@@ -17,6 +17,7 @@ for (let i = 0; i < shots.length; i++) {
   if (i > 0) await page.evaluate((n) => window.__setShot(n), s);
   await page.waitForFunction(() => window.__READY__ === true, null, { timeout: 600000, polling: 500 });
   const info = await page.evaluate(() => ({ ...window.__SHOT_INFO__(), ...(window.__PERF__ ? (({ geometries, textures, programs }) => ({ geometries, textures, programs }))(window.__PERF__()) : {}) }));
+  if (i === 0) { res.__groups = await page.evaluate(() => window.__GROUPS__?.()); }
   res[s] = info; fs.writeFileSync(out, JSON.stringify(res, null, 1));
   console.log(s, ((Date.now() - t) / 1000).toFixed(0) + 's', JSON.stringify(info));
 }

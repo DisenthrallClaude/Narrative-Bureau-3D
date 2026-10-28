@@ -294,6 +294,7 @@ G.glitch = (s) => { R.ca.offset.set(0.004 * s, 0.003 * s); setTimeout(() => R.ca
 // —— 主循环 ——
 const clock = new THREE.Clock();
 let frames = 0, fpsAcc = 0, fpsN = 0, stepAcc = 0; const perf = { max: 0, last: null };
+window.__GROUPS__ = () => scene.children.filter((g) => g.isGroup || g.isObject3D).map((g) => { let meshes = 0, tris = 0, shadow = 0; g.traverse((o) => { if (!o.isMesh || !o.geometry) return; const n = (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1); meshes++; tris += n; if (o.castShadow) shadow += n; }); return { name: g.name || g.type, visible: g.visible, meshes, tris: Math.round(tris), shadowTris: Math.round(shadow) }; }).filter((x) => x.meshes);
 window.__PERF__ = () => ({ ...perf.last, geometries: R.gl.info.memory.geometries, textures: R.gl.info.memory.textures, programs: R.gl.info.programs?.length ?? 0 });
 function loop() {
   if (window.__READY__) return;

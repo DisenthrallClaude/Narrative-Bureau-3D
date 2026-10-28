@@ -56,7 +56,7 @@ function depthMats(M) {
     dp_pageDark: new THREE.MeshStandardMaterial({ map: page, roughness: 0.92, color: 0x6a6458 }),
     dp_street: new THREE.MeshStandardMaterial({ map: street, roughness: 0.95, color: 0xd8d0bc }),
     dp_kraft: new THREE.MeshStandardMaterial({ map: kraftTxt, roughness: 0.9, color: 0xc8a070 }),
-    dp_ink: new THREE.MeshPhysicalMaterial({ color: 0x030304, map: inkTex, emissive: 0xc89a48, emissiveMap: inkTex, emissiveIntensity: 1.4, roughness: 0.12, metalness: 0.0, clearcoat: 0.6, clearcoatRoughness: 0.08, envMapIntensity: 0.12 }), // M6：原 env 2.0 把室内 HDR 拉伸映在潮面（R5 P0-2）
+    dp_ink: new THREE.MeshLambertMaterial({ color: 0x050608, map: inkTex, emissive: 0xc89a48, emissiveMap: inkTex, emissiveIntensity: 0.5 }), // M7：潮面掠射角被聚光/清漆打成整片白（R5 P0-2 复发）→ 改无高光 Lambert，墨面只靠金字自发光
     dp_inkMatte: new THREE.MeshStandardMaterial({ color: 0x0b0b0e, roughness: 0.7 }),
     dp_red: new THREE.MeshStandardMaterial({ color: 0x5a0a0c, emissive: 0x9a1014, emissiveIntensity: 1.4, roughness: 0.6 }),
     dp_redText: new THREE.MeshStandardMaterial({ color: 0, emissive: 0xff2a1a, emissiveIntensity: 2.2, transparent: true, side: THREE.DoubleSide, depthWrite: false, map: cvTex(1024, 256, (c, w, h) => { c.clearRect(0, 0, w, h); c.fillStyle = '#fff'; c.font = '700 120px "NB Title", "NB Serif", serif'; c.fillText('此页不应存在', 20, 160); }) }),
@@ -168,7 +168,7 @@ export async function buildDepths(scene, world, ctx) {
       const post = plane(zone, docMat('doc_abyss_tide_post', signMaterial('边界警示', ['墨潮带', '禁止越过红桩', '不要读它们身上的字'], 420, 520)), 0.7, 0.86, 43.3, Y + 1.0, -139.2, -Math.PI / 2); anchor('doc_abyss_tide_post', post);
       const rec = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 0.2), M.blackMetal); rec.position.set(42.6, Y + 0.03, -141.4); rec.rotation.set(0.3, 0.6, 0.1); zone.add(rec); const rl = new THREE.Mesh(new THREE.PlaneGeometry(0.03, 0.03), new THREE.MeshBasicMaterial({ color: 0xff3020 })); rl.position.set(42.6, Y + 0.07, -141.35); rl.rotation.x = -Math.PI / 2; zone.add(rl); anchor('doc_abyss_recorder', rec, 2.4);
       for (let k = 0; k < 14; k++) { const p = person(M, { coat: 0x050506 }); p.position.set(52 + rnd() * 30, Y - 0.9 - rnd() * 0.6, -125 - rnd() * 30); p.rotation.y = rnd() * 6; zone.add(p); }
-      point(zone, 0x9a2018, 10, [40, Y + 4, -140], 20); spot(zone, 0xffe0b0, 160, [60, Y + 18, -125], [75, Y, -145], 0.6, false, 40); }
+      point(zone, 0x9a2018, 10, [40, Y + 4, -140], 20); point(zone, 0x3a5a8a, 8, [80, Y + 10, -140], 40); }
     // M6：倒悬主楼（AREAS A0 核心画面：抬头看见地面上的叙事管理局倒插下来）——黑石主体 + 收分塔 + 倒尖顶 + 金线 + 发光尖窗 + 倒写招牌
     { const cx = 0, cz = -150, top = Y + 70; const win = new THREE.MeshStandardMaterial({ color: 0x0a0806, emissive: 0xffc35a, emissiveIntensity: 1.2, roughness: 0.6 });
       const blk = (w, h, d, y0, mat = 'dp_inkMatte') => { b.box(mat, w, h, d, [cx, y0 - h / 2, cz], { uv: 0.2 }); b.box('gold', w + 0.3, 0.3, d + 0.3, [cx, y0 - h + 0.15, cz], { uv: 1 }); return y0 - h; };
@@ -210,7 +210,7 @@ export async function buildDepths(scene, world, ctx) {
     for (let i = 0; i < 46; i++) { const t0 = i / 46, t1 = (i + 1) / 46; const p0 = gcur.getPoint(t0), p1 = gcur.getPoint(t1); const mid = p0.clone().add(p1).multiplyScalar(0.5); const yaw = Math.atan2(p1.x - p0.x, p1.z - p0.z); const len = p0.distanceTo(p1) + 0.08; const nx = Math.cos(yaw), nz = -Math.sin(yaw);
       b.add('dp_kraft', new THREE.BoxGeometry(3.6, 0.3, len), { pos: [mid.x, Y - 0.15, mid.z], rot: [0, yaw, 0] }, { uv: 0.2, collide: true });
       b.add('dp_kraft', new THREE.BoxGeometry(0.3, 12, len), { pos: [mid.x + nx * 1.9, Y + 6, mid.z + nz * 1.9], rot: [0, yaw, 0] }, { uv: 0.45, collide: true });
-      b.add(i % 2 ? 'dp_page' : 'dp_pageDark', new THREE.BoxGeometry(0.3, 12, len), { pos: [mid.x - nx * 1.9, Y + 6, mid.z - nz * 1.9], rot: [0, yaw, 0] }, { uv: 0.45, collide: true });
+      b.add('dp_page', new THREE.BoxGeometry(0.3, 12, len), { pos: [mid.x - nx * 1.9, Y + 6, mid.z - nz * 1.9], rot: [0, yaw, 0] }, { uv: 0.45, collide: true });
       for (const sd of [-1, 1]) b.add('dp_kraft', new THREE.BoxGeometry(2.3, 0.12, len), { pos: [mid.x + nx * sd * 0.98, Y + 12.35, mid.z + nz * sd * 0.98], rot: [0, yaw, -sd * 0.42] }, { uv: 0.45 }); // M6：书脊折角天花
       if (i % 4 === 0) b.add('dp_red', new THREE.BoxGeometry(0.05, 0.05, len), { pos: [mid.x, Y + 12.82, mid.z], rot: [0, yaw, 0] }, { uv: false });
       if (i % 3 === 0) { b.add('dp_red', new THREE.CylinderGeometry(0.03, 0.03, 3.8, 5), { pos: [mid.x, Y + 7.5, mid.z], rot: [0, yaw, Math.PI / 2] }, { uv: false }); }

@@ -17,3 +17,6 @@
 - [07:45] 宿舍完成（m7/dorm_lobby, dorm_room, dorm_101b, dorm_207）。下一步：walk.mjs 走查
 - [08:05] 走查第1轮 23/8：根因 physics.js y<-60 一律重生到广场 → 墨渊(-300)/装订线(-500) 进不去；已修（深区带例外）。test 模式改为不预编译不渲染（加载 60s）。重跑中
 - [08:25] 走查 31/0 通过，WALKTHROUGH.md 已写。下一步：m7 复拍第1批 abyss_core,abyss_tide,seventh_gutter,seventh_rewrite
+- [08:50] m7 第1批完成（abyss_core OK、seventh_rewrite OK、seventh_gutter 斑马条纹已改、abyss_tide 潮面白片已改待复拍）；第2批 library,director,metro,hangar 拍摄中
+- [09:15] 第2批完成：library/director 良好；metro 地面略泛光、入口亭灰盒；hangar 灰盒偏重(WIP)。复拍 abyss_tide,seventh_gutter 中
+- [09:40] seventh_gutter 斑马条纹已修；abyss_tide 潮面改 Lambert 复拍中；下一步 perf.mjs → PERF.md
