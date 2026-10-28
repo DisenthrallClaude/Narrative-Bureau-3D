@@ -18,7 +18,9 @@ export function mats() {
   M.goldEmis = new THREE.MeshStandardMaterial({ color: 0xf6d27e, metalness: 1, roughness: 0.25, emissive: 0xc8902e, emissiveIntensity: 0.8, envMapIntensity: 1.4 });
   M.slate = pbr('Metal027', { color: 0x2a2d36, metalness: 0.6, roughness: 0.45, env: 1.0 });
   M.iron = pbr('Metal046A', { color: 0x2b2d33, metalness: 1, roughness: 0.42 });
-  M.glassOut = new THREE.MeshPhysicalMaterial({ color: TOD.label === '白昼' ? 0x22355e : 0x0c1428, metalness: 0.3, roughness: 0.05, envMapIntensity: TOD.label === '白昼' ? 2.4 : 1.6, emissive: 0x1a2a55, emissiveIntensity: 0.2, clearcoat: 1 });
+  // M6：深蓝铅条菱格玻璃（canvas 自产，ShapeGeometry UV 为米制 → 每 0.9 m 一组菱格）
+  const lead = leadedGlassTexture();
+  M.glassOut = new THREE.MeshPhysicalMaterial({ color: TOD.label === '白昼' ? 0x6f8fe0 : 0x3a5098, map: lead.map, roughnessMap: lead.rough, metalness: 0.25, roughness: 0.9, envMapIntensity: TOD.label === '白昼' ? 1.6 : 1.1, emissive: 0x2440a0, emissiveMap: lead.map, emissiveIntensity: TOD.label === '白昼' ? 0.35 : 0.25, clearcoat: 0.6, clearcoatRoughness: 0.1 });
   M.glassOut.userData.noShadow = true;
   // 黄昏：外立面尖窗按窗格随机亮起暖色灯光（世界坐标哈希），其余保持深色反射
   M.glassOut.onBeforeCompile = (sh) => {
@@ -45,7 +47,7 @@ export function mats() {
   M.hedge = new THREE.MeshStandardMaterial({ color: 0x6f8a62, map: leaf.map, normalMap: leaf.normal, normalScale: new THREE.Vector2(1.6, 1.6), roughness: 0.92 });
   M.grass = new THREE.MeshStandardMaterial({ color: 0x8aa070, map: leaf.grass, roughness: 0.95 });
   // 室内
-  M.hallFloor = pbr('Marble012', { rn: true, color: 0x55555b, roughness: 0.3, env: 0.3, physical: true, clearcoat: 0.12, clearcoatRoughness: 0.25 });
+  M.hallFloor = pbr('Marble012', { rn: true, color: 0x3c3c42, roughness: 0.34, env: 0.22, physical: true, clearcoat: 0.12, clearcoatRoughness: 0.25 });
   M.hallFloorDark = pbr('Marble006', { rn: true, color: 0x46464c, roughness: 0.3, env: 0.3, physical: true, clearcoat: 0.12, clearcoatRoughness: 0.25 });
   M.terrazzo = pbr('Terrazzo005', { rn: true, color: 0x8a8a8e, roughness: 0.55, env: 0.3 });
   M.wallStone = pbr('Marble016', { rn: true, color: 0x5e5e66, roughness: 0.5, env: 0.6 }); // M4：原花岗岩在暖光下呈锈斑，改黑金纹大理石
@@ -64,6 +66,8 @@ export function mats() {
   M.kraft = pbr('Paper006', { color: 0xd6b88a, roughness: 0.9 });
   M.kraftDark = pbr('Cardboard004', { color: 0xb08a5a, roughness: 0.95 });
   M.leather = pbr('Leather026', { rn: true, color: 0x2a1c16, roughness: 0.62, env: 0.4 }); // M5：原粗糙度图均值 0.37×0.5 → 偏镜面，桌面泛白
+  M.baize = new THREE.MeshStandardMaterial({ color: 0x1d3a28, roughness: 0.97, envMapIntensity: 0.05 }); // M6：阅览桌绿台呢（原皮革掠射角泛白，R4 P1-2）
+  M.winView = new THREE.MeshBasicMaterial({ map: cityViewTexture(), toneMapped: true }); M.winView.userData.noShadow = true; // M6：室内窗外城景（R4 P1-6 floor3 纯蓝）
   M.concrete = pbr('Concrete036', { color: 0x7a7a7e, roughness: 0.9 });
   M.screenOff = new THREE.MeshStandardMaterial({ color: 0x050608, roughness: 0.15, metalness: 0.4 });
   M.lampGreen = new THREE.MeshStandardMaterial({ color: 0x0d4a2a, emissive: 0x1d7a45, emissiveIntensity: 0.25, roughness: 0.15, metalness: 0.1 });
@@ -94,6 +98,43 @@ export function mats() {
   weather(M.steel, { macro: 0.12, tarnish: 0.15, rough: 0.15, scale: 1.5 });
   weather(M.brass, { macro: 0.1, tarnish: 0.35, rough: 0.15, scale: 2.0 });
   return M;
+}
+
+/** 窗外城景：天空渐变 + 三层哥特剪影（远淡近深）+ 亮窗 + 河带，按窗归一化 UV（fitUV）贴满尖拱窗 */
+function cityViewTexture() {
+  const W = 512, H = 1024, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const day = TOD.label === '白昼'; const sky = c.createLinearGradient(0, 0, 0, H * 0.75);
+  if (day) { sky.addColorStop(0, '#5f86c0'); sky.addColorStop(0.7, '#a9c2df'); sky.addColorStop(1, '#d9e2ea'); } else { sky.addColorStop(0, '#1a1f3a'); sky.addColorStop(0.6, '#7a4a52'); sky.addColorStop(1, '#e09a5a'); }
+  c.fillStyle = sky; c.fillRect(0, 0, W, H);
+  if (day) { c.fillStyle = 'rgba(255,255,255,0.55)'; for (let i = 0; i < 14; i++) { c.beginPath(); c.ellipse(Math.random() * W, 80 + Math.random() * 380, 40 + Math.random() * 90, 12 + Math.random() * 20, 0, 0, Math.PI * 2); c.fill(); } }
+  const layers = [[0.62, day ? '#8a95a8' : '#3a3048', 0.5], [0.7, day ? '#5a6272' : '#241e2e', 0.8], [0.8, day ? '#2c3038' : '#121018', 1.2]];
+  for (const [base, col, sc] of layers) {
+    let x = -10; c.fillStyle = col;
+    while (x < W) { const w = (18 + Math.random() * 40) * sc, h = (40 + Math.random() * 140) * sc, y0 = H * base; c.fillRect(x, y0 - h, w, h + H); if (Math.random() < 0.5) { c.beginPath(); c.moveTo(x - 2, y0 - h); c.lineTo(x + w / 2, y0 - h - (30 + Math.random() * 120) * sc); c.lineTo(x + w + 2, y0 - h); c.fill(); }
+      if (sc > 0.7) { c.save(); c.fillStyle = day ? 'rgba(40,50,70,0.8)' : 'rgba(255,190,110,0.85)'; for (let wy = y0 - h + 8; wy < y0 - 4; wy += 9 * sc) for (let wx = x + 3; wx < x + w - 4; wx += 6 * sc) if (Math.random() < (day ? 0.5 : 0.3)) c.fillRect(wx, wy, 2 * sc, 4 * sc); c.restore(); }
+      x += w + Math.random() * 6; }
+    if (base === 0.7) { const rv = c.createLinearGradient(0, H * 0.7, 0, H * 0.76); rv.addColorStop(0, day ? '#9fb6cc' : '#c08060'); rv.addColorStop(1, day ? '#4f6a84' : '#30283a'); c.fillStyle = rv; c.fillRect(0, H * 0.7, W, H * 0.06); c.fillStyle = col; }
+  }
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
+/** 铅条菱格深蓝玻璃：颜色图（铅条黑、玻璃深蓝带色差与少量琥珀/宝石红）+ 粗糙度图（铅条粗、玻璃光） */
+function leadedGlassTexture() {
+  const N = 256, c1 = document.createElement('canvas'), c2 = document.createElement('canvas'); c1.width = c1.height = c2.width = c2.height = N;
+  const g = c1.getContext('2d'), r = c2.getContext('2d');
+  g.fillStyle = '#05070c'; g.fillRect(0, 0, N, N); r.fillStyle = '#e0e0e0'; r.fillRect(0, 0, N, N);
+  const cells = 4, s = N / cells;
+  for (let j = -1; j <= cells; j++) for (let i = -1; i <= cells; i++) for (const off of [0, 0.5]) {
+    const cx = (i + off) * s + s / 2, cy = (j + off) * s + s / 2; const k = Math.random();
+    const col = k < 0.06 ? [150, 90, 20] : k < 0.1 ? [110, 18, 28] : [20 + Math.random() * 25, 45 + Math.random() * 35, 120 + Math.random() * 70];
+    const pts = [[cx, cy - s / 2 + 3], [cx + s / 2 - 3, cy], [cx, cy + s / 2 - 3], [cx - s / 2 + 3, cy]];
+    const grd = g.createLinearGradient(cx - s / 2, cy - s / 2, cx + s / 2, cy + s / 2);
+    grd.addColorStop(0, `rgb(${col[0] * 1.3 | 0},${col[1] * 1.3 | 0},${col[2] * 1.25 | 0})`); grd.addColorStop(1, `rgb(${col[0] * 0.7 | 0},${col[1] * 0.7 | 0},${col[2] * 0.75 | 0})`);
+    g.fillStyle = grd; r.fillStyle = `rgb(${18 + Math.random() * 30 | 0},0,0)`;
+    for (const ctx of [g, r]) { ctx.beginPath(); pts.forEach((p, n) => (n ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]))); ctx.closePath(); ctx.fill(); }
+  }
+  const T = (cv, srgb) => { const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1.1, 1.1); if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; };
+  return { map: T(c1, true), rough: T(c2, false) };
 }
 
 /** 程序化叶丛贴图（颜色 + 法线），用于绿篱、柏树、草坪 */

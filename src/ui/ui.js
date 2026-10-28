@@ -63,6 +63,7 @@ export function dialog(lines, { auto = false } = {}) {
         const pick = (k) => { const mm = opts[k].match(/选项\s*([A-Z])/); choice = mm ? mm[1] : String.fromCharCode(65 + k); dlgAdvance = adv; document.removeEventListener('keydown', kd); showLine(); };
         const kd = (e) => { if (e.code === 'KeyW' || e.code === 'ArrowUp') { sel = (sel + opts.length - 1) % opts.length; render(); } if (e.code === 'KeyS' || e.code === 'ArrowDown') { sel = (sel + 1) % opts.length; render(); } if (e.code === 'KeyE' || e.code === 'Enter' || e.code === 'Space') { e.stopPropagation(); pick(sel); } if (/Digit[1-9]/.test(e.code)) pick(Math.min(opts.length - 1, +e.code.slice(5) - 1)); };
         dlgAdvance = null;
+        if (window.__NB_AUTO__) { const want = window.__NB_AUTO__.choices?.shift?.() ?? 'A'; const k = Math.max(0, opts.findIndex((o) => o.includes('选项 ' + want) || o.includes('选项' + want))); window.__NB_AUTO__.log?.push('选择 ' + opts[k]); setTimeout(() => pick(k), 0); return; }
         setTimeout(() => document.addEventListener('keydown', kd), 50);
         $('dlgch').onclick = (e) => { const k = e.target.dataset?.k; if (k != null) pick(+k); };
         return;
@@ -71,6 +72,7 @@ export function dialog(lines, { auto = false } = {}) {
       if (mm && !line.startsWith('（')) { $('dlgwho').textContent = mm[1].replace(/（[A-Z]）/, ''); $('dlgline').textContent = mm[2]; $('dlgline').className = 'line'; }
       else { $('dlgwho').textContent = ''; $('dlgline').textContent = line; $('dlgline').className = 'line narr'; }
       i++;
+      if (window.__NB_AUTO__) { setTimeout(adv, 0); return; }
       if (auto) setTimeout(adv, 2600);
     };
     const finish = () => { $('dlg').classList.add('hidden'); ui.state = 'play'; dlgAdvance = null; resolve(choice); };
@@ -93,6 +95,7 @@ function renderPage() {
 }
 export function openReader(pg, { onClose } = {}) {
   pages = pg; pi = 0; ui.state = 'reader'; $('reader').classList.remove('hidden'); renderPage();
+  if (window.__NB_AUTO__) { for (let k = 1; k < pages.length; k++) readerFlip(1); window.__NB_AUTO__.log?.push('阅读 ' + pg.length + ' 页：' + (pg[0]?.title ?? '')); return new Promise((res) => { readerDone = () => { onClose?.(); res(); }; setTimeout(closeReader, 0); }); }
   return new Promise((res) => { readerDone = () => { onClose?.(); res(); }; });
 }
 export function readerFlip(d) { const n = Math.max(0, Math.min(pages.length - 1, pi + d)); if (n !== pi) { pi = n; renderPage(); return true; } return false; }
@@ -132,6 +135,7 @@ export function showPause(on) { $('pause').classList.toggle('hidden', !on); if (
 export function onResume(fn) { $('resume').onclick = fn; }
 
 export function chapterCard(a, b, ms = 6000) {
+  if (window.__NB_AUTO__) { window.__NB_AUTO__.log?.push('章节卡 ' + a + ' / ' + (b ?? '')); ms = 50; }
   return new Promise((res) => { $('chapa').textContent = a; $('chapb').textContent = b ?? ''; $('chapter').classList.add('on'); setTimeout(() => { $('chapter').classList.remove('on'); setTimeout(res, 2000); }, ms); });
 }
 export function fade(on) { $('fade').classList.toggle('on', on); }

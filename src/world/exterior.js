@@ -447,9 +447,58 @@ function buildCity(g, M, ctx) {
   const river = new THREE.Mesh(new THREE.ShapeGeometry(riverShape, 4), riverMat); river.rotation.x = -Math.PI / 2; river.position.y = -4.2; river.scale.y = -1; g.add(river);
   // 第二条河（东侧南北向）
   const r2 = new THREE.Mesh(new THREE.PlaneGeometry(150, 6000), riverMat); r2.rotation.x = -Math.PI / 2; r2.position.set(620, -4.25, 0); g.add(r2);
+  // M6：城墙北侧大河（参考图：主楼背后环抱的宽阔河道）+ 石砌河堤 + 哥特石拱桥
+  const northZ = (x) => -35 - 265 * Math.exp(-((x / 420) ** 2)) - 40 * Math.exp(-(((x - 900) / 500) ** 2)) * 0;
+  const ribbon = (fz, x0, x1, w0, w1, y, mat, step = 20) => {
+    const pos = [], idx = []; let n = 0;
+    for (let x = x0; x <= x1; x += step) {
+      const z = fz(x), dz = (fz(x + 1) - fz(x - 1)) / 2, l = Math.hypot(1, dz), nx = -dz / l, nz = 1 / l;
+      pos.push(x + nx * w0, y, z + nz * w0, x + nx * w1, y, z + nz * w1);
+      if (n) idx.push(2 * n - 2, 2 * n, 2 * n - 1, 2 * n - 1, 2 * n, 2 * n + 1); n++;
+    }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setIndex(idx); geo.computeVertexNormals();
+    if (geo.attributes.normal.getY(0) < 0) { idx.reverse(); geo.setIndex(idx); geo.computeVertexNormals(); }
+    const m = new THREE.Mesh(geo, mat); m.receiveShadow = false; g.add(m); return m;
+  };
+  ribbon(northZ, -3500, 3500, -72, 72, -4.22, riverMat, 12);
+  const quayMat = new THREE.MeshStandardMaterial({ color: 0x4a4a50, roughness: 0.85 });
+  const quayTop = new THREE.MeshStandardMaterial({ color: 0x6a6a70, roughness: 0.8 });
+  for (const sd of [-1, 1]) { ribbon(northZ, -3500, 3500, sd * 72, sd * 84, -3.2, quayTop, 12); }
+  // 河堤立面（竖直石墙）：沿河两岸的竖带
+  for (const sd of [-1, 1]) {
+    const pos = [], idx = []; let n = 0;
+    for (let x = -3500; x <= 3500; x += 12) { const z = northZ(x), dz = (northZ(x + 1) - northZ(x - 1)) / 2, l = Math.hypot(1, dz), nx = -dz / l, nz = 1 / l; const px = x + nx * sd * 72, pz = z + nz * sd * 72; pos.push(px, -3.2, pz, px, -4.3, pz); if (n) idx.push(2 * n - 2, 2 * n - 1, 2 * n, 2 * n - 1, 2 * n + 1, 2 * n); n++; }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setIndex(idx); geo.computeVertexNormals();
+    const m = new THREE.Mesh(geo, quayMat); m.material.side = THREE.DoubleSide; g.add(m);
+  }
+  // 河堤路灯（金色灯头，黄昏自发光）
+  { const lampG = new THREE.CylinderGeometry(0.18, 0.25, 7, 6); lampG.translate(0, 3.5, 0); const headG = new THREE.SphereGeometry(0.55, 8, 6); headG.translate(0, 7.2, 0);
+    const poles = new THREE.InstancedMesh(lampG, M.iron, 640), heads = new THREE.InstancedMesh(headG, new THREE.MeshStandardMaterial({ color: 0xffe0a0, emissive: 0xffc070, emissiveIntensity: TOD.label === '白昼' ? 0.4 : 3 }), 640); let k = 0; const mm = new THREE.Matrix4();
+    for (let x = -1600; x <= 1600 && k < 640; x += 18) for (const sd of [-1, 1]) { const z = northZ(x), dz = (northZ(x + 1) - northZ(x - 1)) / 2, l = Math.hypot(1, dz); mm.makeTranslation(x + (-dz / l) * sd * 80, -3.2, z + (1 / l) * sd * 80); poles.setMatrixAt(k, mm); heads.setMatrixAt(k++, mm); }
+    for (const im of [poles, heads]) { im.count = k; im.frustumCulled = false; im.castShadow = false; im.instanceMatrix.needsUpdate = true; g.add(im); } }
+  const bridgeStone = new THREE.MeshStandardMaterial({ color: 0x2a2b31, roughness: 0.7, metalness: 0.1 });
+  const archDark = new THREE.MeshStandardMaterial({ color: 0x0b0c10, roughness: 1, side: THREE.DoubleSide });
+  const gothicBridge = (cx, cz, yaw, len, w) => {
+    const br = new THREE.Group(); br.position.set(cx, 0, cz); br.rotation.y = yaw; g.add(br);
+    const deckY = 4.5; const add = (geo, mat, x, y, z) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = false; br.add(m); return m; };
+    add(new THREE.BoxGeometry(w, 1.6, len), bridgeStone, 0, deckY, 0);
+    add(new THREE.BoxGeometry(w + 0.6, 0.35, len), M.gold, 0, deckY - 0.85, 0);
+    for (const sx of [-1, 1]) { add(new THREE.BoxGeometry(0.5, 1.3, len), bridgeStone, sx * (w / 2 - 0.25), deckY + 1.45, 0); add(new THREE.BoxGeometry(0.62, 0.12, len), M.gold, sx * (w / 2 - 0.25), deckY + 2.12, 0); }
+    const span = len / 5;
+    for (let i = 1; i < 5; i++) { const z = -len / 2 + i * span;
+      add(new THREE.BoxGeometry(w + 2, deckY + 4.4, 5), bridgeStone, 0, (deckY - 4.4) / 2 - 0.4, z); // 桥墩
+      const cut = add(new THREE.ConeGeometry(3.2, 7, 4), bridgeStone, 0, 0.5, z); cut.rotation.set(0, Math.PI / 4, 0); cut.scale.set(1, 1, 0.8); // 分水尖
+      for (const sx of [-1, 1]) { add(new THREE.BoxGeometry(1.4, 9, 1.4), bridgeStone, sx * (w / 2 + 0.4), deckY + 3.5, z); const sp = add(new THREE.ConeGeometry(1.0, 4.5, 4), bridgeStone, sx * (w / 2 + 0.4), deckY + 10.2, z); sp.rotation.y = Math.PI / 4; add(new THREE.SphereGeometry(0.35, 8, 6), M.gold, sx * (w / 2 + 0.4), deckY + 12.6, z); }
+    }
+    // 尖拱拱腹（每跨一道深色拱券，从侧面读出拱桥）
+    for (let i = 0; i < 5; i++) { const z = -len / 2 + (i + 0.5) * span; for (const sx of [-1, 1]) { const a = add(new THREE.ShapeGeometry(archShape(span - 5, 0.6)), archDark, sx * (w / 2 + 0.02), -4.2, z); a.rotation.y = sx * Math.PI / 2; a.scale.y = 7.6 / (0.6 + (span - 5) * 0.866); } }
+  };
+  gothicBridge(0, northZ(0), 0, 175, 22);
+  for (const bx of [-520, 470]) { const z = northZ(bx), dz = (northZ(bx + 1) - northZ(bx - 1)) / 2; gothicBridge(bx, z, -Math.atan(dz), 175 * Math.hypot(1, dz) ** 0.3, 16); }
+  for (const bx of [-1300, 1250]) gothicBridge(bx, northZ(bx), 0, 175, 16);
   // 楼群：哥特低模剪影（暗色石体 + 随机亮灯的尖窗 + 四坡尖顶 + 细尖塔），远处由天空盒雾融入生图天空盒
   const rnd = mulberry(7);
-  const riverDist = (x, z) => { const t = (x + 3500) / 7000; const rz = -(-520 + Math.sin(t * 7) * 160 + t * 300); return Math.min(Math.abs(z - rz), Math.abs(x - 620)); };
+  const riverDist = (x, z) => { const t = (x + 3500) / 7000; const rz = -(-520 + Math.sin(t * 7) * 160 + t * 300); return Math.min(Math.abs(z - rz), Math.abs(x - 620), Math.abs(z - northZ(x)) - 10); };
   const winShader = (sh, lit = 0.32) => {
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vWp; varying vec3 vOn; varying float vSeed;')
       .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvec4 nbw = vec4(transformed,1.0);\n#ifdef USE_INSTANCING\nnbw = instanceMatrix * nbw;\n#endif\nvWp = (modelMatrix * nbw).xyz; vOn = normal; vSeed = 0.0;\n#ifdef USE_INSTANCING\nvSeed = instanceMatrix[3].x * 0.013 + instanceMatrix[3].z * 0.007;\n#endif');
@@ -528,7 +577,7 @@ function buildCity(g, M, ctx) {
     }
   });
   // 跨河大桥
-  for (const bx of [-900, 0, 900]) { const t = (bx + 3500) / 7000; const rz = -(-520 + Math.sin(t * 7) * 160 + t * 300); const br = new THREE.Mesh(new THREE.BoxGeometry(30, 3, 260), new THREE.MeshStandardMaterial({ color: 0x4a4c52, roughness: 0.7 })); br.position.set(bx, 2, rz); g.add(br); }
+  for (const bx of [-900, 0, 900]) { const t = (bx + 3500) / 7000; const rz = -(-520 + Math.sin(t * 7) * 160 + t * 300); gothicBridge(bx, rz, 0, 240, bx === 0 ? 30 : 20); }
   // 飞行器
   ctx.aircraft = [];
   for (let i = 0; i < 9; i++) {

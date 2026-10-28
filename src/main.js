@@ -120,6 +120,15 @@ async function boot() {
   setZone('plaza', true);
   UI.updateObjective();
   if (SHOT) return startShot();
+  if (params.get('test')) { // M6：自动化走查接口（tools/walk.mjs）——不锁鼠标，直接进入游戏态
+    window.__NB_AUTO__ = { choices: [], log: [] };
+    window.__NB__ = { G, content, UI, player, inter, zoneAt: (x, y, z) => zoneAt(new THREE.Vector3(x, y, z)),
+      tp: (x, y, z, yaw = 0) => { player.pos.set(x, y, z); player.vel?.set(0, 0, 0); player.yaw = yaw; player.pitch = 0; player.applyCamera(camera); setZone(zoneAt(player.pos)); },
+      spot: (id) => inter.spots.find((s) => s.id === id),
+      use: async (id) => { const s = inter.spots.find((x) => x.id === id); if (!s) throw new Error('no spot ' + id); if (s.enabled && !s.enabled()) throw new Error('spot disabled ' + id); await s.use(); return true; },
+      vols: () => inter.volumes.length, flags: () => [...content.flags], items: () => [...content.items], state: () => UI.ui.state };
+    started = true; UI.ui.state = 'play'; document.getElementById('loading').classList.add('hidden'); window.__NB_READY__ = true; return;
+  }
   UI.loadDone(start);
 }
 
@@ -283,7 +292,8 @@ G.glitch = (s) => { R.ca.offset.set(0.004 * s, 0.003 * s); setTimeout(() => R.ca
 
 // —— 主循环 ——
 const clock = new THREE.Clock();
-let frames = 0, fpsAcc = 0, fpsN = 0, stepAcc = 0;
+let frames = 0, fpsAcc = 0, fpsN = 0, stepAcc = 0; const perf = { max: 0, last: null };
+window.__PERF__ = () => ({ ...perf.last, geometries: R.gl.info.memory.geometries, textures: R.gl.info.memory.textures, programs: R.gl.info.programs?.length ?? 0 });
 function loop() {
   if (window.__READY__) return;
   requestAnimationFrame(loop);
@@ -315,10 +325,12 @@ function loop() {
   R.setExposure(curExp);
   for (const s of ctx.screens) s.update(dt, t);
   updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t); updateDressing(ctx, dt, t); updateDepths(ctx, dt, t);
+  R.gl.info.autoReset = false; R.gl.info.reset(); // M6：统计整帧（反射 + 阴影 + 后期全部 pass）
   reflector.setY(FLOOR); reflector.update(scene, camera, R.q.reflect);
   R.render(dt);
   frames++;
-  if (showFps) { fpsAcc += dt; fpsN++; if (fpsAcc > 0.5) { UI.setFpsText(`${Math.round(fpsN / fpsAcc)} fps · ${R.gl.info.render.calls} dc · ${(R.gl.info.render.triangles / 1e6).toFixed(2)}M △`); fpsAcc = 0; fpsN = 0; } }
+  perf.last = { calls: R.gl.info.render.calls, tris: R.gl.info.render.triangles, zone: G.zone };
+  if (showFps) { fpsAcc += dt; fpsN++; perf.max = Math.max(perf.max, dt); if (fpsAcc > 0.5) { const i = R.gl.info; UI.setFpsText(`${Math.round(fpsN / fpsAcc)} fps · ${(fpsAcc / fpsN * 1000).toFixed(1)} ms（峰 ${(perf.max * 1000).toFixed(0)}）\n${i.render.calls} drawcall · ${(i.render.triangles / 1e6).toFixed(2)}M 三角面\n程序 ${i.programs?.length ?? 0} · 几何 ${i.memory.geometries} · 贴图 ${i.memory.textures}\n区域 ${G.zone ?? '-'} · 画质 ${R.q.label ?? ''}`); fpsAcc = 0; fpsN = 0; perf.max = 0; } }
   if (SHOT && shotStarted) { shotN++; LOG('frame', shotN, (performance.now() / 1000).toFixed(1)); if (shotN === shotFrames) window.__READY__ = true; }
 }
 let shotFrames = 30, shotStarted = false, shotN = 0;

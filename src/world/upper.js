@@ -25,7 +25,7 @@ export function buildUpper(scene, world, ctx) {
   for (const [k, label] of [['2F', '2F　国际联络处 · 宣传处'], ['3F', '3F　办公区 · 医务室 · 鉴定实验室'], ['4F', '4F–11F　典籍藏书阁'], ['12F', '12F　机要室 · 局长室']]) { FLOORS[k] = { y: UPPER[k], label }; }
   FLOOR_ORDER.unshift('12F', '4F', '3F', '2F');
   Object.assign(HALL_TEXT, { '2F': '国际联络处 · 宣传处', '3F': '办公区 · 医务室 · 鉴定实验室', '4F': '典籍藏书阁 · 4F–11F', '12F': '机要室 · 局长室' });
-  const winRow = (b, x, z0, z1, y, h, yaw) => { for (let z = z0 - 3; z > z1 + 1; z -= 5) { const f = new Frame([x, y, z], yaw); b.add('glassOut', new THREE.ShapeGeometry(archShape(1.6, h)), f.at(0, 1.1, 0.02), { uv: false }); b.add('gold', archRingGeo(1.8, h, 1.6, h, 0.2), f.at(0, 1.1, 0.05), { uv: 1 }); } };
+  const winRow = (b, x, z0, z1, y, h, yaw) => { for (let z = z0 - 3; z > z1 + 1; z -= 5) { const f = new Frame([x, y, z], yaw); b.add('winView', new THREE.ShapeGeometry(archShape(1.6, h)), f.at(0, 1.1, 0.02), { uv: false, fitUV: true }); b.add('gold', archRingGeo(1.8, h, 1.6, h, 0.2), f.at(0, 1.1, 0.05), { uv: 1 }); } };
 
   // ================= 2F 国际联络处（东）+ 宣传处（西） =================
   {

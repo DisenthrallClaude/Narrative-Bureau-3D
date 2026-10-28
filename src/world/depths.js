@@ -18,7 +18,31 @@ export const AY = -300, SY = -500; // 墨渊 / 装订线 地坪
 const rnd = (() => { let s = 23; return () => ((s = (s * 16807) % 2147483647) / 2147483647); })();
 const TXT = '万物皆文本作者在上此页不应存在这段太平淡了删留白第七条本条不存在你又一次来报到了墨还没干别相信页码请勿回头阅读此页即进入叙事安全第一';
 function cvTex(w, h, draw, rep) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; if (rep) t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; }
-function textPage(bg, ink, cols = true, size = 22, alpha = 0.75) { return cvTex(512, 512, (c, w, h) => { c.fillStyle = bg; c.fillRect(0, 0, w, h); c.fillStyle = ink; c.font = `${size}px "NB Serif", serif`; c.globalAlpha = alpha; let i = 0; if (cols) { for (let x = w - 30; x > 10; x -= size + 10) for (let y = size; y < h; y += size + 2) c.fillText(TXT[(i++ * 7) % TXT.length], x, y); } else { for (let y = size + 8; y < h; y += size + 12) { c.fillText(Array.from({ length: 22 }, () => TXT[(i++ * 5) % TXT.length]).join(''), 12, y); } } c.globalAlpha = 1; c.strokeStyle = 'rgba(0,0,0,0.25)'; c.lineWidth = 3; c.strokeRect(0, 0, w, h); }, true); }
+// M6：墙面/地面文字改为真实文本排版（审阅 R5 P1-2：原 70 字短句循环成「字汤」）——取 content 文档正文 + 《叙事安全法》节选，竖排右起、段落换列、标题大字
+const LAW = '《中华人民共和国叙事安全法》（节选）\n第一条　为维护现实稳定，防范叙事污染，保障公民免受畸变侵害，制定本法。\n第三条　万物皆文本。任何单位和个人不得擅自续写、删改、署名于正本。\n第九条　现实稳定度低于百分之九十时，所在区域即进入叙事管制状态。\n第十七条　觉醒者应于觉醒之日起七日内向叙事管理局登记，领取临时入职证。\n第二十二条　禁止在公共场所朗读未经审定的结局。\n第四十一条　考场内发生不可读事件的，视同归档处理。\n第五十五条　任何人不得以作者之名发布指令。\n附则　本法自公布之日起施行。第七条：本条不存在。\n定稿记录\n京城一章，第三十二稿。删去雨夜一段，改为晴。删去一名路人。保留广场喷泉。\n第三十三稿。此页不应存在。\n第三十四稿。留白。';
+let CORPUS = null;
+function corpus() {
+  if (CORPUS) return CORPUS;
+  const docs = (content.m?.documents ?? []).filter((d) => /^(abyss|seventh|archive|vault)/.test(d.area ?? '') && d.text).map((d) => (d.title ? d.title + '\n' : '') + d.text.replace(/[ \t]+/g, ''));
+  CORPUS = [LAW, ...docs].join('\n'); if (CORPUS.length < 400) CORPUS = (LAW + '\n').repeat(3);
+  return CORPUS;
+}
+function textPage(bg, ink, cols = true, size = 22, alpha = 0.75) {
+  return cvTex(1024, 1024, (c, w, h) => {
+    c.fillStyle = bg; c.fillRect(0, 0, w, h); c.fillStyle = ink; c.globalAlpha = alpha; const T = corpus(); let i = Math.floor(rnd() * T.length); const S = size * 1.6;
+    const next = () => { const ch = T[i % T.length]; i++; return ch; };
+    if (cols) {
+      let x = w - S * 1.4;
+      while (x > S * 0.4) { let y = S * 1.6; let title = rnd() < 0.08; c.font = `${title ? 700 : 400} ${title ? S * 1.3 : S}px "NB Serif", serif`; const step = title ? S * 1.4 : S * 1.08;
+        while (y < h - S * 0.6) { const ch = next(); if (ch === '\n') { y += step * 2; if (rnd() < 0.5) break; continue; } c.fillText(ch, x, y); y += step; }
+        x -= (title ? S * 1.7 : S * 1.42); }
+    } else {
+      let y = S * 1.8; c.font = `${S}px "NB Serif", serif`;
+      while (y < h - S * 0.4) { let x = S * 0.8, line = ''; while (x < w - S * 1.2) { const ch = next(); if (ch === '\n') { if (line) break; else continue; } c.fillText(ch, x, y); x += S * 1.02; line += ch; } y += S * 1.55; if (rnd() < 0.12) y += S * 0.8; }
+    }
+    c.globalAlpha = 1; c.strokeStyle = 'rgba(0,0,0,0.18)'; c.lineWidth = 4; c.strokeRect(0, 0, w, h);
+  }, true);
+}
 
 let DMAT = null;
 function depthMats(M) {
@@ -32,7 +56,7 @@ function depthMats(M) {
     dp_pageDark: new THREE.MeshStandardMaterial({ map: page, roughness: 0.92, color: 0x6a6458 }),
     dp_street: new THREE.MeshStandardMaterial({ map: street, roughness: 0.95, color: 0xd8d0bc }),
     dp_kraft: new THREE.MeshStandardMaterial({ map: kraftTxt, roughness: 0.9, color: 0xc8a070 }),
-    dp_ink: new THREE.MeshPhysicalMaterial({ color: 0x030304, map: inkTex, emissive: 0xc89a48, emissiveMap: inkTex, emissiveIntensity: 1.4, roughness: 0.06, metalness: 0.3, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 2.0 }),
+    dp_ink: new THREE.MeshPhysicalMaterial({ color: 0x030304, map: inkTex, emissive: 0xc89a48, emissiveMap: inkTex, emissiveIntensity: 1.4, roughness: 0.12, metalness: 0.0, clearcoat: 0.6, clearcoatRoughness: 0.08, envMapIntensity: 0.12 }), // M6：原 env 2.0 把室内 HDR 拉伸映在潮面（R5 P0-2）
     dp_inkMatte: new THREE.MeshStandardMaterial({ color: 0x0b0b0e, roughness: 0.7 }),
     dp_red: new THREE.MeshStandardMaterial({ color: 0x5a0a0c, emissive: 0x9a1014, emissiveIntensity: 1.4, roughness: 0.6 }),
     dp_redText: new THREE.MeshStandardMaterial({ color: 0, emissive: 0xff2a1a, emissiveIntensity: 2.2, transparent: true, side: THREE.DoubleSide, depthWrite: false, map: cvTex(1024, 256, (c, w, h) => { c.clearRect(0, 0, w, h); c.fillStyle = '#fff'; c.font = '700 120px "NB Title", "NB Serif", serif'; c.fillText('此页不应存在', 20, 160); }) }),
@@ -145,6 +169,26 @@ export async function buildDepths(scene, world, ctx) {
       const rec = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 0.2), M.blackMetal); rec.position.set(42.6, Y + 0.03, -141.4); rec.rotation.set(0.3, 0.6, 0.1); zone.add(rec); const rl = new THREE.Mesh(new THREE.PlaneGeometry(0.03, 0.03), new THREE.MeshBasicMaterial({ color: 0xff3020 })); rl.position.set(42.6, Y + 0.07, -141.35); rl.rotation.x = -Math.PI / 2; zone.add(rl); anchor('doc_abyss_recorder', rec, 2.4);
       for (let k = 0; k < 14; k++) { const p = person(M, { coat: 0x050506 }); p.position.set(52 + rnd() * 30, Y - 0.9 - rnd() * 0.6, -125 - rnd() * 30); p.rotation.y = rnd() * 6; zone.add(p); }
       point(zone, 0x9a2018, 10, [40, Y + 4, -140], 20); spot(zone, 0xffe0b0, 160, [60, Y + 18, -125], [75, Y, -145], 0.6, false, 40); }
+    // M6：倒悬主楼（AREAS A0 核心画面：抬头看见地面上的叙事管理局倒插下来）——黑石主体 + 收分塔 + 倒尖顶 + 金线 + 发光尖窗 + 倒写招牌
+    { const cx = 0, cz = -150, top = Y + 70; const win = new THREE.MeshStandardMaterial({ color: 0x0a0806, emissive: 0xffc35a, emissiveIntensity: 1.2, roughness: 0.6 });
+      const blk = (w, h, d, y0, mat = 'dp_inkMatte') => { b.box(mat, w, h, d, [cx, y0 - h / 2, cz], { uv: 0.2 }); b.box('gold', w + 0.3, 0.3, d + 0.3, [cx, y0 - h + 0.15, cz], { uv: 1 }); return y0 - h; };
+      b.box('dp_inkMatte', 70, 4, 36, [cx, top - 2, cz], { uv: 0.2 }); // 倒置的大台基
+      for (const sx of [-1, 1]) { b.box('dp_inkMatte', 18, 16, 22, [cx + sx * 24, top - 4 - 8, cz], { uv: 0.2 }); b.add('dp_inkMatte', new THREE.ConeGeometry(9, 14, 4), { pos: [cx + sx * 24, top - 20 - 7, cz], rot: [Math.PI, Math.PI / 4, 0] }, { uv: 0.2 });
+        for (const k of [-1, 1]) { b.box('dp_inkMatte', 2.4, 26, 2.4, [cx + sx * 30 + k * 4, top - 4 - 13, cz + 11], { uv: 0.3 }); b.add('dp_inkMatte', new THREE.ConeGeometry(1.6, 9, 4), { pos: [cx + sx * 30 + k * 4, top - 30 - 4.5, cz + 11], rot: [Math.PI, Math.PI / 4, 0] }, { uv: 0.3 }); } }
+      let y = top - 4; y = blk(28, 24, 22, y); y = blk(20, 22, 18, y); y = blk(13, 16, 13, y);
+      b.add('dp_inkMatte', new THREE.ConeGeometry(8.4, 34, 8), { pos: [cx, y - 17, cz], rot: [Math.PI, Math.PI / 8, 0] }, { uv: 0.2 });
+      b.add('gold', new THREE.ConeGeometry(0.5, 8, 6), { pos: [cx, y - 34 - 3.5, cz], rot: [Math.PI, 0, 0] }, { uv: 1 });
+      for (const tt of [0.15, 0.45]) b.add('gold', new THREE.CylinderGeometry(8.4 * (1 - tt) + 0.2, 8.4 * (1 - tt) + 0.2, 0.4, 8, 1, true), { pos: [cx, y - 34 * tt, cz], rot: [0, Math.PI / 8, 0] }, { uv: 1 });
+      // 南立面（朝来路）尖窗：倒置发光
+      for (const [wx, wy, ww, wh] of [[-8, top - 10, 2.6, 9], [8, top - 10, 2.6, 9], [0, top - 30, 2.2, 8], [-5, top - 30, 1.6, 6], [5, top - 30, 1.6, 6], [0, top - 52, 1.6, 7], [-24, top - 10, 2.4, 7], [24, top - 10, 2.4, 7]]) { const m = new THREE.Mesh(new THREE.ShapeGeometry(archShape(ww, wh - ww * 0.87)), win); m.position.set(cx + wx, wy, cz + (Math.abs(wx) > 20 ? 11.02 : wy < top - 26 ? (wy < top - 48 ? 6.52 : 9.02) : 11.02)); m.rotation.z = Math.PI; zone.add(m); }
+      const em = emblem(4.2, M.goldBright, M.navy); em.position.set(cx, top - 22, cz + 11.1); em.rotation.z = Math.PI; zone.add(em);
+      const sign = goldText('叙事管理局', 16, 2.4, M.goldBright, { res: 128 }); sign.position.set(cx, top - 7, cz + 11.2); sign.rotation.z = Math.PI; zone.add(sign);
+      point(zone, 0xffd890, 40, [cx, top - 40, cz + 26], 60); }
+    // 天顶改为倒置的纸页街道（微自发光，远看是一块倒扣的地面，不再是纯黑虚空）
+    { const sky = new THREE.Mesh(new THREE.PlaneGeometry(160, 220), new THREE.MeshStandardMaterial({ map: textPage('#d9cfb6', '#2a2018', false, 26, 0.28), color: 0x8a8070, emissive: 0x6a6050, emissiveIntensity: 0.35, roughness: 1 })); sky.material.map.repeat.set(8, 11); sky.rotation.x = Math.PI / 2; sky.position.set(0, Y + 69.8, -140); zone.add(sky); }
+    // 墨潮带远景：墨黑 → 墨蓝渐变雾幕（R5 P0-2：不露纯黑）
+    { const fogT = cvTex(16, 256, (c, w, h) => { const gr = c.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#000000'); gr.addColorStop(0.55, '#0b1424'); gr.addColorStop(0.85, '#1c2a40'); gr.addColorStop(1, '#0a0e16'); c.fillStyle = gr; c.fillRect(0, 0, w, h); });
+      const fm = new THREE.MeshBasicMaterial({ map: fogT, fog: false, side: THREE.DoubleSide }); for (const [x, z, ry, w] of [[104, -140, -Math.PI / 2, 80], [74, -172, 0, 64], [74, -108, Math.PI, 64]]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, 60), fm); m.position.set(x, Y + 26, z); m.rotation.y = ry; zone.add(m); } }
     zone.add(dust([0, Y, -140], [80, 30, 140], 900, 0xe8dcc0));
     b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); jobs.push(P.build(zone));
     world.surface(-80, -240, 80, -50, 'wood', Y - 2, Y + 30);
@@ -167,13 +211,15 @@ export async function buildDepths(scene, world, ctx) {
       b.add('dp_kraft', new THREE.BoxGeometry(3.6, 0.3, len), { pos: [mid.x, Y - 0.15, mid.z], rot: [0, yaw, 0] }, { uv: 0.2, collide: true });
       b.add('dp_kraft', new THREE.BoxGeometry(0.3, 12, len), { pos: [mid.x + nx * 1.9, Y + 6, mid.z + nz * 1.9], rot: [0, yaw, 0] }, { uv: 0.45, collide: true });
       b.add(i % 2 ? 'dp_page' : 'dp_pageDark', new THREE.BoxGeometry(0.3, 12, len), { pos: [mid.x - nx * 1.9, Y + 6, mid.z - nz * 1.9], rot: [0, yaw, 0] }, { uv: 0.45, collide: true });
+      for (const sd of [-1, 1]) b.add('dp_kraft', new THREE.BoxGeometry(2.3, 0.12, len), { pos: [mid.x + nx * sd * 0.98, Y + 12.35, mid.z + nz * sd * 0.98], rot: [0, yaw, -sd * 0.42] }, { uv: 0.45 }); // M6：书脊折角天花
+      if (i % 4 === 0) b.add('dp_red', new THREE.BoxGeometry(0.05, 0.05, len), { pos: [mid.x, Y + 12.82, mid.z], rot: [0, yaw, 0] }, { uv: false });
       if (i % 3 === 0) { b.add('dp_red', new THREE.CylinderGeometry(0.03, 0.03, 3.8, 5), { pos: [mid.x, Y + 7.5, mid.z], rot: [0, yaw, Math.PI / 2] }, { uv: false }); }
       if (i % 6 === 3) { const kn = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.18), tagMaterial(['2019 · 三号 · 已缝合', '2021 · 五号 · 已缝合', '2023 · 七号 · 未缝合', '2024 · 七号 · 未缝合', '2025 · 七号 · 未缝合', '2026 · 七号 · ——', '——', '——'][(i / 6) | 0])); kn.position.set(mid.x, Y + 7.0, mid.z); kn.rotation.y = yaw + Math.PI / 2; zone.add(kn); if (i === 15) anchor('doc_gutter_knots', kn, 6); }
       if (i % 8 === 4) point(zone, 0xc02018, 3, [mid.x, Y + 6.5, mid.z], 9); }
     b.add('dp_red', new THREE.TubeGeometry(new THREE.CatmullRomCurve3(gpts.map((p) => p.clone().setY(Y + 7.6))), 80, 0.05, 5), null, { uv: false });
     { const p = gcur.getPoint(0.5); const mt = plane(zone, docMat('doc_gutter_mirror_text', new THREE.MeshStandardMaterial({ map: cvTex(512, 256, (c, w, h) => { c.fillStyle = '#e9e1cc'; c.fillRect(0, 0, w, h); c.save(); c.translate(w, 0); c.scale(-1, 1); c.fillStyle = '#5a1010'; c.font = '700 40px "NB Title", "NB Serif", serif'; c.fillText('第七局人员守则', 40, 70); c.font = '28px "NB Serif", serif'; c.fillText('一、我们不存在', 40, 130); c.fillText('二、所以我们记得', 40, 180); c.restore(); }), roughness: 0.9 })), 2.6, 1.3, p.x - 1.74, Y + 2.4, p.z, Math.PI / 2 * 0 + Math.atan2(1, 0)); anchor('doc_gutter_mirror_text', mt, 3); }
     // 作战室 seventh_ops（z −112…−134，x −10…10）
-    const room = (z0, z1, x0, x1, h, floor = 'dp_kraft') => { b.box(floor, x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, Y - 0.15, (z0 + z1) / 2], { uv: 0.45, collide: true }); b.box('dp_inkMatte', x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, Y + h + 0.15, (z0 + z1) / 2], { uv: 0.2 }); for (const x of [x0, x1]) b.box('dp_kraft', 0.4, h, z0 - z1, [x, Y + h / 2, (z0 + z1) / 2], { uv: 0.45, collide: true }); };
+    const room = (z0, z1, x0, x1, h, floor = 'dp_kraft') => { b.box(floor, x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, Y - 0.15, (z0 + z1) / 2], { uv: 0.45, collide: true }); b.box('dp_kraft', x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, Y + h + 0.15, (z0 + z1) / 2], { uv: 0.2 }); /* M6：页缝天花（纸背）而非纯黑 */ for (const x of [x0, x1]) b.box('dp_kraft', 0.4, h, z0 - z1, [x, Y + h / 2, (z0 + z1) / 2], { uv: 0.45, collide: true }); };
     room(-112, -134, -10, 10, 6);
     b.box('dp_kraft', 7.8, 6, 0.4, [-6.1, Y + 3, -112], { uv: 0.45, collide: true }); b.box('dp_kraft', 7.8, 6, 0.4, [6.1, Y + 3, -112], { uv: 0.45, collide: true });
     { const bt = cvTex(1024, 512, (c, w, h) => { c.fillStyle = '#120808'; c.fillRect(0, 0, w, h); c.fillStyle = '#e8c87a'; c.font = '700 48px "NB Title", "NB Serif", serif'; c.fillText('S 级以上危机看板　·　第七局', 30, 70); c.font = '28px "NB Sans", sans-serif'; ['S-01　第二草稿：重写计划　进行中', 'S-02　灰塔：档案交换　冻结', 'S-03　余辉剧团：京城巡演　监视', 'S-07　留白：第四次写回　——'].forEach((l, i) => { c.fillStyle = i === 3 ? '#ff5a4a' : '#d8cfc0'; c.fillText(l, 40, 150 + i * 70); }); });

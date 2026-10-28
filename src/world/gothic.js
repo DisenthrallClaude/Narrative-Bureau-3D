@@ -58,10 +58,13 @@ export function lancetWindow(b, f, x, y, z, w, h, o = {}) {
   // 中梃与花格圆
   const ww = w - frame * 0.8;
   if (w > 1.2 && o.tracery !== false) {
-    b.add(o.stone ?? 'stone', new THREE.BoxGeometry(0.12, hs + ww * 0.3, 0.14), f.at(x, y + (hs + ww * 0.3) / 2, z - depth * 0.3), { uv: 1 });
+    // M6：窗棂改金色（审阅 R2–R5 P1：盲窗读不出窗格）
+    const tm = o.traceryMat ?? (o.gold === false ? (o.stone ?? 'stone') : 'gold');
+    b.add(tm, new THREE.BoxGeometry(0.14, hs + ww * 0.3, 0.16), f.at(x, y + (hs + ww * 0.3) / 2, z - depth * 0.3), { uv: 1 });
     const r = ww * 0.22;
-    b.add(o.stone ?? 'stone', new THREE.TorusGeometry(r, 0.06, 6, 20), f.at(x, y + hs + ww * 0.42, z - depth * 0.3), { uv: 1 });
-    if (w > 2.2) for (const sx of [-1, 1]) b.add(o.stone ?? 'stone', new THREE.BoxGeometry(0.08, hs * 0.95, 0.1), f.at(x + sx * ww * 0.25, y + hs * 0.475, z - depth * 0.3), { uv: 1 });
+    b.add(tm, new THREE.TorusGeometry(r, 0.08, 6, 24), f.at(x, y + hs + ww * 0.42, z - depth * 0.3), { uv: 1 });
+    for (let k = 0; k < 3; k++) { const a = Math.PI / 2 + (k * Math.PI * 2) / 3; b.add(tm, new THREE.TorusGeometry(r * 0.42, 0.04, 5, 16), f.at(x + Math.cos(a) * r * 0.5, y + hs + ww * 0.42 + Math.sin(a) * r * 0.5, z - depth * 0.3), { uv: 1 }); }
+    if (w > 2.2) for (const sx of [-1, 1]) b.add(tm, new THREE.BoxGeometry(0.1, hs * 0.95, 0.12), f.at(x + sx * ww * 0.25, y + hs * 0.475, z - depth * 0.3), { uv: 1 });
     // 横档
     for (let k = 1; k < 4; k++) b.add('iron', new THREE.BoxGeometry(ww, 0.04, 0.05), f.at(x, y + (hs * k) / 4, z - depth * 0.32), { uv: 1 });
   }

@@ -40,7 +40,8 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #inv { position: absolute; right: 30px; top: 30px; display: flex; gap: 10px; }
 #inv .it { width: 54px; height: 54px; border: 1px solid rgba(216,180,105,.6); background: rgba(8,10,16,.6) center/cover; position: relative; }
 #inv .it span { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #ccd; white-space: nowrap; }
-#fps { position: absolute; right: 8px; bottom: 6px; font-size: 11px; color: #667; font-family: monospace; }
+#fps { position: absolute; right: 8px; bottom: 6px; font-size: 12px; line-height: 1.45; color: #d8c890; font-family: monospace; white-space: pre; text-align: right; background: rgba(0,0,0,0.45); padding: 0 6px; border-radius: 3px; pointer-events: none; }
+#fps:empty { display: none; }
 
 /* 对话框 */
 #dlg { position: fixed; left: 50%; bottom: 7%; transform: translateX(-50%); width: min(880px, 90vw); z-index: 20; background: linear-gradient(180deg, rgba(8,10,18,.82), rgba(8,10,18,.94)); border-top: 1px solid var(--gold); border-bottom: 1px solid rgba(216,180,105,.3); padding: 22px 36px 18px; font-family: var(--serif); }

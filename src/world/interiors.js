@@ -156,7 +156,7 @@ function buildGate(zone, world, ctx, M, add) {
     b.add('gold', new THREE.BoxGeometry(23, 0.1, 0.1), f.at(0, 10.2, 0.05), { uv: 1 });
   }
   // 拱顶
-  pointedVault(b, 'vault', 0, (Z0 + Z1) / 2, 27.8, 23.6, Y + 14, 7, 5.9);
+  pointedVault(b, 'vault', 0, (Z0 + Z1) / 2, 27.8, 23.6, Y + 14, 9.5, 3.93); // M6：加高起拱、六跨肋拱（R4 P1-5 平板天花）
   // 束柱（装饰）
   for (const sx of [-1, 1]) for (const z of [-12, -24]) pier(b, sx * 12.9, z, Y, 14, 0.5);
 
@@ -575,7 +575,7 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
     const tx = cx + sx * 6.5, tz = Z0 - 9.5 - r * 7;
     if (tz < Z1 + 6) continue;
     b.box('wood', 5.6, 0.08, 1.5, [tx, Y + 0.78, tz], { uv: 0.6 });
-    b.box('leather', 5.2, 0.005, 1.2, [tx, Y + 0.823, tz], { uv: 1 });
+    b.box('baize', 5.2, 0.006, 1.2, [tx, Y + 0.823, tz], { uv: 1 }); for (const ez of [-0.6, 0.6]) b.box('brass', 5.2, 0.012, 0.025, [tx, Y + 0.826, tz + ez], { uv: 1 });
     for (const ex of [-1, 1]) for (const ez of [-1, 1]) b.box('wood', 0.1, 0.74, 0.1, [tx + ex * 2.6, Y + 0.37, tz + ez * 0.6], { uv: 1 });
     b.box('wood', 5.2, 0.12, 0.06, [tx, Y + 0.68, tz], { uv: 1 });
     world.box(tx, Y + 0.4, tz, 5.6, 0.8, 1.5);
