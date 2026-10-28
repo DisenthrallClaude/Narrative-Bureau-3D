@@ -1,5 +1,6 @@
 // 外景：中轴广场、规则之泉、黑金哥特主楼外观、环形城墙与塔楼、远景巨城与河流、飞行器
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { TOD } from '../engine/tod.js';
 import { Batch } from '../engine/batch.js';
 import { placeModel, loadModel } from '../engine/assets.js';
@@ -295,15 +296,15 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
   const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + textBandY, -5 + 0.5); g.add(txt);
   const big = emblem(3.8, M.goldBright, M.navy); big.position.set(0, Y + 37.8, -5 + 0.5); g.add(big); ctx.facadeEmblem = big;
   b.add('stoneDark', new THREE.CylinderGeometry(4.75, 4.75, 0.3, 48), { pos: [0, Y + 37.8, -5 + 0.2], rot: [Math.PI / 2, 0, 0] }, { uv: 0.5 });
-  lancetWindow(b, front, -10.0, 31.5, 0.05, 2.2, 8.5);
-  lancetWindow(b, front, 10.0, 31.5, 0.05, 2.2, 8.5);
-  for (const sx of [-1, 1]) for (let k = 0; k < 3; k++) lancetWindow(b, front, sx * (4 + k * 2.6), 1.5 + 9.6, 0.05, 1.4, 5.2, { tracery: false });
+  lancetWindow(b, front, -10.0, 31.5, 0.42, 2.2, 8.5);
+  lancetWindow(b, front, 10.0, 31.5, 0.42, 2.2, 8.5);
+  for (const sx of [-1, 1]) for (let k = 0; k < 3; k++) lancetWindow(b, front, sx * (4 + k * 2.6), 1.5 + 9.6, 0.42, 1.4, 5.2);
   // 门楼顶部山墙
   { const s = new THREE.Shape(); s.moveTo(-14.7, 0); s.lineTo(0, 13); s.lineTo(14.7, 0); s.lineTo(-14.7, 0);
     b.add('stone', new THREE.ExtrudeGeometry(s, { depth: 1.4, bevelEnabled: false }), front.at(0, 40, -1.4), { uv: 0.25 });
     const e1 = new THREE.Shape(); e1.moveTo(-15, -0.1); e1.lineTo(0, 13.25); e1.lineTo(15, -0.1); e1.lineTo(14.4, -0.1); e1.lineTo(0, 12.6); e1.lineTo(-14.4, -0.1);
     b.add('gold', new THREE.ExtrudeGeometry(e1, { depth: 1.5, bevelEnabled: false }), front.at(0, 40, -1.42), { uv: 1 });
-    lancetWindow(b, front, -2.2, 43.2, 0.05, 1.5, 5.4); lancetWindow(b, front, 2.2, 43.2, 0.05, 1.5, 5.4); lancetWindow(b, front, 0, 44, 0.05, 1.6, 6.2);
+    lancetWindow(b, front, -2.2, 43.2, 0.42, 1.5, 5.4); lancetWindow(b, front, 2.2, 43.2, 0.42, 1.5, 5.4); lancetWindow(b, front, 0, 44, 0.42, 1.6, 6.2);
     pinnacle(b, front, 0, 52.6, -0.7, 0.9);
     gableRoof(b, 0, Y + 40, -18.5, 29.4, 27, 13);
   }
@@ -350,7 +351,7 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
     const f = new Frame([sx * 18.6, Y, -55], sx * Math.PI / 2);
     // 高侧窗段（翼楼屋顶以上）
     b.add('stone', new THREE.BoxGeometry(50, NH, 1.2), f.at(0, NH / 2, -0.6), { uv: 0.2 });
-    for (let k = 0; k < 6; k++) lancetWindow(b, f, -20 + k * 8, WH + 2.5, 0.05, 3.2, 10);
+    for (let k = 0; k < 6; k++) lancetWindow(b, f, -20 + k * 8, WH + 2.5, 0.42, 3.2, 10);
     b.add('gold', new THREE.BoxGeometry(50, 0.14, 0.14), f.at(0, WH + 1.6, 0.07), { uv: 1 });
     b.add('stone', new THREE.BoxGeometry(50.4, 0.6, 0.8), f.at(0, NH - 0.3, 0.2), { uv: 0.5 });
   }
@@ -478,20 +479,20 @@ function buildCity(g, M, ctx) {
     for (const im of [poles, heads]) { im.count = k; im.frustumCulled = false; im.castShadow = false; im.instanceMatrix.needsUpdate = true; g.add(im); } }
   const bridgeStone = new THREE.MeshStandardMaterial({ color: 0x2a2b31, roughness: 0.7, metalness: 0.1 });
   const archDark = new THREE.MeshStandardMaterial({ color: 0x0b0c10, roughness: 1, side: THREE.DoubleSide });
+  const bridgeParts = new Map(); // M6：所有桥按材质合并为少数几个网格（原每桥 ~60 个 Mesh → 数百 drawcall）
   const gothicBridge = (cx, cz, yaw, len, w) => {
-    const br = new THREE.Group(); br.position.set(cx, 0, cz); br.rotation.y = yaw; g.add(br);
-    const deckY = 4.5; const add = (geo, mat, x, y, z) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = false; br.add(m); return m; };
+    const base = new THREE.Matrix4().compose(new THREE.Vector3(cx, 0, cz), new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw), new THREE.Vector3(1, 1, 1));
+    const deckY = 4.5; const add = (geo, mat, x, y, z, rot = [0, 0, 0], sc = [1, 1, 1]) => { const m = new THREE.Matrix4().compose(new THREE.Vector3(x, y, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(...rot)), new THREE.Vector3(...sc)); geo.applyMatrix4(base.clone().multiply(m)); if (geo.index) geo = geo.toNonIndexed(); for (const k of Object.keys(geo.attributes)) if (!['position', 'normal', 'uv'].includes(k)) geo.deleteAttribute(k); if (!bridgeParts.has(mat)) bridgeParts.set(mat, []); bridgeParts.get(mat).push(geo); };
     add(new THREE.BoxGeometry(w, 1.6, len), bridgeStone, 0, deckY, 0);
     add(new THREE.BoxGeometry(w + 0.6, 0.35, len), M.gold, 0, deckY - 0.85, 0);
     for (const sx of [-1, 1]) { add(new THREE.BoxGeometry(0.5, 1.3, len), bridgeStone, sx * (w / 2 - 0.25), deckY + 1.45, 0); add(new THREE.BoxGeometry(0.62, 0.12, len), M.gold, sx * (w / 2 - 0.25), deckY + 2.12, 0); }
     const span = len / 5;
     for (let i = 1; i < 5; i++) { const z = -len / 2 + i * span;
       add(new THREE.BoxGeometry(w + 2, deckY + 4.4, 5), bridgeStone, 0, (deckY - 4.4) / 2 - 0.4, z); // 桥墩
-      const cut = add(new THREE.ConeGeometry(3.2, 7, 4), bridgeStone, 0, 0.5, z); cut.rotation.set(0, Math.PI / 4, 0); cut.scale.set(1, 1, 0.8); // 分水尖
-      for (const sx of [-1, 1]) { add(new THREE.BoxGeometry(1.4, 9, 1.4), bridgeStone, sx * (w / 2 + 0.4), deckY + 3.5, z); const sp = add(new THREE.ConeGeometry(1.0, 4.5, 4), bridgeStone, sx * (w / 2 + 0.4), deckY + 10.2, z); sp.rotation.y = Math.PI / 4; add(new THREE.SphereGeometry(0.35, 8, 6), M.gold, sx * (w / 2 + 0.4), deckY + 12.6, z); }
+      add(new THREE.ConeGeometry(3.2, 7, 4), bridgeStone, 0, 0.5, z, [0, Math.PI / 4, 0], [1, 1, 0.8]); // 分水尖
+      for (const sx of [-1, 1]) { add(new THREE.BoxGeometry(1.4, 9, 1.4), bridgeStone, sx * (w / 2 + 0.4), deckY + 3.5, z); add(new THREE.ConeGeometry(1.0, 4.5, 4), bridgeStone, sx * (w / 2 + 0.4), deckY + 10.2, z, [0, Math.PI / 4, 0]); add(new THREE.SphereGeometry(0.35, 8, 6), M.gold, sx * (w / 2 + 0.4), deckY + 12.6, z); }
     }
-    // 尖拱拱腹（每跨一道深色拱券，从侧面读出拱桥）
-    for (let i = 0; i < 5; i++) { const z = -len / 2 + (i + 0.5) * span; for (const sx of [-1, 1]) { const a = add(new THREE.ShapeGeometry(archShape(span - 5, 0.6)), archDark, sx * (w / 2 + 0.02), -4.2, z); a.rotation.y = sx * Math.PI / 2; a.scale.y = 7.6 / (0.6 + (span - 5) * 0.866); } }
+    for (let i = 0; i < 5; i++) { const z = -len / 2 + (i + 0.5) * span; for (const sx of [-1, 1]) add(new THREE.ShapeGeometry(archShape(span - 5, 0.6)), archDark, sx * (w / 2 + 0.02), -4.2, z, [0, sx * Math.PI / 2, 0], [1, 7.6 / (0.6 + (span - 5) * 0.866), 1]); }
   };
   gothicBridge(0, northZ(0), 0, 175, 22);
   for (const bx of [-520, 470]) { const z = northZ(bx), dz = (northZ(bx + 1) - northZ(bx - 1)) / 2; gothicBridge(bx, z, -Math.atan(dz), 175 * Math.hypot(1, dz) ** 0.3, 16); }
@@ -578,6 +579,7 @@ function buildCity(g, M, ctx) {
   });
   // 跨河大桥
   for (const bx of [-900, 0, 900]) { const t = (bx + 3500) / 7000; const rz = -(-520 + Math.sin(t * 7) * 160 + t * 300); gothicBridge(bx, rz, 0, 240, bx === 0 ? 30 : 20); }
+  for (const [mat, geos] of bridgeParts) { const mg = mergeGeometries(geos, false); if (mg) { const m = new THREE.Mesh(mg, mat); m.castShadow = false; m.receiveShadow = false; g.add(m); } }
   // 飞行器
   ctx.aircraft = [];
   for (let i = 0; i < 9; i++) {

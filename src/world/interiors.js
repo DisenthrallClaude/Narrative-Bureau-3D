@@ -419,7 +419,7 @@ function buildHall(zone, world, ctx, M, add) {
   rules.position.set(12.5, Y + 2.2, -31.5 + 0.77); zone.add(rules); ctx.secRules = rules;
   // 海报（立柱，待生图）
   const posters = [['tex_poster_gaokao', '叙事高考', '2027 全国叙事高考　报名进行中'], ['tex_poster_safety', '畸变规避', '遇到异常文本　请勿念出声']];
-  posters.forEach(([id, title, sub], i) => { const t = content.tex(id); const pm = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 2.0), t ? new THREE.MeshStandardMaterial({ map: t, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.35 }) : posterMaterial(title, sub)); const z = pz[2 + i * 1] + 0; pm.position.set(i ? 12 - 0.9 : -12 + 0.9, Y + 2.6, z); pm.rotation.y = i ? -Math.PI / 2 : Math.PI / 2; zone.add(pm); });
+  posters.forEach(([id, title, sub], i) => { const t = content.tex(id); const pm = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 2.0), t ? new THREE.MeshStandardMaterial({ map: t, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.35 }) : posterMaterial(title, sub)); const z = pz[2 + i * 1] + 0; pm.position.set(i ? 12 - 1.3 : -12 + 1.3, Y + 2.6, z); pm.rotation.y = i ? -Math.PI / 2 : Math.PI / 2; zone.add(pm); });
   // 湿滑警示牌、灭火器、绿植
   add(placeModel('wet_sign', { height: 0.65, pos: [3.2, Y, -47], rotY: 0.6 }));
   for (const z of [-36, -70]) for (const sx of [-1, 1]) add(placeModel('extinguisher', { height: 0.65, pos: [sx * (X - 0.4), Y, z] }));

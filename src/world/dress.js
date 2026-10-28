@@ -59,7 +59,8 @@ export function dressMats(M) {
     dz_glowCold: new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xdfe8ff, emissiveIntensity: 3.0, roughness: 0.5 }),
     dz_shade: new THREE.MeshStandardMaterial({ color: 0xf0e2c4, emissive: 0xffc888, emissiveIntensity: 1.2, roughness: 0.8, side: THREE.DoubleSide }),
     dz_glassDark: new THREE.MeshPhysicalMaterial({ color: 0x0a0e14, roughness: 0.08, metalness: 0.2, envMapIntensity: 0.6, clearcoat: 1 }),
-    dz_leaves: M.foliage,
+    dz_leaves: (() => { const m = M.foliage.clone(); m.color.set(0x7fa868); m.side = THREE.DoubleSide; return m; })(),
+    dz_stem: new THREE.MeshStandardMaterial({ color: 0x4a5a30, roughness: 0.8 }),
     dz_soil: new THREE.MeshStandardMaterial({ color: 0x1c140e, roughness: 1 }),
     dz_brassDim: W(new THREE.MeshStandardMaterial({ color: 0x7a5e34, metalness: 0.85, roughness: 0.55, envMapIntensity: 0.5 }), { macro: 0.15, tarnish: 0.4 }),
     dz_cork: new THREE.MeshStandardMaterial({ color: 0x8a6440, roughness: 1 }),
@@ -228,7 +229,10 @@ export function plantPot(b, x, y, z, s = 1) {
   b.add('stoneDark', new THREE.CylinderGeometry(0.26 * s, 0.2 * s, 0.5 * s, 14), { pos: [x, y + 0.25 * s, z] }, { uv: 0.5 });
   b.add('gold', new THREE.TorusGeometry(0.26 * s, 0.015, 4, 20), { pos: [x, y + 0.5 * s, z], rot: [Math.PI / 2, 0, 0] }, { uv: 1 });
   b.add('dz_soil', new THREE.CylinderGeometry(0.24 * s, 0.24 * s, 0.02, 12), { pos: [x, y + 0.48 * s, z] }, { uv: false });
-  for (let k = 0; k < 7; k++) { const a = k * 2.4, r = 0.12 * s; b.add('dz_leaves', new THREE.IcosahedronGeometry(0.26 * s, 1), { pos: [x + Math.cos(a) * r, y + (0.8 + (k % 3) * 0.28) * s, z + Math.sin(a) * r], scale: [1, 1.3, 1] }, { uv: 0.8 }); }
+  // M6：原 7 个深色二十面体读成「黑球」→ 改为放射状叶片（扁锥）+ 中心茎，亮绿
+  for (let k = 0; k < 16; k++) { const a = k * 2.399, tilt = 0.25 + (k % 4) * 0.22, L = (0.55 + (k % 3) * 0.18) * s; const g = new THREE.ConeGeometry(0.075 * s, L, 4, 1); g.translate(0, L / 2, 0); g.scale(1, 1, 0.18);
+    b.add('dz_leaves', g, { pos: [x, y + 0.5 * s, z], rot: [Math.cos(a) * tilt, a, Math.sin(a) * tilt] }, { uv: 0.8 }); }
+  b.add('dz_stem', new THREE.CylinderGeometry(0.012 * s, 0.018 * s, 0.5 * s, 5), { pos: [x, y + 0.72 * s, z] }, { uv: false });
 }
 /** 办公桌组：桌（GLB）+ 台灯 + 显示器/键盘 或 文件 + 电话 + 椅 + 纸篓。face=桌面朝向（人坐的一侧）yaw */
 export function deskSet(P, b, world, x, y, z, yaw = 0, o = {}) {

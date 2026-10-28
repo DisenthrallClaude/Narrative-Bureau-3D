@@ -33,7 +33,7 @@ export const SHOTS = {
   training: { pos: [4, -52 + 2.2, -96], look: [0, -52 + 3, -134], fov: 78 },
   training_range: { pos: [10, -52 + 2.0, -136], look: [-2, -52 + 1.6, -152], fov: 75 },
   armory_bay: { pos: [-2, -10 + 1.65, -96], look: [10, -10 + 1.2, -116], fov: 75 },
-  hall_board: { pos: [9, 1.8 + 1.65, -64], look: [17, 1.8 + 2.2, -64], fov: 60 },
+  hall_board: { pos: [14.2, 1.8 + 1.65, -62.6], look: [17.4, 1.8 + 2.2, -64], fov: 60 },
   facade_sign: { pos: [0, 25, 20], look: [0, 33.0, -5], fov: 30 },
   canteen_roof: { pos: [-10, 1.8 + 1.65, -114], look: [4, 1.8 + 14, -130], fov: 80 },
   floor2: { pos: [3, 8.8 + 1.65, -95], look: [14, 8.8 + 2.6, -117], fov: 75 },
