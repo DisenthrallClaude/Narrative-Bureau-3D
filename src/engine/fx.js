@@ -51,7 +51,7 @@ export function dust(center, size, count = 600, color = 0xffe8c0) {
     uniforms: { uTime: time, uColor: { value: new THREE.Color(color) }, uH: { value: size[1] } },
     vertexShader: `attribute float seed; uniform float uTime; uniform float uH; varying float vA;
       void main(){ vec3 p = position; p.y = mod(p.y + uTime*0.05*(0.3+seed), uH); p.x += sin(uTime*0.3+seed*30.)*0.4; p.z += cos(uTime*0.25+seed*20.)*0.4;
-        vec4 mv = modelViewMatrix*vec4(p,1.); gl_Position = projectionMatrix*mv; gl_PointSize = (1.5+seed*2.5) * (60. / -mv.z); vA = 0.35*smoothstep(40.,2.,-mv.z); }`,
+        vec4 mv = modelViewMatrix*vec4(p,1.); gl_Position = projectionMatrix*mv; gl_PointSize = min(3.5, (0.6+seed*1.2) * (14. / -mv.z)); vA = 0.5*smoothstep(30.,3.,-mv.z)*smoothstep(1.5,4.,-mv.z); }`,
     fragmentShader: `uniform vec3 uColor; varying float vA; void main(){ float d = length(gl_PointCoord-0.5); if(d>0.5) discard; gl_FragColor = vec4(uColor, vA*(1.-d*2.)); }`,
   });
   const pts = new THREE.Points(g, mat);
@@ -137,23 +137,41 @@ export class CanvasScreen {
 }
 
 /** 彩色玻璃（程序化铅条花窗），用于室内侧发光窗 */
-export function stainedGlassTexture(seed = 1, palette = ['#1b3d8f', '#0f2a6b', '#c89b3c', '#7a1522', '#2b6b8f', '#e7c873']) {
-  const N = 512, cv = document.createElement('canvas'); cv.width = cv.height = N;
+export function stainedGlassTexture(seed = 1) {
+  const W = 512, H = 1024, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
   const c = cv.getContext('2d');
   let s = seed * 9301 + 49297; const rnd = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
-  c.fillStyle = '#111'; c.fillRect(0, 0, N, N);
-  const cell = 32;
-  for (let y = 0; y < N; y += cell) for (let x = 0; x < N; x += cell) {
-    const p = palette[Math.floor(rnd() * palette.length)];
-    c.fillStyle = p; c.globalAlpha = 0.75 + rnd() * 0.25;
-    if (rnd() < 0.5) c.fillRect(x + 2, y + 2, cell - 4, cell - 4);
-    else { c.beginPath(); c.moveTo(x + 2, y + 2); c.lineTo(x + cell - 2, y + 2); c.lineTo(x + 2, y + cell - 2); c.fill(); c.fillStyle = palette[Math.floor(rnd() * palette.length)]; c.beginPath(); c.moveTo(x + cell - 2, y + 2); c.lineTo(x + cell - 2, y + cell - 2); c.lineTo(x + 2, y + cell - 2); c.fill(); }
+  const pick = () => { const r = rnd(); return r < 0.5 ? ['#123a9a', '#0c2a78', '#1b4fb8'][Math.floor(rnd() * 3)] : r < 0.68 ? '#8f1a26' : r < 0.86 ? ['#d9a640', '#f0c95a'][Math.floor(rnd() * 2)] : r < 0.95 ? '#1d6f80' : '#e8e0c8'; };
+  c.fillStyle = '#0a0a0c'; c.fillRect(0, 0, W, H);
+  // 菱形格底
+  const cell = 46;
+  for (let y = -cell; y < H + cell; y += cell / 2) for (let x = -cell; x < W + cell; x += cell) {
+    const ox = ((y / (cell / 2)) % 2) * cell / 2;
+    c.fillStyle = pick(); c.beginPath(); c.moveTo(x + ox, y - cell / 2 + 3); c.lineTo(x + ox + cell / 2 - 3, y); c.lineTo(x + ox, y + cell / 2 - 3); c.lineTo(x + ox - cell / 2 + 3, y); c.closePath(); c.fill();
   }
-  c.globalAlpha = 1;
-  // 圆形花格
-  c.strokeStyle = '#0b0b0b'; c.lineWidth = 6;
-  for (let r = 60; r < N; r += 90) { c.beginPath(); c.arc(N / 2, N / 2, r, 0, Math.PI * 2); c.stroke(); }
-  for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2; c.beginPath(); c.moveTo(N / 2, N / 2); c.lineTo(N / 2 + Math.cos(a) * N, N / 2 + Math.sin(a) * N); c.stroke(); }
+  // 圆形纹章（每块面板一个）
+  for (let k = 0; k < 3; k++) {
+    const cy = H * (0.2 + k * 0.3), r = W * 0.3;
+    c.fillStyle = '#0a0a0c'; c.beginPath(); c.arc(W / 2, cy, r + 8, 0, Math.PI * 2); c.fill();
+    for (let j = 0; j < 12; j++) { c.fillStyle = j % 2 ? '#123a9a' : '#d9a640'; c.beginPath(); c.moveTo(W / 2, cy); c.arc(W / 2, cy, r, (j / 12) * Math.PI * 2 + 0.03, ((j + 1) / 12) * Math.PI * 2 - 0.03); c.closePath(); c.fill(); }
+    c.fillStyle = '#0a0a0c'; c.beginPath(); c.arc(W / 2, cy, r * 0.45, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#f0c95a'; c.beginPath(); for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2 - Math.PI / 2; const rr = i % 2 ? r * 0.12 : r * 0.4; c.lineTo(W / 2 + Math.cos(a) * rr, cy + Math.sin(a) * rr); } c.closePath(); c.fill();
+  }
+  // 竖向铅条
+  c.fillStyle = '#0a0a0c'; for (const x of [W * 0.33, W * 0.66]) c.fillRect(x - 4, 0, 8, H);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping;
   return t;
+}
+
+/** 玫瑰窗彩色玻璃（径向花瓣） */
+export function roseGlassTexture() {
+  const N = 1024, cv = document.createElement('canvas'); cv.width = cv.height = N; const c = cv.getContext('2d'); c.translate(N / 2, N / 2);
+  c.fillStyle = '#0a0a0c'; c.fillRect(-N / 2, -N / 2, N, N);
+  const cols = ['#123a9a', '#8f1a26', '#d9a640', '#1b4fb8', '#1d6f80', '#0c2a78'];
+  for (let ring = 0; ring < 4; ring++) {
+    const r0 = 60 + ring * 110, r1 = r0 + 100, n = 8 * (ring + 1);
+    for (let j = 0; j < n; j++) { c.fillStyle = cols[(j + ring) % cols.length]; c.beginPath(); c.arc(0, 0, r1, (j / n) * Math.PI * 2 + 0.02, ((j + 1) / n) * Math.PI * 2 - 0.02); c.arc(0, 0, r0, ((j + 1) / n) * Math.PI * 2 - 0.02, (j / n) * Math.PI * 2 + 0.02, true); c.closePath(); c.fill(); }
+  }
+  c.fillStyle = '#f0c95a'; c.beginPath(); for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2 - Math.PI / 2; const rr = i % 2 ? 14 : 52; c.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } c.closePath(); c.fill();
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
 }

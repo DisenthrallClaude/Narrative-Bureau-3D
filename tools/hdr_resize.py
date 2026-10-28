@@ -32,6 +32,8 @@ def write_hdr(p,rgb):
     with open(p,'wb') as f:
         f.write(b'#?RADIANCE\nFORMAT=32-bit_rle_rgbe\n\n-Y %d +X %d\n'%(H,W)); f.write(out.tobytes())
 src,dst,w=sys.argv[1],sys.argv[2],int(sys.argv[3])
+clampv=float(sys.argv[4]) if len(sys.argv)>4 else 1e9
 im=read_hdr(src); H,W,_=im.shape; k=W//w
 im=im[:H//k*k,:W//k*k].reshape(H//k,k,W//k,k,3).mean((1,3))
+im=np.minimum(im,clampv)
 write_hdr(dst,im.astype(np.float32)); print(dst,im.shape,float(im.max()))

@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
+import { execFileSync } from 'node:child_process';
 const SRC = path.resolve('../content'), DST = path.resolve('public/content');
 fs.mkdirSync(DST, { recursive: true });
 fs.copyFileSync(path.join(SRC, 'manifest.json'), path.join(DST, 'manifest.json'));
@@ -18,8 +19,12 @@ async function walk(rel) {
     const ext = path.extname(e.name).toLowerCase();
     if (['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) {
       const img = sharp(src); const meta = await img.metadata();
-      let pipe = img; if (Math.max(meta.width, meta.height) > 2048) pipe = pipe.resize({ width: meta.width >= meta.height ? 2048 : null, height: meta.height > meta.width ? 2048 : null });
-      if (ext === '.png') await pipe.png({ compressionLevel: 9, palette: false }).toFile(dst); else if (ext === '.webp') await pipe.webp({ quality: 88 }).toFile(dst); else await pipe.jpeg({ quality: 86, mozjpeg: true }).toFile(dst);
+      let pipe = img; const MAX = /textures\/(archives|emblems)/.test(r) ? 1600 : 1536; if (Math.max(meta.width, meta.height) > MAX) pipe = pipe.resize({ width: meta.width >= meta.height ? MAX : null, height: meta.height > meta.width ? MAX : null });
+      if (ext === '.png') await pipe.png({ compressionLevel: 9, palette: true, quality: 92, effort: 8, dither: 0.6 }).toFile(dst); else if (ext === '.webp') await pipe.webp({ quality: 88 }).toFile(dst); else await pipe.jpeg({ quality: 86, mozjpeg: true }).toFile(dst);
+    } else if (rel.startsWith('audio') && ['.wav', '.flac', '.aiff', '.mp3', '.m4a'].includes(ext)) {
+      // 音频统一转 ogg(vorbis) 以减小体积
+      const o = dst.replace(/\.[^.]+$/, '.ogg');
+      if (!(fs.existsSync(o) && fs.statSync(o).mtimeMs >= fs.statSync(src).mtimeMs)) execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', src, '-c:a', 'libvorbis', '-q:a', '5', o]);
     } else fs.copyFileSync(src, dst);
     n++;
   }

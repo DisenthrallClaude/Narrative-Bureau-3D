@@ -4,7 +4,7 @@ import { Batch } from '../engine/batch.js';
 import { placeModel } from '../engine/assets.js';
 import { mats } from './mats.js';
 import { Frame, archRingGeo, archSolidGeo, archShape, archApex, lancetWindow, emblem, goldText } from './gothic.js';
-import { lightShaft, dust, CanvasScreen, time } from '../engine/fx.js';
+import { lightShaft, dust, CanvasScreen, time, roseGlassTexture } from '../engine/fx.js';
 import { content } from '../engine/content.js';
 import { FLOOR, T } from './exterior.js';
 
@@ -100,7 +100,7 @@ function pointedVault(b, key, cx, cz, w, len, y0, rise, ribEvery = 4) {
 /** 扇形拱：在 (x,z) 柱顶 y0 处旋转出喇叭形穹面 + 放射金肋 */
 function fanConoid(b, x, z, y0, R, H, sectors = [0, Math.PI * 2]) {
   const pts = [];
-  for (let i = 0; i <= 14; i++) { const t = i / 14; const r = 0.5 + (R - 0.5) * Math.sin(t * Math.PI / 2); const y = H * (1 - Math.cos(t * Math.PI / 2)) ** 0.8; pts.push(new THREE.Vector2(r, y)); }
+  for (let i = 0; i <= 14; i++) { const t = i / 14; const r = 0.5 + (R - 0.5) * (1 - Math.cos(t * Math.PI / 2)); const y = H * Math.sin(t * Math.PI / 2); pts.push(new THREE.Vector2(r, y)); }
   const geo = new THREE.LatheGeometry(pts, 48, sectors[0], sectors[1] - sectors[0]);
   b.add('vault', geo, { pos: [x, y0, z] }, { uv: 0.5 });
   const nR = Math.round(24 * (sectors[1] - sectors[0]) / (Math.PI * 2));
@@ -296,6 +296,7 @@ function buildHall(zone, world, ctx, M, add) {
   // 中央平顶带（拱顶最高处）+ 垂饰
   const crownY = springY + H;
   b.box('vault', 13.6, 0.4, len, [0, crownY + 0.1, cz], { uv: 0.25 });
+  b.box('vault', 24.4, 0.4, len, [0, crownY + 0.9, cz], { uv: 0.25 });
   for (const x of [-6.6, 6.6]) b.box('vault', 0.6, 3.2, len, [x, crownY - 1.3, cz], { uv: 0.25 });
   for (let k = 0; k < 4; k++) {
     const z = (pz[k] + pz[k + 1]) / 2;
@@ -343,8 +344,8 @@ function buildHall(zone, world, ctx, M, add) {
   ctx.scanRings = [];
   for (let i = 0; i < 8; i++) {
     const x = lanes[i], z = GZ - 3.2;
-    for (const ex of [-1, 1]) { b.box('paintedSteel', 0.22, 2.3, 0.55, [x + ex * 0.62, Y + 1.15, z], { uv: 1 }); world.box(x + ex * 0.62, Y + 1.15, z, 0.24, 2.3, 0.56); b.box('runeGold', 0.02, 2.0, 0.08, [x + ex * 0.51, Y + 1.15, z + 0.2], { uv: false }); }
-    b.box('paintedSteel', 1.46, 0.3, 0.6, [x, Y + 2.45, z], { uv: 1 });
+    for (const ex of [-1, 1]) { b.box('blackMetal', 0.22, 2.3, 0.55, [x + ex * 0.62, Y + 1.15, z], { uv: 1 }); b.box('gold', 0.24, 0.05, 0.57, [x + ex * 0.62, Y + 2.0, z], { uv: 1 }); world.box(x + ex * 0.62, Y + 1.15, z, 0.24, 2.3, 0.56); b.box('runeGold', 0.02, 2.0, 0.08, [x + ex * 0.51, Y + 1.15, z + 0.2], { uv: false }); }
+    b.box('blackMetal', 1.46, 0.3, 0.6, [x, Y + 2.45, z], { uv: 1 }); b.box('gold', 1.48, 0.04, 0.62, [x, Y + 2.3, z], { uv: 1 });
     const ind = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.06, 0.02), new THREE.MeshStandardMaterial({ color: 0, emissive: 0x44ff88, emissiveIntensity: 2 })); ind.position.set(x, Y + 2.45, z + 0.31); zone.add(ind);
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.035, 8, 64), M.runeGold.clone()); ring.rotation.x = Math.PI / 2; ring.position.set(x, Y + (i === 6 ? 2.25 : 1.2), z); zone.add(ring);
     const lane = goldText(`${i + 1}`, 0.3, 0.3, M.goldBright, { res: 64 }); lane.position.set(x, Y + 2.45, z + 0.32); zone.add(lane);
@@ -419,10 +420,10 @@ function buildHall(zone, world, ctx, M, add) {
     const s = lightShaft({ from: [X - 0.3, Y + 8, z], to: [3, Y, z - 3], r0: 1.4, r1: 3.2, color: 0xbad2ff, intensity: 0.1 }); zone.add(s); ctx.shafts.push(s);
     const s2 = lightShaft({ from: [12, Y + 17, z], to: [-4, Y + 2, z - 2], r0: 1.6, r1: 3.6, color: 0xffe2b5, intensity: 0.07 }); zone.add(s2); ctx.shafts.push(s2);
   }
-  zone.add(dust([0, Y, cz], [32, 22, 44], 1400));
+  zone.add(dust([0, Y, cz], [32, 22, 44], 700));
   // 灯光
-  spot(zone, 0xffd6a0, 1500, [0, Y + 21, -33], [0, Y, -50], 0.42, true, 60);
-  spot(zone, 0xcfe0ff, 500, [14, Y + 11, -48], [-2, Y, -54], 0.55, true, 40);
+  spot(zone, 0xffd6a0, 700, [0, Y + 21, -33], [0, Y, -50], 0.42, true, 60);
+  spot(zone, 0xcfe0ff, 250, [14, Y + 11, -48], [-2, Y, -54], 0.55, true, 40);
   for (const z of [-36.5, -47.5, -58.5, -69.5]) for (const sx of [-1, 1]) point(zone, 0xffcf96, 25, [sx * 14.7, Y + 10.5, z], 14);
   rectLight(zone, 0xffe2c0, 4, 12, 40, [0, crownY - 1, cz], [0, Y, cz]);
   rectLight(zone, 0x7fb4ff, 6, 14, 6, [0, SY - SH / 2 - 0.4, SZ], [0, Y, SZ + 2]);
@@ -438,7 +439,7 @@ function buildHall(zone, world, ctx, M, add) {
 function roseWindow(b, zone, M, pos, r) {
   const [x, y, z] = pos;
   const f = new Frame([x, y, z - 0.35], 0);
-  const glassTex = new THREE.MeshStandardMaterial({ color: 0, emissive: 0xffffff, emissiveMap: M.glassIn.emissiveMap, emissiveIntensity: 3.2, side: THREE.DoubleSide });
+  const glassTex = new THREE.MeshStandardMaterial({ color: 0, emissive: 0xffffff, emissiveMap: roseGlassTexture(), emissiveIntensity: 2.6, side: THREE.DoubleSide });
   const disc = new THREE.Mesh(new THREE.CircleGeometry(r, 64), glassTex); disc.position.set(x, y, z - 0.38); disc.rotation.y = Math.PI; zone.add(disc);
   b.add('stoneDark', new THREE.TorusGeometry(r + 0.25, 0.35, 8, 96), f.at(0, 0, 0), { uv: 0.5 });
   b.add('gold', new THREE.TorusGeometry(r + 0.62, 0.06, 6, 96), f.at(0, 0, 0), { uv: 1 });
@@ -561,7 +562,7 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
     b.box('wood', 5.2, 0.12, 0.06, [tx, Y + 0.68, tz], { uv: 1 });
     world.box(tx, Y + 0.4, tz, 5.6, 0.8, 1.5);
     for (const ex of [-1.4, 1.4]) { bankerLamp(b, zone, M, tx + ex, Y + 0.82, tz); ctx.archiveLamps.push([tx + ex, tz]); }
-    for (const ex of [-1.4, 1.4]) for (const ez of [-1, 1]) add(placeModel('office_chair', { height: 0.95, pos: [tx + ex, Y, tz + ez * 1.15], rotY: ez > 0 ? Math.PI : 0 }).then((o) => o));
+    for (const ex of [-1.6, 0, 1.6]) for (const ez of [-1, 1]) woodChair(b, tx + ex, Y, tz + ez * 1.05, ez);
     // 桌面散落档案
     if (r % 2 === 0) add(placeModel('binder', { width: 0.42, pos: [tx - 0.6 * sx, Y + 0.83, tz + 0.2], rotY: 0.3 }));
   }
@@ -638,10 +639,10 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   for (const [lx, lz] of ctx.archiveLamps.filter((_, i) => i % 2 === 0)) point(zone, 0xffd59a, 6, [lx + 0.7, Y + 1.5, lz], 6);
   for (let z = Z1 + 6; z < Z0; z += 9) add(placeModel('chandelier', { height: 1.8, pos: [cx + 2, Y + H - 2.4, z] }));
   for (let z = Z1 + 6; z < Z0; z += 9) point(zone, 0xffcf96, 30, [cx + 2, Y + H - 3.0, z], 18);
-  spot(zone, 0xffe6c0, 400, [X0 + 1, Y + 11, -44], [X0 + 14, Y, -40], 0.55, true, 40);
+  spot(zone, 0xffe6c0, 160, [X0 + 1, Y + 11, -44], [X0 + 14, Y, -40], 0.55, true, 40);
   spot(zone, 0xffd8a0, 120, [kx + 3, Y + 9, kz], [kx, Y + 1, kz], 0.4, false, 20);
-  rectLight(zone, 0xffe6c8, 2.2, W - 4, L - 4, [cx, Y + H - 0.4, cz], [cx, Y, cz]);
-  zone.add(dust([cx, Y, cz], [W, H, L], 900));
+  rectLight(zone, 0xffe6c8, 0.7, W - 4, L - 4, [cx, Y + H - 0.4, cz], [cx, Y, cz]);
+  zone.add(dust([cx, Y, cz], [W, H, L], 500));
 
   // ——— 楼梯下 B1 ———
   const BY = Y - 6.0; // B1 地坪 -4.2
@@ -658,7 +659,14 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
     world.box((HOLE.x0 + HOLE.x1) / 2 - 0.6, Y + 0.5, HOLE.z0, HOLE.x1 - HOLE.x0 - 1.2, 1.0, 0.1);
     world.box(HOLE.x0, Y + 0.5, z, 0.1, 1.0, 2.2);
     // 楼梯井侧墙
-    for (const zz of [HOLE.z0 + 0.1, HOLE.z1 - 0.1]) b.box('concrete', HOLE.x1 - HOLE.x0, 6.0, 0.2, [(HOLE.x0 + HOLE.x1) / 2, BY + 3.0, zz], { uv: 0.4, collide: true });
+    // 钢梯梁 + 栏杆（B1 内可见，不挡视线）；梯下以阶梯状碰撞块封住
+    const sl = Math.atan2(6.0, steps * run);
+    for (const zz of [HOLE.z0 + 0.05, HOLE.z1 - 0.05]) {
+      b.add('blackMetal', new THREE.BoxGeometry(steps * run + 0.4, 0.3, 0.08), { pos: [xT - (steps * run) / 2, (Y + BY) / 2 - 0.15, zz], rot: [0, 0, sl] }, { uv: 1 });
+      b.add('brass', new THREE.BoxGeometry(steps * run + 0.2, 0.05, 0.05), { pos: [xT - (steps * run) / 2, (Y + BY) / 2 + 0.9, zz], rot: [0, 0, sl] }, { uv: 1 });
+      for (let i = 0; i <= steps; i += 3) b.box('iron', 0.025, 0.95, 0.025, [xT - i * run, Y - rise * i + 0.45, zz], { uv: 1 });
+    }
+    for (let k = 0; k < 6; k++) { const xa = xT - k * (steps * run / 6), xb = xa - steps * run / 6; const top = Y - ((xT - xa) / run) * rise - 0.35; if (top - BY > 0.3) world.box((xa + xb) / 2, (top + BY) / 2, z, Math.abs(xb - xa), top - BY, 2.1); }
     const wf = goldText('B1　密集库　↓', 1.8, 0.3, M.goldBright, { res: 96 }); wf.position.set(HOLE.x1 + 0.3, Y + 2.4, HOLE.z1 - 0.06); wf.rotation.y = 0; zone.add(wf);
     b.box('blackMetal', 0.08, 2.6, 0.08, [HOLE.x1 + 0.3, Y + 1.3, HOLE.z1 - 0.1], { uv: 1 });
     ctx.b1StairTop = new THREE.Vector3(xT, Y, z);
@@ -740,6 +748,13 @@ function buildB1(zone, world, ctx, M, add, X0, X1, Z0, Z1, BY) {
 }
 
 // ——— 小件与材质 ———
+function woodChair(b, x, y, z, face) {
+  b.box('wood', 0.46, 0.05, 0.44, [x, y + 0.46, z], { uv: 2 });
+  for (const ex of [-1, 1]) for (const ez of [-1, 1]) b.box('wood', 0.045, 0.46, 0.045, [x + ex * 0.2, y + 0.23, z + ez * 0.19], { uv: 2 });
+  for (const ex of [-1, 1]) b.box('wood', 0.045, 0.5, 0.045, [x + ex * 0.2, y + 0.72, z + face * 0.2], { uv: 2 });
+  b.box('wood', 0.44, 0.22, 0.03, [x, y + 0.86, z + face * 0.2], { uv: 2 });
+  b.box('leather', 0.4, 0.03, 0.38, [x, y + 0.5, z], { uv: 2 });
+}
 function bankerLamp(b, zone, M, x, y, z) {
   b.add('brass', new THREE.CylinderGeometry(0.09, 0.11, 0.03, 16), { pos: [x, y + 0.015, z] }, { uv: 1 });
   b.add('brass', new THREE.CylinderGeometry(0.012, 0.012, 0.32, 8), { pos: [x, y + 0.18, z] }, { uv: 1 });

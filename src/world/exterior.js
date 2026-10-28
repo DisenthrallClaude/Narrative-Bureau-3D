@@ -39,7 +39,7 @@ export async function buildExterior(scene, world, ctx) {
       for (const ex of [-1, 1]) b.box('hedge', 0.9, 1.1, L, [cx + ex * 9, 0.55, cz], { uv: 0.6, collide: true });
       for (const ez of [-1, 1]) b.box('hedge', 18.9, 1.1, 0.9, [cx, 0.55, cz + ez * L / 2], { uv: 0.6, collide: true });
       // 花坛内低矮绿雕
-      for (let k = 0; k < Math.floor(L / 6); k++) b.add('hedge', new THREE.SphereGeometry(1.1, 12, 8), { pos: [cx, 0.9, z0 + 3 + k * 6], scale: [1, 0.8, 1] }, { uv: 0.6 });
+      for (let k = 0; k < Math.floor(L / 6); k++) b.add('hedge', blob(1.1, k + cx), { pos: [cx, 0.9, z0 + 3 + k * 6], scale: [1, 0.8, 1] }, { uv: 0.8 });
     }
     // 柏树列
     for (let z = 0; z < 64; z += 7) cypress(b, sx * 42, z);
@@ -91,11 +91,17 @@ export async function buildExterior(scene, world, ctx) {
   for (let i = 0; i < 12; i++) {
     const sx = i < 6 ? -1 : 1, k = i % 6;
     const x = sx * 14.5, z = 8 + k * 12;
-    add(placeModel('flag_pole', { height: 12, pos: [x, 0, z] }).then((o) => { world.box(x, 3, z, 0.4, 6, 0.4); return o; }));
-    const fl = new THREE.Mesh(new THREE.PlaneGeometry(1.9, 3.6, 10, 16), flagMat);
+    b.add('blackMarble', new THREE.CylinderGeometry(0.55, 0.65, 0.9, 8), { pos: [x, 0.45, z] }, { uv: 0.5, collide: true });
+    b.add('gold', new THREE.CylinderGeometry(0.58, 0.58, 0.06, 8), { pos: [x, 0.92, z] }, { uv: 1 });
+    b.add('iron', new THREE.CylinderGeometry(0.07, 0.11, 12, 10), { pos: [x, 6.9, z] }, { uv: 1 });
+    b.add('iron', new THREE.BoxGeometry(2.3, 0.08, 0.08), { pos: [x, 11.5, z + 0.1] }, { uv: 1 });
+    b.add('gold', new THREE.SphereGeometry(0.16, 10, 8), { pos: [x, 13.0, z] }, { uv: 1 });
+    b.add('gold', new THREE.ConeGeometry(0.08, 0.6, 6), { pos: [x, 13.45, z] }, { uv: 1 });
+    world.box(x, 6, z, 0.3, 12, 0.3);
+    const fl = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 3.7, 10, 16), flagMat);
     fl.position.set(x + 0.02, 9.7, z + 0.95 * -sx * 0); fl.rotation.y = sx > 0 ? -Math.PI / 2 : Math.PI / 2; fl.position.z += 0; fl.position.x += 0; fl.castShadow = true;
     // 竖挂长旗：贴在横杆下
-    fl.position.x = x + (sx > 0 ? -1.05 : 1.05) * 0; fl.position.set(x, 9.6, z + 1.0); fl.rotation.y = 0;
+    fl.position.x = x + (sx > 0 ? -1.05 : 1.05) * 0; fl.position.set(x, 9.6, z + 0.14); fl.rotation.y = 0;
     g.add(fl);
     if (k === 3 && sx < 0) ctx.flag7 = fl;
   }
@@ -122,9 +128,14 @@ export async function buildExterior(scene, world, ctx) {
   return g;
 }
 
+function blob(r, seed) {
+  const g = new THREE.IcosahedronGeometry(r, 3); const p = g.attributes.position; const v = new THREE.Vector3();
+  for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); const n = Math.sin(v.x * 3.1 + seed) * Math.sin(v.y * 2.7 + seed * 2) * Math.sin(v.z * 3.3 + seed * 3); v.multiplyScalar(1 + n * 0.18 + (Math.random() - 0.5) * 0.06); p.setXYZ(i, v.x, v.y, v.z); }
+  g.computeVertexNormals(); return g;
+}
 function cypress(b, x, z) {
-  b.add('foliage', new THREE.ConeGeometry(1.3, 9, 10, 4), { pos: [x, 5.2, z] }, { uv: 0.5 });
-  b.add('foliage', new THREE.SphereGeometry(1.35, 10, 8), { pos: [x, 1.6, z], scale: [1, 1.3, 1] }, { uv: 0.5 });
+  const H = 8 + Math.random() * 2.5;
+  for (let k = 0; k < 6; k++) { const t = k / 5; const r = 1.45 * (1 - t * 0.78); b.add('foliage', blob(r, x + z + k), { pos: [x + (Math.random() - 0.5) * 0.2, 1.2 + t * H, z + (Math.random() - 0.5) * 0.2], scale: [1, 1.5, 1] }, { uv: 0.8 }); }
   b.add('wood', new THREE.CylinderGeometry(0.2, 0.25, 1, 6), { pos: [x, 0.5, z] }, { uv: 1 });
 }
 
@@ -139,7 +150,7 @@ function groundEmblem(M, pos, r) {
   star(N * 0.48, N * 0.06, 4, -Math.PI / 2); star(N * 0.24, N * 0.04, 4, -Math.PI / 4);
   c.globalCompositeOperation = 'destination-out'; c.beginPath(); c.moveTo(0, -40); c.lineTo(28, 0); c.lineTo(0, 40); c.lineTo(-28, 0); c.fill();
   const t = new THREE.CanvasTexture(cv);
-  const m = M.gold.clone(); m.alphaMap = t; m.alphaTest = 0.5; m.map = null; m.color.set(0xffe0a0);
+  const m = M.gold.clone(); m.alphaMap = t; m.alphaTest = 0.5; m.map = null; m.color.set(0xd8b070); m.roughness = 0.5; m.roughnessMap = null;
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(r * 2, r * 2), m); mesh.rotation.x = -Math.PI / 2; mesh.position.set(...pos); mesh.receiveShadow = true;
   const disc = new THREE.Mesh(new THREE.CircleGeometry(r * 0.78, 64), M.stoneDark); disc.rotation.x = -Math.PI / 2; disc.position.set(pos[0], pos[1] - 0.01, pos[2]); disc.receiveShadow = true;
   const grp = new THREE.Group(); grp.add(disc, mesh); return grp;
@@ -259,28 +270,28 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
   for (const sx of [-1, 1]) {
     const leaf = new THREE.Group();
     const w = DW / 2, h = DH;
-    const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), M.wood); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), M.doorWood); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
     for (let k = 0; k < 6; k++) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.96, 0.14, 0.34), M.iron); strap.position.set(sx * -w / 2, 0.8 + k * 1.5, 0); leaf.add(strap); for (let r = 0; r < 6; r++) { const s = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 4), M.gold); s.position.set(sx * -(0.25 + r * 0.6), 0.8 + k * 1.5, 0.18); leaf.add(s); } }
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 6, 20), M.gold); ring.position.set(sx * -(w - 0.5), h * 0.45, 0.2); leaf.add(ring);
     leaf.position.set(sx * DW / 2, Y, -5.6); leaf.rotation.y = sx * -1.25; g.add(leaf);
   }
   // 门楼立面：文字带、局徽、上部尖窗、山墙
-  const textBandY = 22.5;
+  const textBandY = 29.6;
   b.add('stoneDark', new THREE.BoxGeometry(17, 3.6, 0.5), front.at(0, textBandY, 0.2), { uv: 0.5 });
   b.add('gold', new THREE.BoxGeometry(17.4, 0.14, 0.6), front.at(0, textBandY + 1.85, 0.2), { uv: 1 });
   b.add('gold', new THREE.BoxGeometry(17.4, 0.14, 0.6), front.at(0, textBandY - 1.85, 0.2), { uv: 1 });
   const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 256, spacing: 30 }); txt.position.set(0, Y + textBandY, -5 + 0.5); g.add(txt);
-  const big = emblem(4.4, M.goldBright, M.navy); big.position.set(0, Y + 31, -5 + 0.5); g.add(big); ctx.facadeEmblem = big;
-  b.add('stoneDark', new THREE.CylinderGeometry(5.4, 5.4, 0.3, 48), { pos: [0, Y + 31, -5 + 0.2], rot: [Math.PI / 2, 0, 0] }, { uv: 0.5 });
-  lancetWindow(b, front, -4, 36.5, 0.05, 2.6, 9);
-  lancetWindow(b, front, 4, 36.5, 0.05, 2.6, 9);
-  lancetWindow(b, front, 0, 37.5, 0.05, 3.0, 11);
+  const big = emblem(4.2, M.goldBright, M.navy); big.position.set(0, Y + 37, -5 + 0.5); g.add(big); ctx.facadeEmblem = big;
+  b.add('stoneDark', new THREE.CylinderGeometry(5.3, 5.3, 0.3, 48), { pos: [0, Y + 37, -5 + 0.2], rot: [Math.PI / 2, 0, 0] }, { uv: 0.5 });
+  lancetWindow(b, front, -9.2, 31.5, 0.05, 2.2, 8.5);
+  lancetWindow(b, front, 9.2, 31.5, 0.05, 2.2, 8.5);
+  for (const sx of [-1, 1]) for (let k = 0; k < 3; k++) lancetWindow(b, front, sx * (4 + k * 2.6), 1.5 + 9.6, 0.05, 1.4, 5.2, { tracery: false });
   // 门楼顶部山墙
   { const s = new THREE.Shape(); s.moveTo(-14.7, 0); s.lineTo(0, 13); s.lineTo(14.7, 0); s.lineTo(-14.7, 0);
     b.add('stone', new THREE.ExtrudeGeometry(s, { depth: 1.4, bevelEnabled: false }), front.at(0, 40, -1.4), { uv: 0.25 });
     const e1 = new THREE.Shape(); e1.moveTo(-15, -0.1); e1.lineTo(0, 13.25); e1.lineTo(15, -0.1); e1.lineTo(14.4, -0.1); e1.lineTo(0, 12.6); e1.lineTo(-14.4, -0.1);
     b.add('gold', new THREE.ExtrudeGeometry(e1, { depth: 1.5, bevelEnabled: false }), front.at(0, 40, -1.42), { uv: 1 });
-    lancetWindow(b, front, 0, 42.5, 0.05, 2.2, 7.2);
+    lancetWindow(b, front, -2.2, 43.2, 0.05, 1.5, 5.4); lancetWindow(b, front, 2.2, 43.2, 0.05, 1.5, 5.4); lancetWindow(b, front, 0, 44, 0.05, 1.6, 6.2);
     pinnacle(b, front, 0, 52.6, -0.7, 0.9);
     gableRoof(b, 0, Y + 40, -18.5, 29.4, 27, 13);
   }

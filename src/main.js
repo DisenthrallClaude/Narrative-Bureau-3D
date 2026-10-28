@@ -61,6 +61,7 @@ function applyQuality(q) {
 manager.onProgress = (url, n, total) => UI.loadProgress(0.1 + 0.8 * (n / total), `正在装订页面…… ${n}/${total}`);
 async function boot() {
   UI.loadProgress(0.02, '读取剧情与档案……');
+  try { await Promise.all([document.fonts.load('700 40px "NB Serif"', '叙事管理局'), document.fonts.load('400 40px "NB Serif"', '叙'), document.fonts.load('40px "NB Sans"', '叙')]); } catch { /* */ }
   await content.load();
   await audio.init();
   const pm = new THREE.PMREMGenerator(R.gl);
@@ -75,7 +76,7 @@ async function boot() {
   LOG('world built'); scene.add(world.build()); LOG('bvh ok');
   // 反射地面
   const M = mats();
-  reflector.patch(M.hallFloor, 0.55); reflector.patch(M.hallFloorDark, 0.5);
+  reflector.patch(M.hallFloor, 0.32); reflector.patch(M.hallFloorDark, 0.3);
   scene.traverse((o) => { if (o.isMesh && (o.material === M.hallFloor || o.material === M.hallFloorDark)) reflector.hide.push(o); if (o.userData.isShaft) reflector.hide.push(o); });
   // 主屏射线代理
   const proxy = new THREE.Mesh(new THREE.BoxGeometry(15, 6.6, 0.8), new THREE.MeshBasicMaterial({ visible: false })); proxy.position.copy(ctx.mainScreenPos); inter.proxies.add(proxy); G.mainScreenProxy = proxy;
@@ -127,10 +128,10 @@ const VIS = {
 };
 const ZONE_LOOK = {
   plaza: { env: 'sky', envI: 1.0, sun: 3.4, exp: 1.0, fog: [0xb4c2d2, 0.0009], hemi: 0.25 },
-  gate: { env: 'hall', envI: 0.9, sun: 3.4, exp: 1.25, fog: [0x2a241c, 0.006], hemi: 0.15 },
-  security_hall: { env: 'hall', envI: 0.75, sun: 0, exp: 1.45, fog: [0x1d1915, 0.010], hemi: 0.12 },
-  archive: { env: 'hall', envI: 0.7, sun: 0, exp: 1.5, fog: [0x241c14, 0.012], hemi: 0.1 },
-  archive_b1: { env: 'hall', envI: 0.35, sun: 0, exp: 1.5, fog: [0x10141a, 0.02], hemi: 0.05 },
+  gate: { env: 'hall', envI: 0.7, sun: 3.4, exp: 0.95, fog: [0x2a241c, 0.006], hemi: 0.15 },
+  security_hall: { env: 'hall', envI: 0.6, sun: 0, exp: 1.0, fog: [0x1d1915, 0.010], hemi: 0.12 },
+  archive: { env: 'hall', envI: 0.6, sun: 0, exp: 1.15, fog: [0x241c14, 0.012], hemi: 0.1 },
+  archive_b1: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x10141a, 0.02], hemi: 0.05 },
 };
 let targetExp = 1, curExp = 1;
 function setZone(z, force = false) {
@@ -228,8 +229,10 @@ function loop() {
   if (SHOT && shotStarted) { shotN++; LOG('frame', shotN, (performance.now() / 1000).toFixed(1)); if (shotN === shotFrames) window.__READY__ = true; }
 }
 let shotFrames = 30, shotStarted = false, shotN = 0;
-function startShot() {
-  const s = SHOTS[SHOT] ?? SHOTS.plaza;
+window.__setShot = (name) => { window.__READY__ = false; shotN = 0; applyShot(name); requestAnimationFrame(loop); };
+function startShot() { applyShot(SHOT); }
+function applyShot(name) {
+  const s = SHOTS[name] ?? SHOTS.plaza;
   document.getElementById('loading').classList.add('hidden');
   if (params.get('hud')) document.getElementById('hud').classList.remove('hidden');
   camera.position.set(...s.pos);

@@ -11,5 +11,6 @@ export const SHOTS = {
   hall_gates: { pos: [-6, Y + 1.7, -35], look: [6, Y + 1.5, -44], fov: 70 },
   archive: { pos: [-22, Y + 1.7, -50], look: [-50, Y + 3, -52], fov: 75 },
   archive_gallery: { pos: [-54.6, Y + 6.2 + 1.6, -36], look: [-30, Y + 5, -40], fov: 75 },
-  b1: { pos: [-27, Y - 6 + 1.7, -33.5], look: [-40, Y - 6 + 1.2, -40], fov: 72 },
+  b1: { pos: [-26.5, Y - 6 + 1.7, -38.6], look: [-37, Y - 6 + 1.3, -40.5], fov: 72 },
+  b1_seam: { pos: [-35.7, Y - 6 + 1.65, -39.0], look: [-36.2, Y - 6 + 1.5, -42], fov: 70 },
 };

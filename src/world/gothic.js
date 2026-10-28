@@ -179,6 +179,8 @@ export function tower(b, x, z, w, h, o = {}) {
         lancetWindow(b, ff, xx, yb, w / 2 + 0.05, ww, wh, { tracery: ww > 1.2 });
       }
     }
+    // 竖向金色线脚
+    for (const xx of [-w * 0.36, w * 0.36]) b.add('gold', new THREE.BoxGeometry(0.1, h * 0.92, 0.1), ff.at(xx, h * 0.46, w / 2 + 0.05), { uv: 1 });
     // 女儿墙雉堞
     const nC = Math.max(3, Math.round(w / 2));
     for (let i = 0; i < nC; i++) {
