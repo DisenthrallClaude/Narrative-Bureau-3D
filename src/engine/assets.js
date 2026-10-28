@@ -17,7 +17,10 @@ const modelCache = new Map();
 /** 加载 GLB，返回原始 scene（缓存）。unlit 扫描件转为 PBR。 */
 export function loadModel(name) {
   if (!modelCache.has(name)) {
-    modelCache.set(name, new Promise((res) => {
+    modelCache.set(name, new Promise((resIn) => { let res = resIn;
+      // 超时保护：单个模型 60 秒没加载完就用空组顶上，不让整个场景卡在加载
+      const to = setTimeout(() => { console.warn('[NB] 模型加载超时', name); res(new THREE.Group()); }, 60000);
+      res = (v) => { clearTimeout(to); resIn(v); };
       gltfLoader.load(`${BASE}assets/models/${name}.glb`, (g) => {
         g.scene.traverse((o) => {
           if (o.isMesh) {

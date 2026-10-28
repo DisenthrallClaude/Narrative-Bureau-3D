@@ -49,7 +49,7 @@ export function mats() {
   M.terrazzo = pbr('Terrazzo005', { color: 0xa8a8ac, roughness: 0.3, env: 0.8 });
   M.wallStone = pbr('Granite003A', { color: 0x4c4d55, roughness: 0.5, env: 0.8 });
   M.vault = pbr('Concrete034', { color: 0x8a8478, roughness: 0.85, env: 0.6 }); M.vault.side = THREE.DoubleSide; M.vault.userData.noShadow = true; // 双面薄壳自投影会出现橙黑色阴影痤疮
-  M.panelWall = pbr('Marble006', { color: 0x6a645c, roughness: 0.32, env: 0.9 });
+  M.panelWall = pbr('Marble006', { color: 0x5e5850, roughness: 0.62, env: 0.45 });
   M.wallPlaster = pbr('Concrete034', { color: 0x3e4a44, roughness: 0.8 });
   M.onyx = pbr('Onyx013', { color: 0x8a8a90, roughness: 0.22, env: 1.2 });
   M.wood = pbr('Wood051', { color: 0x6e4e38, roughness: 0.45, env: 0.8 });

@@ -31,7 +31,7 @@ export function buildUpper(scene, world, ctx) {
     const zone = mk('floor2'), b = new Batch(), add = addTo(zone), y = UPPER['2F'];
     elevatorHall(b, zone, world, ctx, M, Mx, '2F', y);
     const X = 28, Z0 = -92, Z1 = -118, H = 6, cz = (Z0 + Z1) / 2;
-    room(b, world, M, -X, X, Z0, Z1, y, H, 'woodFloor', 'panelWall', { frontHole: { x0: -9.4, x1: 9.4, h: 5.2 } });
+    room(b, world, M, -X, X, Z0, Z1, y, H, 'woodFloor', 'panelWall', { ceil: 'vault', frontHole: { x0: -9.4, x1: 9.4, h: 5.2 } });
     wallX(b, 'panelWall', 0, Z0 - 2, Z1, y, H, 0.3, [{ z0: -96, z1: -99, h: 3 }], true);
     winRow(b, -X + 0.01, Z0, Z1, y, 2.6, Math.PI / 2); winRow(b, X - 0.01, Z0, Z1, y, 2.6, -Math.PI / 2);
     // —— 国际联络处：势力评估墙（北墙 13 框）——
@@ -73,7 +73,7 @@ export function buildUpper(scene, world, ctx) {
     const zone = mk('floor3'), b = new Batch(), add = addTo(zone), y = UPPER['3F'];
     elevatorHall(b, zone, world, ctx, M, Mx, '3F', y);
     const X = 28, Z0 = -92, Z1 = -120, H = 5.4, cz = (Z0 + Z1) / 2;
-    room(b, world, M, -X, X, Z0, Z1, y, H, 'carpet', 'panelWall', { frontHole: { x0: -9.4, x1: 9.4, h: 5.2 } });
+    room(b, world, M, -X, X, Z0, Z1, y, H, 'carpet', 'panelWall', { ceil: 'vault', frontHole: { x0: -9.4, x1: 9.4, h: 5.2 } });
     wallX(b, 'panelWall', -9.6, Z0 - 2, Z1, y, H, 0.3, [{ z0: -96, z1: -99, h: 3 }], true); wallX(b, 'whitePad', 9.6, Z0 - 2, Z1, y, H, 0.3, [{ z0: -96, z1: -99, h: 3 }], true);
     winRow(b, -X + 0.01, Z0, Z1, y, 2.4, Math.PI / 2); winRow(b, X - 0.01, Z0, Z1, y, 2.4, -Math.PI / 2);
     // 办公区：工位岛 + 会议室白板 + 法务处门牌 + 公告屏
@@ -122,7 +122,7 @@ export function buildUpper(scene, world, ctx) {
         const x = cx + Math.sin(a) * (R + 0.1), z = cz + Math.cos(a) * (R + 0.1);
         if (lv === 0 && z > cz + R - 2 && Math.abs(x) < 3) continue; // 入口
         b.add('wood', new THREE.BoxGeometry(2.0, 5.4, 0.7), { pos: [x, ly + 2.7, z], rot: [0, a, 0] }, { uv: 0.6 });
-        for (let s = 0; s < 6; s++) b.add(['leather', 'navy', 'kraftDark'][(k + s + lv) % 3], new THREE.BoxGeometry(1.8, 0.62, 0.3), { pos: [x - Math.sin(a) * 0.25, ly + 0.5 + s * 0.85, z - Math.cos(a) * 0.25], rot: [0, a, 0] }, { uv: 2 });
+        for (let s = 0; s < 6; s++) for (let n = 0; n < 7; n++) { const hh = 0.5 + ((k * 7 + s * 3 + n * 5 + lv) % 5) * 0.035; const off = -0.78 + n * 0.26; b.add(['leather', 'navy', 'kraftDark', 'leather', 'wood'][(k + s + n + lv) % 5], new THREE.BoxGeometry(0.22, hh, 0.3), { pos: [x - Math.sin(a) * 0.25 + Math.cos(a) * off, ly + 0.2 + s * 0.85 + hh / 2, z - Math.cos(a) * 0.25 - Math.sin(a) * off], rot: [0, a, ((n * 13 + s) % 7 === 0) ? 0.12 : 0] }, { uv: 2 }); }
       }
       if (lv > 0) { const g = new THREE.RingGeometry(R - 2.2, R, 64); g.rotateX(-Math.PI / 2); b.add('woodFloor', g, { pos: [cx, ly - 0.05, cz] }, { uv: 0.3 }); b.add('gold', new THREE.TorusGeometry(R - 2.2, 0.05, 6, 96), { pos: [cx, ly + 1.0, cz], rot: [Math.PI / 2, 0, 0] }, { uv: 1 }); b.add('iron', new THREE.CylinderGeometry(R - 2.2, R - 2.2, 1.0, 96, 1, true), { pos: [cx, ly + 0.5, cz] }, { uv: 2 }); b.add('stoneDark', new THREE.TorusGeometry(R - 1.1, 0.2, 6, 96), { pos: [cx, ly - 0.25, cz], rot: [Math.PI / 2, 0, 0] }, { uv: 1 }); }
     }
@@ -151,10 +151,9 @@ export function buildUpper(scene, world, ctx) {
     const zone = mk('director'), b = new Batch(), add = addTo(zone), y = UPPER['12F'];
     elevatorHall(b, zone, world, ctx, M, Mx, '12F', y);
     const X = 13, Z0 = -92, Z1 = -112, H = 7, cz = (Z0 + Z1) / 2;
-    room(b, world, M, -X, X, Z0, Z1, y, H, 'woodFloor', 'panelWall', { frontHole: { x0: -9.4, x1: 9.4, h: 5.2 } });
+    room(b, world, M, -X, X, Z0, Z1, y, H, 'woodFloor', 'panelWall', { ceil: 'vault', frontHole: { x0: -9.4, x1: 9.4, h: 5.2 }, backHoles: [-2, -1, 0, 1, 2].map((k) => ({ x0: k * 4.6 - 1.8, x1: k * 4.6 + 1.8, h: 6.2 })) });
     // 北墙：整面落地尖拱窗（能看见暮色中的巨城）
     for (let k = -2; k <= 2; k++) { const f = new Frame([k * 4.6, y, Z1 + 0.25], 0); b.add('glassClear', new THREE.ShapeGeometry(archShape(3.6, 4.4)), f.at(0, 0.3, 0.0), { uv: false }); b.add('stoneDark', archRingGeo(4.2, 4.4, 3.6, 4.4, 0.4), f.at(0, 0.3, 0.05), { uv: 0.5 }); b.add('gold', archRingGeo(4.3, 4.4, 4.2, 4.4, 0.42), f.at(0, 0.3, 0.05), { uv: 1 }); }
-    wallZ(b, 'panelWall', Z1 - 0.01, -X, X, y, 0.3, 0.4, [], true);
     // 书桌 + 镇纸 + 玻璃板手稿 + 抽屉信
     b.box('wood', 3.2, 0.9, 1.4, [0, y + 0.45, -104], { uv: 0.6, collide: true }); b.box('glassClear', 3.0, 0.02, 1.2, [0, y + 0.915, -104], { uv: false }); b.box('leather', 1.6, 0.01, 0.8, [0, y + 0.905, -104], { uv: 1 });
     const md = paper('doc_dir_motto_draft', '手稿'); md.position.set(-0.6, y + 0.91, -104); zone.add(md); ctx.anchors.doc_dir_motto_draft = md;

@@ -245,11 +245,11 @@ export function vaultMats(M) {
 /** 矩形房间（地板/天花/四墙，可在南墙开门，北墙开洞） */
 export function room(b, world, M, x0, x1, z0, z1, y, h, floor, wall, o = {}) {
   b.box(floor, x1 - x0, 0.2, z0 - z1, [(x0 + x1) / 2, y - 0.1, (z0 + z1) / 2], { uv: 0.3, collide: true });
-  b.box(wall, x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, y + h + 0.15, (z0 + z1) / 2], { uv: 0.25 });
+  b.box(o.ceil ?? wall, x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, y + h + 0.15, (z0 + z1) / 2], { uv: 0.25 });
   wallX(b, wall, x0 - 0.2, z0, z1, y, h, 0.4, [], true);
   wallX(b, wall, x1 + 0.2, z0, z1, y, h, 0.4, [], true);
   if (!o.noFront) wallZ(b, wall, z0, x0, x1, y, h, 0.4, o.frontHole ? [o.frontHole] : o.doorX ? [{ x0: o.doorX[0], x1: o.doorX[1], h: 3.2 }] : [], true);
-  wallZ(b, wall, z1, x0, x1, y, h, 0.4, o.backHole ? [{ x0: o.backHole[0], x1: o.backHole[1], h: o.backHole[2] }] : [], true);
+  if (!o.noBack) wallZ(b, wall, z1, x0, x1, y, h, 0.4, o.backHoles ?? (o.backHole ? [{ x0: o.backHole[0], x1: o.backHole[1], h: o.backHole[2] }] : []), true);
   // 踢脚线 + 墙裙金线
   for (const x of [x0 + 0.02, x1 - 0.02]) { b.box('stoneDark', 0.06, 0.18, z0 - z1, [x, y + 0.09, (z0 + z1) / 2], { uv: 1 }); b.box('brass', 0.03, 0.03, z0 - z1, [x, y + 1.2, (z0 + z1) / 2], { uv: 1 }); }
 }
