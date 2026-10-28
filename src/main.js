@@ -73,7 +73,7 @@ async function boot() {
   scene.environment = envSky;
   LOG('hdr ok'); UI.loadProgress(0.1, '建造主楼……');
   await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx);
-  LOG('world built'); scene.add(world.build()); LOG('bvh ok');
+  LOG('world built'); scene.add(world.build()); inter.blocker = world.collider; LOG('bvh ok');
   // 反射地面
   const M = mats();
   reflector.patch(M.hallFloor, 0.32); reflector.patch(M.hallFloorDark, 0.3);

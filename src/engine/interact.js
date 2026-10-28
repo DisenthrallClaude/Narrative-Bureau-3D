@@ -45,11 +45,12 @@ export class Interactions {
     }
     // 射线
     ray.setFromCamera(center, this.camera);
-    ray.far = 4;
+    ray.far = 32; ray.firstHitOnly = true;
     const objs = this.spots.filter((s) => !s.enabled || s.enabled()).map((s) => s.obj);
     const hit = ray.intersectObjects(objs, true)[0];
     let spot = null;
-    if (hit) { let o = hit.object; while (o && !o.userData.spot) o = o.parent; spot = o?.userData.spot; if (spot && hit.distance > spot.range) spot = null; }
+    if (hit) { let o = hit.object; while (o && !o.userData.spot) o = o.parent; spot = o?.userData.spot; if (spot && hit.distance > spot.range) spot = null;
+      if (spot && this.blocker) { const bh = ray.intersectObject(this.blocker, false)[0]; if (bh && bh.distance < hit.distance - 0.35) spot = null; } }
     this.current = spot;
     return spot;
   }

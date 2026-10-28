@@ -4,6 +4,7 @@ export const SHOTS = {
   plaza: { pos: [0, 1.7, 74], look: [0, 30, -40], fov: 70 },
   plaza_aerial: { pos: [70, 95, 150], look: [0, 25, -40], fov: 55 },
   plaza_fountain: { pos: [-22, 3.2, 48], look: [0, 6, 28], fov: 65 },
+  facade_text: { pos: [0, 22, 42], look: [0, 33, -5], fov: 50 },
   facade: { pos: [6, 1.7, 14], look: [0, 30, -6], fov: 75 },
   gate: { pos: [-8, Y + 1.65, -8], look: [11, Y + 3, -18], fov: 72 },
   hall: { pos: [0, Y + 1.65, -32.5], look: [0, Y + 9, -60], fov: 75 },

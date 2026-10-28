@@ -9,6 +9,7 @@ export class Content {
   constructor() { this.m = PLACEHOLDER; this.byId = new Map(); this.flags = new Set(); this.items = new Set(); this.listeners = []; }
   async load() {
     const m = await fetchJSON('content/manifest.json');
+    this.files = new Set((await fetchJSON('content/files.json')) ?? []);
     if (m) this.m = { ...PLACEHOLDER, ...m };
     for (const k of ['documents', 'interactables', 'hints', 'textures', 'items']) for (const e of this.m[k] ?? []) this.byId.set(e.id, e);
     return this;
@@ -17,7 +18,7 @@ export class Content {
   doc(id) { return this.byId.get(id) ?? { id, title: '（文本待接入）', text: `【占位】${id}\n内容由 art-content 编写，接入 content/manifest.json 后自动显示。` }; }
   inter(id) { return this.byId.get(id) ?? { id, prompt: '按 E 查看', result_text: `【占位】${id}` }; }
   /** 贴图 URL（仅 status=ready） */
-  texUrl(id) { const t = this.byId.get(id); if (!t || t.status !== 'ready' || !t.path) return null; return `content/${t.path}`; }
+  texUrl(id) { const t = this.byId.get(id); if (!t || !t.path) return null; if (t.status !== 'ready' && !this.files?.has(t.path)) return null; return `content/${t.path}`; }
   tex(id, opts = {}) { const u = this.texUrl(id); if (!u) return null; const t = loadTex(u, { srgb: true }); if (opts.flipY === false) t.flipY = false; return t; }
   // —— 任务状态 ——
   has(flag) { return this.flags.has(flag) || this.items.has(flag); }

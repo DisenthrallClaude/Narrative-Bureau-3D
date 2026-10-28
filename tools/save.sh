@@ -17,7 +17,7 @@ else
   else echo "PUSH BLOCKED: 远端 main $RM 不在本地历史"; fi
 fi
 TMP=/tmp/nb_snap; mkdir -p $TMP
-tar --exclude=node_modules --exclude=dist -czf $TMP/narrative-bureau-game.tar.gz -C .. game
+tar --exclude=node_modules --exclude=dist --exclude=.git -czf $TMP/narrative-bureau-game.tar.gz -C .. game
 cd $TMP
 FOLDER=18vB1aDfMtrfcfEtNnoX8F8OyD_1jyGVi
 IDF=/workspace/projects/b2c90d19-7034-43fd-aea1-521ddd72406e/game/.drive_snapshot_id

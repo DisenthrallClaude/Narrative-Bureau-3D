@@ -15,8 +15,9 @@ async function walk(rel) {
     if (e.isDirectory()) { await walk(r); continue; }
     const src = path.join(SRC, r), dst = path.join(DST, r);
     fs.mkdirSync(path.dirname(dst), { recursive: true });
-    if (fs.existsSync(dst) && fs.statSync(dst).mtimeMs >= fs.statSync(src).mtimeMs) { skipped++; continue; }
     const ext = path.extname(e.name).toLowerCase();
+    const dchk = rel.startsWith('audio') && ext !== '.ogg' ? dst.replace(/\.[^.]+$/, '.ogg') : dst;
+    if (fs.existsSync(dchk) && fs.statSync(dchk).mtimeMs >= fs.statSync(src).mtimeMs) { skipped++; continue; }
     if (['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) {
       const img = sharp(src); const meta = await img.metadata();
       let pipe = img; const MAX = /textures\/(archives|emblems)/.test(r) ? 1600 : 1536; if (Math.max(meta.width, meta.height) > MAX) pipe = pipe.resize({ width: meta.width >= meta.height ? MAX : null, height: meta.height > meta.width ? MAX : null });
@@ -33,4 +34,7 @@ await walk('textures');
 await walk('audio');
 const ad = path.join(DST, 'audio'); fs.mkdirSync(ad, { recursive: true });
 fs.writeFileSync(path.join(ad, 'index.json'), JSON.stringify(fs.readdirSync(ad).filter((f) => /\.(mp3|ogg|wav|m4a)$/i.test(f))));
-console.log(`synced ${n}, unchanged ${skipped}`);
+const files = []; const walkList = (d, rel = '') => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const r = rel ? rel + '/' + e.name : e.name; if (e.isDirectory()) walkList(path.join(d, e.name), r); else files.push(r); } };
+walkList(path.join(DST, 'textures'), 'textures');
+fs.writeFileSync(path.join(DST, 'files.json'), JSON.stringify(files));
+console.log(`synced ${n}, unchanged ${skipped}, files ${files.length}`);

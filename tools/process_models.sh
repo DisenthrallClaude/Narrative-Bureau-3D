@@ -61,6 +61,37 @@ chandelier|06_director_office/Chandelier_01/Chandelier_01_2k.gltf|1024|1
 gothic_cabinet|06_director_office/GothicCabinet_01/GothicCabinet_01_2k.gltf|1024|1
 caged_light|07_underground_machine/caged_hanging_light/caged_hanging_light_1k.gltf|512|1
 tv_screen|02_security_hall/usd_tv_100mrgb95bu/tv_100mrgb95bu.glb|1024|0.05
+vault_door_anim|05_containment_vault/sc_vault_door_animated/vault_door_animated.glb|1024|0.3
+vault_door|05_containment_vault/sf_vault_door_20d25f/vault_door.glb|1024|0.5
+armored_cabinet|05_containment_vault/sf_armored_cabinet_d16736/armored_cabinet.glb|1024|1
+safe_small|05_containment_vault/sf_safe_small_square_digital_6e8a44/safe_small_square_digital.glb|1024|1
+gem_skull|05_containment_vault/sc_gemstone_skull/gemstone_skull.glb|1024|0.2
+rusty_lantern|05_containment_vault/sc_rusty_lantern/rusty_lantern.glb|1024|0.5
+amber|05_containment_vault/kh_MosquitoInAmber/MosquitoInAmber.glb|1024|0.5
+chrono_watch|05_containment_vault/kh_ChronographWatch/ChronographWatch.glb|1024|0.5
+candle_holder|05_containment_vault/kh_GlassHurricaneCandleHolder/GlassHurricaneCandleHolder.glb|1024|1
+vase|05_containment_vault/antique_ceramic_vase_01/antique_ceramic_vase_01_1k.gltf|512|1
+bull_head|05_containment_vault/bull_head/bull_head_2k.gltf|1024|0.5
+chem_set|05_containment_vault/chemistry_set/chemistry_set_1k.gltf|1024|1
+plastic_container|05_containment_vault/industrial_pastic_container/industrial_pastic_container_1k.gltf|512|1
+storage_cart|05_containment_vault/industrial_storage_cart/industrial_storage_cart_1k.gltf|1024|1
+marble_bust|05_containment_vault/marble_bust_01/marble_bust_01_2k.gltf|1024|0.5
+gas_mask|05_containment_vault/old_gas_mask/old_gas_mask_1k.gltf|512|1
+military_crate|05_containment_vault/old_military_crate/old_military_crate_1k.gltf|1024|1
+ornate_mirror|05_containment_vault/ornate_mirror_01/ornate_mirror_01_2k.gltf|1024|1
+pocket_watch|05_containment_vault/pocket_watch/pocket_watch_1k.gltf|512|1
+microscope|05_containment_vault/vintage_microscope/vintage_microscope_1k.gltf|1024|1
+bronze_fangyi|05_containment_vault/si_d8c62f94/f1930_54-part_02-smartscan-fixed-textured-150k-4096_std.glb|1024|0.25
+bronze_gong|05_containment_vault/si_d8c646aa/f1961_33-part_01-laser-ortery_texture-150k-4096_std.glb|1024|0.25
+bronze_gui|05_containment_vault/sf_gui_food_vessel_10th_century_bce_12073f/gui_food_vessel_10th_century_bce.glb|1024|0.4
+coral|05_containment_vault/si_1d711ba1/Flabellum_-Ulocyathus-_marenzelleri-150k-4096_std.glb|1024|0.25
+monitor|03_command_center/usd_computer_monitor_office_a01/computer_monitor_office_a01.glb|512|0.5
+keyboard|03_command_center/usd_computer_keyboard_a01/sm_computer_keyboard_a01_01.glb|512|0.5
+wall_console|03_command_center/sf_large_wall_mounted_computer_console_298b7d/large_wall_mounted_computer_console.glb|1024|1
+projector|03_command_center/projector_screen/projector_screen_1k.gltf|512|1
+telegraph|03_command_center/si_ed99f44d/morse-telegraph-key-150k-4096.glb|1024|0.2
+notepads|03_command_center/office_notepads/office_notepads_1k.gltf|512|1
+server_rack|07_underground_machine/sf_server_rack_c144d8/server_rack.glb|1024|0.5
 "
 echo "$LIST" | while IFS='|' read n src tex r; do
   [ -z "$n" ] && continue

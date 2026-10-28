@@ -22,10 +22,11 @@ export function lightShaft({ from, to, r0 = 1, r1 = 3, color = 0xffe2b0, intensi
         return mix(mix(mix(h(i),h(i+vec3(1,0,0)),f.x),mix(h(i+vec3(0,1,0)),h(i+vec3(1,1,0)),f.x),f.y),mix(mix(h(i+vec3(0,0,1)),h(i+vec3(1,0,1)),f.x),mix(h(i+vec3(0,1,1)),h(i+vec3(1,1,1)),f.x),f.y),f.z); }
       void main(){
         float t = clamp(-vPos.y / uLen, 0., 1.);
-        float fadeEnds = smoothstep(0.0, 0.12, t) * (1. - smoothstep(0.65, 1.0, t));
+        float fadeEnds = smoothstep(0.0, 0.12, t) * (1. - smoothstep(0.45, 0.95, t));
+        vec3 toC = cameraPosition - vW; float near = smoothstep(0.5, 4.0, length(toC));
         float edge = pow(abs(dot(normalize(vN), vView)), 1.6);
         float n = n3(vW*0.35 + vec3(0., -uTime*0.08, uTime*0.05)) * 0.6 + n3(vW*1.3 + vec3(uTime*0.1,0.,0.))*0.4;
-        float a = fadeEnds * edge * (0.55 + 0.45*n) * uInt;
+        float a = fadeEnds * edge * near * (0.55 + 0.45*n) * uInt;
         gl_FragColor = vec4(uColor * a, a);
       }`,
   });

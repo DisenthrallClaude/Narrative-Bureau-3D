@@ -326,8 +326,8 @@ function buildHall(zone, world, ctx, M, add) {
   ctx.lanes = lanes;
   for (let i = 0; i <= 8; i++) {
     const x = -12 + i * 3;
-    b.box('steel', 0.36, 1.05, 1.6, [x, Y + 0.525, GZ], { uv: 1 });
-    b.box('blackMetal', 0.4, 0.06, 1.64, [x, Y + 1.08, GZ], { uv: 1 });
+    b.box('blackMetal', 0.36, 1.05, 1.6, [x, Y + 0.525, GZ], { uv: 1 }); b.box('gold', 0.38, 0.03, 1.62, [x, Y + 0.6, GZ], { uv: 1 });
+    b.box('steel', 0.4, 0.06, 1.64, [x, Y + 1.08, GZ], { uv: 1 });
     // 读卡器光带
     b.box('runeGold', 0.37, 0.03, 1.2, [x, Y + 0.95, GZ], { uv: false });
     if (i < 8) { // 车道之间的玻璃翼闸
@@ -417,7 +417,7 @@ function buildHall(zone, world, ctx, M, add) {
   const rs = lightShaft({ from: [0, Y + 19, Z0 - 0.2], to: [0, Y + 0.5, -54], r0: 4.2, r1: 6.5, color: 0xffd9a0, intensity: 0.12 }); zone.add(rs); ctx.shafts.push(rs);
   for (let k = 0; k < 4; k++) {
     const z = (pz[k] + pz[k + 1]) / 2;
-    const s = lightShaft({ from: [X - 0.3, Y + 8, z], to: [3, Y, z - 3], r0: 1.4, r1: 3.2, color: 0xbad2ff, intensity: 0.1 }); zone.add(s); ctx.shafts.push(s);
+    const s = lightShaft({ from: [X - 0.3, Y + 8, z], to: [3, Y, z - 3], r0: 1.4, r1: 3.2, color: 0xbad2ff, intensity: 0.06 }); zone.add(s); ctx.shafts.push(s);
     const s2 = lightShaft({ from: [12, Y + 17, z], to: [-4, Y + 2, z - 2], r0: 1.6, r1: 3.6, color: 0xffe2b5, intensity: 0.07 }); zone.add(s2); ctx.shafts.push(s2);
   }
   zone.add(dust([0, Y, cz], [32, 22, 44], 700));
@@ -488,7 +488,7 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
     b.add('glassIn', new THREE.ShapeGeometry(archShape(2.0, 3.3)), f.at(0, 7.4, 0), { uv: false });
     b.add('stoneDark', archRingGeo(2.6, 3.3, 2.0, 3.3, 0.3), f.at(0, 7.4, 0.12), { uv: 0.6 });
     b.add('gold', archRingGeo(2.7, 3.3, 2.6, 3.3, 0.32), f.at(0, 7.4, 0.12), { uv: 1 });
-    const s = lightShaft({ from: [X0 + 0.3, Y + 10, z], to: [X0 + 13, Y, z + 2], r0: 1.1, r1: 2.6, color: 0xffe5bb, intensity: 0.12 }); zone.add(s); (ctx.shafts = ctx.shafts ?? []).push(s);
+    const s = lightShaft({ from: [X0 + 0.3, Y + 10, z], to: [X0 + 13, Y, z + 2], r0: 1.1, r1: 2.6, color: 0xffe5bb, intensity: 0.035 }); zone.add(s); (ctx.shafts = ctx.shafts ?? []).push(s);
   }
   // —— 二层回廊（铸铁）——
   const GW = 2.6;
@@ -636,10 +636,10 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   const pubIntro = brassPlaqueMaterial('登记叙事者公开档案', ['本廊陈列经审定可公开之', '登记叙事者档案摘要', '请勿拍照　请勿触碰玻璃']);
   const pim = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 1.1), pubIntro); pim.position.set(X1 - 3.6, GY + 1.6, Z0 - 0.45); pim.rotation.y = Math.PI; zone.add(pim); ctx.pubIntro = pim;
   // 灯光
-  for (const [lx, lz] of ctx.archiveLamps.filter((_, i) => i % 2 === 0)) point(zone, 0xffd59a, 6, [lx + 0.7, Y + 1.5, lz], 6);
+  for (const [lx, lz] of ctx.archiveLamps.filter((_, i) => i % 2 === 0)) point(zone, 0xffd59a, 2.5, [lx + 0.7, Y + 1.6, lz], 5);
   for (let z = Z1 + 6; z < Z0; z += 9) add(placeModel('chandelier', { height: 1.8, pos: [cx + 2, Y + H - 2.4, z] }));
   for (let z = Z1 + 6; z < Z0; z += 9) point(zone, 0xffcf96, 30, [cx + 2, Y + H - 3.0, z], 18);
-  spot(zone, 0xffe6c0, 160, [X0 + 1, Y + 11, -44], [X0 + 14, Y, -40], 0.55, true, 40);
+  spot(zone, 0xffe6c0, 60, [X0 + 1, Y + 11, -44], [X0 + 14, Y, -40], 0.55, true, 40);
   spot(zone, 0xffd8a0, 120, [kx + 3, Y + 9, kz], [kx, Y + 1, kz], 0.4, false, 20);
   rectLight(zone, 0xffe6c8, 0.7, W - 4, L - 4, [cx, Y + H - 0.4, cz], [cx, Y, cz]);
   zone.add(dust([cx, Y, cz], [W, H, L], 500));

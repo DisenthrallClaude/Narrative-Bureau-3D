@@ -44,7 +44,7 @@ export function setupStory(G) {
   spotRead('doc_gate_brochure', [10.1, Y + 1.32, -23.2, 0.6, 0.5, 0.8], '按 E 拿一份折页', 2.4);
   const desk = content.inter('int_gate_desk');
   inter.add({
-    id: 'int_gate_desk', box: [10.5, Y + 1.4, -16.0, 1.6, 1.4, 2.6], range: 3.0,
+    id: 'int_gate_desk', box: [10.5, Y + 1.4, -17.0, 1.6, 1.4, 2.6], range: 3.0,
     enabled: () => !content.has(desk.completes ?? 'q1_badge'),
     prompt: prompt('int_gate_desk', '按 E 办理报到'),
     use: async () => {
