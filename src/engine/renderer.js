@@ -28,7 +28,7 @@ export class Renderer {
     this.ao.configuration.gammaCorrection = false;
     this.ao.configuration.color = new THREE.Color(0, 0, 0);
     this.composer.addPass(this.ao);
-    this.bloom = new BloomEffect({ intensity: 0.65, luminanceThreshold: 1.0, luminanceSmoothing: 0.3, mipmapBlur: true, radius: 0.72, levels: 7 });
+    this.bloom = new BloomEffect({ intensity: 0.5, luminanceThreshold: 1.25, luminanceSmoothing: 0.3, mipmapBlur: true, radius: 0.72, levels: 7 });
     this.tone = new ToneMappingEffect({ mode: ToneMappingMode.AGX });
     this.grade = new HueSaturationEffect({ saturation: 0.08 });
     this.contrast = new BrightnessContrastEffect({ contrast: 0.06 });

@@ -29,15 +29,15 @@ export function buildEastWing(scene, world, ctx) {
   b.box('wallStone', 2.8, 0.4, 6.6, [18.6, Y + 6.2, -48], { uv: 0.3 });
   for (const ez of [-1, 1]) b.box('wallStone', 2.8, 6.4, 0.4, [18.6, Y + 3.2, -48 + ez * 3.2], { uv: 0.3, collide: true });
   // —— 楼板与外墙 ——
-  slabWithHole(b, 'terrazzo', X0, X1, ZA, ZB, Y - 0.1, 0.1, { x0: 0, x1: 0, z0: 0, z1: 0 }, true);
+  slabWithHole(b, 'blackMarble', X0, X1, ZA, ZB, Y - 0.1, 0.1, { x0: 0, x1: 0, z0: 0, z1: 0 }, true);
   for (const fy of [F2, F3]) slabWithHole(b, 'carpet', X0, X1, ZA, ZB, fy - 0.3, 0.3, WELL, true);
   b.box('wallPlaster', X1 - X0, 0.3, ZA - ZB, [(X0 + X1) / 2, Y + 21.2, (ZA + ZB) / 2], { uv: 0.25 });
-  wallX(b, 'wallStone', X0 - 0.2, ZA, ZB, Y, 21, 0.4, [{ z0: -45, z1: -51, h: 6 }], true);
-  wallX(b, 'wallStone', X1 + 0.2, ZA, ZB, Y, 21, 0.4, [], true);
-  wallZ(b, 'wallStone', ZA + 0.2, X0, X1, Y, 21, 0.4, [], true);
-  wallZ(b, 'wallStone', ZB - 0.2, X0, X1, Y, 21, 0.4, [], true);
+  wallX(b, 'panelWall', X0 - 0.2, ZA, ZB, Y, 21, 0.4, [{ z0: -45, z1: -51, h: 6 }], true);
+  wallX(b, 'panelWall', X1 + 0.2, ZA, ZB, Y, 21, 0.4, [], true);
+  wallZ(b, 'panelWall', ZA + 0.2, X0, X1, Y, 21, 0.4, [], true);
+  wallZ(b, 'panelWall', ZB - 0.2, X0, X1, Y, 21, 0.4, [], true);
   // 楼层间分隔墙（南北两区）：每层 z = -53 / -61（2F/3F 南区从 -62 开始）
-  wallZ(b, 'wallPlaster', ZM, X0, XS, Y, 7, 0.3, [{ x0: 31, x1: 35, h: 3.2 }], true);
+  wallZ(b, 'panelWall', ZM, X0, XS, Y, 7, 0.3, [{ x0: 31, x1: 35, h: 3.2 }], true);
   wallZ(b, 'wallPlaster', -61, X0, XS, F2, 7, 0.3, [{ x0: 40, x1: 43, h: 3 }], true);
   wallZ(b, 'wallPlaster', -61, X0, XS, F3, 7.2, 0.3, [{ x0: 40, x1: 43, h: 3 }], true);
   // 楼梯井列与房间之间的墙（2F/3F），留门
@@ -147,6 +147,8 @@ export function buildEastWing(scene, world, ctx) {
   const lw = new THREE.Mesh(new THREE.PlaneGeometry(9, 3.4), lt ? new THREE.MeshStandardMaterial({ map: lt, roughness: 0.7 }) : lettersMaterial());
   lw.position.set(X1 - 0.05 - 5.8, Y + 2.4, ZA - 0.25); lw.rotation.y = Math.PI; zone.add(lw); ctx.anchors.doc_cit_letters = lw;
   b.box('wood', 9.4, 3.8, 0.12, [X1 - 5.8, Y + 2.4, ZA - 0.12], { uv: 0.5 });
+  for (let x = X0 + 4; x < XS; x += 4) b.box('gold', 0.05, 0.01, ZA - ZB, [x, Y + 0.004, (ZA + ZB) / 2], { uv: 1 });
+  for (let z = ZA - 4; z > ZB; z -= 4) b.box('gold', XS - X0, 0.01, 0.05, [(X0 + XS) / 2, Y + 0.004, z], { uv: 1 });
   // 地面导引
   for (let k = 0; k < 5; k++) b.box('gold', 0.08, 0.012, 14, [23.5 + k * 5.4, Y + 0.005, ZA - 11], { uv: 1 });
   const csTitle = goldText('市民服务大厅　·　污染举报', 6, 0.5, M.goldBright, { res: 128 }); csTitle.position.set(X0 + 0.25, Y + 5.2, -48); csTitle.rotation.y = Math.PI / 2; zone.add(csTitle);

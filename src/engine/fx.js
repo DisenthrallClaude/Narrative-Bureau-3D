@@ -103,10 +103,21 @@ export function waterfallMaterial() {
     transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
     uniforms: { uTime: time },
     vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }',
-    fragmentShader: `uniform float uTime; varying vec2 vUv; float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5);}
-      void main(){ float x = floor(vUv.x*90.); float s = h(vec2(x,1.)); float v = fract(vUv.y*2. + uTime*(1.2+s) + s*10.);
-        float streak = smoothstep(0.0,0.4,v)*smoothstep(1.0,0.6,v); float a = streak*(0.12+0.18*s)*smoothstep(0.,0.15,vUv.y);
-        gl_FragColor = vec4(vec3(0.75,0.85,0.95)*a, a); }`,
+    fragmentShader: `uniform float uTime; varying vec2 vUv;
+      float h(vec2 p){ vec3 q = fract(vec3(p.xyx) * 0.1031); q += dot(q, q.yzx + 33.33); return fract((q.x + q.y) * q.z); }
+      float n(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.-2.*f); return mix(mix(h(i), h(i+vec2(1,0)), f.x), mix(h(i+vec2(0,1)), h(i+vec2(1,1)), f.x), f.y); }
+      void main(){
+        // 细长下落水丝：x 方向高频、y 方向随时间滚动（平滑噪声，无块状走样）
+        float t = uTime;
+        float a1 = n(vec2(vUv.x * 140.0, vUv.y * 3.0 + t * 2.6));
+        float a2 = n(vec2(vUv.x * 310.0 + 7.0, vUv.y * 6.0 + t * 3.9));
+        float a3 = n(vec2(vUv.x * 60.0 + 3.0, vUv.y * 1.5 + t * 1.7));
+        float s = pow(a1 * 0.55 + a2 * 0.3 + a3 * 0.35, 2.2);
+        float edge = smoothstep(0.0, 0.12, vUv.y) * (0.65 + 0.35 * smoothstep(1.0, 0.7, vUv.y));
+        float foam = smoothstep(0.25, 0.0, vUv.y) * n(vec2(vUv.x * 80.0, t * 6.0)) * 0.5;
+        float a = clamp(s * 0.55 + foam, 0.0, 1.0) * edge;
+        gl_FragColor = vec4(vec3(0.78, 0.88, 0.98) * a, a);
+      }`,
   });
 }
 

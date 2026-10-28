@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { pbr } from '../engine/assets.js';
 import { stainedGlassTexture } from '../engine/fx.js';
+import { weather } from '../engine/weather.js';
 
 let M = null;
 export function mats() {
@@ -18,6 +19,17 @@ export function mats() {
   M.iron = pbr('Metal046A', { color: 0x2b2d33, metalness: 1, roughness: 0.42 });
   M.glassOut = new THREE.MeshPhysicalMaterial({ color: 0x0c1428, metalness: 0.2, roughness: 0.06, envMapIntensity: 1.6, emissive: 0x1a2a55, emissiveIntensity: 0.12, clearcoat: 1 });
   M.glassOut.userData.noShadow = true;
+  // 黄昏：外立面尖窗按窗格随机亮起暖色灯光（世界坐标哈希），其余保持深色反射
+  M.glassOut.onBeforeCompile = (sh) => {
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vGw;').replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvGw = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vGw; float gh(vec3 p){ p = fract(p * 0.1031); p += dot(p, p.yzx + 33.33); return fract((p.x + p.y) * p.z); }')
+      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+        { vec3 cell = floor(vGw / vec3(3.0, 5.0, 3.0)); float on = step(0.55, gh(cell));
+          float flick = 0.85 + 0.15 * gh(cell + 7.0);
+          float grad = 0.6 + 0.4 * smoothstep(0.0, 1.0, fract(vGw.y / 5.0));
+          totalEmissiveRadiance += vec3(1.0, 0.58, 0.26) * on * flick * grad * 1.7; }`);
+  };
+  M.glassOut.customProgramCacheKey = () => 'glassOutDusk';
   const sgt = stainedGlassTexture(3); sgt.repeat.set(0.3, 0.115); sgt.offset.set(0.5, 0);
   M.glassIn = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: sgt, emissiveIntensity: 2.4, roughness: 1, side: THREE.DoubleSide });
   M.glassIn.userData.noShadow = true;
@@ -32,11 +44,12 @@ export function mats() {
   M.hedge = new THREE.MeshStandardMaterial({ color: 0x6f8a62, map: leaf.map, normalMap: leaf.normal, normalScale: new THREE.Vector2(1.6, 1.6), roughness: 0.92 });
   M.grass = new THREE.MeshStandardMaterial({ color: 0x8aa070, map: leaf.grass, roughness: 0.95 });
   // 室内
-  M.hallFloor = pbr('Marble012', { color: 0x8e8e94, roughness: 0.18, env: 0.9, physical: true, clearcoat: 0.8, clearcoatRoughness: 0.05 });
-  M.hallFloorDark = pbr('Marble006', { color: 0x606068, roughness: 0.2, env: 0.9, physical: true, clearcoat: 0.8, clearcoatRoughness: 0.06 });
+  M.hallFloor = pbr('Marble012', { color: 0x7e7e84, roughness: 0.26, env: 0.9, physical: true, clearcoat: 0.8, clearcoatRoughness: 0.05 });
+  M.hallFloorDark = pbr('Marble006', { color: 0x58585e, roughness: 0.28, env: 0.9, physical: true, clearcoat: 0.8, clearcoatRoughness: 0.06 });
   M.terrazzo = pbr('Terrazzo005', { color: 0xa8a8ac, roughness: 0.3, env: 0.8 });
   M.wallStone = pbr('Granite003A', { color: 0x4c4d55, roughness: 0.5, env: 0.8 });
-  M.vault = pbr('Concrete034', { color: 0x8a8478, roughness: 0.85, env: 0.6 }); M.vault.side = THREE.DoubleSide;
+  M.vault = pbr('Concrete034', { color: 0x8a8478, roughness: 0.85, env: 0.6 }); M.vault.side = THREE.DoubleSide; M.vault.userData.noShadow = true; // 双面薄壳自投影会出现橙黑色阴影痤疮
+  M.panelWall = pbr('Marble006', { color: 0x6a645c, roughness: 0.32, env: 0.9 });
   M.wallPlaster = pbr('Concrete034', { color: 0x3e4a44, roughness: 0.8 });
   M.onyx = pbr('Onyx013', { color: 0x8a8a90, roughness: 0.22, env: 1.2 });
   M.wood = pbr('Wood051', { color: 0x6e4e38, roughness: 0.45, env: 0.8 });
@@ -61,6 +74,23 @@ export function mats() {
   M.waxRed = new THREE.MeshStandardMaterial({ color: 0x7a1016, roughness: 0.35, metalness: 0.05 });
   M.foliage = new THREE.MeshStandardMaterial({ color: 0x55704c, map: leaf.map, normalMap: leaf.normal, normalScale: new THREE.Vector2(1.8, 1.8), roughness: 0.9 });
   M.rubber = new THREE.MeshStandardMaterial({ color: 0x111214, roughness: 0.8 });
+  // —— 老化与脏污（世界空间，打破平铺与“新模型感”）——
+  weather(M.stone, { macro: 0.28, streak: 0.85, grime: 0.7, ground: 0, rough: 0.22 });
+  weather(M.stoneDark, { macro: 0.18, streak: 0.5, grime: 0.4, ground: 0, rough: 0.16 });
+  weather(M.slate, { macro: 0.2, streak: 0.4, tarnish: 0.25, dust: 0.3 });
+  weather(M.gold, { macro: 0.1, tarnish: 0.32, rough: 0.12, scale: 2.0 });
+  weather(M.goldBright, { macro: 0.06, tarnish: 0.18, rough: 0.08, scale: 2.0 });
+  weather(M.iron, { macro: 0.15, tarnish: 0.5, rough: 0.2, scale: 1.5 });
+  weather(M.wallStone, { macro: 0.2, streak: 0.25, grime: 0.45, ground: 1.8, rough: 0.14 });
+  weather(M.paving, { macro: 0.32, dust: 0.25, rough: 0.2 });
+  weather(M.plazaTile, { macro: 0.18, dust: 0.15, rough: 0.12 });
+  weather(M.blackMarble, { macro: 0.1, rough: 0.08 });
+  weather(M.concrete, { macro: 0.3, grime: 0.5, streak: 0.3, ground: -50, rough: 0.2 });
+  weather(M.panelWall, { macro: 0.12, grime: 0.25, ground: 1.8 });
+  weather(M.wallPlaster, { macro: 0.18, grime: 0.35, ground: 1.8 });
+  weather(M.blackMetal, { macro: 0.12, tarnish: 0.2, rough: 0.15, scale: 1.5 });
+  weather(M.steel, { macro: 0.12, tarnish: 0.15, rough: 0.15, scale: 1.5 });
+  weather(M.brass, { macro: 0.1, tarnish: 0.35, rough: 0.15, scale: 2.0 });
   return M;
 }
 

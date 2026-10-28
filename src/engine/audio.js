@@ -19,6 +19,7 @@ export const ZONE_AUDIO = {
   vault_b3: { bgm: 'M05', amb: 'A05' }, vault_b4: { bgm: 'M05', amb: 'A05' }, vault_b5: { bgm: 'M05', amb: 'A05' },
   spine_b3: { bgm: 'M05', amb: 'A05' }, spine_b4: { bgm: 'M05', amb: 'A05' }, spine_b5: { bgm: 'M05', amb: 'A05' },
   abyss: { bgm: 'M05', amb: 'A06' },
+  canteen: { bgm: 'M03', amb: 'A02' }, armory: { bgm: 'M06', amb: 'A03' }, interrogation: { bgm: 'M05', amb: 'A05' }, training: { bgm: 'M06', amb: 'A06' },
   menu: { bgm: 'M01', amb: null },
 };
 export const FOOTSTEP = { stone: 'S01', marble: 'S01', carpet: 'S02', metal: 'S03', wood: 'S02', grate: 'S03' };

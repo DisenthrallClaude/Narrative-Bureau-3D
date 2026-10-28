@@ -2,3 +2,4 @@ node_modules/
 dist/
 *.log
 .drive_snapshot_id
+screenshots/tmp/

@@ -122,7 +122,7 @@ export function rectLight(zone, color, intensity, w, h, pos, look) {
 }
 export function spot(zone, color, intensity, pos, target, angle = 0.5, shadow = false, dist = 40) {
   const s = new THREE.SpotLight(color, intensity, dist, angle, 0.6, 1.6); s.position.set(...pos); s.target.position.set(...target); zone.add(s, s.target);
-  if (shadow) { s.castShadow = true; s.shadow.mapSize.set(1024, 1024); s.shadow.bias = -0.0004; s.shadow.normalBias = 0.02; s.userData.qualityShadow = true; }
+  if (shadow) { s.castShadow = true; s.shadow.mapSize.set(1024, 1024); s.shadow.bias = -0.0006; s.shadow.normalBias = 0.05; s.userData.qualityShadow = true; }
   return s;
 }
 export function point(zone, color, intensity, pos, dist = 12) { const p = new THREE.PointLight(color, intensity, dist, 2); p.position.set(...pos); zone.add(p); return p; }
@@ -250,7 +250,7 @@ function buildHall(zone, world, ctx, M, add) {
   { const f = new Frame([X - 0.05, Y, -48], -Math.PI / 2); b.add('stoneDark', archRingGeo(7.0, 4.2, 6.0, 4.2, 0.7), f.at(0, 0, 0.3), { uv: 0.5 }); b.add('gold', archRingGeo(7.2, 4.2, 7.0, 4.2, 0.72), f.at(0, 0, 0.3), { uv: 1 });
     const t = goldText('东翼 → 市民服务 · 叙事高考 · 监测指挥中心', 5.6, 0.3, M.goldBright, { res: 96 }); t.position.set(X - 0.3, Y + 7.6, -48); t.rotation.y = -Math.PI / 2; zone.add(t); }
   // 北墙（电梯厅金门、中庭铁门）
-  wallZ(b, 'wallStone', Z1 - 0.3, -X, X, Y, 26, 0.6, [], true);
+  wallZ(b, 'wallStone', Z1 - 0.3, -X, X, Y, 26, 0.6, [{ x0: -2.3, x1: 2.3, h: 6.2 }], true);
   // 南墙（与门厅之间）
   wallZ(b, 'wallStone', Z0 + 0.3, -X, X, Y + 14, 12, 0.6, [], false);
   // 侧廊顶（x ±12…±17.4 高 12）
@@ -324,9 +324,9 @@ function buildHall(zone, world, ctx, M, add) {
     b.add('iron', new THREE.BoxGeometry(0.04, 4.0, 0.14), f.at(0, 2, 0.1), { uv: 1 });
     const ind = goldText('书脊井　B1–B6', 1.6, 0.3, M.goldBright, { res: 96 }); ind.position.set(x, Y + 5.0, Z1 + 0.35); zone.add(ind);
   }
-  add(placeModel('iron_gate', { width: 4.6, pos: [0, Y, Z1 + 0.25] }));
+  for (const sx of [-1, 1]) add(placeModel('iron_gate', { width: 2.3, pos: [sx * 3.6, Y, Z1 + 0.6], rotY: sx * 0.15 })); // 铁门向两侧敞开 → 中庭食堂
   { const f = new Frame([0, Y, Z1 + 0.02], 0); b.add('stoneDark', archRingGeo(6.4, 3.2, 4.8, 3.2, 0.7), f.at(0, 0, 0.3), { uv: 0.5 }); }
-  const atrium = goldText('中庭　食堂　考务中心（暂未开放）', 4.8, 0.32, M.goldBright, { res: 96 }); atrium.position.set(0, Y + 7.6, Z1 + 0.4); zone.add(atrium);
+  const atrium = goldText('中庭　职工食堂　→', 4.8, 0.32, M.goldBright, { res: 96 }); atrium.position.set(0, Y + 7.6, Z1 + 0.4); zone.add(atrium);
 
   // —— 闸机线（z = -40）——
   const GZ = -40;
@@ -648,7 +648,7 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   for (let z = Z1 + 6; z < Z0; z += 9) add(placeModel('chandelier', { height: 1.8, pos: [cx + 2, Y + H - 2.4, z] }));
   for (let z = Z1 + 6; z < Z0; z += 9) point(zone, 0xffcf96, 30, [cx + 2, Y + H - 3.0, z], 18);
   spot(zone, 0xffe6c0, 60, [X0 + 1, Y + 11, -44], [X0 + 14, Y, -40], 0.55, true, 40);
-  spot(zone, 0xffd8a0, 120, [kx + 3, Y + 9, kz], [kx, Y + 1, kz], 0.4, false, 20);
+  spot(zone, 0xffd8a0, 60, [kx + 3, Y + 9, kz], [kx, Y + 1, kz], 0.4, false, 20);
   rectLight(zone, 0xffe6c8, 0.7, W - 4, L - 4, [cx, Y + H - 0.4, cz], [cx, Y, cz]);
   zone.add(dust([cx, Y, cz], [W, H, L], 500));
 

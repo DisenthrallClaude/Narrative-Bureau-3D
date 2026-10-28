@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { Batch } from '../engine/batch.js';
 import { placeModel, loadModel } from '../engine/assets.js';
 import { mats } from './mats.js';
+import { weather } from '../engine/weather.js';
 import { Frame, archRingGeo, archShape, emblem, goldText } from './gothic.js';
 import { CanvasScreen, dust, time } from '../engine/fx.js';
 import { content } from '../engine/content.js';
@@ -11,7 +12,11 @@ import { FLOOR, T } from './exterior.js';
 import { wallX, wallZ, rectLight, spot, point, person, brassPlaqueMaterial, signMaterial, grandClock } from './interiors.js';
 
 export const LEVELS = { B3: -26, B4: -34, B5: -42 };
-const EZ = -84; // 电梯门所在墙面 z（门朝北开向楼层）
+// 电梯可达楼层登记（其他模块往里注册：FLOORS.B1 = { y, label }）
+export const FLOOR_ORDER = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6'];
+export const FLOORS = { B3: { y: -26, label: 'B3　收容库 · 开架区（1–3 级）' }, B4: { y: -34, label: 'B4　单独收容柜（4–6 级）' }, B5: { y: -42, label: 'B5　深库（7 级以上）' } };
+const EZ = -84;
+export const HALL_TEXT = { B1: '外勤缉拿处 · 整备库', B2: '审讯室 · 临时羁押', B3: '证物收容库 · 开架区 · 1–3 级', B4: '证物收容库 · 单独收容柜 · 4–6 级', B5: '深库 · 7 级以上 · 双人双锁', B6: '驯化副本训练场' }; // 电梯门所在墙面 z（门朝北开向楼层）
 
 export function buildVault(scene, world, ctx) {
   const M = mats();
@@ -221,8 +226,8 @@ export function buildVault(scene, world, ctx) {
 }
 
 // ———————— 结构件 ————————
-function vaultMats(M) {
-  const tint = (m, c, extra = {}) => { const n = m.clone(); n.color = new THREE.Color(c); Object.assign(n, extra); return n; };
+export function vaultMats(M) {
+  const tint = (m, c, extra = {}, w = { macro: 0.25, grime: 0.5, streak: 0.3, ground: -60 }) => { const n = m.clone(); n.userData = {}; n.color = new THREE.Color(c); Object.assign(n, extra); return weather(n, w); };
   return {
     concreteFloor: tint(M.concrete, 0x6a6a6c, { roughness: 0.55 }),
     concreteWall: tint(M.concrete, 0x50545a),
@@ -230,13 +235,15 @@ function vaultMats(M) {
     darkTile: tint(M.hallFloorDark, 0x3a3c42),
     blackFloor: tint(M.blackMarble, 0x4a4a50),
     hazard: hazardMaterial(),
+    whitePad: weather(new THREE.MeshStandardMaterial({ color: 0xd8d6d0, roughness: 0.92 }), { macro: 0.12, grime: 0.4, ground: -60 }),
+    mirrorGlass: new THREE.MeshPhysicalMaterial({ color: 0x101418, metalness: 0.9, roughness: 0.05, envMapIntensity: 1.4 }),
     evLabel: new THREE.MeshStandardMaterial({ color: 0xf2efe4, roughness: 0.8 }),
     lampAmber: new THREE.MeshStandardMaterial({ color: 0xffd9a0, emissive: 0xffa040, emissiveIntensity: 5, roughness: 0.5 }),
     elevDoor: new THREE.MeshStandardMaterial({ color: 0xd8b060, metalness: 1, roughness: 0.22, map: pageReliefTexture(), bumpMap: pageReliefTexture(), bumpScale: 1.5 }),
   };
 }
 /** 矩形房间（地板/天花/四墙，可在南墙开门，北墙开洞） */
-function room(b, world, M, x0, x1, z0, z1, y, h, floor, wall, o = {}) {
+export function room(b, world, M, x0, x1, z0, z1, y, h, floor, wall, o = {}) {
   b.box(floor, x1 - x0, 0.2, z0 - z1, [(x0 + x1) / 2, y - 0.1, (z0 + z1) / 2], { uv: 0.3, collide: true });
   b.box(wall, x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, y + h + 0.15, (z0 + z1) / 2], { uv: 0.25 });
   wallX(b, wall, x0 - 0.2, z0, z1, y, h, 0.4, [], true);
@@ -247,7 +254,7 @@ function room(b, world, M, x0, x1, z0, z1, y, h, floor, wall, o = {}) {
   for (const x of [x0 + 0.02, x1 - 0.02]) { b.box('stoneDark', 0.06, 0.18, z0 - z1, [x, y + 0.09, (z0 + z1) / 2], { uv: 1 }); b.box('brass', 0.03, 0.03, z0 - z1, [x, y + 1.2, (z0 + z1) / 2], { uv: 1 }); }
 }
 /** 电梯厅：南墙两扇书页浮雕金门（x=±6），楼层铭牌，安全须知 */
-function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
+export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
   const Z0 = EZ, Z1 = -92, X = 9, H = 5.2;
   b.box('darkTile', 2 * X, 0.2, Z0 - Z1, [0, y - 0.1, (Z0 + Z1) / 2], { uv: 0.3, collide: true });
   b.box('vaultWall', 2 * X, 0.3, Z0 - Z1, [0, y + H + 0.15, (Z0 + Z1) / 2], { uv: 0.25 });
@@ -266,7 +273,7 @@ function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
     pnl.position.set(x + (x > 0 ? 2.0 : -2.0), y + 1.3, Z0 - 0.23); zone.add(pnl);
     ctx.elevatorCalls.push({ obj: pnl, x, floor: name });
   }
-  const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.7), brassPlaqueMaterial(name, [{ B3: '证物收容库 · 开架区 · 1–3 级', B4: '证物收容库 · 单独收容柜 · 4–6 级', B5: '深库 · 7 级以上 · 双人双锁' }[name]]));
+  const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.7), brassPlaqueMaterial(name, [HALL_TEXT[name] ?? '']));
   plate.position.set(0, y + 2.2, Z0 - 0.22); plate.rotation.y = Math.PI; zone.add(plate);
   if (name === 'B3') ctx.anchors.doc_spine_floorplate_b3 = plate;
   if (name === 'B4') { const sf = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.6), signMaterial('电梯安全须知', ['若电梯显示不存在的楼层', '请勿出梯', '', '若轿厢内多出一名乘客', '请不要数人数'], 420, 600)); sf.position.set(-3.0, y + 1.6, Z0 - 0.22); sf.rotation.y = Math.PI; zone.add(sf); ctx.anchors.doc_spine_safety = sf; }
@@ -281,7 +288,7 @@ function airlock(b, zone, M, Mx, x, y, z) {
   for (const s of [-1, 1]) { b.box('hazard', 0.3, 3.2, 0.5, [x + s * 2.35, y + 1.6, z], { uv: 0.8 }); b.box('steel', 2.0, 3.1, 0.25, [x + s * 3.4, y + 1.55, z - 0.35], { uv: 0.8 }); }
 }
 /** 钢架货架（长 L，深 d，高 h，lv 层） */
-function steelShelf(b, world, cx, y, z, L, d, h, lv) {
+export function steelShelf(b, world, cx, y, z, L, d, h, lv) {
   for (let i = 0; i <= Math.round(L / 2.3); i++) { const x = cx - L / 2 + i * (L / Math.round(L / 2.3)); for (const dz of [-d / 2, d / 2]) b.box('paintedGreen', 0.06, h, 0.06, [x, y + h / 2, z + dz], { uv: 1 }); }
   for (let k = 0; k < lv; k++) { b.box('steel', L, 0.04, d, [cx, y + 0.12 + k * 0.9, z], { uv: 1 }); b.box('hazard', L, 0.05, 0.01, [cx, y + 0.12 + k * 0.9, z + d / 2 + 0.01], { uv: 0.8 }); }
   world.box(cx, y + h / 2, z, L, h, d + 0.1);
@@ -301,7 +308,7 @@ function cell(b, zone, world, M, Mx, x, y, z, dir) {
 }
 
 // ———————— 程序化道具与贴图 ————————
-function hazardMaterial() {
+export function hazardMaterial() {
   const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c = cv.getContext('2d');
   c.fillStyle = '#d8a812'; c.fillRect(0, 0, 128, 128); c.fillStyle = '#16140f';
   for (let i = -128; i < 256; i += 48) { c.beginPath(); c.moveTo(i, 0); c.lineTo(i + 24, 0); c.lineTo(i + 24 + 128, 128); c.lineTo(i + 128, 128); c.fill(); }
@@ -309,7 +316,7 @@ function hazardMaterial() {
   return new THREE.MeshStandardMaterial({ map: t, roughness: 0.6, metalness: 0.2 });
 }
 const _tagCache = new Map();
-function tagMaterial(text) {
+export function tagMaterial(text) {
   if (_tagCache.has(text)) return _tagCache.get(text);
   const cv = document.createElement('canvas'); cv.width = 512; cv.height = 160; const c = cv.getContext('2d');
   c.fillStyle = '#efe9d8'; c.fillRect(0, 0, 512, 160); c.strokeStyle = '#7a1a1a'; c.lineWidth = 6; c.strokeRect(6, 6, 500, 148);
@@ -380,7 +387,7 @@ export function drawFrame(g, t) {
   c.fillStyle = '#c8a888'; c.beginPath(); c.ellipse(180 + sway, 150 - knock * 6, 12 + knock * 6, 14 + knock * 6, 0, 0, Math.PI * 2); c.fill();
   tex.needsUpdate = true;
 }
-function beacon(M) {
+export function beacon(M) {
   const g = new THREE.Group();
   const base = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.1, 16), M.blackMetal); g.add(base);
   const dome = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x401008, emissive: 0xff5020, emissiveIntensity: 2.0, transparent: true, opacity: 0.85 })); dome.position.y = 0.05; g.add(dome);
@@ -406,17 +413,12 @@ export function updateVault(ctx, dt, t, playerPos) {
 /** 书脊井电梯：呼梯面板 → 楼层选择 → 黑场转场 → 到站；B6+关门 7 秒 → B7 彩蛋 */
 export function setupElevator(G, { toast, dialog, fade, runInteractable }) {
   const { inter, ctx, audio, player } = G;
-  const DEST = {
-    '1F': (x) => ({ pos: [x, FLOOR + 0.05, -73.2], yaw: Math.PI }),
-    B3: (x) => ({ pos: [x, LEVELS.B3 + 0.05, -86.4], yaw: 0 }),
-    B4: (x) => ({ pos: [x, LEVELS.B4 + 0.05, -86.4], yaw: 0 }),
-    B5: (x) => ({ pos: [x, LEVELS.B5 + 0.05, -86.4], yaw: 0 }),
-  };
+  const DEST = (to, x) => to === '1F' ? { pos: [x, FLOOR + 0.05, -73.2], yaw: Math.PI } : { pos: [x, FLOORS[to].y + 0.05, -86.4], yaw: 0 };
   let busy = false;
   const ride = async (from, to, x) => {
     busy = true; G.freeze(true); audio.sfx('S13', 0.6); fade(true);
     await sleep(700); audio.sfx('S14', 0.7);
-    const d = DEST[to](x); player.pos.set(...d.pos); player.vel?.set(0, 0, 0); player.yaw = d.yaw; player.pitch = 0;
+    const d = DEST(to, x); player.pos.set(...d.pos); player.vel?.set(0, 0, 0); player.yaw = d.yaw; player.pitch = 0;
     await sleep(Math.min(2600, 900 + Math.abs(levelY(from) - levelY(to)) * 60));
     audio.sfx('S13', 0.7); fade(false); G.freeze(false); busy = false;
   };
@@ -426,12 +428,14 @@ export function setupElevator(G, { toast, dialog, fade, runInteractable }) {
       enabled: () => !busy,
       use: async () => {
         if (!content.has('item_badge')) { toast('面板没有反应。\n需要入职证刷卡。'); return; }
-        const opts = [['A', '1F', '1F　安检大厅'], ['B', 'B3', 'B3　收容库 · 开架区（1–3 级）'], ['C', 'B4', 'B4　单独收容柜（4–6 级）'], ['D', 'B5', 'B5　深库（7 级以上）'], ['E', 'B6+', 'B6　驯化副本训练场'], ['F', null, '离开']].filter((o) => o[1] !== c.floor);
+        const L = 'ABCDEFGHIJ'; const keys = ['1F', ...FLOOR_ORDER.filter((k) => FLOORS[k])].filter((k) => k !== c.floor);
+        const opts = keys.map((k, i) => [L[i], k, k === '1F' ? '1F　安检大厅' : FLOORS[k].label]);
+        if (!FLOORS.B6) opts.push([L[opts.length], 'B6x', 'B6　驯化副本训练场（需教官授权）']);
+        opts.push([L[opts.length], 'B6+', '（同时按住 B6 与关门键）'], [L[opts.length + 1], null, '离开']);
         const choice = await dialog([`（书脊井 · ${c.floor}。轿厢面板：12F…1F，B1–B6。没有 B7。）`, ...opts.map((o) => `> 选项 ${o[0]}：${o[2]}`)]);
         const pick = opts.find((o) => o[0] === choice); if (!pick || !pick[1]) return;
+        if (pick[1] === 'B6x') { toast('B6 的按钮是暗的：「训练场 · 需教官授权」。'); return; }
         if (pick[1] === 'B6+') {
-          const egg = await dialog(['（B6 的按钮是暗的：「训练场 · 需教官授权」。）', '> 选项 A：按住 B6，同时按住关门键', '> 选项 B：算了']);
-          if (egg !== 'A') return;
           G.freeze(true); toast('（你按住两个按钮。）', { ms: 7000, whisper: true }); await sleep(7000); G.freeze(false);
           const it = content.get('int_spine_b7'); if (it) await runInteractable(G, it, null); G.glitch?.(1.2); return;
         }
@@ -444,5 +448,5 @@ export function setupElevator(G, { toast, dialog, fade, runInteractable }) {
   inter.volume({ box: [-2.6, LEVELS.B5 - 1, -101.2, 2.6, LEVELS.B5 + 3, -99.4], enabled: () => !ctx.vault?.door?.opened && !!ctx.vault?.door, enter: () => { player.pos.z = -98.6; player.vel?.set(0, 0, 0); } });
   if (ctx.vault) ctx.vault.onDoorOpen = () => { audio.sfx('S12', 0.9); toast('（泄压声。金库门慢慢转开。）', { ms: 3500, whisper: true }); };
 }
-const levelY = (f) => (f === '1F' ? FLOOR : LEVELS[f] ?? 0);
+const levelY = (f) => (f === '1F' ? FLOOR : FLOORS[f]?.y ?? 0);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
