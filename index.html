@@ -1,1 +1,53 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>叙事管理局</title></head><body><script type="module" src="./src/main.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>叙事管理局</title>
+<meta name="description" content="《叙事管理局》第一人称 3D 网页探索游戏：新人报到第一天。" />
+<style>
+@font-face { font-family: 'NB Serif'; src: url('fonts/serif-bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'NB Serif'; src: url('fonts/serif-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'NB Sans'; src: url('fonts/sans-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+#reader .paper { background-image: url('assets/tex/Paper006_color.webp'); }
+#reader .paper.dark, #reader .paper.screen, #reader .paper.phone { background-image: none; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="loading">
+  <svg class="emb" viewBox="-60 -60 120 120"><g fill="none" stroke="#d8b469"><circle r="44" stroke-width="3"/><circle r="35" stroke-width="1"/></g><path fill="#e9cf8c" d="M0-56 7-7 56 0 7 7 0 56-7 7-56 0-7-7Z"/><path fill="#b8964c" d="M0-30 4-4 30 0 4 4 0 30-4 4-30 0-4-4Z" transform="rotate(45)"/><path fill="#16224a" d="M0-8 5 0 0 8-5 0Z"/></svg>
+  <h1>叙事管理局</h1>
+  <div class="sub">NARRATIVE BUREAU · 京城总部</div>
+  <div class="bar"><i id="loadbar"></i></div>
+  <div class="tip" id="loadtip">正在装订页面……</div>
+  <button id="start" class="hidden">进入</button>
+</div>
+<div id="hud" class="hidden">
+  <div id="cross"></div>
+  <div id="prompt"></div>
+  <div id="obj"><div class="t">当前目标</div><div class="m" id="objm"></div><div class="o" id="objo"></div></div>
+  <div id="area"><div class="n" id="arean"></div><div class="e" id="areae"></div></div>
+  <div id="toast"></div>
+  <div id="inv"></div>
+  <div id="fps"></div>
+</div>
+<div id="dlg" class="hidden"><div class="who" id="dlgwho"></div><div class="line" id="dlgline"></div><div class="choices" id="dlgch"></div><div class="next">E / 点击 继续</div></div>
+<div id="reader" class="hidden"><div class="paper" id="paper"></div><div class="help">滚轮 / ← → 翻页　·　E 下一页　·　Esc 关闭</div></div>
+<div id="pause" class="hidden"><div class="panel">
+  <h1>暂停</h1><div class="sub">叙事管理局 · 京城总部</div>
+  <div class="row"><span>画质</span><div class="seg" id="qseg"></div></div>
+  <div class="row"><span>鼠标灵敏度</span><input type="range" id="sens" min="0.3" max="3" step="0.05" value="1"></div>
+  <div class="row"><span>视野（FOV）</span><input type="range" id="fov" min="55" max="95" step="1" value="70"></div>
+  <div class="row"><span>主音量</span><input type="range" id="vol" min="0" max="1" step="0.05" value="0.8"></div>
+  <div class="row"><span>音乐</span><input type="range" id="volm" min="0" max="1" step="0.05" value="0.55"></div>
+  <div class="row"><span>显示帧率</span><div class="seg" id="fpsseg"><span data-v="0" class="on">关</span><span data-v="1">开</span></div></div>
+  <div class="keys">WASD 移动　·　Shift 奔跑　·　空格 跳　·　E 查看 / 拾取 / 翻页　·　Tab 物品　·　Esc 暂停</div>
+  <div class="btns"><button class="btn" id="resume">继续</button><button class="btn" id="showcred">致谢</button></div>
+  <div id="credits" class="hidden"></div>
+</div></div>
+<div id="chapter"><div class="a" id="chapa"></div><div class="b" id="chapb"></div></div>
+<div id="fade"></div>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

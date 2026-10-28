@@ -1,1 +1,245 @@
-document.body.textContent="叙事管理局 · 构建中";
+// 《叙事管理局》入口：渲染、加载、分区、控制、交互、剧情
+import * as THREE from 'three';
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
+import { Renderer, QUALITY } from './engine/renderer.js';
+import { manager, loadHDR, setAnisotropy } from './engine/assets.js';
+import { World, Player } from './engine/physics.js';
+import { Interactions } from './engine/interact.js';
+import { Audio } from './engine/audio.js';
+import { content } from './engine/content.js';
+import { PlanarReflector } from './engine/reflect.js';
+import { time } from './engine/fx.js';
+import { buildExterior, updateExterior, FLOOR } from './world/exterior.js';
+import { buildInteriors, updateInteriors } from './world/interiors.js';
+import { mats } from './world/mats.js';
+import { setupStory } from './story.js';
+import * as UI from './ui/ui.js';
+import { SHOTS } from './shots.js';
+
+const params = new URLSearchParams(location.search);
+const SHOT = params.get('shot');
+const LOG = (...a) => { if (SHOT) console.log('[NB]', ...a); };
+window.__SHOT__ = !!SHOT;
+RectAreaLightUniformsLib.init();
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.05, 6000);
+scene.add(camera);
+const R = new Renderer(document.getElementById('c'), scene, camera);
+const savedQ = params.get('q') || localStorage.getItem('nb_quality') || (SHOT ? 'high' : 'high');
+setAnisotropy(QUALITY[savedQ]?.anis ?? 8);
+
+const ctx = { screens: [] };
+const world = new World();
+const player = new Player(world);
+const inter = new Interactions(camera);
+scene.add(inter.proxies);
+const audio = new Audio(camera);
+const G = { scene, camera, ctx, world, player, inter, audio, zone: null, onUpdate: [], onZone: [], frozen: false };
+window.G = G;
+
+// —— 光照 ——
+const sun = new THREE.DirectionalLight(0xfff0dc, 3.4);
+sun.castShadow = true; sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.04;
+const SUN_DIR = new THREE.Vector3(0.45, 0.62, 0.64).normalize();
+scene.add(sun, sun.target);
+const hemi = new THREE.HemisphereLight(0xbfd4ff, 0x3a3428, 0.25); scene.add(hemi);
+function setShadowSize(s) { sun.shadow.mapSize.set(s, s); sun.shadow.map?.dispose(); sun.shadow.map = null; const c = sun.shadow.camera; c.left = -110; c.right = 110; c.top = 110; c.bottom = -110; c.near = 1; c.far = 600; c.updateProjectionMatrix(); }
+
+let envSky = null, envHall = null, skyTex = null;
+const reflector = new PlanarReflector(R.gl, { y: FLOOR });
+
+function applyQuality(q) {
+  R.setQuality(q); localStorage.setItem('nb_quality', q);
+  setShadowSize(R.q.shadow);
+  scene.traverse((o) => { if (o.isSpotLight && o.userData.qualityShadow) o.castShadow = R.q.shadowsLocal; });
+  for (const s of ctx.shafts ?? []) s.visible = R.q.shafts;
+  UI.ui.markQ?.(q);
+}
+
+// —— 加载 ——
+manager.onProgress = (url, n, total) => UI.loadProgress(0.1 + 0.8 * (n / total), `正在装订页面…… ${n}/${total}`);
+async function boot() {
+  UI.loadProgress(0.02, '读取剧情与档案……');
+  await content.load();
+  await audio.init();
+  const pm = new THREE.PMREMGenerator(R.gl);
+  const [sky, hall] = await Promise.all([loadHDR('sky_2k'), loadHDR('hall_1k')]);
+  skyTex = sky;
+  envSky = sky ? pm.fromEquirectangular(sky).texture : null;
+  envHall = hall ? pm.fromEquirectangular(hall).texture : null;
+  scene.background = sky; scene.backgroundIntensity = 1.0;
+  scene.environment = envSky;
+  LOG('hdr ok'); UI.loadProgress(0.1, '建造主楼……');
+  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx);
+  LOG('world built'); scene.add(world.build()); LOG('bvh ok');
+  // 反射地面
+  const M = mats();
+  reflector.patch(M.hallFloor, 0.55); reflector.patch(M.hallFloorDark, 0.5);
+  scene.traverse((o) => { if (o.isMesh && (o.material === M.hallFloor || o.material === M.hallFloorDark)) reflector.hide.push(o); if (o.userData.isShaft) reflector.hide.push(o); });
+  // 主屏射线代理
+  const proxy = new THREE.Mesh(new THREE.BoxGeometry(15, 6.6, 0.8), new THREE.MeshBasicMaterial({ visible: false })); proxy.position.copy(ctx.mainScreenPos); inter.proxies.add(proxy); G.mainScreenProxy = proxy;
+  setupStory(G);
+  applyQuality(savedQ);
+  UI.initPause({
+    quality: QUALITY, setQuality: applyQuality,
+    setSens: (v) => { sens = v; }, setFov: (v) => { camera.fov = v; camera.updateProjectionMatrix(); },
+    setVol: (v) => audio.setVolumes({ master: v }), setMusic: (v) => audio.setVolumes({ music: v }), setFps: (v) => { showFps = v; if (!v) UI.setFpsText(''); },
+    credits: await fetch('./assets/CREDITS.txt').then((r) => (r.ok ? r.text() : '')).catch(() => ''),
+  });
+  UI.onResume(() => lock());
+  // 出生点
+  player.pos.set(0, 0.05, 72); player.yaw = 0; player.pitch = 0.02; player.spawn = player.pos.clone();
+  // 预编译
+  UI.loadProgress(0.95, '点亮灯光……');
+  for (const z of Object.values(ctx.zones)) z.visible = true;
+  if (!SHOT) { try { await R.gl.compileAsync(scene, camera); } catch { /* 旧浏览器 */ } }
+  LOG('compiled');
+  setZone('plaza', true);
+  UI.updateObjective();
+  if (SHOT) return startShot();
+  UI.loadDone(start);
+}
+
+let started = false;
+async function start() {
+  started = true; UI.ui.state = 'play';
+  audio.resume(); audio.setZone('plaza');
+  lock();
+  setTimeout(async () => { await G.read(UI.docPages('doc_plaza_notice_phone')); UI.updateObjective(); }, 900);
+}
+
+// —— 分区与可见性 ——
+const AREA_NAMES = { plaza: ['中轴广场 · 规则之泉', 'CENTRAL PLAZA'], gate: ['正门 · 服务台', 'MAIN GATE'], security_hall: ['安检大厅', 'SECURITY HALL'], archive: ['人事档案馆', 'PERSONNEL ARCHIVE'], archive_b1: ['B1 · 密集库', 'ARCHIVE STACKS · B1'] };
+function zoneAt(p) {
+  const Y = FLOOR;
+  if (p.x < -17.6 && p.x > -57 && p.z < -31 && p.z > -71) return p.y < Y - 2.5 ? 'archive_b1' : 'archive';
+  if (Math.abs(p.x) < 18 && p.z < -29.9 && p.z > -77) return 'security_hall';
+  if (Math.abs(p.x) < 14.5 && p.z < -5.6 && p.z > -30) return 'gate';
+  return 'plaza';
+}
+const VIS = {
+  plaza: { exterior: 1, gate: 1, security_hall: 1, archive: 0, archive_b1: 0 },
+  gate: { exterior: 1, gate: 1, security_hall: 1, archive: 0, archive_b1: 0 },
+  security_hall: { exterior: 0, gate: 1, security_hall: 1, archive: 1, archive_b1: 0 },
+  archive: { exterior: 0, gate: 0, security_hall: 1, archive: 1, archive_b1: 1 },
+  archive_b1: { exterior: 0, gate: 0, security_hall: 0, archive: 1, archive_b1: 1 },
+};
+const ZONE_LOOK = {
+  plaza: { env: 'sky', envI: 1.0, sun: 3.4, exp: 1.0, fog: [0xb4c2d2, 0.0009], hemi: 0.25 },
+  gate: { env: 'hall', envI: 0.9, sun: 3.4, exp: 1.25, fog: [0x2a241c, 0.006], hemi: 0.15 },
+  security_hall: { env: 'hall', envI: 0.75, sun: 0, exp: 1.45, fog: [0x1d1915, 0.010], hemi: 0.12 },
+  archive: { env: 'hall', envI: 0.7, sun: 0, exp: 1.5, fog: [0x241c14, 0.012], hemi: 0.1 },
+  archive_b1: { env: 'hall', envI: 0.35, sun: 0, exp: 1.5, fog: [0x10141a, 0.02], hemi: 0.05 },
+};
+let targetExp = 1, curExp = 1;
+function setZone(z, force = false) {
+  if (z === G.zone && !force) return;
+  const prev = G.zone; G.zone = z;
+  const vis = VIS[z];
+  scene.getObjectByName('exterior').visible = !!vis.exterior;
+  for (const [k, g] of Object.entries(ctx.zones)) g.visible = !!vis[k];
+  const L = ZONE_LOOK[z];
+  scene.environment = L.env === 'sky' ? envSky : envHall;
+  scene.environmentIntensity = L.envI;
+  sun.intensity = L.sun; sun.castShadow = L.sun > 0; hemi.intensity = L.hemi;
+  scene.fog = new THREE.FogExp2(L.fog[0], L.fog[1]);
+  targetExp = L.exp;
+  reflector.enabled = z === 'gate' || z === 'security_hall';
+  if (prev && AREA_NAMES[z]) UI.showArea(...AREA_NAMES[z]);
+  audio.setZone(z);
+  for (const f of G.onZone) f(z, prev);
+}
+
+// —— 输入 ——
+const keys = {}; let sens = 1, showFps = false;
+const canvas = R.gl.domElement;
+function lock() { if (SHOT) return; canvas.requestPointerLock?.(); }
+canvas.addEventListener('click', () => { if (started && UI.ui.state === 'play' && document.pointerLockElement !== canvas) lock(); else if (UI.ui.state === 'dialog') UI.dialogNext(); });
+document.addEventListener('pointerlockchange', () => {
+  const locked = document.pointerLockElement === canvas;
+  if (!locked && started && UI.ui.state === 'play') { UI.showPause(true); audio.sfx('S22', 0.6); }
+  if (locked && UI.ui.state === 'pause') UI.showPause(false);
+});
+addEventListener('mousemove', (e) => {
+  if (document.pointerLockElement !== canvas || G.frozen || UI.ui.state !== 'play') return;
+  player.yaw -= e.movementX * 0.0022 * sens; player.pitch -= e.movementY * 0.0022 * sens;
+  player.pitch = THREE.MathUtils.clamp(player.pitch, -1.45, 1.45);
+});
+addEventListener('keydown', (e) => {
+  keys[e.code] = true;
+  if (e.code === 'Tab') { e.preventDefault(); const items = content.itemsList(); UI.toast(items.length ? '物品：\n' + items.map((i) => `${i.name}　—　${i.desc ?? ''}`).join('\n') + (content.has('item_file') ? '\n（按 R 重读入职档案）' : '') : '你身上只有一部手机。', { ms: 5000 }); }
+  if (e.code === 'KeyR' && UI.ui.state === 'play' && G.reopenFile) G.reopenFile();
+  if (e.code === 'KeyE') {
+    if (UI.ui.state === 'dialog') return UI.dialogNext();
+    if (UI.ui.state === 'reader') return UI.readerNextOrClose();
+    if (UI.ui.state === 'play' && !G.frozen && inter.current) { audio.sfx('S15', 0.5); inter.current.use(); }
+  }
+  if (UI.ui.state === 'reader') {
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') UI.readerFlip(1);
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') UI.readerFlip(-1);
+    if (e.code === 'Escape') UI.closeReader();
+  }
+  if (e.code === 'Backquote' && e.shiftKey) player.noclip = !player.noclip;
+});
+addEventListener('keyup', (e) => { keys[e.code] = false; });
+G.read = async (pages) => { if (!pages?.length) return; await UI.openReader(pages); if (started && document.pointerLockElement !== canvas) lock(); };
+G.freeze = (f) => { G.frozen = f; };
+G.pitchDown = () => player.pitch < -0.25;
+G.glitch = (s) => { R.ca.offset.set(0.004 * s, 0.003 * s); setTimeout(() => R.ca.offset.set(0.0006, 0.0004), 600); };
+
+// —— 主循环 ——
+const clock = new THREE.Clock();
+let frames = 0, fpsAcc = 0, fpsN = 0, stepAcc = 0;
+function loop() {
+  if (window.__READY__) return;
+  requestAnimationFrame(loop);
+  const dt = Math.min(clock.getDelta(), 0.1);
+  if (!envSky && !SHOT && !started) return;
+  time.value += dt;
+  const t = time.value;
+  // 控制
+  if (!SHOT && started) {
+    const canMove = UI.ui.state === 'play' && !G.frozen && document.pointerLockElement === canvas;
+    const input = canMove ? { f: (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0), r: (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0), run: keys.ShiftLeft || keys.ShiftRight, jump: keys.Space, up: keys.KeyQ ? 1 : 0, down: keys.KeyZ ? 1 : 0 } : { f: 0, r: 0, run: false, jump: false, up: 0, down: 0 };
+    const before = player.stepDist;
+    player.update(dt, input);
+    stepAcc += player.stepDist - before;
+    if (stepAcc > (input.run ? 0.95 : 0.72)) { stepAcc = 0; audio.footstep(world.surfaceAt(player.pos.clone().add(new THREE.Vector3(0, 0.3, 0)))); }
+    player.applyCamera(camera);
+    setZone(zoneAt(player.pos));
+    const spot = inter.update(dt, player.pos, UI.ui.state === 'play' && !G.frozen);
+    UI.setPrompt(spot ? (typeof spot.prompt === 'function' ? spot.prompt() : spot.prompt) : '');
+    for (const f of G.onUpdate) f(dt, t);
+  }
+  // 太阳阴影跟随相机
+  const focus = camera.position.clone(); focus.y = 0;
+  sun.target.position.copy(focus); sun.position.copy(focus).addScaledVector(SUN_DIR, 300);
+  const texel = 220 / sun.shadow.mapSize.x; sun.target.position.x = Math.round(sun.target.position.x / texel) * texel; sun.target.position.z = Math.round(sun.target.position.z / texel) * texel; sun.position.copy(sun.target.position).addScaledVector(SUN_DIR, 300);
+  // 曝光适应
+  curExp += (targetExp - curExp) * Math.min(1, dt * 1.5);
+  R.setExposure(curExp);
+  for (const s of ctx.screens) s.update(dt, t);
+  updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t);
+  reflector.setY(FLOOR); reflector.update(scene, camera, R.q.reflect);
+  R.render(dt);
+  frames++;
+  if (showFps) { fpsAcc += dt; fpsN++; if (fpsAcc > 0.5) { UI.setFpsText(`${Math.round(fpsN / fpsAcc)} fps · ${R.gl.info.render.calls} dc · ${(R.gl.info.render.triangles / 1e6).toFixed(2)}M △`); fpsAcc = 0; fpsN = 0; } }
+  if (SHOT && shotStarted) { shotN++; LOG('frame', shotN, (performance.now() / 1000).toFixed(1)); if (shotN === shotFrames) window.__READY__ = true; }
+}
+let shotFrames = 30, shotStarted = false, shotN = 0;
+function startShot() {
+  const s = SHOTS[SHOT] ?? SHOTS.plaza;
+  document.getElementById('loading').classList.add('hidden');
+  if (params.get('hud')) document.getElementById('hud').classList.remove('hidden');
+  camera.position.set(...s.pos);
+  if (s.look) camera.lookAt(...s.look); else camera.rotation.set(s.pitch ?? 0, s.yaw ?? 0, 0, 'YXZ');
+  if (s.fov) { camera.fov = s.fov; camera.updateProjectionMatrix(); }
+  setZone(s.zone ?? zoneAt(new THREE.Vector3(s.pos[0], s.pos[1] - 1.6, s.pos[2])), true);
+  curExp = targetExp; time.value = s.t ?? 12;
+  shotFrames = Number(params.get('frames') || 8);
+  shotStarted = true;
+  window.__SHOT_INFO__ = () => ({ calls: R.gl.info.render.calls, tris: R.gl.info.render.triangles, zone: G.zone });
+}
+loop();
+boot().catch((e) => { console.error(e); UI.loadProgress(1, '加载失败：' + e.message); });

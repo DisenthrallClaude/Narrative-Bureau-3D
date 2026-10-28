@@ -54,6 +54,13 @@ wall_clock|03_command_center/wall_clock/wall_clock_1k.gltf|512|1
 desk_lamp|06_director_office/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf|512|1
 clipboard|03_command_center/clipboard/clipboard_1k.gltf|512|1
 laptop|03_command_center/classic_laptop/classic_laptop_1k.gltf|1024|1
+grandfather_clock|06_director_office/vintage_grandfather_clock_01/vintage_grandfather_clock_01_2k.gltf|1024|1
+picture_frame|06_director_office/fancy_picture_frame_01/fancy_picture_frame_01_1k.gltf|1024|1
+fluorescent|07_underground_machine/mounted_fluorescent_lights/mounted_fluorescent_lights_1k.gltf|512|1
+chandelier|06_director_office/Chandelier_01/Chandelier_01_2k.gltf|1024|1
+gothic_cabinet|06_director_office/GothicCabinet_01/GothicCabinet_01_2k.gltf|1024|1
+caged_light|07_underground_machine/caged_hanging_light/caged_hanging_light_1k.gltf|512|1
+tv_screen|02_security_hall/usd_tv_100mrgb95bu/tv_100mrgb95bu.glb|1024|0.05
 "
 echo "$LIST" | while IFS='|' read n src tex r; do
   [ -z "$n" ] && continue

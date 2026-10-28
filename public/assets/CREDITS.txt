@@ -1,0 +1,66 @@
+叙事管理局 · 致谢
+
+【三维模型 · CC BY 4.0（须署名）】
+· "Burdett-Coutts Fountain" by artfletch (https://sketchfab.com/3d-models/b0ec2ec4e15143e3afe7b4a002bc6ecb) licensed under CC BY 4.0. Changes may have been made.
+· "Gothic cathedral" by Gnemegorl (https://sketchfab.com/3d-models/8b8f08c852e949ecba39ca0dd29448f0) licensed under CC BY 4.0. Changes may have been made.
+· "Gothic Fan Vaulting" by Robert Kiraly (https://sketchfab.com/3d-models/96f57fa5ee634de482a038543351fb9a) licensed under CC BY 4.0. Changes may have been made.
+· "Gothic Memorial Spire - Rookwood Cemetery Sydney" by rookwoodgothica (https://sketchfab.com/3d-models/74a9e2267a684d31abbe9001e5577442) licensed under CC BY 4.0. Changes may have been made.
+· "Rose Window - Valencia Cathedral, Spain" by egiptologo91 (https://sketchfab.com/3d-models/628a1dba139849b282f7280feec1f2a0) licensed under CC BY 4.0. Changes may have been made.
+· "CCTV Camera" by Smoggybeard (https://sketchfab.com/3d-models/e69d5eb37ffb4f188e4d3c84a5d79cdc) licensed under CC BY 4.0. Changes may have been made.
+· "Double full height turnstile (low poly)" by anDDDres (https://sketchfab.com/3d-models/993581a938ff4bd0aff70b77f3278b81) licensed under CC BY 4.0. Changes may have been made.
+· "Subway Turnstile" by Gunnar Correa (https://sketchfab.com/3d-models/eed7f05ffcff4251a3f1cbef98342093) licensed under CC BY 4.0. Changes may have been made.
+· "tv_100mrgb95bu" — LG Electronics (via NVIDIA SimReady), https://huggingface.co/datasets/LGElectronics/simready-assets, licensed under CC BY 4.0. Changes made (format conversion).
+· "Office Chair" by j.a.m (https://sketchfab.com/3d-models/41973aa1808d4a13b84c24497fc77c63) licensed under CC BY 4.0. Changes may have been made.
+· "File Cabinet" by Siberia (https://sketchfab.com/3d-models/f0742791a0ea432db1f432c24de83867) licensed under CC BY 4.0. Changes may have been made.
+· "Filing Cabinets" by TooManyDemons (https://sketchfab.com/3d-models/7ef1ca295ff14af2abcbe0ae0168a241) licensed under CC BY 4.0. Changes may have been made.
+
+【三维模型 · CC0】
+· Concrete Road Barrier 02 (concrete_road_barrier_02)
+· Bollard
+· Flag Pole
+· Park Bench
+· Street Planter
+· Gothic Statue (gothic_statue)
+· Large Castle Door (large_castle_door)
+· Large Iron Gate (large_iron_gate)
+· Lion Head (lion_head)
+· Modular Street Seating (modular_street_seating)
+· Planter Box 01 (planter_box_01)
+· Street Lamp 01 (street_lamp_01)
+· Street Lamp 02 (street_lamp_02)
+· Water Manhole Cover (water_manhole_cover)
+· Wet Floor Sign 01 (WetFloorSign_01)
+· Fire Alarm (fire_alarm)
+· Korean Fire Extinguisher 01 (korean_fire_extinguisher_01)
+· Metal Detector (metal_detector)
+· Modern Arm Chair 01 (modern_arm_chair_01)
+· Modern Ceiling Lamp 01 (modern_ceiling_lamp_01)
+· Potted Plant 02 (potted_plant_02)
+· Security Camera 01 (security_camera_01)
+· Classic Laptop (classic_laptop)
+· Clipboard (clipboard)
+· Metal Office Desk (metal_office_desk)
+· Wall Clock (wall_clock)
+· Binder Notebook (binder_notebook)
+· Book Encyclopedia Set 01 (book_encyclopedia_set_01)
+· Cardboard Box 01 (cardboard_box_01)
+· Drawer Cabinet (drawer_cabinet)
+· Cardboard Box Stack
+· Magnifying Glass 01 (magnifying_glass_01)
+· Stationery Supplies (stationery_supplies)
+· Steel Frame Shelves 01 (steel_frame_shelves_01)
+· Steel Frame Shelves 03 (steel_frame_shelves_03)
+· Vintage Stapler (vintage_stapler)
+· Worn Metal Rack (worn_metal_rack)
+· Chandelier 01 (Chandelier_01)
+· Gothic Cabinet 01 (GothicCabinet_01)
+· Desk Lamp Arm 01 (desk_lamp_arm_01)
+· Fancy Picture Frame 01 (fancy_picture_frame_01)
+· Caged Hanging Light (caged_hanging_light)
+· Mounted Fluorescent Lights (mounted_fluorescent_lights)
+
+【PBR 材质】ambientCG（CC0）：Granite003A、Marble006/012/016/021、Metal009/027/046A/048A、PavingStones142、Tiles138、Terrazzo005、Paper006、Cardboard004、Fabric023、Concrete034/036、Onyx013、Wood051、WoodFloor064、Carpet012、Leather026、Facade001
+【HDRI】Poly Haven（CC0）：kloofendal_48d_partly_cloudy_puresky（Greg Zaal, Jarod Guest）、entrance_hall（Sergej Majboroda）、large_corridor（Sergej Majboroda）
+【字体】Noto Serif SC / Noto Sans SC（SIL Open Font License 1.1）
+【引擎】three.js（MIT）、three-mesh-bvh（MIT）、postprocessing（Zlib）、N8AO（CC0）
+【剧情与美术设定】叙事管理局项目组；部分贴图由 GPT image 生成

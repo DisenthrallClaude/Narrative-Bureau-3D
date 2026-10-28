@@ -1,0 +1,3171 @@
+{
+ "version": "v4",
+ "updated": "2026-10-29",
+ "areas_covered": [
+  "abyss_city",
+  "abyss_core",
+  "abyss_exam",
+  "abyss_gate",
+  "abyss_tide",
+  "archive",
+  "armory",
+  "canteen",
+  "citizen_service",
+  "command_center",
+  "director_office",
+  "dorm",
+  "exam_center",
+  "gate",
+  "helipad",
+  "interrogation",
+  "lab",
+  "liaison",
+  "library",
+  "medical",
+  "memorial",
+  "metro_exit",
+  "offices",
+  "plaza",
+  "publicity",
+  "security_hall",
+  "seventh_entry",
+  "seventh_gutter",
+  "seventh_ops",
+  "seventh_rewrite",
+  "seventh_wrap",
+  "spine_shaft",
+  "training",
+  "vault",
+  "wall_posts",
+  "zone_control"
+ ],
+ "schema": {
+  "documents": "可读文本：id / area（见 AREAS.md）/ location（放置位置描述）/ type / title / text（中文，\\n 换行）/ 可选 texture（textures 里的 id）、page、requires、note",
+  "interactables": "交互：id / area / location / type（use|look|dialogue|npc_quest|trigger_quest|trigger_easter_egg|puzzle|read）/ prompt / 可选 lines、result_text、sequence、gives、requires、completes、then、unlocks",
+  "hints": "提示与目标：id / area / location / type（objective|objective_optional|tooltip|whisper|wayfinding|chapter_card）/ text / step、order、done_when",
+  "textures": "贴图：id / area / location / type / path（相对 content/）/ status（ready|pending）/ size / source"
+ },
+ "items": [
+  {
+   "id": "item_badge",
+   "name": "临时入职证",
+   "texture": "tex_item_badge",
+   "desc": "编号 XS-2026-1029-07，当日有效。姓名一栏是空的。"
+  },
+  {
+   "id": "item_file",
+   "name": "入职档案袋",
+   "texture": "tex_file_cover",
+   "desc": "档号 07-0-0000。封面盖着「已归档」，又被一枚「柒」字黑章压住。"
+  }
+ ],
+ "quest_flow": [
+  "q0_arrive",
+  "q1_badge",
+  "q2_scan",
+  "q3_file",
+  "q4_read_1",
+  "q4_read_2",
+  "q4_read_3",
+  "q5_b1(可选)"
+ ],
+ "documents": [
+  {
+   "id": "doc_plaza_notice_phone",
+   "area": "plaza",
+   "location": "开场 UI：玩家手机屏幕（游戏开始自动弹出）",
+   "type": "phone_message",
+   "title": "【叙事管理局人事处】报到通知",
+   "text": "您好，留白同志：\n\n经审核，您已被录用为叙事管理局京城总部新入职人员。请于二〇二六年十月二十九日上午九时至十一时，前往总部正门服务台报到。\n\n报到须知：\n1. 请携带本通知与本人有效证件。\n2. 入局须经安检大厅文本完整性扫描，请勿携带任何来源不明的纸质物品。\n3. 报到后请前往西翼人事档案馆领取并核对本人入职档案。\n\n欢迎加入。我们制定规则，不是为了折断谁的笔，而是为了不让这人间沦为废稿。\n\n——叙事管理局 人事处\n（本短信由系统自动发送，请勿回复。此号码已于 2023 年 6 月 8 日向您发送过同一条通知。）",
+   "note": "姓名处故意写「留白」，像系统把空字段直接显示成了占位词。末尾括号是第一处异常。"
+  },
+  {
+   "id": "doc_plaza_fountain_plaque",
+   "area": "plaza",
+   "location": "规则之泉南侧，泉池外沿的黑石铭牌（齐腰高，斜面朝上）",
+   "type": "plaque",
+   "title": "规则之泉",
+   "text": "规则之泉\n\n建于大夏立国之初，系经本局驯化之三级畸变物。\n凡落入泉中之字，错者自正，衍者自消，缺者——\n\n（铭文到这里就断了。下面一行字的位置被磨平了。）\n\n泉水不可饮用。请勿向泉中投掷写有文字的物品。\n叙事管理局 立",
+   "note": "「缺者——」没有下文：缺掉的字泉水也补不上，呼应主角的「留白」。"
+  },
+  {
+   "id": "doc_plaza_newspaper",
+   "area": "plaza",
+   "location": "广场东侧第三张长椅的椅缝里，一张被风吹皱的报纸",
+   "type": "newspaper",
+   "title": "《京城晚报》第 A03 版（残页）",
+   "text": "通州区现实稳定度连续三日低于 96%\n本报讯　据叙事管理局监测指挥中心发布，受某未登记 1 级禁区影响，通州区现实稳定度自本月 26 日起连续三日低于 96%。管理局提醒市民，近期出行请留意手机「现实稳定度」提示，如遇同一段路反复经过，请原地等待救援。\n\n2027 全国叙事高考报名将于明年三月开启\n本报讯　教育部与叙事管理局联合发文，2027 年全国叙事高考「叙事觉醒」加试仍于理论考试结束次日举行。去年全国觉醒率为千分之三点零二……\n\n寻人启事\n寻找一位二〇二三年参加加试的考生。我们不记得他的名字，也不记得他的样子，只记得家里多了一双没人穿的鞋。知情者请联系——（后面被撕掉了）"
+  },
+  {
+   "id": "doc_plaza_screen_countdown",
+   "area": "plaza",
+   "location": "广场南端大台阶上方的户外 LED 屏",
+   "type": "screen",
+   "title": "高考倒计时屏",
+   "text": "距 2027 全国叙事高考\n222 天\n\n今日京城　晴　17℃\n叙事污染指数 37（良）\n现实稳定度 97.3%\n\n叙事管理局 · 教育部 联合提醒：备考期间请勿私自进入任何禁区刷取「觉醒经验」。"
+  },
+  {
+   "id": "doc_plaza_flagpole",
+   "area": "plaza",
+   "location": "旗杆阵列中间那根（第 7 根）旗杆底座的铜牌",
+   "type": "plaque",
+   "title": "旗杆铭牌",
+   "text": "局旗　第七杆\n\n本杆于每日升旗时悬挂空白旗一面。\n——依《机要条例》第七条执行，不予解释。",
+   "note": "这里的局旗是白的，贴图用 tex_flag_blank（暂缺，build-lead 可以把局旗贴图去饱和、去局徽来做）。"
+  },
+  {
+   "id": "doc_gate_visitor_rules",
+   "area": "gate",
+   "location": "正门门廊左侧，黑石访客须知碑（T01 样张）",
+   "type": "sign",
+   "title": "叙事管理局 · 访客须知",
+   "text": "一、入局请佩戴访客证件，全程接受叙事稳定监测。\n二、请勿触碰任何标注「畸变」字样的物品。\n三、若听见纸页翻动声，请立即联系最近的工作人员。\n四、今日现实稳定度：97.3%。\n\n我们制定规则，不是为了折断谁的笔，而是为了不让这人间沦为废稿。",
+   "texture": "tex_gate_visitor_rules"
+  },
+  {
+   "id": "doc_gate_newcomer",
+   "area": "gate",
+   "location": "正门门廊右侧，黑石墙上的黄铜铭牌",
+   "type": "plaque",
+   "title": "新入职人员报到须知",
+   "text": "一、报到时间：上午九时至十一时。\n二、请于正门服务台出示报到通知，领取临时入职证。\n三、经安检大厅完成文本完整性扫描后，前往西翼人事档案馆领取本人入职档案。\n四、入职档案须当场核对。如发现信息与本人不符，请勿外传，立即报告。\n五、自踏入本局起，您的每一句话都将被记录在案。\n\n叙事管理局 人事处",
+   "texture": "tex_gate_newcomer"
+  },
+  {
+   "id": "doc_gate_directory",
+   "area": "gate",
+   "location": "门廊进门正对面、服务台左侧的立式导视牌",
+   "type": "sign",
+   "title": "楼层导视",
+   "text": "↑ 一层　安检大厅\n↑ 一层　市民服务 · 叙事高考加试报名\n→ 东翼　监测指挥中心\n← 西翼　人事档案馆\n↑ 北翼　证物与畸变物收容库（授权人员）\n⇡ 三层　办公区 · 局长室\n⇣ 地下　—— 暂未开放 ——\n\n新入职人员请先至西翼人事档案馆领取入职档案",
+   "texture": "tex_gate_directory"
+  },
+  {
+   "id": "doc_gate_brochure",
+   "area": "gate",
+   "location": "服务台台面右端的亚克力折页架",
+   "type": "brochure",
+   "title": "《入职须知》折页",
+   "text": "欢迎来到叙事管理局\n\n【我们是谁】\n叙事管理局是大夏最高级别的超凡执法与管理机构，下辖各省市分局，负责全国叙事高考、畸变禁区封锁与叙事犯罪缉拿。\n\n【你的第一天】\n09:00　正门服务台报到，领取临时入职证\n09:20　安检大厅文本完整性扫描\n09:40　西翼人事档案馆领取入职档案\n10:30　入职培训（地点另行通知）\n\n【三条忠告】\n1. 在局里，不要随便念出别人的全名。\n2. 看到不属于这层楼的楼层号，不要去。\n3. 如果有人说他认识你，而你不认识他——先别急着否认。\n\n人事处 印制　第 4 版",
+   "note": "「第 4 版」：玩家这是第四次报到。"
+  },
+  {
+   "id": "doc_gate_queue_screen",
+   "area": "gate",
+   "location": "服务台后上方的叫号屏",
+   "type": "screen",
+   "title": "叫号屏",
+   "text": "请　XS-2026-1029-07　号\n到　3　号窗口办理入职报到\n\n——\n上次叫号：XS-2025-0611-07（未到）\n上上次叫号：XS-2024-0302-07（未到）",
+   "note": "历次「07」号都没来，因为那时他已经被归档。"
+  },
+  {
+   "id": "doc_gate_misprint",
+   "area": "gate",
+   "location": "服务台打印机出纸口（领证后出现，可拾取）",
+   "type": "card",
+   "title": "作废的入职证",
+   "text": "临时入职证\n姓名：林——　陈——　（第三个名字被打印头来回打穿了，看不出字）\n部门：新人培训处\n编号：XS-2026-1029-07\n\n（卡面斜印：作废）",
+   "note": "三个名字都被划掉了：前三次报到用过的名字。"
+  },
+  {
+   "id": "doc_sec_main_screen",
+   "area": "security_hall",
+   "location": "大厅中央拱顶下悬挂的巨型 LED 大屏",
+   "type": "screen",
+   "title": "安检大厅实时监测",
+   "text": "叙事管理局 · 京城总部 安检大厅实时监测\n\n今日叙事污染指数　37　良 · 二级\n现实稳定度　97.3%　较昨日 ▼0.4%\n\n各区监测：东城区 98.1%｜西城区 97.6%｜朝阳区 96.2%｜海淀区 97.9%｜通州区 95.4% ⚠\n\n入局人员文本完整性扫描　今日通过 1,284 人　复核 3 人\n地下驯化空间　驯化度 99.98%　状态：稳定",
+   "texture": "tex_sec_main_screen",
+   "glitch": "每隔约 40 秒，右下角闪一帧：「B7 层 —— 无数据」（build-lead 做成叠加层，贴图 tex_sec_b7_glitch，可代码生成）"
+  },
+  {
+   "id": "doc_sec_rules",
+   "area": "security_hall",
+   "location": "闸机通道入口右侧立柱上的规定牌",
+   "type": "sign",
+   "title": "入局安检规定",
+   "text": "一、所有人员须依次通过物理安检与文本完整性扫描。\n二、扫描时请正视前方，勿默念任何文字。\n三、以下物品禁止携带入局：\n　· 来源不明的纸质书页、残页；\n　· 未登记的畸变物或其仿制品；\n　· 写有他人全名的物品（工作证件除外）。\n四、扫描结果为「异常」者，须接受人工复核。\n五、复核期间请保持安静，不要回答扫描门提出的任何问题。",
+   "note": "第五条：扫描门会提问。"
+  },
+  {
+   "id": "doc_sec_scan_result",
+   "area": "security_hall",
+   "location": "第 7 号闸机旁的扫描结果小屏（玩家通过时显示）",
+   "type": "screen",
+   "title": "文本完整性扫描",
+   "text": "扫描对象：新入职人员\n证件编号：XS-2026-1029-07\n文本段落：完整度 —— 无法计算\n检测结果：段落缺失\n\n异常 · 请转人工复核\n\n此人此前已被扫描过一次",
+   "texture": "tex_sec_scan_result"
+  },
+  {
+   "id": "doc_sec_wanted_board",
+   "area": "security_hall",
+   "location": "大厅东墙通缉公告栏（玻璃罩，三张通缉令 + 一张通告）",
+   "type": "notice_board",
+   "title": "通缉公告栏",
+   "text": "【A 级通缉】秦骁　序列【王寇】\n能强行将他人拉入决斗场，胜者夺取败者一项能力。发现后切勿接受任何形式的「挑战」或「打赌」，立即撤离并报警。\n\n【A 级通缉】江戾　序列【冥礼】（自称「祭叙者」）\n涉嫌多起禁忌献祭案。如遇有人向您索要「一段记忆」或「一个器官的名字」，请立即拒绝。\n\n【通告】关于防范「第二草稿」组织蛊惑宣传的通知\n近期该组织以「世界只是劣质初稿」为口号，在网络散布极端言论。凡接触其宣传品者，请主动至市民服务 1 号窗口登记。\n\n【通告】余辉剧团近期在京活动预警\n如您发现身边陌生人言行像在「念台词」，请勿配合演出。\n\n叙事管理局 外勤缉拿处",
+   "texture": "tex_sec_wanted_board",
+   "portraits": [
+    "textures/archives/qinxiao.jpg",
+    "textures/archives/jiangli.jpg"
+   ],
+   "note": "秦骁、江戾的通缉身份是我的编排【待确认】；王寇能力取自世界观序列表与其档案描述。"
+  },
+  {
+   "id": "doc_sec_contraband_label",
+   "area": "security_hall",
+   "location": "大厅西侧违禁品展示柜，第二格（一个木质相框）",
+   "type": "evidence_label",
+   "title": "证物标签 · 没收品",
+   "text": "证物编号：SEC-2026-0417\n名称：「活人相框」仿制品\n等级：未定级（无效仿制）\n来源：某旅客随身行李\n说明：外形仿照 5 级畸变物【活人相框】，经鉴定无任何叙事效应。持有人称系网购「辟邪摆件」。\n处理：没收，展示用于公众警示。\n\n备注（手写）：昨晚值班时，相框里多了一张照片。已取出销毁。今早又有了。",
+   "texture": "tex_evidence_label_generic"
+  },
+  {
+   "id": "doc_sec_clock",
+   "area": "security_hall",
+   "location": "大厅西北角，一座停走的老式落地座钟（装饰品，铜牌在底座）",
+   "type": "plaque",
+   "title": "装饰座钟铭牌",
+   "text": "回响座钟（复刻装饰件）\n原件为四级畸变物，现收容于本局证物库。\n本件无叙事效应，仅作陈设。\n\n（钟面指针停在三点零七分。）"
+  },
+  {
+   "id": "doc_archive_rules",
+   "area": "archive",
+   "location": "档案馆入口双开门右侧墙面的黄铜规章牌",
+   "type": "plaque",
+   "title": "人事档案馆 · 阅览规章",
+   "text": "一、档案只许阅读，不许改写。任何字迹改动将被视为叙事篡改。\n二、调阅本人档案须由管理员陪同。\n三、馆内禁止朗读他人初始文本。\n四、若发现档案中出现您未曾经历的经历，请合上档案，不要继续读下去。\n五、闭馆后如听见翻页声，属正常现象，请勿回应。\n\n人事档案馆 管理员 叶寻",
+   "texture": "tex_archive_rules"
+  },
+  {
+   "id": "doc_archive_file_cover",
+   "area": "archive",
+   "location": "道具：本人入职档案袋（封面）",
+   "type": "file_cover",
+   "title": "人事档案（封面）",
+   "text": "叙事管理局\n人事档案\n\n档号：07-0-0000\n姓名：\n部门：新人培训处\n密级：机密\n\n【已归档】（红色方章，已褪色）\n【柒】（黑色小圆章，压在红章上）",
+   "texture": "tex_file_cover",
+   "page": 0
+  },
+  {
+   "id": "doc_archive_file_p1",
+   "area": "archive",
+   "location": "道具：本人入职档案袋（第 1 页：人事登记表）",
+   "type": "file_page",
+   "title": "叙事管理局 人事登记表",
+   "text": "姓名：（留白）\n档号：07-0-0000\n入职日期：二〇二六年十月二十九日\n觉醒情况：未觉醒\n叙事篇幅：——\n污染抗性评级：无法评定\n状态：已归档\n归档日期：二〇二三年六月八日\n\n备注：如果你读到这里，说明你又一次被写回来了。\n\n照片：（虚线框内手写小字）无法成像",
+   "texture": "tex_file_page1",
+   "page": 1,
+   "completes_on_read": "q4_read_1"
+  },
+  {
+   "id": "doc_archive_file_p2",
+   "area": "archive",
+   "location": "道具：本人入职档案袋（第 2 页：二〇二三年叙事高考加试记录，复印件）",
+   "type": "file_page",
+   "title": "二〇二三年全国叙事高考 · 觉醒加试 考场记录（复印件）",
+   "text": "考点：京城 302 考点　考场：07\n副本：SUR-044-5（驯化切片）\n考生人数：1\n觉醒人数：1\n归档人数：1\n\n觉醒时长：0.3 秒\n篇幅峰值：无法读数（溢出）\n篇幅终值：0\n\n监考员意见：考生觉醒瞬间篇幅归零，按《叙事安全法》第四十一条视同归档处理。本考场无人员伤亡。\n\n（页角有一行铅笔字，被擦过，仍能辨认：「不是归零。是读不出来。——K」）",
+   "texture": "tex_file_page2",
+   "page": 2,
+   "completes_on_read": "q4_read_2"
+  },
+  {
+   "id": "doc_archive_file_p3",
+   "area": "archive",
+   "location": "道具：本人入职档案袋（第 3 页：初始文本残页，黑纸金字）",
+   "type": "file_page",
+   "title": "初始文本（残页）",
+   "text": "你被碾碎在泥泞的阶前，你咽下同伴未凉的污血。\n你骨里生刺，你眼里生煞。\n你是整本残卷里……最荒谬的留白。\n\n（页边一行鲜红色批注，字迹潦草）\n此页不应存在。——祂",
+   "texture": "tex_file_page3",
+   "page": 3,
+   "completes_on_read": "q4_read_3",
+   "fx": "打开此页时：屏幕边缘出现缓慢飘散的金色纸屑；红色批注逐字浮现；伴随远处翻页声。",
+   "note": "初始文本引自用户世界观「范例一」的节选。"
+  },
+  {
+   "id": "doc_archive_logbook",
+   "area": "archive",
+   "location": "管理员柜台左侧摊开的借阅登记簿（翻到往前几页）",
+   "type": "ledger",
+   "title": "借阅登记簿",
+   "text": "日期｜档号｜调阅人｜陪同｜归还\n2026-10-28｜03-2-1188｜周闻｜叶寻｜✓\n2026-10-28｜05-1-0412｜方妍｜叶寻｜✓\n……\n2025-06-11｜07-0-0000｜K｜（空）｜未归还 → 已归还（笔迹不同）\n2024-03-02｜07-0-0000｜K｜（空）｜未归还 → 已归还\n2023-06-09｜07-0-0000｜K｜（空）｜未归还 → 已归还\n\n（最下面一行是新墨迹，还没干）\n2026-10-29｜07-0-0000｜K｜（空）｜去 B1 第七排还给我。",
+   "note": "引导可选深入。"
+  },
+  {
+   "id": "doc_archive_note_yexun",
+   "area": "archive",
+   "location": "柜台显示器边框上贴的黄色便利贴",
+   "type": "note",
+   "title": "叶寻的便签",
+   "text": "给明天的我：\n1. 新人七号会来，档案在 B1 第七排。（影子知道）\n2. 不要问他名字。他答不上来，会难受。\n3. 你昨天也写了这张便签。"
+  },
+  {
+   "id": "doc_archive_public_intro",
+   "area": "archive",
+   "location": "二层回廊入口的说明牌",
+   "type": "sign",
+   "title": "登记叙事者公开档案陈列",
+   "text": "依《叙事者登记管理办法》，以下为经本人同意公开的登记叙事者档案摘要，供新入职人员学习。\n档案内容仅限阅览，禁止抄录能力细节，禁止朗读其中的引语。"
+  },
+  {
+   "id": "doc_archive_pub_chenhe",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 1 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 陈鹤",
+   "text": "姓名：陈鹤\n序列：【画押】\n登记状态：在册\n能力描述：强制目标在契约上签字，让普通契约获得叙事层面的强制力。\n\n本人引语：「画押落笔，契约已成，天地为证。」",
+   "texture": "tex_archive_portrait_chenhe"
+  },
+  {
+   "id": "doc_archive_pub_chujing",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 2 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 楚菁",
+   "text": "姓名：楚菁\n序列：【不朽】\n登记状态：在册\n能力描述：不会死亡，也不会被叙事修改或删除，高阶几乎无法被任何手段消灭。\n\n本人引语：「不朽不是永恒，而是拒绝被遗忘。」",
+   "texture": "tex_archive_portrait_chujing"
+  },
+  {
+   "id": "doc_archive_pub_cuiyou",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 3 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 崔攸",
+   "text": "姓名：崔攸\n序列：【藏锋】\n登记状态：在册\n能力描述：将一次攻击藏入叙事，在任意未来时刻释放。\n\n本人引语：「有些事，不是忘了，而是我还没打算讲出来。」",
+   "texture": "tex_archive_portrait_cuiyou"
+  },
+  {
+   "id": "doc_archive_pub_fuliu",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 4 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 付流",
+   "text": "姓名：付流\n序列：【回音】\n登记状态：在册\n能力描述：复制刚发生的叙事效果，威力减半；高阶可复制更早的效果。\n\n本人引语：「刚刚发生的，只是我现在的回声。」",
+   "texture": "tex_archive_portrait_fuliu"
+  },
+  {
+   "id": "doc_archive_pub_hanwei",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 5 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 韩魏",
+   "text": "姓名：韩魏\n序列：【怀古】\n登记状态：在册\n能力描述：回溯历史，感知或重现某地的历史场景，唤醒沉睡的古老力量。\n\n本人引语：「我从过去中来，却不属于任何时代。」",
+   "texture": "tex_archive_portrait_hanwei"
+  },
+  {
+   "id": "doc_archive_pub_linxiu",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 6 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 林休",
+   "text": "姓名：林休\n序列：【天眷】\n登记状态：在册\n能力描述：被动好运，拥有者会不自觉地获得好运与眷顾。\n\n本人引语：「我从未选择命运，是命运选择了将我遗忘。」",
+   "texture": "tex_archive_portrait_linxiu"
+  },
+  {
+   "id": "doc_archive_pub_lixi",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 7 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 李汐",
+   "text": "姓名：李汐\n序列：【红尘】\n登记状态：在册\n能力描述：与情感、欲望、执念相关，可放大或缩小目标情感。\n\n本人引语：「红尘万丈，谁不是执迷不悟。」",
+   "texture": "tex_archive_portrait_lixi"
+  },
+  {
+   "id": "doc_archive_pub_lvqi",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 8 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 吕柒",
+   "text": "姓名：吕柒\n序列：【千面】\n登记状态：在册\n能力描述：改变外貌，也可以完全变成另一个人，包括记忆甚至部分能力。\n\n本人引语：「我不是在模仿你，我是在成为你，同时超越你。」",
+   "texture": "tex_archive_portrait_lvqi"
+  },
+  {
+   "id": "doc_archive_pub_qichou",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 9 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 齐仇",
+   "text": "姓名：齐仇\n序列：【裁纸】\n登记状态：在册\n能力描述：切断两个叙事之间的任何联系，被切断的联系难以恢复。\n\n本人引语：「裁纸，断万物之联。连接即是枷锁。」",
+   "texture": "tex_archive_portrait_qichou"
+  },
+  {
+   "id": "doc_archive_pub_qilingyun",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 10 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 齐凌云",
+   "text": "姓名：齐凌云\n序列：【天命】\n登记状态：在册\n能力描述：感知并干预事件潜藏的必然性，不改变结果，只调整路径。\n\n本人引语：「我不窥天命，天命也从不放过窥视我的人。」",
+   "texture": "tex_archive_portrait_qilingyun"
+  },
+  {
+   "id": "doc_archive_pub_songliang",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 11 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 宋凉",
+   "text": "姓名：宋凉\n序列：【嫁衣】\n登记状态：在册\n能力描述：将自身代价转嫁给替身或傀儡承担。\n\n本人引语：「嫁衣织就，穿的人却未必是我。」",
+   "texture": "tex_archive_portrait_songliang"
+  },
+  {
+   "id": "doc_archive_pub_suyan",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 12 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 苏言",
+   "text": "姓名：苏言\n序列：【盲签】\n登记状态：在册\n能力描述：让他人在不知情的情况下进入抽签状态，结果未知。\n\n本人引语：「签下的不是名字，是你未曾预见的命运。」",
+   "texture": "tex_archive_portrait_suyan"
+  },
+  {
+   "id": "doc_archive_pub_yexun",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 13 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 叶寻",
+   "text": "姓名：叶寻\n序列：【万影】\n登记状态：在册\n能力描述：制造多个自己的影子分身，影子并非实体复制品。\n\n本人引语：「我从不寻找影子，它们自愿为我记住一切。」",
+   "texture": "tex_archive_portrait_yexun"
+  },
+  {
+   "id": "doc_archive_pub_yinze",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 14 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 殷泽",
+   "text": "姓名：殷泽\n序列：【咫尺】\n登记状态：在册\n能力描述：以叙事为锚点，重构空间的关系与顺序。\n\n本人引语：「距离从来不是障碍，叙事的起点，才是。」",
+   "texture": "tex_archive_portrait_yinze"
+  },
+  {
+   "id": "doc_archive_pub_zhaoqiu",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 15 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 赵裘",
+   "text": "姓名：赵裘\n序列：【烬余】\n登记状态：在册\n能力描述：濒死时爆发剩余叙事能量，随后陷入沉睡。\n\n本人引语：「故事从不死亡，它只会被我用完。」",
+   "texture": "tex_archive_portrait_zhaoqiu"
+  },
+  {
+   "id": "doc_archive_pub_zhouwen",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 16 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 周闻",
+   "text": "姓名：周闻\n序列：【流言】\n登记状态：在册\n能力描述：通过网络传播信息，流言一旦发布会自主传播、变异、放大。\n\n本人引语：「我只提供选择，你信什么，关我什么事。」",
+   "texture": "tex_archive_portrait_zhouwen"
+  },
+  {
+   "id": "doc_archive_pub_zhouye",
+   "area": "archive",
+   "location": "二层回廊玻璃陈列柜 第 17 格（档案海报竖挂，下方说明卡）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 周也",
+   "text": "姓名：周也\n序列：【穿肠】\n登记状态：在册\n能力描述：与伤害、痛苦、穿透相关，可让攻击穿透防御、痛苦加倍。\n\n本人引语：「穿肠之痛，不在于刃，在于无法愈合。」",
+   "texture": "tex_archive_portrait_zhouye"
+  },
+  {
+   "id": "doc_archive_pub_xiaonan",
+   "area": "archive",
+   "location": "二层回廊陈列柜 最后一格（第 18 格，玻璃内侧贴着「暂停展出」）",
+   "type": "personnel_file",
+   "title": "登记叙事者档案 · 萧难",
+   "text": "姓名：萧难\n序列：——\n登记状态：UNKNOWN\n等级：？\n文件类型：FRAGMENT（残档）\n\n本格档案经上级通知暂停展出。\n\n（说明卡背面有铅笔字：「K」）",
+   "texture": "tex_archive_portrait_xiaonan",
+   "note": "萧难＝K＝第七局，是我的编排【待确认】。"
+  },
+  {
+   "id": "doc_archive_pub_suyu",
+   "area": "archive",
+   "location": "二层回廊陈列柜 第 19 格（档案为「心理评估记录」样式）",
+   "type": "personnel_file",
+   "title": "心理评估记录 · 苏予",
+   "text": "姓名：苏予\n序列：【心错】\n评估状态：□ 稳定　□ 不稳定　■ 错误（ERROR）\n备注：评估对象非受控；档案不完整；需进一步观察。\n\n本人引语：「你以为你在选择，不过是我设下的……」（后半句被裁掉）",
+   "texture": "tex_archive_portrait_suyu"
+  },
+  {
+   "id": "doc_archive_pub_fangyan",
+   "area": "archive",
+   "location": "二层回廊尽头墙面（单独装裱）",
+   "type": "personnel_file",
+   "title": "人员档案 · 方妍",
+   "text": "姓名：方妍\n职业：律师（本局法务处法律顾问）\n许可等级：B\n状态：在职\n\n「法律也是一种现实。」",
+   "texture": "tex_archive_portrait_fangyan"
+  },
+  {
+   "id": "doc_seventh_entry_plate",
+   "area": "seventh_entry",
+   "location": "B1 密集架第 7 排缝隙内侧，嵌在纸背上的一枚小铜牌（只有凑近缝隙才看得到）",
+   "type": "plaque",
+   "title": "（无标题铜牌）",
+   "text": "柒\n\n光明照不到的装订线里，由我们用血来粘合。",
+   "requires": "q5_b1"
+  },
+  {
+   "id": "doc_seventh_punchcard",
+   "area": "seventh_entry",
+   "location": "缝隙里卡着的一张旧打卡卡（可拾取）",
+   "type": "card",
+   "title": "打卡卡",
+   "text": "档号：07-0-0000\n姓名：\n\n2023-06-09　上班 03:07\n2024-03-03　上班 03:07\n2025-06-12　上班 03:07\n2026-10-29　上班 ——\n\n（下班栏全是空的。）",
+   "requires": "q5_b1",
+   "easter_egg": true
+  },
+  {
+   "id": "doc_metro_rules_official",
+   "area": "metro_exit",
+   "location": "地铁 7 号线「管理局站」B 口扶梯顶端的立式告示",
+   "type": "sign",
+   "title": "《地铁乘车守则》（官方版）",
+   "text": "一、请在黄线外候车，先下后上。\n二、末班车（23:40）后请勿在站内逗留。\n三、网传《午夜地铁乘车守则》系粤-12 号 3 级禁区的规则怪谈文本，不适用于本线路，请勿转发。\n四、如列车报出本线不存在的站名，请勿下车，并在下一站报告站务人员。\n\n京城地铁运营公司 · 叙事管理局 联合发布"
+  },
+  {
+   "id": "doc_metro_rules_folk",
+   "area": "metro_exit",
+   "location": "官方告示背面，被胶带粘着的半张打印纸",
+   "type": "note",
+   "title": "《午夜地铁乘车守则》（民间流传版，残）",
+   "text": "1. 末班车之后如果还有车进站，可以上，但不要坐下。\n2. 车上所有人都在看同一本书时，不要问书名。\n3. 如果有人把书递给你，翻到最后一页，告诉他「写完了」。\n4. 不要在车厢里说出你要去的站。\n5. 「管理局站」之后还有一站。那一站没有站名。\n6. 如果你在那一站下了车——\n（第 7 条以后被撕掉了）",
+   "note": "第 7 条残片放在 v4 装订线里。"
+  },
+  {
+   "id": "doc_metro_shop",
+   "area": "metro_exit",
+   "location": "出站口便利店收银台上的小票（可拾取）",
+   "type": "receipt",
+   "title": "便利店小票",
+   "text": "京城便利 · 管理局站店\n2026-10-29　08:51\n\n篇幅补充剂（柠檬味）×1　6.50\n《基础叙事学》同步练习（初二上）×1　28.00\n镇纸片（薄荷）×1　3.00\n\n合计 37.50　找零 12.50\n\n小票背面：本店不提供「留白」口味。"
+  },
+  {
+   "id": "doc_metro_weather",
+   "area": "metro_exit",
+   "location": "出站口顶部的城市信息屏",
+   "type": "screen",
+   "title": "城市信息屏",
+   "text": "京城　10 月 29 日　星期四\n晴　8～17℃　北风 2 级\n空气质量 良　叙事污染指数 37\n现实稳定度 97.3%\n\n今日提醒：通州区部分路段存在「重复路段」现象，请绕行。"
+  },
+  {
+   "id": "doc_wall_rules",
+   "area": "wall_posts",
+   "location": "南三号塔楼岗亭门内侧",
+   "type": "sign",
+   "title": "岗哨执勤守则",
+   "text": "一、哨兵每两小时轮换一次，交接时须互相核对姓名。\n二、如对方说不出自己的名字，不得交接，立即上报。\n三、城墙内嵌叙事稳定钉，严禁攀爬、刻字、涂写。\n四、夜间若听见墙内有人念书，记录时间，不必回应。\n五、塔楼编号以本守则附图为准。若实地数出的塔楼数量与附图不符，以附图为准。"
+  },
+  {
+   "id": "doc_wall_logbook",
+   "area": "wall_posts",
+   "location": "北二号塔楼岗亭桌上的执勤登记本",
+   "type": "ledger",
+   "title": "执勤登记本",
+   "text": "10 月 27 日　22:00—00:00　哨兵 张　无异常\n10 月 28 日　00:00—02:00　哨兵 王　无异常\n10 月 28 日　02:00—04:00　哨兵 王\n　03:07　北二哨听见墙里有人念书，念的是一份人事档案。\n　处理结果：未见异常。\n　03:44　念完了。最后一句是「如果你读到这里」。\n10 月 28 日　04:00—06:00　哨兵 张　无异常（接班时王说不出自己的名字，已上报）"
+  },
+  {
+   "id": "doc_wall_tower_map",
+   "area": "wall_posts",
+   "location": "南三号塔楼岗亭墙上的附图",
+   "type": "map",
+   "title": "环形城墙塔楼编号附图",
+   "text": "（一张城墙俯视图。环形城墙上均匀分布 12 座塔楼，编号 1 到 12。）\n\n实地数：11 座。6 号与 8 号之间没有 7 号，只有一段特别厚的墙。"
+  },
+  {
+   "id": "doc_helipad_log",
+   "area": "helipad",
+   "location": "东北塔顶机库调度台上的《起降日志》",
+   "type": "ledger",
+   "title": "起降日志",
+   "text": "架次｜机号｜目的地｜机组｜批准\n10-28-01｜京-001｜冀-03 禁区封锁线｜外勤三组｜周也\n10-28-02｜京-004｜灰塔（阿尔卑斯）交接｜联络处 2 人｜齐凌云\n10-28-03｜京-002｜通州区｜外勤一组｜周也\n10-28-07｜——｜——｜——｜柒\n\n（所有「柒」批准的架次，回传坐标都是同一个：北纬 39.9042°，东经 116.4074°，海拔 -1,207 米。）",
+   "note": "坐标就是总部本身的正下方。"
+  },
+  {
+   "id": "doc_helipad_crate",
+   "area": "helipad",
+   "location": "机库角落防爆运输箱上贴的证物标签",
+   "type": "evidence_label",
+   "title": "证物标签 · 运输中",
+   "text": "证物编号：TRN-2026-1028-03\n名称：未命名（市民上交）\n畸变等级：待定（暂按 2 级）\n收容区：转运中 → B3\n来源：通州区重复路段现场\n说明：一块路牌。正面写「此路通往通州」，背面写「此路通往此路」。\n处理：已封存，请勿翻转。",
+   "texture": "tex_evidence_label_generic"
+  },
+  {
+   "id": "doc_helipad_safety",
+   "area": "helipad",
+   "location": "飞行器舱门内侧的安全须知贴纸",
+   "type": "sign",
+   "title": "乘机安全须知",
+   "text": "1. 起飞前请系好安全带，摘下所有写有文字的饰品。\n2. 穿越禁区上空时，舷窗外可能出现文字，请勿阅读。\n3. 如机长广播的目的地与登机前不一致，以登机前为准。\n4. 本机配备心锚急救包，位于座椅下方。"
+  },
+  {
+   "id": "doc_memorial_inscription",
+   "area": "memorial",
+   "location": "碑廊入口的主碑",
+   "type": "monument",
+   "title": "无字碑廊",
+   "text": "这里纪念的人，我们已不记得。\n正因为不记得，才要立碑。\n\n叙事管理局　立",
+   "texture": "tex_memorial_stele"
+  },
+  {
+   "id": "doc_memorial_rules",
+   "area": "memorial",
+   "location": "碑廊入口小立牌",
+   "type": "sign",
+   "title": "参观须知",
+   "text": "一、请保持安静。\n二、献花请放在碑前，不要放在碑上。\n三、如果你在某块碑前突然想起了谁，请把名字写在留言簿上——\n　　通常第二天你就会忘记自己写过。留言簿会替你记得。"
+  },
+  {
+   "id": "doc_memorial_guestbook",
+   "area": "memorial",
+   "location": "入口立牌旁的留言簿（可翻阅）",
+   "type": "ledger",
+   "title": "留言簿",
+   "text": "「哥，今年我考上了。」\n「不知道你是谁，但我每年都来。」\n「致 2019 年雾港的二十一个人。」\n「我梦见有个人替我挡了一下。」\n「07-0-0000：今年你又回来报到了吗？」（这一行的笔迹和登记簿上「K」的笔迹一样。）"
+  },
+  {
+   "id": "doc_dorm_assign",
+   "area": "dorm",
+   "location": "附楼一层宿管室窗口外的公告板",
+   "type": "notice",
+   "title": "新入职人员宿舍分配表",
+   "text": "XS-2026-1022-01　李——　3 号楼 204\nXS-2026-1022-02　王——　3 号楼 205\n……\nXS-2026-1029-07　（空）　3 号楼 207\n\n分配日期：2023 年 6 月 9 日\n（207 号房的钥匙一直没人领。）"
+  },
+  {
+   "id": "doc_cit_windows",
+   "area": "citizen_service",
+   "location": "服务窗口上方一整排 LED 窗口牌",
+   "type": "screen",
+   "title": "窗口指示牌",
+   "text": "1 污染举报｜2 畸变物上交｜3 叙事者备案｜4 归档人员查询｜5 加试报名咨询",
+   "texture": "tex_cit_windows"
+  },
+  {
+   "id": "doc_cit_report_form",
+   "area": "citizen_service",
+   "location": "填单台上的举报单样表",
+   "type": "form",
+   "title": "叙事污染举报登记表（样表）",
+   "text": "举报人：张三（示例）\n联系电话：138****0000\n发现地点：朝阳区某小区 3 号楼楼道\n发现时间：每晚 23:00 前后\n现象描述：楼道每天多一层台阶，已数到第十九层。走到顶层是我家，但门牌号不对。\n是否有人员伤亡：否\n是否已拍照：是（照片里没有台阶）\n\n填写提示：请只描述你看见的，不要描述你「觉得」的。觉得也会被写进去。"
+  },
+  {
+   "id": "doc_cit_handover",
+   "area": "citizen_service",
+   "location": "2 号窗口旁的钢制畸变物投放口上方",
+   "type": "sign",
+   "title": "畸变物上交须知",
+   "text": "一、请将物品放入投放口，关好抽屉，听到「咔」一声后离开。\n二、请勿对物品说再见。\n三、如物品在您放入后自行回到您的口袋，请再放一次，并在窗口登记次数。\n四、上交物品不予退还，也不予告知其最终去向。"
+  },
+  {
+   "id": "doc_cit_window4",
+   "area": "citizen_service",
+   "location": "4 号窗口玻璃上贴的公告",
+   "type": "notice",
+   "title": "4 号窗口 · 归档人员查询说明",
+   "text": "归档人员无法被查询，因为您不会记得要查询他。\n若您仍然来到了本窗口，说明您记得一部分。\n请填写附表七。"
+  },
+  {
+   "id": "doc_cit_form7",
+   "area": "citizen_service",
+   "location": "4 号窗口台面上压着的一张空白表格（可拾取）",
+   "type": "form",
+   "title": "附表七",
+   "text": "附表七　疑似归档人员线索登记\n\n你记得的部分：____________\n你确定忘记了的部分：____________\n你不确定是记得还是梦见的部分：____________\n\n填表人档号：07-0-0000（已预先打印）\n\n（表格其他地方全是空白。）",
+   "easter_egg": true
+  },
+  {
+   "id": "doc_cit_letters",
+   "area": "citizen_service",
+   "location": "大厅东墙「群众来信摘录」展示墙",
+   "type": "notice_board",
+   "title": "群众来信摘录",
+   "text": "「我家楼道每天多一层台阶，已经数到第十九层了。」\n「我家电饭锅会说话，它说它不想煮饭。」\n「我奶奶说她年轻时有一个弟弟，可户口本上从来没有。」\n「地铁 7 号线末班车上，所有人都在看同一本书。」\n「我儿子三年前参加加试回来以后，家里多了一个空房间。我们不知道那是谁的房间，但谁也不愿意把它改成书房。」",
+   "texture": "tex_cit_letters"
+  },
+  {
+   "id": "doc_exam_flow",
+   "area": "exam_center",
+   "location": "1F 报名大厅入口立式海报",
+   "type": "poster",
+   "title": "2027 全国叙事高考 · 觉醒加试 报名流程",
+   "text": "① 网上预报名\n② 现场确认 · 文本采集\n③ 污染抗性初测\n④ 领取准考证\n⑤ 理论考试次日 · 统一乘车前往加试考点\n\n加试期间请勿携带任何个人书写物品。觉醒率约为千分之三，请理性看待。",
+   "texture": "tex_exam_flow"
+  },
+  {
+   "id": "doc_exam_paper",
+   "area": "exam_center",
+   "location": "2F 阅卷中心第三排工位，摊开的真题与评分细则",
+   "type": "exam_paper",
+   "title": "2026 年全国叙事高考《高等叙事学理论》（全国甲卷）节选",
+   "text": "一、名词解释（每题 4 分）\n1. 叙事篇幅　2. 初始文本　3. 叙事主场　4. 归档（杀青）\n\n二、简答题（每题 10 分）\n5. 简述叙事污染与叙事畸变的区别与联系。\n6. 简述「规则怪谈」类禁区的破局原则，并举一例。\n\n三、论述题（30 分）\n7. 请以「留白」为题，论述文本的未完成性与自由意志的关系。不少于 800 字。\n\n【评分细则 · 第 7 题】\n一类卷（26—30 分）：能指出「未完成」不是缺陷，而是自由的前提。\n特别说明：若考生交白卷并在卷面写「留白」二字，按零分处理。——但 2023 年京城 07 考场有一份例外，此卷由第七局调走，不计入统计。"
+  },
+  {
+   "id": "doc_exam_grader_note",
+   "area": "exam_center",
+   "location": "阅卷工位显示器边框上的便利贴",
+   "type": "note",
+   "title": "阅卷员便签",
+   "text": "今天第三百份「我觉醒时看见了一道光」。\n孩子们，光是看不见的，你们看见的是自己想看的。\n真正觉醒的那三个，卷子上什么都没写。"
+  },
+  {
+   "id": "doc_exam_dispatch",
+   "area": "exam_center",
+   "location": "3F 副本投放调度室，调度台上的一沓调度单",
+   "type": "form",
+   "title": "加试副本投放调度单（2026 年 6 月 8 日）",
+   "text": "副本编号｜序列｜危险等级｜投放考点｜驯化度｜签发\nSUR-044-5｜绝境生存｜5（驯化后 1）｜京城 302 考点｜99.9%｜考务中心\nMYS-013-2｜诡秘怪谈｜2（驯化后 1）｜京城 117 考点｜99.9%｜考务中心\nRPG-021-1｜异界扮演｜1｜津门 08 考点｜100%｜考务中心\n\n副本来源：墨渊 · 考场母本（第八号驯化空间）\n调度要求：投放前须由书脊井货梯运至地面，全程不得开封。",
+   "note": "第一次明确提到「墨渊」与考场母本。"
+  },
+  {
+   "id": "doc_exam_stats",
+   "area": "exam_center",
+   "location": "3F 调度室墙上的统计看板",
+   "type": "screen",
+   "title": "历年觉醒率统计",
+   "text": "2021　全国觉醒率 3.01‰\n2022　全国觉醒率 2.98‰\n2023　全国觉醒率 3.00‰（京城 07 考场：考生 1 人 · 觉醒 1 人 · 归档 1 人）\n2024　全国觉醒率 3.03‰\n2025　全国觉醒率 3.02‰\n\n（2023 年京城 07 考场那一行被人用红笔圈了七次。）"
+  },
+  {
+   "id": "doc_canteen_menu",
+   "area": "canteen",
+   "location": "打饭窗口上方的电子菜单屏",
+   "type": "screen",
+   "title": "职工食堂 · 今日菜单",
+   "text": "早餐　豆浆　油条　鸡蛋灌饼　小米粥\n午餐　宫保鸡丁　清蒸鲈鱼　麻婆豆腐　番茄炒蛋　米饭\n特供　篇幅恢复套餐（外勤人员凭证）　镇魂汤　安神茶\n\n今日现实稳定度 97.3%，请放心用餐。",
+   "texture": "tex_canteen_menu"
+  },
+  {
+   "id": "doc_canteen_board",
+   "area": "canteen",
+   "location": "中庭入口员工公告栏",
+   "type": "notice_board",
+   "title": "员工公告栏",
+   "text": "【工会】本周六组织参观无妄城，名额 20 个，报名找后勤处。（无妄城内禁止使用能力，请提前适应）\n【失物招领】一枚黑色书签，正面刻「柒」字，背面空白。失主请到后勤处认领。（注：已有三人前来认领，均称是自己的，又均在半路忘了为什么要来。）\n【团购】雾港风味海产礼盒，深瞳物流直送，副本里也能收到。\n【提醒】请勿在食堂使用【暴食】类能力，上周已吃掉两张餐桌。"
+  },
+  {
+   "id": "doc_office_notice",
+   "area": "offices",
+   "location": "三层电梯厅公告屏",
+   "type": "notice",
+   "title": "内部通知（叙管办〔2026〕117 号）",
+   "text": "关于严禁在办公区使用【画押】类能力签署合同的通知\n\n各处室：\n近期发现个别同志在办理采购、借调等事务时，私下使用【画押】类能力迫使对方签字。此类合同虽具叙事强制力，但不具备行政效力，且已造成财务处两名同志「无法拒绝任何请求」。\n现通知如下：一、办公区内禁止使用一切契约类能力；二、已签署的此类合同，请联系法务处方妍律师统一解除；三、受影响同志请到医务室登记。\n\n叙事管理局办公室"
+  },
+  {
+   "id": "doc_office_whiteboard",
+   "area": "offices",
+   "location": "政策研究室会议室白板",
+   "type": "whiteboard",
+   "title": "白板（会议残留）",
+   "text": "议题：「祂」的公开称谓\n- 方案 A：不可描述的自然现象（宣传处）✓\n- 方案 B：作者（×，引发宗教化风险）\n- 方案 C：编辑（？？谁写的）\n\n议题：第二草稿网络动员\n- 口号「第一稿总是最拙劣的」传播量 ↑ 300%\n- 对策：别跟他们争「这一稿好不好」，要说「这一稿是我们的」\n\n（白板角落有人画了一个小小的「柒」，又擦掉了，留下印子。）"
+  },
+  {
+   "id": "doc_office_legal_plate",
+   "area": "offices",
+   "location": "法务处门牌",
+   "type": "plaque",
+   "title": "法务处门牌",
+   "text": "法务处\n法律顾问　方妍（B 级许可）\n\n来访请先敲门。不要对律师说「我发誓」。"
+  },
+  {
+   "id": "doc_cmd_main_screen",
+   "area": "command_center",
+   "location": "指挥大厅正面巨幅弧形主屏",
+   "type": "screen",
+   "title": "全国现实稳定度监测主屏",
+   "text": "全国现实稳定度 96.8%\n今日预警：冀 5 级禁区时流异常（橙色）｜粤 规则怪谈扩散（黄色）｜京 通州 1 级禁区（黄色）\n世界时钟：京城｜灰塔｜华盛顿｜雾港（坐标漂移中）\n滚动：03:07 京城地下第八号驯化空间读数出现心跳样波动，已自动消除",
+   "texture": "tex_cmd_main_screen"
+  },
+  {
+   "id": "doc_cmd_log_strip",
+   "area": "command_center",
+   "location": "值班长台侧边针式打印机吐出的长条监测日志（垂到地上）",
+   "type": "printout",
+   "title": "监测日志（打印条）",
+   "text": "2026-10-28 00:00　京城　现实稳定度 97.4%　正常\n2026-10-28 01:00　京城　现实稳定度 97.4%　正常\n2026-10-28 02:00　京城　现实稳定度 97.3%　正常\n2026-10-28 03:00　京城　现实稳定度 97.3%　正常\n2026-10-28 03:07　京城地下　第八号驯化空间　心跳样波动　持续 37 秒　已自动消除\n2026-10-28 04:00　京城　现实稳定度 97.3%　正常\n2026-10-28 05:00　京城　现实稳定度 97.2%　正常\n2026-10-29 03:07　京城地下　第八号驯化空间　心跳样波动　持续 38 秒　已自动消除\n\n（红色圆珠笔手写）每天多一秒。没人觉得奇怪吗？",
+   "texture": "tex_cmd_log_strip"
+  },
+  {
+   "id": "doc_cmd_handover",
+   "area": "command_center",
+   "location": "值班长台上的交接班记录本",
+   "type": "ledger",
+   "title": "交接班记录",
+   "text": "10 月 28 日 夜班 → 白班\n交班人：周闻　接班人：（未到）\n\n1. 冀-03 时流异常持续，外勤三组已在封锁线待命。\n2. 03:07 心跳波动照常出现，照常自动消除。按惯例不上报。\n3. 我算了一下：从 2023 年 6 月 8 日第一次出现算起，到今天正好持续 37 秒。也就是说，第一天是 0 秒。\n4. 那天是加试日。\n5. 以上第 3、4 条请阅后撕掉。——周闻\n\n（第 3、4 条没有被撕掉。）"
+  },
+  {
+   "id": "doc_cmd_alert_flow",
+   "area": "command_center",
+   "location": "红色一键预警按钮的防护罩上",
+   "type": "sign",
+   "title": "预警发布流程",
+   "text": "一级（红色）：值班长 + 副局长双人授权，按下后全国手机推送。\n二级（橙色）：值班长授权。\n三级（黄色）：值班员授权。\n\n注意：预警一旦发布，会被写进当天的世界文本。请确认你真的希望它发生在新闻里。"
+  },
+  {
+   "id": "doc_zone_grading",
+   "area": "zone_control",
+   "location": "调度厅北墙挂牌",
+   "type": "sign",
+   "title": "畸变禁区分级标准",
+   "text": "1 级　局部空间异常，无直接致死性\n2 级　轻度认知干扰，可短时停留\n3 级　规则类异常，须持证进入\n4 级　存在主动攻击性诡异\n5 级　时间或空间结构错乱\n6 级　区域性现实改写\n7 级　城市级叙事主场覆盖\n8 级　物理法则局部失效　须驯化或永久封锁\n9 级　物理法则彻底崩塌　生命禁区",
+   "texture": "tex_zone_grading"
+  },
+  {
+   "id": "doc_zone_cardwall",
+   "area": "zone_control",
+   "location": "调度厅西墙禁区卡片墙",
+   "type": "notice_board",
+   "title": "禁区卡片墙",
+   "text": "京-朝阳-001 · 1 级 · 烂尾楼每夜多一间房\n冀-03 · 5 级 · 时流异常　入内一日外界十年\n粤-12 · 3 级 · 《午夜地铁乘车守则》\n太平洋底沉没书库 · 9 级 · 只读\n撒哈拉倒悬之城 · 9 级 · 只读\n昆仑无字碑林 · 9 级 · 只读\n\n（正中一张黑卡）京城地下 · 8 级 · 已驯化，不计入",
+   "texture": "tex_zone_cardwall"
+  },
+  {
+   "id": "doc_zone_dispatch",
+   "area": "zone_control",
+   "location": "调度台上的封锁调度单",
+   "type": "form",
+   "title": "禁区封锁调度单",
+   "text": "禁区：冀-03（5 级 · 时流异常）\n封锁半径：3.2 公里 → 扩大至 4.0 公里\n派遣：外勤缉拿处三组（队长 周也）\n注意事项：封锁线内一小时，线外约十天。外勤人员进入前，请给家人留好下周的话。\n签发：禁区封锁调度厅"
+  },
+  {
+   "id": "doc_spine_safety",
+   "area": "spine_shaft",
+   "location": "每部电梯轿厢内镜面旁的安全须知",
+   "type": "sign",
+   "title": "电梯安全须知",
+   "text": "一、请勿超载。叙事浓度高的人员（6 阶以上）按两人计。\n二、若电梯显示不存在的楼层，请勿出梯。\n三、若电梯在两层之间停住，门外是纸，请勿撕开。\n四、本梯不通往 B7。B7 不存在。\n五、如您确实到达了 B7，请不要告诉任何人，包括您自己。",
+   "texture": "tex_spine_panel"
+  },
+  {
+   "id": "doc_spine_floorplate_b3",
+   "area": "spine_shaft",
+   "location": "B3 电梯厅楼层铭牌",
+   "type": "plaque",
+   "title": "B3 楼层铭牌",
+   "text": "B3　证物与畸变物收容库 · 一至三级\n授权人员凭二级以上证件进入\n请在黄线处等候收容员"
+  },
+  {
+   "id": "doc_vault_rules",
+   "area": "vault",
+   "location": "B3 收容库入口气闸门旁",
+   "type": "sign",
+   "title": "证物与畸变物收容库 · 分级收容制度",
+   "text": "B3　一至三级　开架收容，双人巡检\nB4　四至六级　单柜收容，独立监测\nB5　七级以上及特殊藏品　深库，双人双锁\n\n一、任何人不得单独与畸变物共处超过十分钟。\n二、不得为畸变物命名、喂食、讲故事。\n三、如果某件藏品开始叫你的名字，请立即离开并报告——\n　　如果你没有名字，它就不会叫你。\n\n收容库主管　齐仇"
+  },
+  {
+   "id": "doc_vault_label_clock",
+   "area": "vault",
+   "location": "B5 单件收容室 01，回响座钟玻璃罩底座",
+   "type": "evidence_label",
+   "title": "证物标签 · 回响座钟",
+   "text": "证物编号：VLT-B5-0001\n名称：回响座钟\n畸变等级：4 级\n收容区：B5 深库 单件收容室 01\n效应：敲响时将周围十米拉入三分钟前的历史残影。\n副作用：长时间聆听者会遗忘自己身处的年份。\n处理：钟摆固定于三时零七分，禁止敲击。\n\n（手写）它自己走了一下。",
+   "texture": "tex_vault_label_clock"
+  },
+  {
+   "id": "doc_vault_label_frame",
+   "area": "vault",
+   "location": "B5 单件收容室 02，活人相框观察窗下",
+   "type": "evidence_label",
+   "title": "证物标签 · 活人相框",
+   "text": "证物编号：VLT-B5-0002\n名称：活人相框\n畸变等级：5 级\n收容区：B5 深库 单件收容室 02\n效应：放入照片者，其本人将被困于二维照片世界，直至相框被打碎。\n副作用：相框会自行更换照片。\n处理：禁止靠近观察窗一米以内。\n\n（手写）里面的人在举牌子。别看。",
+   "texture": "tex_vault_label_frame"
+  },
+  {
+   "id": "doc_vault_incident",
+   "area": "vault",
+   "location": "B5 双人登记台上夹着的事故报告",
+   "type": "report",
+   "title": "收容事故报告（VLT-INC-2025-0611）",
+   "text": "事件：回响座钟被误敲一次。\n经过：值班员在巡检中听见座钟「自己走了一下」，伸手扶正钟摆时触发效应。\n后果：值班员坚信当天是 2023 年 6 月 8 日，持续 7 小时，期间反复询问「七号考场的那个孩子出来了没有」。\n处理：已送医务室净化。值班员恢复后表示不记得说过这句话。\n备注：同日，人事档案馆借阅登记簿上出现一条 07-0-0000 的调阅记录。"
+  },
+  {
+   "id": "doc_vault_b3_items",
+   "area": "vault",
+   "location": "B3 开架区货架上的一组证物小标签（逐件可读）",
+   "type": "evidence_label",
+   "title": "B3 开架证物（节选）",
+   "text": "VLT-B3-0112　琥珀里的蚊子（1 级）：每隔一小时眨一次眼。\nVLT-B3-0230　会说话的电饭锅（1 级，市民上交）：坚称自己想当一本书。\nVLT-B3-0301　防毒面具（2 级）：戴上后能闻到文字的味道，「谎言是铁锈味」。\nVLT-B3-0477　古董花瓶（2 级）：插什么花都会开成白菊。\nVLT-B3-0519　路牌（2 级，转运中）：「此路通往此路」。"
+  },
+  {
+   "id": "doc_pub_press",
+   "area": "publicity",
+   "location": "新闻发布厅讲台上的通稿草稿（红笔修改痕迹）",
+   "type": "draft",
+   "title": "新闻通稿（第三稿）",
+   "text": "【标题】我局成功处置通州区 1 级禁区「重复路段」事件\n\n10 月 28 日，叙事管理局外勤缉拿处一组对通州区某路段出现的重复路段现象进行了处置。经处置，该路段已恢复为「只通往通州」。事件中无人员伤亡，~~两名市民至今仍在第三遍~~ 全部市民已安全离开。\n\n（红笔批注）删掉划线句。\n（红笔批注，另一种笔迹）他们还在第三遍。\n（红笔批注，第一种笔迹）那就写「已安全离开」，写了就是了。"
+  },
+  {
+   "id": "doc_pub_guide",
+   "area": "publicity",
+   "location": "剪辑室书架上的《宣传口径手册》（翻开页）",
+   "type": "manual",
+   "title": "《宣传口径手册》（内部）第 4 章",
+   "text": "4.1　对「祂」一律称「不可描述的自然现象」，不使用「作者」「造物主」「编辑」等拟人称谓。\n4.2　不得在镜头前完整念出任何人的初始文本。\n4.3　对高阶叙事者出手画面，须在播出前做「去神化」处理：保留震撼，删掉表情。\n4.4　「第七局」一词不存在，因此不需要口径。\n4.5　如被记者问到 4.4，请回答：「请参见 4.4。」"
+  },
+  {
+   "id": "doc_pub_rejected",
+   "area": "publicity",
+   "location": "海报打样间废纸篓旁，被揉皱后又展平的一张海报小样",
+   "type": "poster",
+   "title": "被否决的海报小样",
+   "text": "（一张深红底海报，中间一根暗红色的线穿过一本书的书脊。）\n标题：「第七局欢迎你」\n副标题：「光明照不到的地方，也有人值班。」\n\n（右下角盖着一枚蓝色印章：不存在）",
+   "texture": "tex_pub_rejected"
+  },
+  {
+   "id": "doc_pub_comments",
+   "area": "publicity",
+   "location": "运营工位屏幕上的短视频后台评论截图",
+   "type": "screen",
+   "title": "短视频后台 · 热门评论",
+   "text": "「8 阶出手那一下我看了 40 遍，天直接黑了一块」 赞 12.4 万\n「为什么每次画面都切得这么快」 赞 3.1 万\n「我舅在管理局上班，他说地底下还有一个管理局」 赞 8,902（已折叠）\n「有没有人记得 2023 年京城加试那个……算了我也说不清」 赞 7（已折叠）\n「楼上的，我也是。我记得有个人，但想不起来」 赞 7（已折叠）"
+  },
+  {
+   "id": "doc_liaison_intro",
+   "area": "liaison",
+   "location": "联络处会客厅入口的说明牌",
+   "type": "sign",
+   "title": "国际联络处",
+   "text": "负责与境外官方、半官方及非官方超凡势力的外事接待、情报交换、通缉协查与跨境禁区合作。\n\n势力评估墙仅限本处人员与授权访客查看。评估内容不代表外交立场。"
+  },
+  {
+   "id": "doc_liaison_faction_01",
+   "area": "liaison",
+   "location": "势力评估墙 第 1 框（徽记 + 评估牌）",
+   "type": "faction_file",
+   "title": "势力评估 · 灰塔",
+   "text": "势力：灰塔（欧洲 · 守望与囚笼）\n关系：半官方 · 合作\n概述：阿尔卑斯山脉深处。上半部是全球最大的叙事灾难预警中心，下半部是关押 S 级叙事重犯与灭世畸变物的无间死牢。本局 S 级在押人员按协议移送灰塔。\n准则：「塔尖看见风暴时，塔底的庸人还在晒太阳。」"
+  },
+  {
+   "id": "doc_liaison_faction_02",
+   "area": "liaison",
+   "location": "势力评估墙 第 2 框（徽记 + 评估牌）",
+   "type": "faction_file",
+   "title": "势力评估 · 联邦档案局",
+   "text": "势力：联邦档案局（北美 · 科技与武装）\n关系：官方 · 竞争\n概述：北美官方与硅谷科技巨头的结合体，研究人工智能推演叙事、机甲镶嵌畸变物、人造叙事基因药剂。其「人工觉醒」项目对本局叙事高考体系构成挑战。\n准则：「（未公开）」",
+   "texture": "tex_liaison_N03"
+  },
+  {
+   "id": "doc_liaison_faction_03",
+   "area": "liaison",
+   "location": "势力评估墙 第 3 框（徽记 + 评估牌）",
+   "type": "faction_file",
+   "title": "势力评估 · 雾港",
+   "text": "势力：雾港（跨洋黑市与收藏家）\n关系：中立 · 监控\n概述：在公海与里世界夹缝中游弋的移动巨型港湾，全球最大的地下拍卖行与畸变物黑市。2019 年雾港沉船事件档案已由「其他部门」接管。\n准则：「雾港的每一件藏品，都比它的上一任主人活得更久。」",
+   "texture": "tex_liaison_N04"
+  },
+  {
+   "id": "doc_liaison_faction_04",
+   "area": "liaison",
+   "location": "势力评估墙 第 4 框（徽记 + 评估牌）",
+   "type": "faction_file",
+   "title": "势力评估 · 无名海岸",
+   "text": "势力：无名海岸（法外之地）\n关系：无外交关系 · 高危\n概述：三不管地带的罪恶之城，收留被通缉的叛逃者与失控边缘的疯子。本局通缉人员中约四成最后一次出现于此。\n准则：「名字是别人给的，但死在哪个海岸，是自己选的。」"
+  },
+  {
+   "id": "doc_liaison_faction_05",
+   "area": "liaison",
+   "location": "势力评估墙 第 5 框（徽记 + 评估牌）",
+   "type": "faction_file",
+   "title": "势力评估 · 无妄城",
+   "text": "势力：无妄城（绝对中立圣地）\n关系：中立 · 合作\n概述：瑞士与里世界交界处，被一件 8 阶神物覆盖，处于绝对禁武状态，任何叙事能力在此失效。全球谈判圆桌与顶级超凡学府所在地。\n准则：「（城门无字）」",
+   "texture": "tex_liaison_势力档案-无妄城"
+  },
+  {
+   "id": "doc_liaison_faction_06",
+   "area": "liaison",
+   "location": "势力评估墙 第 6 框（徽记 + 评估牌）",
+   "type": "faction_file",
+   "title": "势力评估 · 深瞳",
+   "text": "势力：深瞳（暗网与信使）\n关系：商业 · 合作\n概述：垄断全球超凡通讯与物流。其「叙事渡鸦」能穿过副本壁垒送信。本局外勤副本补给合同由深瞳承运。\n准则：「只要你付得起篇幅。」",
+   "texture": "tex_liaison_势力档案-深瞳"
+  },
+  {
+   "id": "doc_liaison_faction_07",
+   "area": "liaison",
+   "location": "势力评估墙 第 7 框（徽记 + 评估牌）",
+   "type": "faction_file",
+   "title": "势力评估 · 第二草稿",
+   "text": "势力：第二草稿（颠覆者组织）\n关系：恐怖组织 · 打击\n概述：认为当前世界是劣质初稿，四处制造灾难、引爆禁区，企图逼迫世界重启。近期以「留白」为关键词在网络搜索某个人。\n准则：「第一稿总是最拙劣的，毁掉它，第二稿才会诞生。」",
+   "texture": "tex_liaison_势力档案-第二草稿"
+  },
+  {
+   "id": "doc_liaison_faction_08",
+   "area": "liaison",
+   "location": "势力评估墙 第 8 框（徽记 + 评估牌）",
+   "type": "faction_file",
+   "title": "势力评估 · 蛇之尾",
+   "text": "势力：蛇之尾（衔尾蛇学会）\n关系：隐秘结社 · 监控\n概述：顶尖科学家与神秘学家组成的隐秘教派，捕猎解剖跨界异种，企图顺因果线逆流而上，咬住作者的手指。\n准则：「当蛇咬住自己的尾巴，有限的字符便铸成了无限的环。」",
+   "texture": "tex_liaison_势力档案-蛇之尾"
+  },
+  {
+   "id": "doc_liaison_faction_09",
+   "area": "liaison",
+   "location": "势力评估墙 第 9 框（徽记 + 评估牌）",
+   "type": "faction_file",
+   "title": "势力评估 · 焚稿会",
+   "text": "势力：焚稿会（极端净化派）\n关系：恐怖组织 · 打击\n概述：痛恨一切超凡与畸变，为销毁一件畸变物不惜抹除整座城镇。本局收容库为其头号目标之一。\n准则：「（未公开）」",
+   "texture": "tex_liaison_势力档案-焚稿会"
+  },
+  {
+   "id": "doc_liaison_faction_10",
+   "area": "liaison",
+   "location": "势力评估墙 第 10 框（徽记 + 评估牌）",
+   "type": "faction_file",
+   "title": "势力评估 · 余辉剧团",
+   "text": "势力：余辉剧团（幕后操纵者）\n关系：恐怖组织 · 打击\n概述：把整座城市当作舞台，制造连环悬案、挑起势力战争来演绎「戏剧」，取悦虚空中的存在，收割篇幅。\n准则：「当血色的幕布落下，谁还分得清自己是在看戏，还是在戏里？」",
+   "texture": "tex_liaison_势力档案-余辉剧团"
+  },
+  {
+   "id": "doc_liaison_faction_11",
+   "area": "liaison",
+   "location": "势力评估墙 第 11 框（徽记 + 评估牌）",
+   "type": "faction_file",
+   "title": "势力评估 · 第十三书签",
+   "text": "势力：第十三书签（杀手王朝）\n关系：犯罪组织 · 打击\n概述：跨国暗杀组织。收到黑色书签的人，往往死于荒谬却逻辑自洽的「意外」。\n准则：「一本书只有十二章。」",
+   "texture": "tex_liaison_势力档案-第十三书签"
+  },
+  {
+   "id": "doc_liaison_empty_frame",
+   "area": "liaison",
+   "location": "势力评估墙第 13 框（空框，只钉着一根暗红色线）",
+   "type": "faction_file",
+   "title": "势力评估 · （空）",
+   "text": "（框里什么都没有，只有一根暗红色的装订线钉在中央，两端垂下来，线头打了一个结。）\n\n框下的铜牌被拧掉了，留下两个螺丝孔。",
+   "easter_egg": true
+  },
+  {
+   "id": "doc_liaison_bookmark",
+   "area": "liaison",
+   "location": "联络处保险柜上方的证物盒（透明亚克力）",
+   "type": "evidence_label",
+   "title": "证物标签 · 黑色书签",
+   "text": "证物编号：LIA-2026-0919\n名称：黑色书签（第十三书签组织）\n来源：深瞳渡鸦投递，已拦截\n收件人：本局某员（收件人一栏是空的）\n说明：书签正面烫印「第十三章」，背面写有一行小字：「这一次，故事到此为止。」\n处理：已封存。联络处已就此向深瞳提出交涉。"
+  },
+  {
+   "id": "doc_liaison_raven",
+   "area": "liaison",
+   "location": "渡鸦标本脚下的深瞳信箱，里面一封未拆的信",
+   "type": "letter",
+   "title": "匿名信（深瞳渡鸦投递）",
+   "text": "致叙事管理局：\n你们的新人又回来了。各方都看见了。\n灰塔在问他是不是「错误」；联邦档案局在问能不能复制；第二草稿在问他会不会站到他们那边；雾港在问他值多少钱。\n我们只送信，不站队。\n但如果你们要问我们的意见——让他自己选。\n\n——深瞳"
+  },
+  {
+   "id": "doc_liaison_greytower_call",
+   "area": "liaison",
+   "location": "会客厅电话旁的来电记录便签",
+   "type": "note",
+   "title": "来电记录",
+   "text": "10 月 28 日 21:40　灰塔（阿尔卑斯）\n来电人：守望席值班官\n内容：「你们那边是不是有一段文字在反复出现？我们塔尖看见了，像一个人在同一页上来回走。」\n处理：已转告齐副局长。答复：「是我们的人。」"
+  },
+  {
+   "id": "doc_med_sanity_table",
+   "area": "medical",
+   "location": "诊室墙上的理智值分级表",
+   "type": "chart",
+   "title": "理智值分级表",
+   "text": "90—100　稳定：可执行一切外勤任务\n70—89　轻度波动：偶见幻听翻页声，建议休息\n50—69　中度：看见他人头顶浮现文字，须暂停外勤\n30—49　重度：逻辑错乱，开始预知「下一句话」，强制净化\n0—29　失控：狂草化风险，转 B2 隔离\n\n注：本表不适用于文本过短者。",
+   "texture": "tex_med_sanity_table"
+  },
+  {
+   "id": "doc_med_eye_chart",
+   "area": "medical",
+   "location": "诊室门后的视力表",
+   "type": "chart",
+   "title": "视力表",
+   "text": "（第一行）祂\n（第二行）在　看\n（第三行）你　也　在　看\n（第四行）你　在　读　这　一　行\n（最后一行，极小）请不要再往下读了",
+   "texture": "tex_med_eye_chart"
+  },
+  {
+   "id": "doc_med_case",
+   "area": "medical",
+   "location": "隔离观察室门外病历夹",
+   "type": "medical_record",
+   "title": "观察室病历（节选）",
+   "text": "患者：外勤缉拿处 某员（姓名已遮挡）\n诊断：叙事超载（重度），理智值 41\n主诉：「我活在一本书里。」\n查体：患者能准确说出医生的下一句话。\n处置：净化舱冲洗三次，心锚稳定。\n医嘱：暂停外勤 30 天。\n\n附：患者出院前在墙上写了一句话，护士没擦：「新来的那个人没有下一句。」"
+  },
+  {
+   "id": "doc_med_meds",
+   "area": "medical",
+   "location": "药柜玻璃门上的药品清单",
+   "type": "label",
+   "title": "药柜清单",
+   "text": "篇幅稳定剂（口服液）　外勤前 30 分钟服用\n镇纸片（含片）　出现翻页幻听时含服\n净化冲洗液（金）　仅限净化舱使用\n心锚急救针　理智值低于 30 时注射\n空白安慰剂　——（本栏手写，字迹是苏予的：「给七号」）"
+  },
+  {
+   "id": "doc_lab_flow",
+   "area": "lab",
+   "location": "实验室入口墙面流程图",
+   "type": "sign",
+   "title": "叙事能力鉴定流程",
+   "text": "① 初始文本拓印（黑色光面板，约 3 分钟）\n② 叙事篇幅测量（蓝色液柱）\n③ 阶位测定（1—9 阶）\n④ 能力效应安全测试（防爆舱）\n⑤ 七阶以上：叙事主场范围测试（B6 训练场）\n⑥ 能力命名委员会命名 · 登记入档"
+  },
+  {
+   "id": "doc_lab_report",
+   "area": "lab",
+   "location": "鉴定室桌上的鉴定报告样例",
+   "type": "report",
+   "title": "叙事能力鉴定报告（样例）",
+   "text": "鉴定对象：2026 届觉醒者 某（已脱敏）\n初始文本（摘）：「你是被雷劈开的那一夜……」\n序列名：【惊蛰】\n类型：天灾破妄\n阶位：2 阶\n篇幅：中等偏上\n效应：响指引动紫金劫雷，天克幻术、潜行与精神污染。\n风险：引雷入体时理智值短暂下降。\n结论：建议特招入超凡学府。"
+  },
+  {
+   "id": "doc_lab_naming",
+   "area": "lab",
+   "location": "命名委员会会议桌上的命名备选词表",
+   "type": "form",
+   "title": "能力命名备选词表（第 2026-41 次会议）",
+   "text": "通过：惊蛰、蝉蜕、苦修、妄想\n待议：回音（与已登记「回响」近似）\n被否决：\n　「留白」——理由：该名已被占用。\n　（会议记录员手写）被谁占用的？查不到登记。\n　（另一笔迹）别查了。"
+  },
+  {
+   "id": "doc_lab_scale_wall",
+   "area": "lab",
+   "location": "实验室侧墙的阶位刻度墙",
+   "type": "chart",
+   "title": "阶位刻度墙",
+   "text": "1 阶 ─ 2 阶 ─ 3 阶 ─ 4 阶 ─ 5 阶 ─ 6 阶 ─ 7 阶（叙事主场）─ 8 阶 ─ 9 阶\n\n（9 阶的位置没有刻度，只有一道很深的划痕，像有人用指甲刻上去的。）",
+   "texture": "tex_lab_scale_wall"
+  },
+  {
+   "id": "doc_lib_rules",
+   "area": "library",
+   "location": "主塔四层藏书阁入口铜门内侧",
+   "type": "plaque",
+   "title": "藏书阁阅览须知",
+   "text": "一、不得在馆内大声念出「祂」。\n二、限阅区残卷会自行翻页，请勿用手按住。\n三、异书残页上的符号会缓慢爬动，请勿用手指描摹。\n四、「本册」只许看最新一页，不许往前翻。\n五、如果你在书里读到了自己，请把书放回原处，然后去喝杯水。"
+  },
+  {
+   "id": "doc_lib_hypothesis",
+   "area": "library",
+   "location": "五层阅读龛，一本摊开的《宇宙图书馆假说》",
+   "type": "book",
+   "title": "《宇宙图书馆假说》（摘录）",
+   "text": "……如果将视角拉到宇宙尺度，整个宇宙其实是一座跨越维度的巨型图书馆。每一个平行世界、每一处秘境、每一个失落的文明，都是书架上的一本书。我们所处的现代地球，只是其中一册正在连载的书。\n\n叙事不是宿命。一个人的文本里充满条件句、留白与未定稿的分支。正是这种「未完成性」，构成了人类自由意志的空间。\n\n（页边铅笔批注）那么最大的自由，是一整块留白。——K"
+  },
+  {
+   "id": "doc_lib_alien_pages",
+   "area": "library",
+   "location": "七层限阅区标本框（三块异书残页）",
+   "type": "evidence_label",
+   "title": "异书残页标本",
+   "text": "LIB-X-0031　来源：赛博朋克世界（推定）\n材质：带电路纹的薄膜，符号会像霓虹一样闪烁。偷渡客：「义体猎犬」，已击毙。\n\nLIB-X-0058　来源：蒸汽朋克伦敦（推定）\n材质：沾煤灰的羊皮纸，文字是齿轮咬合的排列。偷渡客：未捕获。\n\nLIB-X-0102　来源：仙侠王朝（推定）\n材质：竹简一片，字会在夜里化作剑气。偷渡客：自称「谪仙」，已移交灰塔。",
+   "texture": "tex_lib_alien_pages"
+  },
+  {
+   "id": "doc_lib_origin",
+   "area": "library",
+   "location": "九层《叙事学》原典展柜",
+   "type": "book",
+   "title": "《叙事学》原典 · 扉页",
+   "text": "凡有文字处，皆有叙事；凡有叙事处，皆有作者。\n作者不可见，故以规则代之；\n规则不可尽，故以人补之；\n人不可全，故以留白容之。\n\n——佚名，大夏立国前"
+  },
+  {
+   "id": "doc_dir_motto_draft",
+   "area": "director_office",
+   "location": "局长书桌玻璃板下压着的一张手稿",
+   "type": "manuscript",
+   "title": "准则原稿（局长手书）",
+   "text": "我们制定规则，不是为了折断谁的笔，\n而是为了不让这人间~~被划掉~~沦为废稿。\n\n（涂改处旁边一行小字）「被划掉」太像在跟祂吵架。改掉。"
+  },
+  {
+   "id": "doc_dir_letter_k",
+   "area": "director_office",
+   "location": "书桌抽屉里一封没封口的信",
+   "type": "letter",
+   "title": "致 K",
+   "text": "K：\n他又来报到了。\n前三次，是我们替他选的：第一次让他留在光明处，第二次让他去缝雾港那一页，第三次让他守着墨渊的边。\n每一次，他最后都签了「本人自愿」。\n我不再确定那是他的笔迹，还是我们的。\n这一次，让他自己选。\n\n——（落款是一枚金色罗盘十字小印）"
+  },
+  {
+   "id": "doc_dir_secret_index",
+   "area": "director_office",
+   "location": "机要室保险柜内的《机要文件目录》",
+   "type": "index",
+   "title": "机要文件目录（摘）",
+   "text": "第一条　墨渊驯化协议\n第二条　镇纸保管与转动权限\n第三条　叙事高考加试副本来源保密规定\n第四条　S 级在押人员移交灰塔协议\n第五条　对「祂」批注的处置规程\n第六条　局长继任程序\n第七条　█████████████████（整行涂黑）"
+  },
+  {
+   "id": "doc_arm_briefing",
+   "area": "armory",
+   "location": "B1 作战简报室白板与大屏",
+   "type": "whiteboard",
+   "title": "今日出勤",
+   "text": "一组　通州区重复路段　收尾　✓\n二组　朝阳-001 烂尾楼　例行巡查　进行中\n三组　冀-03 封锁线　待命（线内一小时 = 线外约十天）\n四组　——　（整行被擦掉）\n\n高危提醒：第二草稿近期在京活动频繁，关键词「留白」。"
+  },
+  {
+   "id": "doc_arm_equipment",
+   "area": "armory",
+   "location": "装备墙下方的装备领用单",
+   "type": "form",
+   "title": "装备领用单",
+   "text": "领用人｜装备｜数量｜归还\n周也｜防污染作战服 · 锁喉铐 · 记录仪｜1 套｜—\n外勤三组｜篇幅稳定剂｜12 支｜—\n07-0-0000｜防污染作战服（M 号）· 记录仪｜1 套｜2025-06-11 未归还\n\n（备注栏，库管手写）这套衣服上周自己挂回了架子，口袋里有一张雾港的船票。"
+  },
+  {
+   "id": "doc_arm_wanted_files",
+   "area": "armory",
+   "location": "简报室档案柜，高危通缉档案（抽屉标签「A 级」）",
+   "type": "personnel_file",
+   "title": "高危通缉档案（摘）",
+   "text": "秦骁　序列【王寇】　A 级通缉\n强行拉人进入生死决斗场，胜者永久剥夺败者一项核心能力。最后出现：无名海岸。\n\n江戾　序列【冥礼】　A 级通缉（自称「祭叙者」）\n向虚空中的未知概念献祭器官、记忆或仇敌的灵魂，换取降神一击。「我不终结生命，我只是为故事写下最后的句点。」最后出现：京城 7 号线末班车。"
+  },
+  {
+   "id": "doc_int_transcript",
+   "area": "interrogation",
+   "location": "B2 观察间桌上的审讯笔录",
+   "type": "transcript",
+   "title": "审讯笔录（节选）",
+   "text": "被审讯人：第二草稿成员（代号「誊抄员」）\n问：你们在找谁？\n答：一块留白。\n问：找到以后呢？\n答：在上面写第二稿的第一个字。\n问：你知道这会怎么样吗？\n答：你们拼命修补的这一稿，作者自己都不想要了。我们只是帮祂一个忙。\n问：你怎么知道祂不想要？\n答：因为祂开始在页边写「删？」了。你们的指挥中心每天 03:07 都能看到，只是不敢承认那是字。"
+  },
+  {
+   "id": "doc_int_cell_last",
+   "area": "interrogation",
+   "location": "羁押走廊最后一间白色软包牢房的门牌",
+   "type": "plaque",
+   "title": "羁押室 B2-07",
+   "text": "羁押人员：07-0-0000\n羁押原因：自愿\n羁押期限：直至本人想起自己的名字\n状态：空置（门未上锁）",
+   "easter_egg": true,
+   "texture": "tex_int_cell_plate"
+  },
+  {
+   "id": "doc_int_madwall",
+   "area": "interrogation",
+   "location": "「狂草者」隔离间墙面（满墙手写字，可读几处）",
+   "type": "graffiti",
+   "title": "隔离间墙面",
+   "text": "「下一句是什么下一句是什么下一句是什么」\n「我不是怪物我是一个错别字」\n「它在页边写字 它在页边写字」\n「七号会回来 七号会回来 七号会回来」\n（最干净的一行，像刚写的）「谢谢你上次替我挡了那一下。」",
+   "texture": "tex_int_madwall"
+  },
+  {
+   "id": "doc_train_rules",
+   "area": "training",
+   "location": "B6 控制塔下方训练守则",
+   "type": "sign",
+   "title": "驯化副本训练守则",
+   "text": "一、所有副本切片均来自墨渊，已驯化至 1 级以下。\n二、进入前须佩戴心锚手环，理智值低于 70 自动拉出。\n三、切片内死亡不会真的死亡，但疼痛是真的。\n四、ABY 序列切片仅作展示，未经第七局许可严禁启封。\n五、出切片后请第一时间核对自己的名字。"
+  },
+  {
+   "id": "doc_train_board",
+   "area": "training",
+   "location": "控制塔外墙成绩榜",
+   "type": "screen",
+   "title": "本月训练成绩榜 · SUR-001-1（三分钟生存）",
+   "text": "1.　（空白）　0:00 进入 · 3:00 生还 · 无伤\n2.　周也　3:00 生还 · 轻伤\n3.　赵裘　3:00 生还 · 篇幅透支\n4.　外勤三组 · 某　2:47 拉出\n5.　外勤二组 · 某　2:31 拉出\n\n（第一名的记录时间是 2025-06-10 03:07。）",
+   "texture": "tex_train_board"
+  },
+  {
+   "id": "doc_train_gate_sur",
+   "area": "training",
+   "location": "训练场「SUR-001-1」副本门门框铭牌",
+   "type": "plaque",
+   "title": "副本切片 SUR-001-1",
+   "text": "序列：SUR · 绝境生存\n名称：孤岛三分钟\n说明：活到倒计时结束即为通关。"
+  },
+  {
+   "id": "doc_train_gate_com",
+   "area": "training",
+   "location": "训练场「COM-005-2」副本门门框铭牌",
+   "type": "plaque",
+   "title": "副本切片 COM-005-2",
+   "text": "序列：COM · 铁血猎杀\n名称：地牢第一层\n说明：击倒驯化的看门者。"
+  },
+  {
+   "id": "doc_train_gate_mys",
+   "area": "training",
+   "location": "训练场「MYS-013-2」副本门门框铭牌",
+   "type": "plaque",
+   "title": "副本切片 MYS-013-2",
+   "text": "序列：MYS · 诡秘怪谈\n名称：午夜地铁（驯化版）\n说明：找到守则里的逻辑漏洞。"
+  },
+  {
+   "id": "doc_train_gate_rpg",
+   "area": "training",
+   "location": "训练场「RPG-021-1」副本门门框铭牌",
+   "type": "plaque",
+   "title": "副本切片 RPG-021-1",
+   "text": "序列：RPG · 异界扮演\n名称：蒸汽伦敦一日\n说明：扮演一名邮差，不得 OOC。"
+  },
+  {
+   "id": "doc_train_gate_exp",
+   "area": "training",
+   "location": "训练场「EXP-009-1」副本门门框铭牌",
+   "type": "plaque",
+   "title": "副本切片 EXP-009-1",
+   "text": "序列：EXP · 禁区探索\n名称：失落帝国回廊\n说明：自由探索，带回一片残页。"
+  },
+  {
+   "id": "doc_train_gate_aby",
+   "area": "training",
+   "location": "训练场「ABY-000-?」副本门门框铭牌",
+   "type": "plaque",
+   "title": "副本切片 ABY-000-?",
+   "text": "序列：ABY · 深渊禁书\n名称：（封存）\n说明：未经第七局许可，严禁启封。"
+  },
+  {
+   "id": "doc_dorm_rules",
+   "area": "dorm",
+   "location": "附楼走廊宿舍管理条例",
+   "type": "sign",
+   "title": "职工宿舍管理条例",
+   "text": "一、23:30 熄灯。熄灯后请勿在走廊朗读。\n二、请勿在宿舍内饲养畸变物（含电饭锅）。\n三、叙事残页请投入走廊回收箱，不要压在枕头下。\n四、如室友说不出你的名字，请不要怪他。"
+  },
+  {
+   "id": "doc_dorm_letter",
+   "area": "dorm",
+   "location": "3 号楼 207 室书桌抽屉里一封没寄出的家书",
+   "type": "letter",
+   "title": "没寄出的家书",
+   "text": "爸、妈：\n我考上了。不对，是我觉醒了。\n他们说我的文本里有一块空白，很少见。他们说这是好事。\n我有点怕。我觉得那块空白在慢慢变大。\n如果哪天你们收到一封信，却想不起是谁写的，那就是我。\n不用想起来，把信收好就行。\n\n2023 年 6 月 8 日 夜\n（落款处的名字被水泡开了，看不清。）",
+   "note": "玩家自己的家书。"
+  },
+  {
+   "id": "doc_abyss_gate_plate",
+   "area": "abyss_gate",
+   "location": "折页门门侧的黑金铭牌",
+   "type": "plaque",
+   "title": "第八号驯化空间 · 墨渊",
+   "text": "等级：8 级（已驯化）\n驯化度：99.98%\n驯化锚点：镇纸（局长室 · 主塔书脊）\n\n进入须知：\n一、请勿在本空间内回忆自己的名字。\n二、脚下是天，头顶是地。不要试图纠正。\n三、遇到墨潮，请抓住最近的一行字。"
+  },
+  {
+   "id": "doc_abyss_city_sign",
+   "area": "abyss_city",
+   "location": "倒悬书城入口上方漂浮的字句路牌",
+   "type": "sign",
+   "title": "路牌",
+   "text": "← 正本档案塔\n↓ 定稿厅（向上走）\n→ 考场母本\n↑ 墨潮带　禁止前往\n\n欢迎来到叙事管理局。这里才是。"
+  },
+  {
+   "id": "doc_abyss_true_file",
+   "area": "abyss_city",
+   "location": "正本档案塔第七层，一只悬浮的档案袋",
+   "type": "file_page",
+   "title": "人事档案（正本）",
+   "text": "档号：07-0-0000\n姓名：█ █ █（被墨迹盖住，只露出最后一个字的一角）\n觉醒情况：已觉醒（2023-06-08）\n序列：【留白】\n类型：概念 · 未定\n能力描述：本人文本中存在一块作者无法书写的空白。处于该空白内的事物，不受「祂」的批注影响。\n篇幅：无法读数（不是归零，是读不出来）\n阶位：无法测定\n归档 / 写回记录：归档 3 次，写回 3 次（执行：第七局）\n\n正本附注：正本档案不随副本更新。副本上写着你「已归档」，是为了让祂找不到你。",
+   "note": "揭示能力【留白】：与世界观「祂唯一在乎故事精彩」形成对立。",
+   "texture": "tex_abyss_true_file"
+  },
+  {
+   "id": "doc_abyss_resident_notice",
+   "area": "abyss_city",
+   "location": "书城街角，书页墙上贴的居民告示",
+   "type": "notice",
+   "title": "书城居民告示",
+   "text": "致全体驯化居民：\n近期墨潮频繁，请减少在外环街道的停留。\n定稿厅的红色批注增多，请勿抬头阅读。\n如在街上遇到「新人」，请正常问好。他看得见我们。\n\n——墨渊书城自治会"
+  },
+  {
+   "id": "doc_abyss_paperweight",
+   "area": "abyss_core",
+   "location": "从头顶插下来的黑金镇纸巨柱，柱身底部刻文",
+   "type": "monument",
+   "title": "镇纸刻文",
+   "text": "压住这一页，别让祂翻过去。\n\n（柱身上缠绕着《叙事安全法》全文，小字密密麻麻。最下面一条是新刻的，字迹还发亮：）\n第七条：本条不存在。"
+  },
+  {
+   "id": "doc_abyss_revisions",
+   "area": "abyss_core",
+   "location": "环形书桌上摊开的「京城」一章，页边批注",
+   "type": "manuscript",
+   "title": "定稿记录（京城一章 · 页边）",
+   "text": "（黑色楷体，管理局修补记录）\n2026-10-28　通州区重复路段：已修补。\n2026-10-28　冀-03 时流：已封锁。\n2026-10-29　03:07　第八号空间心跳：已消除。\n\n（红色潦草笔迹，祂）\n这段太平淡了。\n删？\n这个人为什么写不进去？\n——\n删？\n\n（黑色楷体，另一个笔迹，萧难）\n不删。他是我们的。",
+   "texture": "tex_abyss_revisions"
+  },
+  {
+   "id": "doc_abyss_exam_paper",
+   "area": "abyss_exam",
+   "location": "无限延伸的空考场，第七排第七张课桌上的试卷",
+   "type": "exam_paper",
+   "title": "2023 年叙事觉醒加试 · 京城 07 考场（母本）",
+   "text": "考生：（留白）\n题目：在最浓的墨里，看清你自己的笔触。请写下你的初始文本。\n\n答：你被碾碎在泥泞的阶前，你咽下同伴未凉的污血……\n　　你是整本残卷里……最荒谬的\n\n（答案最后两个字没有写。卷面上留着一大块空白，空白的形状像一扇门。）\n\n阅卷意见（红色）：交白？\n阅卷意见（黑色）：不是白卷。是留白。满分。——K"
+  },
+  {
+   "id": "doc_abyss_tide_post",
+   "area": "abyss_tide",
+   "location": "墨潮带边界警示桩",
+   "type": "sign",
+   "title": "边界警示",
+   "text": "前方驯化度低于 60%。\n墨潮内游动的是被划掉却没删干净的废稿残影。\n不要直视。不要读出它们身上的字。\n本警示桩每次墨潮后需要重新立一次。这是第 1,207 根。"
+  },
+  {
+   "id": "doc_abyss_recorder",
+   "area": "abyss_tide",
+   "location": "警示桩旁半埋在墨里的外勤记录仪（可播放）",
+   "type": "audio_log",
+   "title": "外勤记录仪 · 最后一段录音（转写）",
+   "text": "（风声，像无数书页在翻）\n「……三组呼叫指挥中心，三组呼叫……」\n「我们在墨潮边上。这里的字……」\n「这里的字在读我。」\n「它读到我名字了。它在念——」\n（录音中断。最后一秒是一个很清楚的翻页声。）"
+  },
+  {
+   "id": "doc_seventh_metro_fragment",
+   "area": "seventh_entry",
+   "location": "装订线入口地面，一张被踩过的碎纸片",
+   "type": "note",
+   "title": "《午夜地铁乘车守则》（民间版）第 7 条残片",
+   "text": "7. 如果你在那一站下了车，有人会问你叫什么。\n　 不要回答。\n　 回答了，你就只是一个乘客。\n　 不回答，你就是第七局的人。"
+  },
+  {
+   "id": "doc_gutter_knots",
+   "area": "seventh_gutter",
+   "location": "走廊头顶暗红装订线上，每隔几米一枚线结铭牌（逐个可读）",
+   "type": "plaque",
+   "title": "线结铭牌",
+   "text": "2015 · 撒哈拉倒悬之城外溢 · 已缝合\n2017 · 京城 7 号线末班车 · 已缝合\n2019 · 雾港沉船（21 人）· 已缝合\n2021 · 昆仑无字碑林碑文错位 · 已缝合\n2023 · 京城 07 考场 · 已缝合（缝了一个人进去）\n2024 · 雾港拍卖会「作者的指甲」流拍 · 已缝合\n2025 · 墨渊边缘塌方 · 已缝合\n2026 · ——（线头还没打结）"
+  },
+  {
+   "id": "doc_gutter_mirror_text",
+   "area": "seventh_gutter",
+   "location": "走廊弧墙上透出的背面楼层反字（连起来读）",
+   "type": "graffiti",
+   "title": "反字（第七局人员守则）",
+   "text": "（文字是左右颠倒的，要用镜子或倒着读）\n一、我们不存在，所以我们不会被划掉。\n二、我们缝合，不修补。修补是给人看的，缝合是给书看的。\n三、我们不问名字。名字是祂找到你的线索。\n四、每一个被归档的人，第七局记得。\n五、光明照不到的装订线里，由我们用血来粘合。"
+  },
+  {
+   "id": "doc_ops_board",
+   "area": "seventh_ops",
+   "location": "作战室正墙 S 级危机看板",
+   "type": "notice_board",
+   "title": "S 级以上危机看板",
+   "text": "S-01　墨渊驯化度下降（99.98% → 预计 99.90%，2027 年加试前）\n S-02　「祂」页边批注频率上升（京城一章，每日 +1 秒）\n S-03　第二草稿搜寻「留白」（已接触灰塔、雾港）\n S-04　联邦档案局「人工觉醒」项目（拟复制「留白」）\n S-05　第十三书签黑色书签一枚（收件人：空）\n\n处置人：K　协同：七号（待定）",
+   "texture": "tex_ops_board"
+  },
+  {
+   "id": "doc_ops_traitor_wall",
+   "area": "seventh_ops",
+   "location": "作战室侧墙「内鬼墙」（照片 + 红线）",
+   "type": "notice_board",
+   "title": "内鬼墙",
+   "text": "（十几张照片被红线连在一起，大部分人的脸被裁掉了。红线最后汇聚到一张没有照片的卡片上。）\n卡片：「把七号的消息卖给第二草稿的人，就在局里。」\n下面三个候选名字，前两个被划掉，第三个被墨盖住。"
+  },
+  {
+   "id": "doc_ops_k_notes",
+   "area": "seventh_ops",
+   "location": "萧难办公桌上摊开的工作笔记（署名 K）",
+   "type": "notebook",
+   "title": "K 的工作笔记",
+   "text": "第一次写回：他问我是谁。我说我是你的同事。他信了。\n第二次写回：他问我是谁。我说你不用知道。他还是信了。\n第三次写回：他没问。他直接问：「这次要缝哪一页？」\n我开始怕的不是祂把他划掉，是我们把他用完。\n\n第四次：我不去见他。让他自己走到这里。\n如果他走到了，桌上的茶还是热的——那说明我刚走。别追。\n\n——K"
+  },
+  {
+   "id": "doc_wrap_intro",
+   "area": "seventh_wrap",
+   "location": "杀青室门口的木牌",
+   "type": "plaque",
+   "title": "杀青室",
+   "text": "这里保存世界已经忘记的人。\n每一只空白档案袋，都是一个被归档的人。\n世界不记得他们。第七局记得。"
+  },
+  {
+   "id": "doc_wrap_file_2023",
+   "area": "seventh_wrap",
+   "location": "杀青室第七排，三只并排的空白档案袋之第 1 只（打开后有字）",
+   "type": "file_page",
+   "title": "07-0-0000 · 2023",
+   "text": "第一次档案\n觉醒：2023-06-08　京城 07 考场\n结果：觉醒瞬间篇幅读数溢出，被世界判定为「归档」。\n写回：2023-06-09 03:07（执行：K）\n任务：无。留在光明处，入职人事处。\n再次归档：2023-12-31。原因：祂在页边写了第一个「删？」。\n结尾：本人自愿。"
+  },
+  {
+   "id": "doc_wrap_file_2024",
+   "area": "seventh_wrap",
+   "location": "杀青室第七排，三只并排的空白档案袋之第 2 只（打开后有字）",
+   "type": "file_page",
+   "title": "07-0-0000 · 2024",
+   "text": "第二次档案\n写回：2024-03-02 03:07（执行：K）\n任务：缝合雾港拍卖会「作者的指甲」一页。\n结果：任务完成。拍品流拍。\n再次归档：2024-11-09。原因：在雾港被问了名字，回答了。\n结尾：本人自愿。"
+  },
+  {
+   "id": "doc_wrap_file_2025",
+   "area": "seventh_wrap",
+   "location": "杀青室第七排，三只并排的空白档案袋之第 3 只（打开后有字）",
+   "type": "file_page",
+   "title": "07-0-0000 · 2025",
+   "text": "第三次档案\n写回：2025-06-11 03:07（执行：K）\n任务：守墨渊边缘，加固驯化锚点。\n结果：墨渊边缘塌方被止住，代价是篇幅。\n再次归档：2025-06-12。原因：篇幅读数为「——」持续 24 小时，被系统自动归档。\n结尾：本人自愿。"
+  },
+  {
+   "id": "doc_rewrite_plate",
+   "area": "seventh_rewrite",
+   "location": "回写台长桌前端的铜牌",
+   "type": "plaque",
+   "title": "回写台",
+   "text": "被归档的人，可以从这里被写回来。\n代价：执笔者的篇幅。\n\n执笔记录：K、K、K。\n第四次执笔者：____"
+  },
+  {
+   "id": "doc_rewrite_last_page",
+   "area": "seventh_rewrite",
+   "location": "回写台空白巨书的最后一页",
+   "type": "manuscript",
+   "title": "最后一页",
+   "text": "（红色）——祂\n\n（旁边一行很小的黑字，萧难的笔迹）\n这一页，祂没有写完。剩下的，归你。"
+  }
+ ],
+ "interactables": [
+  {
+   "id": "int_plaza_fountain_coin",
+   "area": "plaza",
+   "location": "规则之泉泉池边任意位置",
+   "type": "use",
+   "prompt": "按 E 投一枚硬币",
+   "result_text": "硬币落进水里。背面「壹圆」两个字晃了一下，变成了「壹園」，又变了回来。泉水好像在犹豫。",
+   "repeat": true
+  },
+  {
+   "id": "int_plaza_fountain_wait",
+   "area": "plaza",
+   "location": "站在规则之泉边，静止 30 秒（隐藏触发）",
+   "type": "trigger_easter_egg",
+   "prompt": "（无提示）",
+   "result_text": "泉底的铜字地砖上，有一行字慢慢浮起来，又沉下去：\n「第七条：本条不存在。」",
+   "easter_egg": true
+  },
+  {
+   "id": "int_plaza_old_painter",
+   "area": "plaza",
+   "location": "泉池西北侧，坐在折叠凳上写生的老人",
+   "type": "dialogue",
+   "prompt": "按 E 交谈",
+   "lines": [
+    "老人：年轻人，第一天来报到？",
+    "老人：我在这儿画了四十年，这楼我闭着眼都能画。",
+    "老人（指着画板）：你看，七座尖塔。",
+    "（你抬头数了数，主楼只有六座尖塔。）",
+    "老人：……奇怪，每次都多画一座。算了，你快去吧，九点了。"
+   ],
+   "note": "画板贴图 tex_painter_canvas（第二批生图：主楼速写，比实际多一座尖塔）。"
+  },
+  {
+   "id": "int_plaza_reflection",
+   "area": "plaza",
+   "location": "规则之泉水面（视角对准水面倒影时）",
+   "type": "look",
+   "prompt": "（视线停留 3 秒）",
+   "result_text": "倒影里的主楼，比你身后那栋多一座塔。那座塔是倒着长的。",
+   "easter_egg": true,
+   "note": "build-lead：水面反射探头里额外加一座倒置尖塔，只在倒影里出现。"
+  },
+  {
+   "id": "int_gate_desk",
+   "area": "gate",
+   "location": "服务台 3 号窗口，人事处干事",
+   "type": "npc_quest",
+   "prompt": "按 E 办理报到",
+   "quest_step": "q1_badge",
+   "lines": [
+    "干事：报到是吧？通知给我看一下。……好，人脸对一下。",
+    "（终端「嘀」了一声，屏幕显示：识别结果 —— 无。）",
+    "干事：又坏了。行，手动录入。名字？",
+    "（你张了张嘴，那两个字就在嘴边，却说不出来。）",
+    "干事：……没事，紧张很正常，好多人第一天都这样。系统里你的名字也是空的，回头档案馆会补。",
+    "（打印机咔哒卡了一下，吐出一张废卡，又吐出一张新的。）",
+    "干事：拿好，临时证，今天有效。安检往前直走。哦对了——",
+    "干事：你看着有点眼熟。我们见过吗？"
+   ],
+   "gives": "item_badge",
+   "completes": "q1_badge"
+  },
+  {
+   "id": "int_gate_emblem_wall",
+   "area": "gate",
+   "location": "服务台后的巨型局徽墙（走近到 1.5 米内凝视局徽中心）",
+   "type": "look",
+   "prompt": "（凝视）",
+   "result_text": "局徽中心那颗菱形宝石里，映出七颗星。墙上的局徽只有四芒。",
+   "easter_egg": true
+  },
+  {
+   "id": "int_sec_scanner",
+   "area": "security_hall",
+   "location": "第 7 号闸机通道，金属探测门 + 金色符文环",
+   "type": "trigger_quest",
+   "prompt": "走入扫描门",
+   "quest_step": "q2_scan",
+   "requires": "item_badge",
+   "sequence": [
+    "扫描环从头顶降到脚底，金色符文一圈圈亮起。",
+    "（耳边有一个很轻的声音，像有人翻书：「你是谁？」）",
+    "扫描环停在胸口的位置，不动了。",
+    "警示灯转为琥珀色。小屏：段落缺失 · 请转人工复核。"
+   ],
+   "then": "dlg_yinze_review"
+  },
+  {
+   "id": "dlg_yinze_review",
+   "area": "security_hall",
+   "location": "第 7 号闸机后，安检组长殷泽（走到玩家两步外）",
+   "type": "dialogue",
+   "prompt": "（自动对话）",
+   "lines": [
+    "殷泽：别动，站着就好。",
+    "殷泽（看了一眼小屏，又看了一眼你）：……段落缺失。",
+    "殷泽：设备老毛病。",
+    "殷泽：刚才扫描门问你话了吗？",
+    "> 选项 A：「问了，它问我是谁。」",
+    "> 选项 B：「没有。」",
+    "殷泽（A）：你没回答吧？那就好。",
+    "殷泽（B）：嗯。那就是没有。",
+    "殷泽：放行。你去档案馆吧，西边。路上别回头。"
+   ],
+   "completes": "q2_scan",
+   "note": "殷泽始终保持在玩家两步外（能力【咫尺】）：玩家靠近，他就同步后移。"
+  },
+  {
+   "id": "int_sec_clock",
+   "area": "security_hall",
+   "location": "装饰座钟",
+   "type": "use",
+   "prompt": "按 E 看钟",
+   "result_text": "你凑近看。钟摆一动不动。\n可你分明听见了一声「当」，从很深的地方传上来。",
+   "repeat": false,
+   "sfx": "bell_deep_far"
+  },
+  {
+   "id": "int_archive_yexun",
+   "area": "archive",
+   "location": "一层阅览大厅尽头的管理员柜台，管理员叶寻",
+   "type": "npc_quest",
+   "prompt": "按 E 领取档案",
+   "quest_step": "q3_file",
+   "requires": "q2_scan",
+   "lines": [
+    "叶寻（头也不抬）：新人？编号。",
+    "（你把证件递过去。）",
+    "叶寻：XS……2026……1029……07。七号。",
+    "叶寻：稍等。我记性不好，东西都是它记的。",
+    "（他的影子从柜台后站起来，自己走进了档案架之间。叶寻本人一动没动。）",
+    "（片刻后，影子把一只牛皮纸档案袋放在柜台上，又缩回了他脚下。）",
+    "叶寻：当场核对。核对完在登记簿上签字。",
+    "叶寻：……奇怪，这袋子我好像见过。算了，我什么都觉得见过。"
+   ],
+   "gives": "item_file",
+   "completes": "q3_file",
+   "then": "ui_open_file"
+  },
+  {
+   "id": "int_archive_logbook",
+   "area": "archive",
+   "location": "管理员柜台左侧摊开的借阅登记簿",
+   "type": "read",
+   "prompt": "按 E 翻看登记簿",
+   "doc": "doc_archive_logbook",
+   "requires": "q4_read_3"
+  },
+  {
+   "id": "int_archive_compactor",
+   "area": "archive",
+   "location": "B1 密集库，第 7 排电动密集架端头的转盘控制面板（四位档号拨盘）",
+   "type": "puzzle",
+   "prompt": "按 E 操作密集架",
+   "requires": "item_file",
+   "optional": true,
+   "quest_step": "q5_b1",
+   "solution": "07-0-0000",
+   "fail_text": "密集架嗡地动了一下，又合拢了。",
+   "success_sequence": [
+    "拨盘归位：07-0-0000。",
+    "第 7 排的两列密集架缓缓分开，却在半途停住，露出一道比手掌还窄的缝。",
+    "缝里不是墙，是一页巨大的纸的背面。一根暗红色的线从缝里穿出来，被风吹得轻轻发颤。",
+    "冷风里有很轻的翻页声。",
+    "（你听见有人在缝的另一头说：「还不是时候。先去上班吧，七号。」）"
+   ],
+   "completes": "q5_b1",
+   "unlocks": "seventh_entry_teaser",
+   "note": "v1 到此为止：缝隙不可通过，第一章结束字幕。v4 开放装订线。"
+  },
+  {
+   "id": "int_wall_bitten",
+   "area": "wall_posts",
+   "location": "西段城墙内侧，一处石材表面缺了一块的墙砖（齐胸高）",
+   "type": "look",
+   "prompt": "按 E 查看",
+   "result_text": "墙砖上原本刻着一行字，中间被什么东西啃掉了一块，齿痕很整齐。\n「此墙之内，_______不得进入。」\n少了一个字。也可能是两个。"
+  },
+  {
+   "id": "int_wall_telescope",
+   "area": "wall_posts",
+   "location": "东一号塔楼顶部的黄铜望远镜",
+   "type": "look",
+   "prompt": "按 E 远眺",
+   "result_text": "远处是河、桥和一望无际的城。飞行器沿着金色航线滑过黄昏。\n东南方向的地平线上立着一堵灰白色的雾墙，那是冀-03 号 5 级禁区的边界。雾墙里有一座钟楼，钟面上的指针转得飞快。",
+   "camera": "zoom_skybox_east"
+  },
+  {
+   "id": "int_memorial_0000",
+   "area": "memorial",
+   "location": "碑廊第七排最后一块碑（碑底编号 07-0-0000 · 2023）",
+   "type": "look",
+   "prompt": "按 E 查看",
+   "result_text": "碑底只刻着一个编号和年份：07-0-0000 · 2023。\n碑前放着一束白菊，花瓣还是湿的。花里夹着一张卡片：\n「给又一次回来的你。这次走远一点。」",
+   "easter_egg": true
+  },
+  {
+   "id": "int_cit_drawer",
+   "area": "citizen_service",
+   "location": "2 号窗口旁的钢制投放抽屉",
+   "type": "use",
+   "prompt": "按 E 拉开投放口",
+   "result_text": "抽屉拉不开。里面传来三下很有礼貌的敲击声。\n然后是第四下，从你身后的地板下面传来。"
+  },
+  {
+   "id": "int_cit_ricecooker",
+   "area": "citizen_service",
+   "location": "排队座椅第二排，一位抱着电饭锅的大妈",
+   "type": "dialogue",
+   "prompt": "按 E 交谈",
+   "lines": [
+    "大妈：小伙子……不，小姑娘？哎，我老眼花，看不清你的脸。",
+    "大妈：我这锅会说话，来上交的。",
+    "电饭锅（闷声）：我不想煮饭。",
+    "电饭锅：我想当一本书。",
+    "大妈：听听，天天这样。",
+    "电饭锅：你也不是这一页的人吧？",
+    "（大妈赶紧把锅盖按紧了。）"
+   ],
+   "note": "对玩家性别与外貌一律模糊处理（「看不清你的脸」）。"
+  },
+  {
+   "id": "int_exam_kiosk",
+   "area": "exam_center",
+   "location": "1F 报名大厅自助报名机（第 7 台）",
+   "type": "use",
+   "prompt": "按 E 使用报名机",
+   "sequence": [
+    "屏幕：请刷身份证或工作证。",
+    "（你把临时入职证贴上去。）",
+    "屏幕：查询到您的历史报名记录。",
+    "屏幕：2023 年　京城 302 考点　07 考场　结果：——",
+    "屏幕：该结果无法显示，因为显示它需要您的名字。",
+    "屏幕：是否重新报名？　[是]　[否]",
+    "（无论你选什么，屏幕都只显示：「已存档。」）"
+   ],
+   "requires": "item_badge"
+  },
+  {
+   "id": "int_exam_shelf",
+   "area": "exam_center",
+   "location": "3F 调度室中央的旋转金属书架（副本母带）",
+   "type": "look",
+   "prompt": "按 E 查看母带",
+   "result_text": "一排排厚重的书竖在架上，书脊烫金编号：SUR-044-5、MYS-013-2、RPG-021-1……每本都缠着「封」字封条。\n最后一本没有编号，只写着「ABY-000-?」，被铁链锁着。锁头上刻着一个「柒」字。",
+   "texture": "tex_exam_spines"
+  },
+  {
+   "id": "int_canteen_gossip",
+   "area": "canteen",
+   "location": "靠窗长桌，两名正在吃饭的职员",
+   "type": "dialogue",
+   "prompt": "（走近时自动触发）",
+   "lines": [
+    "职员甲：……真的，档案馆 B1 底下还有一层，是倒着的。",
+    "职员乙：你又听周闻那儿传出来的？他那张嘴，说什么都会变成真的。",
+    "职员甲：不是。我是说，局长从来不坐电梯。",
+    "职员乙：那他怎么上十二楼？",
+    "职员甲：他不上去。他从下面「翻」上来。",
+    "（他们注意到你，同时闭嘴，低头吃饭。）"
+   ]
+  },
+  {
+   "id": "int_cmd_globe",
+   "area": "command_center",
+   "location": "大厅正中的全息文字地球仪",
+   "type": "use",
+   "prompt": "按 E 旋转地球",
+   "result_text": "地球由无数流动的小字组成。你把它转到大夏，京城的位置有一个小小的空洞：那里的字是倒着流的，一直流进地底。",
+   "repeat": true
+  },
+  {
+   "id": "int_cmd_zhouwen",
+   "area": "command_center",
+   "location": "值班长台，值班长周闻",
+   "type": "dialogue",
+   "prompt": "按 E 交谈",
+   "lines": [
+    "周闻：新人？实习的？坐那儿，别碰红按钮。",
+    "周闻：你知道这屏上的数字是怎么来的吗？大部分是测出来的。",
+    "周闻：小部分是我说出来的。我说「今天稳定」，它就稳定一点。",
+    "周闻：所以别问我 03:07 是什么。",
+    "周闻：我一旦说出来，它就是真的了。"
+   ]
+  },
+  {
+   "id": "int_zone_sandbox",
+   "area": "zone_control",
+   "location": "调度厅中央二十米长的实体沙盘（大夏版图，发光棱柱）",
+   "type": "use",
+   "prompt": "按 E 选择禁区棱柱",
+   "result_text": "棱柱按等级发光：浅金、橙、红……你点开冀-03，沙盘上方浮出卡片：「5 级 · 时流异常 · 封锁中 · 外勤三组」。",
+   "repeat": true
+  },
+  {
+   "id": "int_zone_beijing8",
+   "area": "zone_control",
+   "location": "沙盘上京城位置那根不发光的黑色 8 级棱柱",
+   "type": "trigger_easter_egg",
+   "prompt": "按 E 按下棱柱",
+   "sequence": [
+    "棱柱很沉，按下去的时候发出「咔」的一声，像钥匙转进锁里。",
+    "沙盘底下传来电梯运行的声音：很远，一直往下。",
+    "卡片浮出来：「京城地下 · 8 级 · 墨渊 · 已驯化（99.98%）· 不计入」。",
+    "卡片底部一行小字：「如果你能按下它，说明你有权限。可你没有权限。」"
+   ],
+   "easter_egg": true,
+   "quest_step": "q6_heartbeat"
+  },
+  {
+   "id": "int_spine_b7",
+   "area": "spine_shaft",
+   "location": "电梯楼层面板（同时按住 B6 与关门键 7 秒）",
+   "type": "trigger_easter_egg",
+   "prompt": "（隐藏输入）",
+   "result_text": "面板最下方那块空白金属亮了一下，浮出两个金色字符：B7。\n一秒后熄灭。轿厢里多了一股旧纸的味道。",
+   "easter_egg": true,
+   "note": "v4 起此输入可真正到达装订线 seventh_entry。"
+  },
+  {
+   "id": "int_vault_frame",
+   "area": "vault",
+   "location": "活人相框观察窗（靠近到一米以内）",
+   "type": "look",
+   "prompt": "（靠近观察窗）",
+   "result_text": "相框里是一个看不清脸的人，正用力敲着玻璃。他举起一张纸，上面写着：\n「别相信第七局，也别相信我。」\n你眨了一下眼，照片换了。这一张里，举纸的人穿着和你一样的衣服。",
+   "easter_egg": true
+  },
+  {
+   "id": "int_vault_qichou",
+   "area": "vault",
+   "location": "B4 收容柜走廊尽头，收容库主管齐仇",
+   "type": "dialogue",
+   "prompt": "按 E 交谈",
+   "lines": [
+    "齐仇：实习生不能下 B5。",
+    "齐仇：……你的证件挂在我这儿的权限是「全部」。谁给你开的？",
+    "齐仇（低头看证件，又抬头看你）：算了。我把你和这些东西的「联系」先剪断，免得它们记住你。",
+    "（他用手掌在你和走廊之间轻轻一划，空气里像有一根线断了。）",
+    "齐仇：去吧。别敲钟。"
+   ]
+  },
+  {
+   "id": "int_med_test",
+   "area": "medical",
+   "location": "诊室里的理智值监测仪（坐上检测椅）",
+   "type": "use",
+   "prompt": "按 E 坐下检测",
+   "sequence": [
+    "电极贴上太阳穴。波形屏亮起来。",
+    "波形是一条笔直的线。",
+    "监测仪：被测者文本过短，无法测定。",
+    "苏予（从屏风后探头）：别紧张，它对谁都这么说。……好吧，只对你这么说。"
+   ]
+  },
+  {
+   "id": "int_lab_gauge",
+   "area": "lab",
+   "location": "篇幅测量仪（站上底座）",
+   "type": "use",
+   "prompt": "按 E 站上去",
+   "result_text": "蓝色液柱一动不动。\n过了很久，液柱最底部浮起一个很小的气泡，然后破了。\n读数屏：0？\n读数屏：——\n读数屏：读不出来。",
+   "texture": "tex_lab_gauge_screen"
+  },
+  {
+   "id": "int_lab_rubbing",
+   "area": "lab",
+   "location": "初始文本拓印台（黑色光面板）",
+   "type": "use",
+   "prompt": "按 E 把手放上去",
+   "result_text": "黑色面板上慢慢浮现一行白字：\n「请先写下你的名字。」\n你的手指在面板上停了很久。什么也没写出来。\n面板：拓印失败。原因：起笔处为空。"
+  },
+  {
+   "id": "int_lib_benche",
+   "area": "library",
+   "location": "十一层书井顶端讲经台上，那部只有封面的巨书「本册」",
+   "type": "use",
+   "prompt": "按 E 翻开「本册」",
+   "sequence": [
+    "封面烫金两个字：本册。",
+    "你翻开。它只给你看最新的一页。",
+    "上面正在一个字一个字地写：「新人站在藏书阁顶层，翻开了本册。」",
+    "那一行字的后面，空了很长一段。",
+    "页边有一道暗红色的线，穿过页缝，伸进书脊里。"
+   ],
+   "easter_egg": false,
+   "quest_step": "q9_benche",
+   "texture": "tex_lib_benche_cover"
+  },
+  {
+   "id": "int_dir_painting",
+   "area": "director_office",
+   "location": "局长室壁炉上方盖着黑布的画框",
+   "type": "use",
+   "prompt": "按 E 掀开黑布",
+   "result_text": "画的是一座城，倒挂在一片墨色的天空里。尖塔朝下，像钟乳石。城的正中央插着一根黑金色的长柱，柱顶连着画框上沿，好像一直通到画外面。\n画的右下角签着一个字：柒。",
+   "texture": "tex_dir_painting"
+  },
+  {
+   "id": "int_dir_paperweight",
+   "area": "director_office",
+   "location": "书桌上压着信笺的金色镇纸（罗盘十字造型）",
+   "type": "use",
+   "prompt": "按 E 触碰镇纸",
+   "result_text": "镇纸很沉，纹丝不动。底座上刻着一行小字：「压住这一页，别让祂翻过去。」\n（v4：持有副局长授权后可转动，书脊井直达墨渊。）",
+   "unlocks_v4": "abyss_gate"
+  },
+  {
+   "id": "int_dir_qilingyun",
+   "area": "director_office",
+   "location": "落地窗前，副局长齐凌云",
+   "type": "dialogue",
+   "prompt": "按 E 交谈",
+   "lines": [
+    "齐凌云：你来得比我算的早了七分钟。",
+    "齐凌云：别紧张。我的能力不改结果，只看路。你今天走的每条路，我都看得见。",
+    "齐凌云：可我看不见你路的尽头。那里是白的。",
+    "齐凌云：局长不在。他留了句话给你：这一次，你自己选。",
+    "齐凌云：选什么？……等你下到最底下，就知道了。"
+   ]
+  },
+  {
+   "id": "int_arm_zhouye",
+   "area": "armory",
+   "location": "整备库装备墙前，外勤队长周也",
+   "type": "dialogue",
+   "prompt": "按 E 交谈",
+   "lines": [
+    "周也：新人别在这儿晃。这儿每样东西都能把你划开。",
+    "周也：……等等。你那套作战服，挂在第三排。",
+    "周也：我不知道为什么我知道。",
+    "周也：拿走吧。下面的路不太平。"
+   ]
+  },
+  {
+   "id": "int_train_sur",
+   "area": "training",
+   "location": "SUR-001-1 副本门",
+   "type": "minigame",
+   "prompt": "按 E 进入切片（三分钟生存）",
+   "result_text": "（v4 可玩小关：黑白纸页构成的孤岛，墨潮每 30 秒上涨一次，活过 3:00 即通关。）",
+   "optional": true
+  },
+  {
+   "id": "int_abyss_fold",
+   "area": "abyss_gate",
+   "location": "由无数书页折成的巨门",
+   "type": "transition",
+   "prompt": "按 E 穿过折页门",
+   "result_text": "（转场：画面像一张纸一样从中间对折，再展开。天地颠倒。）",
+   "fx": "page_fold_transition"
+  },
+  {
+   "id": "int_abyss_guard",
+   "area": "abyss_gate",
+   "location": "折页门内侧岗哨，一名书芯卫队队员（脸是一页空白的纸）",
+   "type": "dialogue",
+   "prompt": "按 E 交谈",
+   "lines": [
+    "卫队员：证件。",
+    "（你递过去。他把证件贴在自己空白的脸上，脸上浮出了你的编号。）",
+    "卫队员：XS-2026-1029-07。第四次。",
+    "卫队员：前三次你都是从装订线那边来的。这次走了正门。",
+    "卫队员：进去吧。档案塔在左手边，倒着走就到了。"
+   ]
+  },
+  {
+   "id": "int_abyss_yexun_shadow",
+   "area": "abyss_city",
+   "location": "正本档案塔门口，一个独自站着的影子（叶寻的影子）",
+   "type": "dialogue",
+   "prompt": "按 E 交谈",
+   "lines": [
+    "影子：……",
+    "影子（用手指在地上写字）：他记不住你，我记得。",
+    "影子：四次。你每次都在登记簿上签字，每次签的都不是同一个名字。",
+    "影子：这次别签了。"
+   ]
+  },
+  {
+   "id": "int_abyss_core_look_up",
+   "area": "abyss_core",
+   "location": "定稿厅中央（抬头看向书页边缘的红色批注）",
+   "type": "look",
+   "prompt": "（抬头凝视 5 秒）",
+   "result_text": "页边的红字一个接一个地冒出来，越来越快。\n「删？」「删？」「删？」\n然后停住了。最后一个字写到一半，笔尖悬在你头顶上方。\n它在等。\n（屏幕边缘轻微乱码，持续 2 秒。）",
+   "fx": "red_annotation_rain + screen_glitch"
+  },
+  {
+   "id": "int_abyss_exam_sit",
+   "area": "abyss_exam",
+   "location": "第七排第七张课桌（坐下）",
+   "type": "use",
+   "prompt": "按 E 坐下",
+   "result_text": "你坐下的一瞬间，四周所有空课桌上的试卷同时翻了一页。\n很远很远的地方，有人小声说：「开考。」\n（回响：2023 年 6 月 8 日的残影。你看见三年前的自己坐在同一个位置，抬头看了你一眼。）",
+   "fx": "echo_replay_2023"
+  },
+  {
+   "id": "int_ops_tea",
+   "area": "seventh_ops",
+   "location": "萧难办公桌上一杯茶",
+   "type": "look",
+   "prompt": "按 E 查看",
+   "result_text": "茶还是热的。杯底压着一张字条：「别追。去杀青室，看看你自己。」"
+  },
+  {
+   "id": "int_wrap_mirror",
+   "area": "seventh_wrap",
+   "location": "杀青室尽头的一面落地镜",
+   "type": "look",
+   "prompt": "（走到镜前）",
+   "result_text": "镜子里的人穿着你的衣服，站着你的姿势。\n脸的位置是一片纸白。\n你抬手，镜子里的人没有抬手。他在等你先写点什么。",
+   "fx": "mirror_blank_face"
+  },
+  {
+   "id": "int_rewrite_choice",
+   "area": "seventh_rewrite",
+   "location": "回写台：空白巨书 + 墨池里的金色钢笔 + 「柒」字印章",
+   "type": "ending_choice",
+   "prompt": "按 E 拿起笔",
+   "choices": [
+    {
+     "id": "end_a_name",
+     "label": "在姓名栏写下自己的名字",
+     "result": "你写下了名字。字很丑，但是是你的。\n巨书合上。你回到地面，正门服务台的叫号屏上，第一次显示了一个名字。\n结局 A：署名。\n（你成为叙事管理局正式员工。祂在页边写了最后一个字：「行。」）"
+    },
+    {
+     "id": "end_b_seal",
+     "label": "不写名字，按下「柒」字印章",
+     "result": "印章落下。红色的「柒」渗进纸里，像一滴血。\n装订线在你头顶收紧，打了一个结。线结铭牌上写着：2026 · 七号 · 已缝合。\n结局 B：装订。\n（你加入第七局。世界依然不记得你，但从今天起，你记得所有人。）"
+    },
+    {
+     "id": "end_c_close",
+     "label": "合上书，走回地面",
+     "result": "你合上了书。墨池里的笔慢慢沉下去。\n你走回地面，天亮了。手机震了一下。\n「【叙事管理局人事处】报到通知：您好，留白同志……」\n结局 C：留白。\n（下一轮报到开始。档案袋封面上，「第 5 版」。）"
+    }
+   ],
+   "note": "三结局均以字幕 + 回到广场收尾；结局 C 直接回到开场。",
+   "texture": "tex_seventh_seal"
+  }
+ ],
+ "hints": [
+  {
+   "id": "hint_q0",
+   "area": "plaza",
+   "location": "开场 HUD 目标栏",
+   "type": "objective",
+   "text": "前往管理局正门报到",
+   "step": "q0_arrive",
+   "order": 0,
+   "done_when": "enter_area:gate"
+  },
+  {
+   "id": "hint_q1",
+   "area": "gate",
+   "location": "HUD 目标栏",
+   "type": "objective",
+   "text": "在服务台 3 号窗口领取临时入职证",
+   "step": "q1_badge",
+   "order": 1,
+   "done_when": "q1_badge"
+  },
+  {
+   "id": "hint_q2",
+   "area": "security_hall",
+   "location": "HUD 目标栏",
+   "type": "objective",
+   "text": "通过安检大厅第 7 号闸机的文本完整性扫描",
+   "step": "q2_scan",
+   "order": 2,
+   "done_when": "q2_scan"
+  },
+  {
+   "id": "hint_q3",
+   "area": "archive",
+   "location": "HUD 目标栏",
+   "type": "objective",
+   "text": "前往西翼人事档案馆，向管理员领取本人入职档案",
+   "step": "q3_file",
+   "order": 3,
+   "done_when": "q3_file"
+  },
+  {
+   "id": "hint_q4",
+   "area": "archive",
+   "location": "HUD 目标栏",
+   "type": "objective",
+   "text": "当场核对入职档案（0/3 页）",
+   "step": "q4_read",
+   "order": 4,
+   "done_when": "q4_read_1&q4_read_2&q4_read_3",
+   "progress_text": "当场核对入职档案（{n}/3 页）"
+  },
+  {
+   "id": "hint_q5",
+   "area": "archive",
+   "location": "HUD 目标栏（可选，金色斜体）",
+   "type": "objective_optional",
+   "text": "（可选）去 B1 第七排看看",
+   "step": "q5_b1",
+   "order": 5,
+   "done_when": "q5_b1"
+  },
+  {
+   "id": "hint_end1",
+   "area": "archive",
+   "location": "q5 完成或玩家离开档案馆 60 秒后：全屏黑场字幕",
+   "type": "chapter_card",
+   "text": "第一章 · 报到　完\n\n你又一次来报到了。",
+   "order": 6
+  },
+  {
+   "id": "hint_ctx_interact",
+   "area": "*",
+   "location": "准星对准可交互物时的提示",
+   "type": "tooltip",
+   "text": "按 E 互动",
+   "order": -1
+  },
+  {
+   "id": "hint_ctx_read",
+   "area": "*",
+   "location": "打开文档时的底部提示",
+   "type": "tooltip",
+   "text": "鼠标滚轮翻页　Esc 关闭",
+   "order": -1
+  },
+  {
+   "id": "hint_ctx_gate_way",
+   "area": "security_hall",
+   "location": "玩家在安检大厅停留超过 90 秒且未过闸时，耳边低语字幕",
+   "type": "whisper",
+   "text": "（有人在你身后翻了一页纸。）",
+   "order": -1
+  },
+  {
+   "id": "hint_ctx_archive_way",
+   "area": "security_hall",
+   "location": "玩家通过安检后往东走时，西墙箭头导视亮起",
+   "type": "wayfinding",
+   "text": "← 西翼　人事档案馆",
+   "order": -1
+  },
+  {
+   "id": "hint_ctx_lookback",
+   "area": "security_hall",
+   "location": "殷泽说「路上别回头」之后，玩家 180° 转身时（只触发一次）",
+   "type": "whisper",
+   "text": "（大厅里所有人都停下了动作，看着你。再转回去，一切如常。）",
+   "order": -1,
+   "easter_egg": true
+  },
+  {
+   "id": "hint_ctx_b1",
+   "area": "archive",
+   "location": "q4 完成后，档案馆通往 B1 的楼梯口地面上的导视贴",
+   "type": "wayfinding",
+   "text": "B1　密集库　→",
+   "order": -1
+  },
+  {
+   "id": "hint_c2_start",
+   "area": "security_hall",
+   "location": "第一章结束后：HUD 目标栏",
+   "type": "objective",
+   "text": "前往东翼二层监测指挥中心报到实习",
+   "step": "q6_cmd",
+   "order": 10,
+   "done_when": "enter_area:command_center"
+  },
+  {
+   "id": "hint_c2_log",
+   "area": "command_center",
+   "location": "HUD 目标栏",
+   "type": "objective",
+   "text": "阅读监测日志与交接班记录",
+   "step": "q6_log",
+   "order": 11,
+   "done_when": "read:doc_cmd_log_strip&read:doc_cmd_handover"
+  },
+  {
+   "id": "hint_c2_zone",
+   "area": "zone_control",
+   "location": "HUD 目标栏（可选）",
+   "type": "objective_optional",
+   "text": "（可选）在禁区沙盘上找到京城",
+   "step": "q6_heartbeat",
+   "order": 12
+  },
+  {
+   "id": "hint_c2_exam",
+   "area": "exam_center",
+   "location": "HUD 目标栏",
+   "type": "objective",
+   "text": "去考务中心查 2023 年京城 07 考场的记录",
+   "step": "q7_exam",
+   "order": 13,
+   "done_when": "read:doc_exam_stats"
+  },
+  {
+   "id": "hint_c2_vault",
+   "area": "vault",
+   "location": "HUD 目标栏",
+   "type": "objective",
+   "text": "去 B5 深库看看回响座钟",
+   "step": "q8_vault",
+   "order": 14,
+   "done_when": "read:doc_vault_label_clock"
+  },
+  {
+   "id": "hint_c2_end",
+   "area": "vault",
+   "location": "q8 完成后：全屏黑场字幕",
+   "type": "chapter_card",
+   "text": "第二章 · 下午　完\n\n钟摆停在三点零七分。今晚你留下值夜班。",
+   "order": 15
+  },
+  {
+   "id": "hint_c3_start",
+   "area": "canteen",
+   "location": "第二章结束后：HUD 目标栏",
+   "type": "objective",
+   "text": "夜班开始：去主塔顶层，副局长要见你",
+   "step": "q9_director",
+   "order": 20,
+   "done_when": "talk:int_dir_qilingyun"
+  },
+  {
+   "id": "hint_c3_library",
+   "area": "library",
+   "location": "HUD 目标栏（途经藏书阁）",
+   "type": "objective_optional",
+   "text": "（可选）翻开藏书阁顶层的「本册」",
+   "step": "q9_benche",
+   "order": 21
+  },
+  {
+   "id": "hint_c3_find",
+   "area": "director_office",
+   "location": "HUD 目标栏",
+   "type": "objective",
+   "text": "找到通往「最底下」的路：镇纸、书脊井、或者档案馆 B1 第七排",
+   "step": "q10_down",
+   "order": 22
+  },
+  {
+   "id": "hint_c3_end",
+   "area": "director_office",
+   "location": "q10 触发：全屏黑场字幕",
+   "type": "chapter_card",
+   "text": "第三章 · 夜班　完\n\n往下走。别回头。",
+   "order": 23
+  },
+  {
+   "id": "hint_c4_start",
+   "area": "abyss_gate",
+   "location": "进入墨渊：HUD 目标栏",
+   "type": "objective",
+   "text": "找到正本档案塔",
+   "step": "q11_truefile",
+   "order": 30,
+   "done_when": "read:doc_abyss_true_file"
+  },
+  {
+   "id": "hint_c4_core",
+   "area": "abyss_city",
+   "location": "HUD 目标栏",
+   "type": "objective",
+   "text": "去定稿厅（向上走）",
+   "step": "q12_core",
+   "order": 31,
+   "done_when": "enter_area:abyss_core"
+  },
+  {
+   "id": "hint_c4_exam",
+   "area": "abyss_city",
+   "location": "HUD 目标栏（可选）",
+   "type": "objective_optional",
+   "text": "（可选）去考场母本，坐回你的位置",
+   "step": "q12b_exam",
+   "order": 32
+  },
+  {
+   "id": "hint_c4_seventh",
+   "area": "abyss_core",
+   "location": "HUD 目标栏",
+   "type": "objective",
+   "text": "镇纸柱底有一道暗红色的线，跟着它走",
+   "step": "q13_gutter",
+   "order": 33,
+   "done_when": "enter_area:seventh_rewrite"
+  },
+  {
+   "id": "hint_c4_choice",
+   "area": "seventh_rewrite",
+   "location": "HUD 目标栏",
+   "type": "objective",
+   "text": "做出选择",
+   "step": "q14_choice",
+   "order": 34
+  },
+  {
+   "id": "hint_c4_tide_warn",
+   "area": "abyss_tide",
+   "location": "靠近墨潮带 10 米内：全屏边缘红字闪烁",
+   "type": "whisper",
+   "text": "（不要读它们身上的字。）",
+   "order": -1
+  }
+ ],
+ "textures": [
+  {
+   "id": "tex_gate_visitor_rules",
+   "area": "gate",
+   "location": "门廊左侧访客须知碑碑面",
+   "type": "sign",
+   "path": "textures/b01/T01_访客须知告示牌.png",
+   "size": "816x1088（原图 3:4）",
+   "source": "T01 测试样张（GPT image 2.5）",
+   "status": "ready"
+  },
+  {
+   "id": "tex_emblem_hd",
+   "area": "*",
+   "location": "全局：局徽（门楣、局徽墙、地徽、证件、UI）",
+   "type": "emblem",
+   "path": "textures/b01/B01_01_局徽高清.png",
+   "size": "1024x1024",
+   "source": "B01 生图",
+   "status": "ready"
+  },
+  {
+   "id": "tex_flag_bureau",
+   "area": "plaza",
+   "location": "广场旗杆阵列、正门两侧长旗、大厅垂旗",
+   "type": "flag",
+   "path": "textures/b01/B01_02_局旗深蓝.png",
+   "size": "1024x1536",
+   "source": "B01 生图",
+   "status": "ready"
+  },
+  {
+   "id": "tex_gate_directory",
+   "area": "gate",
+   "location": "服务台左侧立式导视牌牌面",
+   "type": "sign",
+   "path": "textures/b01/B01_03_正门导视牌.png",
+   "source": "B01 生图",
+   "status": "ready"
+  },
+  {
+   "id": "tex_gate_newcomer",
+   "area": "gate",
+   "location": "门廊右侧黄铜铭牌",
+   "type": "sign",
+   "path": "textures/b01/B01_04_新人报到告示.png",
+   "source": "B01 生图",
+   "status": "ready"
+  },
+  {
+   "id": "tex_sec_main_screen",
+   "area": "security_hall",
+   "location": "大厅中央 LED 大屏（emissive）",
+   "type": "screen_ui",
+   "path": "textures/b01/B01_05_安检大屏主界面.png",
+   "size": "1536x864",
+   "source": "B01 生图",
+   "status": "ready"
+  },
+  {
+   "id": "tex_sec_scan_result",
+   "area": "security_hall",
+   "location": "第 7 号闸机扫描结果小屏（emissive，扫描事件时切换）",
+   "type": "screen_ui",
+   "path": "textures/b01/B01_06_安检扫描异常屏.png",
+   "size": "1536x864",
+   "source": "B01 生图",
+   "status": "ready"
+  },
+  {
+   "id": "tex_poster_gaokao",
+   "area": "security_hall",
+   "location": "安检大厅北墙 / 市民服务入口的灯箱海报",
+   "type": "poster",
+   "path": "textures/b01/B01_07_海报_叙事高考.png",
+   "source": "B01 生图",
+   "status": "ready"
+  },
+  {
+   "id": "tex_poster_fountain",
+   "area": "plaza",
+   "location": "广场两侧灯杆旗 / 正门门廊灯箱",
+   "type": "poster",
+   "path": "textures/b01/B01_08_海报_规则之泉.png",
+   "source": "B01 生图",
+   "status": "ready"
+  },
+  {
+   "id": "tex_poster_safety",
+   "area": "security_hall",
+   "location": "安检大厅等候区立柱海报",
+   "type": "poster",
+   "path": "textures/b01/B01_09_海报_畸变规避.png",
+   "source": "B01 生图",
+   "status": "ready"
+  },
+  {
+   "id": "tex_file_cover",
+   "area": "archive",
+   "location": "档案袋模型封面 + 阅读 UI 封面页",
+   "type": "document",
+   "path": "textures/b01/B01_10_档案袋封面.png",
+   "source": "B01 生图",
+   "status": "ready"
+  },
+  {
+   "id": "tex_file_page1",
+   "area": "archive",
+   "location": "阅读 UI 第 1 页（人事登记表）",
+   "type": "document",
+   "path": "textures/b01/B01_11_入职档案内页.png",
+   "source": "B01 生图",
+   "status": "ready"
+  },
+  {
+   "id": "tex_file_page2",
+   "area": "archive",
+   "location": "阅读 UI 第 2 页（加试考场记录复印件）",
+   "type": "document",
+   "path": "textures/b02/B02_档案内页_加试记录.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_file_page3",
+   "area": "archive",
+   "location": "阅读 UI 第 3 页（初始文本残页）",
+   "type": "document",
+   "path": "textures/b01/B01_12_初始文本残页.png",
+   "source": "B01 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_item_badge",
+   "area": "gate",
+   "location": "临时入职证道具模型正面 + 背包 UI",
+   "type": "item",
+   "path": "textures/b01/B01_13_临时入职证.png",
+   "size": "1536x1024",
+   "source": "B01 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_skybox_city_dusk",
+   "area": "*",
+   "location": "全局天空盒（等距柱状 2:1）",
+   "type": "skybox",
+   "path": "textures/b01/B01_14_天空盒_黄昏巨城.png",
+   "size": "2048x1024",
+   "source": "B01 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_tile_blackstone_gold",
+   "area": "*",
+   "location": "外立面与大厅墙面：黑石金线（无缝，repeat）",
+   "type": "material_albedo",
+   "path": "textures/b01/B01_15_无缝_黑石金线.png",
+   "size": "1024x1024",
+   "source": "B01 生图",
+   "note": "法线 / 粗糙度可复用 assets/sourced/00_materials/acg_Marble* 的通道",
+   "status": "pending"
+  },
+  {
+   "id": "tex_tile_floor_hall",
+   "area": "*",
+   "location": "正门、安检大厅地面拼花（无缝）",
+   "type": "material_albedo",
+   "path": "textures/b01/B01_16_无缝_大厅地砖.png",
+   "size": "1024x1024",
+   "source": "B01 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_tile_flag_fabric",
+   "area": "*",
+   "location": "旗帜布料细节（无缝，叠加在旗面上）",
+   "type": "material_albedo",
+   "path": "textures/b01/B01_17_无缝_旗帜布纹.png",
+   "size": "1024x1024",
+   "source": "B01 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_archive_rules",
+   "area": "archive",
+   "location": "档案馆入口黄铜规章牌",
+   "type": "sign",
+   "path": "textures/b01/B01_18_档案馆规章铜牌.png",
+   "source": "B01 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_archive_portrait_chenhe",
+   "area": "archive",
+   "location": "二层回廊陈列柜：陈鹤档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/chenhe.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_chujing",
+   "area": "archive",
+   "location": "二层回廊陈列柜：楚菁档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/chujing.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_cuiyou",
+   "area": "archive",
+   "location": "二层回廊陈列柜：崔攸档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/cuiyou.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_fuliu",
+   "area": "archive",
+   "location": "二层回廊陈列柜：付流档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/fuliu.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_hanwei",
+   "area": "archive",
+   "location": "二层回廊陈列柜：韩魏档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/hanwei.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_linxiu",
+   "area": "archive",
+   "location": "二层回廊陈列柜：林休档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/linxiu.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_lixi",
+   "area": "archive",
+   "location": "二层回廊陈列柜：李汐档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/lixi.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_lvqi",
+   "area": "archive",
+   "location": "二层回廊陈列柜：吕柒档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/lvqi.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_qichou",
+   "area": "archive",
+   "location": "二层回廊陈列柜：齐仇档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/qichou.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_qilingyun",
+   "area": "archive",
+   "location": "二层回廊陈列柜：齐凌云档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/qilingyun.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_songliang",
+   "area": "archive",
+   "location": "二层回廊陈列柜：宋凉档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/songliang.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_suyan",
+   "area": "archive",
+   "location": "二层回廊陈列柜：苏言档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/suyan.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_yexun",
+   "area": "archive",
+   "location": "二层回廊陈列柜：叶寻档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/yexun.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_yinze",
+   "area": "archive",
+   "location": "二层回廊陈列柜：殷泽档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/yinze.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_zhaoqiu",
+   "area": "archive",
+   "location": "二层回廊陈列柜：赵裘档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/zhaoqiu.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_zhouwen",
+   "area": "archive",
+   "location": "二层回廊陈列柜：周闻档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/zhouwen.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_zhouye",
+   "area": "archive",
+   "location": "二层回廊陈列柜：周也档案海报（竖版 9:16）",
+   "type": "personnel_poster",
+   "path": "textures/archives/zhouye.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_xiaonan",
+   "area": "archive",
+   "location": "萧难 档案海报",
+   "type": "personnel_poster",
+   "path": "textures/archives/xiaonan.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_suyu",
+   "area": "archive",
+   "location": "苏予 档案海报",
+   "type": "personnel_poster",
+   "path": "textures/archives/suyu.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_fangyan",
+   "area": "archive",
+   "location": "方妍 档案海报",
+   "type": "personnel_poster",
+   "path": "textures/archives/fangyan.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_qinxiao",
+   "area": "security_hall",
+   "location": "秦骁（通缉栏） 档案海报",
+   "type": "personnel_poster",
+   "path": "textures/archives/qinxiao.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_archive_portrait_jiangli",
+   "area": "security_hall",
+   "location": "江戾（通缉栏） 档案海报",
+   "type": "personnel_poster",
+   "path": "textures/archives/jiangli.jpg",
+   "size": "1024x1820",
+   "source": "用户 Drive「项目图片」角色档案",
+   "status": "ready"
+  },
+  {
+   "id": "tex_seal_wax_red",
+   "area": "archive",
+   "location": "档案袋火漆印贴花（透明底需抠图）",
+   "type": "decal",
+   "path": "textures/emblems/N22.jpg",
+   "source": "用户 Drive N22",
+   "status": "ready"
+  },
+  {
+   "id": "tex_evidence_label_generic",
+   "area": "*",
+   "location": "证物标签通用底板",
+   "type": "label",
+   "path": "textures/b02/B02_证物标签底板.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_sec_wanted_board",
+   "area": "security_hall",
+   "location": "通缉公告栏底板",
+   "type": "notice_board",
+   "path": "textures/b02/B02_通缉公告栏.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_painter_canvas",
+   "area": "plaza",
+   "location": "写生老人画板（主楼速写，七座尖塔）",
+   "type": "prop_art",
+   "path": "textures/b02/B02_写生画板.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_sec_b7_glitch",
+   "area": "security_hall",
+   "location": "大屏 B7 闪帧叠加层（可代码生成：黑底红字「B7 层 —— 无数据」）",
+   "type": "screen_overlay",
+   "path": "textures/code/sec_b7_glitch.png",
+   "source": "代码生成",
+   "status": "ready"
+  },
+  {
+   "id": "tex_ref_N01",
+   "area": "*",
+   "location": "可复用平面图：法务处 / 局徽备选：天平与钢笔（v2 起用于各区）",
+   "type": "artwork",
+   "path": "textures/emblems/N01.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_ref_N02",
+   "area": "*",
+   "location": "可复用平面图：第七局（书与匕首）【待确认】（v2 起用于各区）",
+   "type": "artwork",
+   "path": "textures/emblems/N02.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_ref_N11",
+   "area": "*",
+   "location": "可复用平面图：回响座钟证物照片（v2 起用于各区）",
+   "type": "artwork",
+   "path": "textures/emblems/N11.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_ref_N12",
+   "area": "*",
+   "location": "可复用平面图：活人相框证物照片（v2 起用于各区）",
+   "type": "artwork",
+   "path": "textures/emblems/N12.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_ref_N13",
+   "area": "*",
+   "location": "可复用平面图：涂黑机密文件（v2 起用于各区）",
+   "type": "artwork",
+   "path": "textures/emblems/N13.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_ref_N26",
+   "area": "*",
+   "location": "可复用平面图：叙事高考考场照片（v2 起用于各区）",
+   "type": "artwork",
+   "path": "textures/emblems/N26.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_cmd_main_screen",
+   "area": "command_center",
+   "location": "指挥大厅弧形主屏（emissive，21:9）",
+   "type": "screen_ui",
+   "path": "textures/b02/B02_指挥中心主屏.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_cmd_log_strip",
+   "area": "command_center",
+   "location": "值班长台打印条（长条平面，垂到地面）",
+   "type": "document",
+   "path": "textures/b02/B02_监测日志打印条.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_zone_grading",
+   "area": "zone_control",
+   "location": "北墙分级标准挂牌",
+   "type": "sign",
+   "path": "textures/b02/B02_禁区分级标准挂牌.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_zone_cardwall",
+   "area": "zone_control",
+   "location": "西墙禁区卡片墙",
+   "type": "notice_board",
+   "path": "textures/b02/B02_禁区卡片墙.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_cit_windows",
+   "area": "citizen_service",
+   "location": "窗口上方 LED 指示牌（emissive）",
+   "type": "screen_ui",
+   "path": "textures/b02/B02_市民服务窗口牌.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_cit_letters",
+   "area": "citizen_service",
+   "location": "东墙群众来信墙",
+   "type": "notice_board",
+   "path": "textures/b02/B02_群众来信墙.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_exam_flow",
+   "area": "exam_center",
+   "location": "报名大厅流程海报",
+   "type": "poster",
+   "path": "textures/b02/B02_海报_加试报名大厅.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_exam_spines",
+   "area": "exam_center",
+   "location": "调度室旋转书架上的母带书脊",
+   "type": "prop_art",
+   "path": "textures/b02/B02_副本母带书脊.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_spine_panel",
+   "area": "spine_shaft",
+   "location": "电梯轿厢楼层面板",
+   "type": "prop_art",
+   "path": "textures/b02/B02_电梯楼层面板.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_vault_label_clock",
+   "area": "vault",
+   "location": "回响座钟收容标签",
+   "type": "label",
+   "path": "textures/b02/B02_收容标签_回响座钟.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_vault_label_frame",
+   "area": "vault",
+   "location": "活人相框收容标签",
+   "type": "label",
+   "path": "textures/b02/B02_收容标签_活人相框.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_canteen_menu",
+   "area": "canteen",
+   "location": "打饭窗口电子菜单屏（emissive）",
+   "type": "screen_ui",
+   "path": "textures/b02/B02_食堂今日菜单.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_flag_blank",
+   "area": "plaza",
+   "location": "旗杆阵列第 7 根：空白旗",
+   "type": "flag",
+   "path": "textures/b02/B02_空白局旗.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_memorial_stele",
+   "area": "memorial",
+   "location": "碑廊入口主碑",
+   "type": "monument",
+   "path": "textures/b02/B02_无字碑廊碑文.png",
+   "source": "B02 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_liaison_N03",
+   "area": "liaison",
+   "location": "势力评估墙第 2 框：联邦档案局",
+   "type": "faction_art",
+   "path": "textures/emblems/N03.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_liaison_N04",
+   "area": "liaison",
+   "location": "势力评估墙第 3 框：雾港",
+   "type": "faction_art",
+   "path": "textures/emblems/N04.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_liaison_势力档案-无妄城",
+   "area": "liaison",
+   "location": "势力评估墙第 5 框：无妄城",
+   "type": "faction_art",
+   "path": "textures/emblems/势力档案-无妄城.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_liaison_势力档案-深瞳",
+   "area": "liaison",
+   "location": "势力评估墙第 6 框：深瞳",
+   "type": "faction_art",
+   "path": "textures/emblems/势力档案-深瞳.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_liaison_势力档案-第二草稿",
+   "area": "liaison",
+   "location": "势力评估墙第 7 框：第二草稿",
+   "type": "faction_art",
+   "path": "textures/emblems/势力档案-第二草稿.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_liaison_势力档案-蛇之尾",
+   "area": "liaison",
+   "location": "势力评估墙第 8 框：蛇之尾",
+   "type": "faction_art",
+   "path": "textures/emblems/势力档案-蛇之尾.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_liaison_势力档案-焚稿会",
+   "area": "liaison",
+   "location": "势力评估墙第 9 框：焚稿会",
+   "type": "faction_art",
+   "path": "textures/emblems/势力档案-焚稿会.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_liaison_势力档案-余辉剧团",
+   "area": "liaison",
+   "location": "势力评估墙第 10 框：余辉剧团",
+   "type": "faction_art",
+   "path": "textures/emblems/势力档案-余辉剧团.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_liaison_势力档案-第十三书签",
+   "area": "liaison",
+   "location": "势力评估墙第 11 框：第十三书签",
+   "type": "faction_art",
+   "path": "textures/emblems/势力档案-第十三书签.jpg",
+   "source": "用户 Drive 项目图片",
+   "status": "ready"
+  },
+  {
+   "id": "tex_pub_rejected",
+   "area": "publicity",
+   "location": "海报打样间：被否决的「第七局欢迎你」海报",
+   "type": "poster",
+   "path": "textures/b03/B03_海报_第七局欢迎你.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_dir_painting",
+   "area": "director_office",
+   "location": "壁炉上方油画：倒悬之城",
+   "type": "prop_art",
+   "path": "textures/b03/B03_油画_倒悬之城.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_lib_benche_cover",
+   "area": "library",
+   "location": "顶层讲经台「本册」巨书封面",
+   "type": "prop_art",
+   "path": "textures/b03/B03_藏书阁_本册封面.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_lib_alien_pages",
+   "area": "library",
+   "location": "七层限阅区异书残页标本框",
+   "type": "prop_art",
+   "path": "textures/b03/B03_异书残页标本.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_med_sanity_table",
+   "area": "medical",
+   "location": "诊室理智值分级表挂图",
+   "type": "chart",
+   "path": "textures/b03/B03_理智值分级表.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_med_eye_chart",
+   "area": "medical",
+   "location": "诊室门后视力表",
+   "type": "chart",
+   "path": "textures/b03/B03_视力表.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_lab_gauge_screen",
+   "area": "lab",
+   "location": "篇幅测量仪屏幕（emissive）",
+   "type": "screen_ui",
+   "path": "textures/b03/B03_篇幅测量仪屏.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_lab_scale_wall",
+   "area": "lab",
+   "location": "阶位刻度墙",
+   "type": "sign",
+   "path": "textures/b03/B03_阶位刻度墙.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_train_board",
+   "area": "training",
+   "location": "控制塔成绩榜（emissive）",
+   "type": "screen_ui",
+   "path": "textures/b03/B03_训练场成绩榜.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_train_gate_plates",
+   "area": "training",
+   "location": "六扇副本门门楣铭牌（图集，2×3 切分）",
+   "type": "atlas",
+   "path": "textures/b03/B03_副本门铭牌组.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_int_cell_plate",
+   "area": "interrogation",
+   "location": "B2-07 羁押室门牌",
+   "type": "plaque",
+   "path": "textures/b03/B03_羁押室门牌.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_int_madwall",
+   "area": "interrogation",
+   "location": "狂草者隔离间墙面（repeat 1×1）",
+   "type": "material_albedo",
+   "path": "textures/b03/B03_狂草隔离间墙面.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_abyss_skybox",
+   "area": "abyss_city",
+   "location": "墨渊天空盒（倒悬书城，头顶是地面）",
+   "type": "skybox",
+   "path": "textures/b03/B03_天空盒_墨渊倒悬书城.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_abyss_true_file",
+   "area": "abyss_city",
+   "location": "正本档案（名字被墨盖住）",
+   "type": "document",
+   "path": "textures/b03/B03_正本档案.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_abyss_revisions",
+   "area": "abyss_core",
+   "location": "定稿记录页边批注（红黑笔迹）",
+   "type": "document",
+   "path": "textures/b03/B03_定稿记录批注.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_gutter_wall",
+   "area": "seventh_gutter",
+   "location": "装订线走廊墙面：书页内侧 + 暗红缝线（无缝竖向）",
+   "type": "material_albedo",
+   "path": "textures/b03/B03_无缝_书页内侧缝线.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_ops_board",
+   "area": "seventh_ops",
+   "location": "S 级危机看板",
+   "type": "notice_board",
+   "path": "textures/b03/B03_第七局危机看板.png",
+   "source": "B03 生图",
+   "status": "pending"
+  },
+  {
+   "id": "tex_seventh_seal",
+   "area": "seventh_rewrite",
+   "location": "「柒」字印章与印迹",
+   "type": "decal",
+   "path": "textures/b03/B03_柒字印章.png",
+   "source": "B03 生图",
+   "status": "pending"
+  }
+ ]
+}
