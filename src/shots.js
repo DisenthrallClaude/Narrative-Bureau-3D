@@ -30,6 +30,10 @@ export const SHOTS = {
   canteen: { pos: [12, Y + 1.65, -112], look: [-4, Y + 4, -134], fov: 75 },
   armory: { pos: [-12, -10 + 1.65, -95], look: [6, -10 + 1.5, -118], fov: 75 },
   interrogation: { pos: [0, -18 + 1.65, -94], look: [0.5, -18 + 1.4, -134], fov: 70 },
-  training: { pos: [-6, -52 + 2.2, -96], look: [6, -52 + 4, -130], fov: 78 },
+  training: { pos: [-16, -52 + 2.2, -95], look: [4, -52 + 4, -132], fov: 78 },
+  floor2: { pos: [3, 8.8 + 1.65, -95], look: [14, 8.8 + 2.6, -117], fov: 75 },
+  floor3: { pos: [8, 15.8 + 1.65, -94], look: [20, 15.8 + 1.2, -112], fov: 75 },
+  library: { pos: [0, 22.8 + 1.65, -95], look: [0, 22.8 + 14, -112], fov: 80 },
+  director: { pos: [5, 71.8 + 1.65, -94], look: [-2, 71.8 + 2, -110], fov: 72 },
   east_stair: { pos: [51, Y + 1.65, -54], look: [52, Y + 5, -62], fov: 75 },
 };

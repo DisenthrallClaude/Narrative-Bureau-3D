@@ -34,10 +34,13 @@ export function buildRooms(scene, world, ctx) {
     point(zone, 0xffe0b0, 8, [0, Y + 5, -86], 12); point(zone, 0xffe0b0, 8, [0, Y + 5, -100], 12);
     // 大厅本体
     b.box('woodFloor', 2 * X, 0.1, Z0 - Z1, [0, Y - 0.05, cz], { uv: 0.35, collide: true });
-    wallX(b, 'panelWall', -X - 0.2, Z0, Z1, Y, H, 0.4, [], true); wallX(b, 'panelWall', X + 0.2, Z0, Z1, Y, H, 0.4, [], true);
-    wallZ(b, 'panelWall', Z0, -X, X, Y, H, 0.4, [{ x0: -2.4, x1: 2.4, h: 6.2 }], true); wallZ(b, 'panelWall', Z1, -X, X, Y, H, 0.4, [], true);
+    // 墙体碰撞只到 6.8 m（上方与 2F 楼板在同一位置，避免挡住楼上的玩家）
+    wallX(b, 'panelWall', -X - 0.2, Z0, Z1, Y, 6.8, 0.4, [], true); wallX(b, 'panelWall', X + 0.2, Z0, Z1, Y, 6.8, 0.4, [], true);
+    wallZ(b, 'panelWall', Z0, -X, X, Y, 6.8, 0.4, [{ x0: -2.4, x1: 2.4, h: 6.2 }], true); wallZ(b, 'panelWall', Z1, -X, X, Y, 6.8, 0.4, [], true);
+    for (const sx of [-1, 1]) b.box('panelWall', 0.4, H - 6.8, Z0 - Z1, [sx * (X + 0.2), Y + 6.8 + (H - 6.8) / 2, cz], { uv: 0.3 });
+    for (const z of [Z0, Z1]) b.box('panelWall', 2 * X, H - 6.8, 0.4, [0, Y + 6.8 + (H - 6.8) / 2, z], { uv: 0.3 });
     // 两层回廊（二层挑台）
-    for (const sx of [-1, 1]) { b.box('wood', 4, 0.3, Z0 - Z1, [sx * (X - 2), Y + 6.3, cz], { uv: 0.5, collide: true }); b.box('iron', 0.06, 1.0, Z0 - Z1, [sx * (X - 4), Y + 6.95, cz], { uv: 1 }); b.box('gold', 0.08, 0.05, Z0 - Z1, [sx * (X - 4), Y + 7.45, cz], { uv: 1 }); for (let z = Z0 - 3; z > Z1; z -= 6) { b.add('stoneDark', new THREE.CylinderGeometry(0.28, 0.32, 6.2, 12), { pos: [sx * (X - 4), Y + 3.1, z] }, { uv: 0.5, collide: true }); } }
+    for (const sx of [-1, 1]) { b.box('wood', 4, 0.3, Z0 - Z1, [sx * (X - 2), Y + 6.3, cz], { uv: 0.5 }); b.box('iron', 0.06, 1.0, Z0 - Z1, [sx * (X - 4), Y + 6.95, cz], { uv: 1 }); b.box('gold', 0.08, 0.05, Z0 - Z1, [sx * (X - 4), Y + 7.45, cz], { uv: 1 }); for (let z = Z0 - 3; z > Z1; z -= 6) { b.add('stoneDark', new THREE.CylinderGeometry(0.28, 0.32, 6.2, 12), { pos: [sx * (X - 4), Y + 3.1, z] }, { uv: 0.5, collide: true }); } }
     // 玻璃顶（钢桁架 + 透明玻璃，能看见黄昏天空）
     for (let z = Z0; z >= Z1; z -= 3) { b.box('blackMetal', 2 * X, 0.18, 0.12, [0, Y + H, z], { uv: 1 }); b.add('blackMetal', new THREE.BoxGeometry(0.1, 0.1, 2 * X * 0.56), { pos: [-X / 2, Y + H + 2.2, z], rot: [0, Math.PI / 2, 0.28] }, { uv: 1 }); b.add('blackMetal', new THREE.BoxGeometry(0.1, 0.1, 2 * X * 0.56), { pos: [X / 2, Y + H + 2.2, z], rot: [0, Math.PI / 2, -0.28] }, { uv: 1 }); }
     for (const sx of [-1, 1]) { const g = new THREE.PlaneGeometry(Z0 - Z1, X * 1.04); const m = new THREE.Mesh(g, M.glassClear); m.position.set(sx * X / 2, Y + H + 2.4, cz); m.rotation.set(-Math.PI / 2, 0, Math.PI / 2); m.rotateX(sx * 0.28); zone.add(m); }

@@ -15,6 +15,7 @@ import { buildEastWing, updateEastWing } from './world/eastwing.js';
 import { bindAll, runInteractable } from './engine/binder.js';
 import { buildVault, updateVault, setupElevator } from './world/vault.js';
 import { buildRooms, updateRooms } from './world/rooms.js';
+import { buildUpper, updateUpper } from './world/upper.js';
 import { installSkyFog } from './engine/skyfog.js';
 import { mats } from './world/mats.js';
 import { setupStory } from './story.js';
@@ -81,7 +82,7 @@ async function boot() {
   scene.background = sky; scene.backgroundIntensity = SKY_I;
   scene.environment = envSky;
   LOG('hdr ok'); UI.loadProgress(0.1, '建造主楼……');
-  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx);
+  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx);
   LOG('world built'); scene.add(world.build()); inter.blocker = world.collider; LOG('bvh ok');
   // 反射地面
   const M = mats();
@@ -126,13 +127,18 @@ const AREA_NAMES = { plaza: ['中轴广场 · 规则之泉', 'CENTRAL PLAZA'], g
   citizen_service: ['东翼 1F · 市民服务大厅', 'CITIZEN SERVICES'], exam_center: ['东翼 · 叙事高考考务中心', 'NARRATIVE EXAM CENTER'], command_center: ['东翼 2F · 现实稳定度监测指挥中心', 'STABILITY COMMAND'], zone_control: ['东翼 3F · 禁区封锁调度厅', 'ZONE CONTROL'], east_stair: ['东翼楼梯', 'EAST STAIR'],
   spine_b3: ['书脊井 · B3 电梯厅', 'SPINE SHAFT · B3'], spine_b4: ['书脊井 · B4 电梯厅', 'SPINE SHAFT · B4'], spine_b5: ['书脊井 · B5 电梯厅', 'SPINE SHAFT · B5'],
   vault_b3: ['B3 · 证物收容库　开架区', 'EVIDENCE VAULT · B3'], vault_b4: ['B4 · 单独收容柜', 'CONTAINMENT · B4'], vault_b5: ['B5 · 深库', 'DEEP VAULT · B5'],
-  canteen: ['职工食堂 · 中庭', 'STAFF CANTEEN'], armory: ['B1 · 外勤缉拿处', 'FIELD OPS · B1'], interrogation: ['B2 · 审讯室', 'INTERROGATION · B2'], training: ['B6 · 驯化副本训练场', 'TRAINING GROUNDS · B6'] };
+  canteen: ['职工食堂 · 中庭', 'STAFF CANTEEN'], armory: ['B1 · 外勤缉拿处', 'FIELD OPS · B1'], interrogation: ['B2 · 审讯室', 'INTERROGATION · B2'], training: ['B6 · 驯化副本训练场', 'TRAINING GROUNDS · B6'],
+  floor2: ['2F · 国际联络处 · 宣传处', 'LIAISON & PUBLICITY · 2F'], floor3: ['3F · 办公区 · 医务 · 实验室', 'OFFICES · CLINIC · LAB · 3F'], library: ['典籍藏书阁 · 4F–11F', 'THE LIBRARY'], director: ['12F · 机要室与局长室', 'DIRECTOR · 12F'] };
 // 区域 → manifest 区域 id（用于 enter_area 条件）
-const AREA_OF = { spine_b3: 'spine_shaft', spine_b4: 'spine_shaft', spine_b5: 'spine_shaft', vault_b3: 'vault', vault_b4: 'vault', vault_b5: 'vault' };
+const AREA_OF = { director: 'director_office',  spine_b3: 'spine_shaft', spine_b4: 'spine_shaft', spine_b5: 'spine_shaft', vault_b3: 'vault', vault_b4: 'vault', vault_b5: 'vault' };
 // 区域 → 场景分组（多个区域共用一个分组）
 const GROUP_OF = { spine_b3: 'vault_b3', spine_b4: 'vault_b4', spine_b5: 'vault_b5', citizen_service: 'east_wing', exam_center: 'east_wing', command_center: 'east_wing', zone_control: 'east_wing', east_stair: 'east_wing' };
 function zoneAt(p) {
   const Y = FLOOR;
+  if (p.y > 60) return 'director';
+  if (p.y > 21 && p.z < -80) return 'library';
+  if (p.y > 14.5 && p.z < -80) return 'floor3';
+  if (p.y > 7.6 && p.z < -80 && Math.abs(p.x) < 30) return 'floor2';
   if (p.y < -46) return 'training';
   if (p.y < -14 && p.y > -22) return 'interrogation';
   if (p.y < -6 && p.y > -14 && p.z < -80) return 'armory';
@@ -155,7 +161,7 @@ const VIS = {
   plaza: { exterior: 1, gate: 1, security_hall: 1 },
   gate: { exterior: 1, gate: 1, security_hall: 1 },
   security_hall: { exterior: 0, gate: 1, security_hall: 1, archive: 1, east_wing: 1, canteen: 1 },
-  canteen: { security_hall: 1 }, armory: {}, interrogation: {}, training: {},
+  canteen: { security_hall: 1 }, armory: {}, interrogation: {}, training: {}, floor2: {}, floor3: {}, library: {}, director: {},
   archive: { exterior: 0, gate: 0, security_hall: 1, archive: 1, archive_b1: 1 },
   archive_b1: { exterior: 0, archive: 1, archive_b1: 1 },
   spine_b3: {}, spine_b4: {}, spine_b5: {}, vault_b3: {}, vault_b4: {}, vault_b5: {},
@@ -179,6 +185,10 @@ const ZONE_LOOK = {
   canteen: { env: 'sky', envI: 0.6, sun: 2.2, exp: 1.05, fog: [0x2a221a, 0.006], hemi: 0.18 },
   armory: { env: 'hall', envI: 0.35, sun: 0, exp: 1.15, fog: [0x10141a, 0.02], hemi: 0.06 },
   interrogation: { env: 'hall', envI: 0.4, sun: 0, exp: 1.1, fog: [0x14161a, 0.025], hemi: 0.08 },
+  floor2: { env: 'hall', envI: 0.6, sun: 0, exp: 1.05, fog: [0x221c16, 0.01], hemi: 0.14 },
+  floor3: { env: 'hall', envI: 0.6, sun: 0, exp: 1.05, fog: [0x1c1c1e, 0.01], hemi: 0.14 },
+  library: { env: 'hall', envI: 0.5, sun: 0, exp: 1.15, fog: [0x241c12, 0.008], hemi: 0.1 },
+  director: { env: 'sky', envI: 0.5, sun: 0, exp: 1.05, fog: [0x1e1814, 0.004], hemi: 0.15 },
   training: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x060a14, 0.012], hemi: 0.05 },
   east_stair: { env: 'hall', envI: 0.55, sun: 0, exp: 1.1, fog: [0x1d1915, 0.012], hemi: 0.12 },
 };
@@ -271,7 +281,7 @@ function loop() {
   curExp += (targetExp - curExp) * Math.min(1, dt * 1.5);
   R.setExposure(curExp);
   for (const s of ctx.screens) s.update(dt, t);
-  updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t);
+  updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t);
   reflector.setY(FLOOR); reflector.update(scene, camera, R.q.reflect);
   R.render(dt);
   frames++;
