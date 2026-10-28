@@ -88,7 +88,7 @@ async function boot() {
   LOG('world built'); scene.add(world.build()); inter.blocker = world.collider; LOG('bvh ok');
   // 反射地面
   const M = mats();
-  reflector.patch(M.hallFloor, 0.15); reflector.patch(M.hallFloorDark, 0.14);
+  reflector.patch(M.hallFloor, 0.09); reflector.patch(M.hallFloorDark, 0.08);
   scene.traverse((o) => { if (o.isMesh && (o.material === M.hallFloor || o.material === M.hallFloorDark)) reflector.hide.push(o); if (o.userData.isShaft) reflector.hide.push(o); });
   // 主屏射线代理
   const proxy = new THREE.Mesh(new THREE.BoxGeometry(15, 6.6, 0.8), new THREE.MeshBasicMaterial({ visible: false })); proxy.position.copy(ctx.mainScreenPos); inter.proxies.add(proxy); G.mainScreenProxy = proxy;
@@ -139,10 +139,13 @@ const AREA_OF = { director: 'director_office',  spine_b3: 'spine_shaft', spine_b
 const GROUP_OF = { spine_b3: 'vault_b3', spine_b4: 'vault_b4', spine_b5: 'vault_b5', citizen_service: 'east_wing', exam_center: 'east_wing', command_center: 'east_wing', zone_control: 'east_wing', east_stair: 'east_wing' };
 function zoneAt(p) {
   const Y = FLOOR;
-  if (p.y > 60) return 'director';
-  if (p.y > 21 && p.z < -80) return 'library';
-  if (p.y > 14.5 && p.z < -80) return 'floor3';
-  if (p.y > 7.6 && p.z < -80 && Math.abs(p.x) < 30) return 'floor2';
+  // 地上楼层：按 upper.js 实际平面包围盒判定（含电梯厅 z -84…-92）；包围盒外的高空一律算室外
+  const inUpper = (hx, z1) => Math.abs(p.x) < hx && p.z < -83.6 && p.z > z1;
+  if (p.y > 70 && p.y < 80 && inUpper(13.6, -112.6)) return 'director';
+  if (p.y > 21 && p.y < 70 && inUpper(15.5, -121.5)) return 'library';
+  if (p.y > 14.5 && p.y < 21.5 && inUpper(28.6, -120.6)) return 'floor3';
+  if (p.y > 8.55 && p.y < 14.5 && inUpper(28.6, -118.6)) return 'floor2';
+  if (p.y > 8.55) return 'plaza'; // 食堂挑台（脚底 y≈8.25）仍按下方 canteen 判定
   if (p.y < -46) return 'training';
   if (p.y < -14 && p.y > -22) return 'interrogation';
   if (p.y < -6 && p.y > -14 && p.z < -80) return 'armory';
@@ -184,11 +187,11 @@ const ZONE_LOOK = {
   spine_b3: { env: 'hall', envI: 0.35, sun: 0, exp: 1.15, fog: [0x15130f, 0.02], hemi: 0.06 },
   vault_b3: { env: 'hall', envI: 0.35, sun: 0, exp: 1.1, fog: [0x12161c, 0.022], hemi: 0.06 },
   vault_b4: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a120a, 0.03], hemi: 0.05 },
-  vault_b5: { env: 'hall', envI: 0.3, sun: 0, exp: 1.25, fog: [0x0c0d12, 0.025], hemi: 0.04 },
+  vault_b5: { env: 'hall', envI: 0.18, sun: 0, exp: 1.3, fog: [0x0a0806, 0.034], hemi: 0.02 },
   spine_b4: null, spine_b5: null,
   canteen: { env: 'sky', envI: 0.6, sun: 2.2, exp: 1.05, fog: [0x2a221a, 0.006], hemi: 0.18 },
   armory: { env: 'hall', envI: 0.35, sun: 0, exp: 1.15, fog: [0x10141a, 0.02], hemi: 0.06 },
-  interrogation: { env: 'hall', envI: 0.4, sun: 0, exp: 1.1, fog: [0x14161a, 0.025], hemi: 0.08 },
+  interrogation: { env: 'hall', envI: 0.3, sun: 0, exp: 1.0, fog: [0x101216, 0.03], hemi: 0.06 },
   floor2: { env: 'hall', envI: 0.6, sun: 0, exp: 1.05, fog: [0x221c16, 0.01], hemi: 0.14 },
   floor3: { env: 'hall', envI: 0.6, sun: 0, exp: 1.05, fog: [0x1c1c1e, 0.01], hemi: 0.14 },
   library: { env: 'hall', envI: 0.5, sun: 0, exp: 1.15, fog: [0x241c12, 0.008], hemi: 0.1 },

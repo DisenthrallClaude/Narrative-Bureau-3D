@@ -125,7 +125,7 @@ export function rectLight(zone, color, intensity, w, h, pos, look) {
   const l = new THREE.HemisphereLight(c, g, k); l.position.set(...pos); l.userData.isFill = true; zone.add(l); void look; return l;
 }
 export function spot(zone, color, intensity, pos, target, angle = 0.5, shadow = false, dist = 40) {
-  const s = new THREE.SpotLight(color, intensity, dist, angle, 0.6, 1.6); s.position.set(...pos); s.target.position.set(...target); zone.add(s, s.target);
+  const s = new THREE.SpotLight(color, intensity, Math.min(dist, 40), angle, 0.6, 2); s.position.set(...pos); s.target.position.set(...target); zone.add(s, s.target);
   if (shadow) { s.castShadow = true; s.shadow.mapSize.set(1024, 1024); s.shadow.bias = -0.0006; s.shadow.normalBias = 0.05; s.userData.qualityShadow = true; }
   return s;
 }
@@ -506,7 +506,7 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
     b.add('glassIn', new THREE.ShapeGeometry(archShape(2.0, 3.3)), f.at(0, 7.4, 0), { uv: false });
     b.add('stoneDark', archRingGeo(2.6, 3.3, 2.0, 3.3, 0.3), f.at(0, 7.4, 0.12), { uv: 0.6 });
     b.add('gold', archRingGeo(2.7, 3.3, 2.6, 3.3, 0.32), f.at(0, 7.4, 0.12), { uv: 1 });
-    const s = lightShaft({ from: [X0 + 0.3, Y + 10, z], to: [X0 + 13, Y, z + 2], r0: 1.1, r1: 2.6, color: 0xffe5bb, intensity: 0.035 }); zone.add(s); (ctx.shafts = ctx.shafts ?? []).push(s);
+    const s = lightShaft({ from: [X0 + 0.3, Y + 10, z], to: [X0 + 13, Y, z + 2], r0: 1.1, r1: 2.6, color: 0xffe5bb, intensity: 0.014 }); zone.add(s); (ctx.shafts = ctx.shafts ?? []).push(s);
   }
   // —— 二层回廊（铸铁）——
   const GW = 2.6;
@@ -657,9 +657,9 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   for (const [lx, lz] of ctx.archiveLamps) point(zone, 0xffd59a, 3.2, [lx, Y + 1.3, lz], 4.5);
   for (let z = Z1 + 6; z < Z0; z += 9) add(placeModel('chandelier', { height: 1.8, pos: [cx + 2, Y + H - 2.4, z] }));
   for (let z = Z1 + 6; z < Z0; z += 9) point(zone, 0xffcf96, 15, [cx + 2, Y + H - 3.0, z], 16);
-  spot(zone, 0xffe6c0, 60, [X0 + 1, Y + 11, -44], [X0 + 14, Y, -40], 0.55, true, 40);
-  spot(zone, 0xffd8a0, 60, [kx + 3, Y + 9, kz], [kx, Y + 1, kz], 0.4, false, 20);
-  rectLight(zone, 0xffe6c8, 0.7, W - 4, L - 4, [cx, Y + H - 0.4, cz], [cx, Y, cz]);
+  spot(zone, 0xffe6c0, 30, [X0 + 1, Y + 11, -44], [X0 + 14, Y, -40], 0.45, true, 24);
+  spot(zone, 0xffd8a0, 30, [kx + 3, Y + 9, kz], [kx, Y + 1, kz], 0.4, false, 14);
+  rectLight(zone, 0xffe6c8, 0.35, W - 4, L - 4, [cx, Y + H - 0.4, cz], [cx, Y, cz]);
   zone.add(dust([cx, Y, cz], [W, H, L], 500));
 
   // ——— 楼梯下 B1 ———

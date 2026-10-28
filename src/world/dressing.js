@@ -6,7 +6,8 @@ import { mats } from './mats.js';
 import { Frame, archShape, archRingGeo, emblem } from './gothic.js';
 import { vaultMats, tagMaterial } from './vault.js';
 import { posterMaterial, point, spot, signMaterial } from './interiors.js';
-import { roseGlassTexture } from '../engine/fx.js';
+import { roseGlassTexture, lightShaft } from '../engine/fx.js';
+const lightShaftLite = (x, y0, z, y1, r0, r1, color, intensity) => lightShaft({ from: [x, y0, z], to: [x, y1, z], r0, r1, color, intensity });
 import { FLOOR } from './exterior.js';
 import { UPPER } from './upper.js';
 import { UNDER } from './rooms.js';
@@ -45,6 +46,7 @@ export async function buildDressing(scene, world, ctx) {
   D.dz_quilt = D.dz_quilt ?? quiltMat();
   D.dz_blueGlow = D.dz_blueGlow ?? new THREE.MeshStandardMaterial({ color: 0, emissive: 0x3a8cff, emissiveIntensity: 1.6 });
   D.dz_rose = D.dz_rose ?? new THREE.MeshStandardMaterial({ color: 0, emissive: 0xffffff, emissiveMap: roseGlassTexture(), emissiveIntensity: 1.8, side: THREE.DoubleSide });
+  D.dz_redGlow = D.dz_redGlow ?? new THREE.MeshStandardMaterial({ color: 0x300000, emissive: 0xff2010, emissiveIntensity: 3 });
   D.dz_grate = D.dz_grate ?? new THREE.MeshStandardMaterial({ color: 0x2a2c30, metalness: 0.9, roughness: 0.45 });
   const MAT = { ...M, ...Mx, ...D, spine: spineMaterial() };
   const jobs = [];
@@ -203,8 +205,19 @@ export async function buildDressing(scene, world, ctx) {
     // 上层墙：哥特高窗（彩窗）+ 壁柱
     for (const sx of [-1, 1]) for (let z = Z0 - 4; z > Z1 + 2; z -= 6) { const f = new Frame([sx * (X - 0.02), Y + 7.6, z], -sx * Math.PI / 2); b.add('glassIn', new THREE.ShapeGeometry(archShape(1.7, 3.2)), f.at(0, 0, 0.02), { uv: false }); b.add('stoneDark', archRingGeo(2.2, 3.2, 1.7, 3.2, 0.25), f.at(0, 0, 0.1), { uv: 0.5 }); b.add('gold', archRingGeo(2.3, 3.2, 2.2, 3.2, 0.27), f.at(0, 0, 0.1), { uv: 1 }); b.box('dz_pil', 0.5, 6.0, 0.18, [sx * (X - 0.09), Y + 9.9, z - 3], { uv: 0.5 }); }
     for (const z of [Z0, Z1]) { const f = new Frame([0, Y + 7.3, z + (z === Z0 ? -0.22 : 0.22)], z === Z0 ? Math.PI : 0); for (const dx of [-4.2, 0, 4.2]) { b.add('glassIn', new THREE.ShapeGeometry(archShape(2.2, dx === 0 ? 3.6 : 2.8)), f.at(dx, 0, 0.02), { uv: false }); b.add('gold', archRingGeo(2.5, dx === 0 ? 3.6 : 2.8, 2.2, dx === 0 ? 3.6 : 2.8, 0.25), f.at(dx, 0, 0.1), { uv: 1 }); } }
+    // 二层挑台可登临：西侧沿挑台外沿的直跑楼梯（z −112 → −128），挑台楼板与栏杆加碰撞，栏杆在梯口留缺口
+    { const sx = -13.0, za = -112.2, zb = -128.0, top = Y + 6.45, n = 50; const run = (za - zb) / n, rise = (top - Y) / n;
+      for (let i = 0; i < n; i++) b.box('dz_beam', 1.4, rise + 0.02, run + 0.02, [sx, Y + rise * (i + 0.5), za - run * (i + 0.5)], { uv: 0.6 });
+      b.add('dz_pil', new THREE.BoxGeometry(0.12, 0.5, za - zb), { pos: [sx + 0.72, (Y + top) / 2 - 0.1, (za + zb) / 2], rot: [Math.atan2(top - Y, za - zb), 0, 0] }, { uv: 0.5 });
+      b.add('brass', new THREE.BoxGeometry(0.06, 0.06, Math.hypot(za - zb, top - Y)), { pos: [sx + 0.72, (Y + top) / 2 + 0.95, (za + zb) / 2], rot: [Math.atan2(top - Y, za - zb), 0, 0] }, { uv: 1 });
+      for (let i = 0; i <= n; i += 4) b.box('iron', 0.025, 0.95, 0.025, [sx + 0.72, Y + rise * i + 0.47, za - run * i], { uv: 1 });
+      world.ramp([sx, Y, za + 0.2], [sx, top, zb], 1.3); world.box(sx + 0.75, (Y + top) / 2 + 0.6, (za + zb) / 2, 0.1, top - Y + 1.2, za - zb);
+      ctx.canteenStair = { x: sx, za, zb }; }
+    for (const sx of [-1, 1]) { world.box(sx * (X - 2), Y + 6.4, (Z0 + Z1) / 2, 4, 0.12, Z0 - Z1); const x = sx * (X - 4); if (sx < 0) { world.box(x, Y + 7.0, (Z0 - 0.2 + -127.6) / 2, 0.1, 1.2, -127.6 - (Z0 - 0.2) < 0 ? (Z0 - 0.2) - -127.6 : 0.1); world.box(x, Y + 7.0, (-129.4 + Z1) / 2, 0.1, 1.2, -129.4 - Z1); } else world.box(x, Y + 7.0, (Z0 + Z1) / 2, 0.1, 1.2, Z0 - Z1); }
+    // 挑台咖啡座（两侧各 4 组小圆桌）
+    for (const sx of [-1, 1]) for (let k = 0; k < 4; k++) { const x = sx * (X - 2), z = -114 - k * 6.5 - (sx < 0 && k === 2 ? 2.5 : 0); b.add('dz_pil', new THREE.CylinderGeometry(0.4, 0.4, 0.04, 20), { pos: [x, Y + 7.2, z] }, { uv: 0.5 }); b.add('brass', new THREE.CylinderGeometry(0.04, 0.2, 0.75, 10), { pos: [x, Y + 6.82, z] }, { uv: 1 }); P.add('armchair', [x, Y + 6.45, z - 0.8], { h: 0.85 }); P.add('armchair', [x, Y + 6.45, z + 0.8], { h: 0.85, yaw: Math.PI }); b.add('whiteMarble', new THREE.CylinderGeometry(0.045, 0.04, 0.09, 12), { pos: [x + 0.1, Y + 7.27, z] }, { uv: 1 }); }
     // 挑台：栏杆立柱（替换整片铁板）+ 托架 + 挑台下吊顶
-    for (const sx of [-1, 1]) { const x = sx * (X - 4); for (let z = Z0 - 0.3; z > Z1; z -= 0.18) b.box('iron', 0.025, 0.95, 0.025, [x, Y + 6.93, z], { uv: 1 }); b.box('iron', 0.05, 0.05, Z0 - Z1, [x, Y + 6.5, (Z0 + Z1) / 2], { uv: 1 }); b.box('dz_beam', 0.12, 0.3, Z0 - Z1, [x, Y + 6.0, (Z0 + Z1) / 2], { uv: 0.5 }); for (let z = Z0 - 1.5; z > Z1; z -= 3) { b.box('dz_beam', 4, 0.22, 0.18, [sx * (X - 2), Y + 6.03, z], { uv: 0.5 }); b.box('gold', 0.3, 0.3, 0.3, [x, Y + 5.95, z], { uv: 1 }); } for (let z = Z0 - 3; z > Z1; z -= 6) { b.box('dz_glow', 0.3, 0.02, 0.3, [sx * (X - 2), Y + 5.9, z], { uv: false }); } }
+    for (const sx of [-1, 1]) { const x = sx * (X - 4); for (let z = Z0 - 0.3; z > Z1; z -= 0.18) { if (sx < 0 && z < -127.6 && z > -129.4) continue; b.box('iron', 0.025, 0.95, 0.025, [x, Y + 6.93, z], { uv: 1 }); } b.box('iron', 0.05, 0.05, Z0 - Z1, [x, Y + 6.5, (Z0 + Z1) / 2], { uv: 1 }); b.box('dz_beam', 0.12, 0.3, Z0 - Z1, [x, Y + 6.0, (Z0 + Z1) / 2], { uv: 0.5 }); for (let z = Z0 - 1.5; z > Z1; z -= 3) { b.box('dz_beam', 4, 0.22, 0.18, [sx * (X - 2), Y + 6.03, z], { uv: 0.5 }); b.box('gold', 0.3, 0.3, 0.3, [x, Y + 5.95, z], { uv: 1 }); } for (let z = Z0 - 3; z > Z1; z -= 6) { b.box('dz_glow', 0.3, 0.02, 0.3, [sx * (X - 2), Y + 5.9, z], { uv: false }); } }
     // 地面：水磨石拼花 + 走道黑石带
     floorInlay(b, -X, X, Z0, Z1, Y, { field: 'terrazzo', margin: 0.5, rep: 0.3, band: 'dz_pil' });
     for (const x of [-4.5, 4.5]) b.box('dz_pil', 1.2, 0.014, Z0 - Z1 - 2, [x, Y + 0.012, (Z0 + Z1) / 2], { uv: 0.5 });
@@ -286,6 +299,17 @@ export async function buildDressing(scene, world, ctx) {
     for (let s = 0; s < 4; s++) { b.box('dz_pil', 1.0, 0.5, 18, [X - 2.0 - s * 1.0, y + 0.25 + s * 0.5, -138], { uv: 0.5, collide: true }); b.box('blackMetal', 0.98, 0.12, 18, [X - 2.0 - s * 1.0, y + 0.56 + s * 0.5, -138], { uv: 1 }); }
     // 地面局徽（训练场中心）
     { const em = emblem(4.5, M.goldEmis, M.navy); em.rotation.x = -Math.PI / 2; em.position.set(0, y + 0.03, -122); zone.add(em); }
+    finish(zone, b, P);
+  }
+
+  // ================= B5 深库：黑石墙裙 + 金线壁柱 + 法阵光柱 + 红色警示灯 =================
+  if (zoneOf('vault_b5')) {
+    const zone = zoneOf('vault_b5'), b = new Batch(), P = new Props(), y = -42, H = 7;
+    const vs = { style: 'stone', over: { up: null, low: 'dz_pil', field: 'stoneDark', lowH: 1.4 }, pitch: 5 };
+    WX(b, -14, -100.4, -133.8, 1, y, H, vs); WX(b, 14, -100.4, -133.8, -1, y, H, vs); WZ(b, -133.8, -14, 14, 1, y, H, { ...vs, skip: [[-1.9, 1.9]] });
+    zone.add(lightShaftLite(0, y + H, -117, y, 1.6, 3.4, 0xffc880, 0.14));
+    for (const sx of [-1, 1]) for (const z of [-104, -130]) { b.add('blackMetal', new THREE.CylinderGeometry(0.12, 0.12, 0.12, 12), { pos: [sx * 13.8, y + H - 0.6, z], rot: [0, 0, Math.PI / 2] }, { uv: 1 }); b.add('dz_redGlow', new THREE.SphereGeometry(0.1, 10, 8, 0, Math.PI * 2, 0, Math.PI / 2), { pos: [sx * 13.7, y + H - 0.6, z], rot: [0, 0, sx * Math.PI / 2] }, { uv: false }); point(zone, 0xff2010, 2.2, [sx * 13.2, y + H - 0.7, z], 6); }
+    for (let k = 0; k < 24; k++) { const a = (k / 24) * Math.PI * 2; b.box('dz_pil', 0.5, 0.02, 0.18, [Math.cos(a) * 4.4, y + 0.01, -117 + Math.sin(a) * 4.4], { uv: 0.5, rot: [0, -a, 0] }); }
     finish(zone, b, P);
   }
 

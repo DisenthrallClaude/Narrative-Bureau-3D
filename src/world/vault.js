@@ -14,6 +14,8 @@ import { wallX, wallZ, rectLight, spot, point, person, brassPlaqueMaterial, sign
 export const LEVELS = { B3: -26, B4: -34, B5: -42 };
 // 电梯可达楼层登记（其他模块往里注册：FLOORS.B1 = { y, label }）
 export const FLOOR_ORDER = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6'];
+// 施工中的楼层：电梯面板显示「施工中」并拒绝到达（布景未达标的区域不以灰盒开放）
+export const WIP = new Set();
 export const FLOORS = { B3: { y: -26, label: 'B3　收容库 · 开架区（1–3 级）' }, B4: { y: -34, label: 'B4　单独收容柜（4–6 级）' }, B5: { y: -42, label: 'B5　深库（7 级以上）' } };
 const EZ = -84;
 export const HALL_TEXT = { B1: '外勤缉拿处 · 整备库', B2: '审讯室 · 临时羁押', B3: '证物收容库 · 开架区 · 1–3 级', B4: '证物收容库 · 单独收容柜 · 4–6 级', B5: '深库 · 7 级以上 · 双人双锁', B6: '驯化副本训练场' }; // 电梯门所在墙面 z（门朝北开向楼层）
@@ -210,7 +212,7 @@ export function buildVault(scene, world, ctx) {
     const seal = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 1.6), sealMaterial()); seal.position.set(0.4, y + 2.0, Z1 + 0.58); seal.rotation.z = 0.12; zone.add(seal);
     const em = emblem(0.7, M.goldBright, M.navy); em.position.set(0, y + 5.2, Z1 + 0.5); zone.add(em);
     // 灯：冷暗 + 细金线
-    rectLight(zone, 0x8ea6d8, 0.8, 26, 30, [0, y + H - 0.3, -117], [0, y, -117]);
+    rectLight(zone, 0x8ea6d8, 0.3, 26, 30, [0, y + H - 0.3, -117], [0, y, -117]); // M4：压低补光，深库更戏剧
     point(zone, 0xffc880, 6, [0, y + 4, -117], 10);
     spot(zone, 0xffd090, 90, [0, y + H - 0.2, -117], [0, y, -117], 0.6, true, 12);
     for (let z = Zd - 4; z > Z1 + 2; z -= 5) { b.box('gold', 0.06, 0.06, 4.4, [-3.6, y + H - 0.1, z], { uv: 1 }); b.box('gold', 0.06, 0.06, 4.4, [3.6, y + H - 0.1, z], { uv: 1 }); }
@@ -429,7 +431,7 @@ export function setupElevator(G, { toast, dialog, fade, runInteractable }) {
       use: async () => {
         if (!content.has('item_badge')) { toast('面板没有反应。\n需要入职证刷卡。'); return; }
         const L = 'ABCDEFGHIJ'; const keys = ['1F', ...FLOOR_ORDER.filter((k) => FLOORS[k])].filter((k) => k !== c.floor);
-        const opts = keys.map((k, i) => [L[i], k, k === '1F' ? '1F　安检大厅' : FLOORS[k].label]);
+        const opts = keys.map((k, i) => [L[i], k, k === '1F' ? '1F　安检大厅' : FLOORS[k].label + (WIP.has(k) ? '　（施工中）' : '')]);
         if (!FLOORS.B6) opts.push([L[opts.length], 'B6x', 'B6　驯化副本训练场（需教官授权）']);
         opts.push([L[opts.length], 'B6+', '（同时按住 B6 与关门键）'], [L[opts.length + 1], null, '离开']);
         const choice = await dialog([`（书脊井 · ${c.floor}。轿厢面板：12F…1F，B1–B6。没有 B7。）`, ...opts.map((o) => `> 选项 ${o[0]}：${o[2]}`)]);
@@ -439,6 +441,7 @@ export function setupElevator(G, { toast, dialog, fade, runInteractable }) {
           G.freeze(true); toast('（你按住两个按钮。）', { ms: 7000, whisper: true }); await sleep(7000); G.freeze(false);
           const it = content.get('int_spine_b7'); if (it) await runInteractable(G, it, null); G.glitch?.(1.2); return;
         }
+        if (WIP.has(pick[1])) { toast(`${pick[1]} 的按钮贴着一张黄条：「施工中 · 暂停开放」。`, { ms: 4200 }); return; }
         if (pick[1] === 'B5' && !content.has('used:int_vault_qichou')) { toast('B5 按钮亮起红灯：「深库 · 需双人授权」。\n也许该先去 B4 找收容库主管。', { ms: 5200 }); return; }
         await ride(c.floor, pick[1], c.x);
       },

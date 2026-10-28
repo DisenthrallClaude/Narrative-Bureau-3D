@@ -65,6 +65,12 @@ export function lancetWindow(b, f, x, y, z, w, h, o = {}) {
     // 横档
     for (let k = 1; k < 4; k++) b.add('iron', new THREE.BoxGeometry(ww, 0.04, 0.05), f.at(x, y + (hs * k) / 4, z - depth * 0.32), { uv: 1 });
   }
+  else if (w > 0.6 && o.tracery !== false) { // M4：小窗也有窗棂——一道竖棂 + 顶部三叶圆环（金）
+    b.add('gold', new THREE.CylinderGeometry(0.04, 0.04, hs + ww * 0.25, 6), f.at(x, y + (hs + ww * 0.25) / 2, z - depth * 0.3), { uv: 1 });
+    b.add('gold', new THREE.TorusGeometry(ww * 0.2, 0.035, 5, 16), f.at(x, y + hs + ww * 0.4, z - depth * 0.3), { uv: 1 });
+    for (let k = 1; k < 3; k++) b.add('iron', new THREE.BoxGeometry(ww, 0.03, 0.04), f.at(x, y + (hs * k) / 3, z - depth * 0.32), { uv: 1 });
+  }
+  if (w > 1.2 && o.tracery !== false) b.add('gold', new THREE.TorusGeometry(ww * 0.22 + 0.07, 0.03, 5, 24), f.at(x, y + hs + ww * 0.42, z - depth * 0.28), { uv: 1 });
   // 玻璃
   b.add(o.glass ?? 'glassOut', new THREE.ShapeGeometry(archShape(ww, hs)), f.at(x, y, z - depth * 0.36), { uv: false });
   // 窗台
