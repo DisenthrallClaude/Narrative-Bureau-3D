@@ -1,5 +1,6 @@
 // 外景：中轴广场、规则之泉、黑金哥特主楼外观、环形城墙与塔楼、远景巨城与河流、飞行器
 import * as THREE from 'three';
+import { TOD } from '../engine/tod.js';
 import { Batch } from '../engine/batch.js';
 import { placeModel, loadModel } from '../engine/assets.js';
 import { mats } from './mats.js';
@@ -29,6 +30,13 @@ export async function buildExterior(scene, world, ctx) {
   // 环形拼花（喷泉外）
   for (const [r, w] of [[19, 1.4], [22, 0.6]]) { const ring = new THREE.RingGeometry(r - w / 2, r + w / 2, 128); ring.rotateX(-Math.PI / 2); b.add(r === 19 ? 'whiteMarble' : 'stoneDark', ring, { pos: [0, 0.04, 30] }, { uv: 0.5 }); }
   { const ring = new THREE.RingGeometry(20.3, 20.5, 128); ring.rotateX(-Math.PI / 2); b.add('gold', ring, { pos: [0, 0.05, 30] }, { uv: 1 }); }
+  // M4：喷泉外黑白石材放射拼花（三圈错位扇形 + 金线圈），中轴大道菱形黑石嵌花，窨井盖
+  for (const [r0, r1, n, off] of [[13.7, 15.3, 32, 0], [15.3, 16.9, 48, 0.5], [16.9, 18.25, 64, 0]]) {
+    for (let k = 0; k < n; k++) { const g2 = new THREE.RingGeometry(r0, r1, 3, 1, ((k + off) / n) * Math.PI * 2, (Math.PI * 2) / n); g2.rotateX(-Math.PI / 2); b.add(k % 2 ? 'whiteMarble' : 'stoneDark', g2, { pos: [0, 0.066, 30] }, { uv: 0.5 }); }
+    const gr = new THREE.RingGeometry(r1 - 0.05, r1 + 0.05, 128); gr.rotateX(-Math.PI / 2); b.add('gold', gr, { pos: [0, 0.071, 30] }, { uv: 1 });
+  }
+  for (let z = 2; z < 80; z += 4) { if (Math.abs(z - 30) < 19) continue; const d = new THREE.PlaneGeometry(2.2, 2.2); d.rotateX(-Math.PI / 2); d.rotateY(Math.PI / 4); b.add('stoneDark', d, { pos: [0, 0.062, z + 2] }, { uv: 0.5 }); const d2 = new THREE.PlaneGeometry(1.1, 1.1); d2.rotateX(-Math.PI / 2); d2.rotateY(Math.PI / 4); b.add('whiteMarble', d2, { pos: [0, 0.064, z + 2] }, { uv: 0.5 }); for (const sx of [-1, 1]) { const d3 = new THREE.PlaneGeometry(0.9, 0.9); d3.rotateX(-Math.PI / 2); d3.rotateY(Math.PI / 4); b.add('stoneDark', d3, { pos: [sx * 4.5, 0.062, z + 2] }, { uv: 0.5 }); } }
+  for (const [x, z] of [[-12, 8], [12, 8], [-12, 52], [12, 52]]) add(placeModel('manhole', { width: 1.0, pos: [x, 0.03, z] }));
   // 大地徽（南端）
   g.add(groundEmblem(M, [0, 0.06, 64], 9));
   // 绿篱花坛与草坪（两侧）
@@ -271,7 +279,11 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
     const leaf = new THREE.Group();
     const w = DW / 2, h = DH;
     const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), M.doorWood); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
-    for (let k = 0; k < 6; k++) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.96, 0.14, 0.34), M.iron); strap.position.set(sx * -w / 2, 0.8 + k * 1.5, 0); leaf.add(strap); for (let r = 0; r < 6; r++) { const s = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 4), M.gold); s.position.set(sx * -(0.25 + r * 0.6), 0.8 + k * 1.5, 0.18); leaf.add(s); } }
+    // M4：门扇分格（2 列 × 4 行凸起镶板 + 金边框 + 三道铁箍），双面
+    for (const fz of [-1, 1]) {
+      for (let c = 0; c < 2; c++) for (let r = 0; r < 4; r++) { const pw = w * 0.38, ph = r === 3 ? 1.9 : 1.55, px = sx * -(w * 0.27 + c * w * 0.46), py = 0.9 + r * 1.95 + ph / 2; const pnl = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.06), M.wood); pnl.position.set(px, py, fz * 0.16); leaf.add(pnl); const fr = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.12, ph + 0.12, 0.03), M.gold); fr.position.set(px, py, fz * 0.145); leaf.add(fr); }
+      for (const k of [0, 2, 4]) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.12, 0.05), M.iron); strap.position.set(sx * -w / 2, 0.55 + k * 1.95, fz * 0.17); leaf.add(strap); for (let r = 0; r < 5; r++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 4), M.gold); st.position.set(sx * -(0.3 + r * 0.7), 0.55 + k * 1.95, fz * 0.2); leaf.add(st); } }
+    }
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 6, 20), M.gold); ring.position.set(sx * -(w - 0.5), h * 0.45, 0.2); leaf.add(ring);
     leaf.position.set(sx * DW / 2, Y, -5.6); leaf.rotation.y = sx * -1.25; g.add(leaf);
   }
@@ -354,12 +366,20 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
   // 后楼正面在中庭以上露出的部分（翼楼屋顶之上）
   for (const sx of [-1, 1]) bayWall(b, new Frame([sx * 40, Y + WH, -80], 0), 44, RH - WH, 5, { pinnacles: true });
   // —— 主塔（中央，z -96，宽 28，高 96）——
-  tower(b, 0, -98, 28, 96, { y0: Y, spireH: 74, levels: 6 });
+  // M4：主塔加高约 40% 并分三段收分（方塔 → 收分方塔 → 八角灯笼亭 → 尖顶），让主塔压倒两侧塔群
+  tower(b, 0, -98, 28, 92, { y0: Y, spire: false, levels: 6 });
+  tower(b, 0, -98, 21, 30, { y0: Y + 92, spire: false, levels: 2, collide: false });
+  { const f = new Frame([0, Y + 122, -98], 0); const r = 8.6, hh = 16;
+    b.add('stone', new THREE.CylinderGeometry(r, r * 1.05, hh, 8), f.at(0, hh / 2, 0, [0, Math.PI / 8, 0]), { uv: 0.3 });
+    for (let k = 0; k < 8; k++) { const a = (k / 8) * Math.PI * 2; lancetWindow(b, new Frame([Math.cos(a) * r * 0.93, Y + 122, -98 + Math.sin(a) * r * 0.93], -a + Math.PI / 2), 0, 2.5, 0, 2.2, 10, { tracery: true }); const fp = new Frame([Math.cos(a + Math.PI / 8) * r * 1.02, Y + 122, -98 + Math.sin(a + Math.PI / 8) * r * 1.02], 0); b.add('stone', new THREE.BoxGeometry(1.0, hh, 1.0), fp.at(0, hh / 2, 0), { uv: 0.4 }); spire(b, fp, 0, hh, 0, 0.75, 7, { lucarnes: false, bands: [0] }); }
+    for (const yy of [0.2, hh]) b.add('gold', new THREE.CylinderGeometry(r * 1.07, r * 1.07, 0.25, 8, 1, true), f.at(0, yy, 0, [0, Math.PI / 8, 0]), { uv: 1 });
+    spire(b, f, 0, hh, 0, r * 0.92, 108, { bands: [0, 0.22, 0.45, 0.66, 0.84] }); }
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const f = new Frame([sx * 11.8, Y + 122, -98 + sz * 11.8], 0); b.add('stone', new THREE.CylinderGeometry(1.3, 1.5, 6, 8), f.at(0, 3, 0), { uv: 0.4 }); spire(b, f, 0, 6, 0, 1.5, 20, { lucarnes: false, bands: [0, 0.5] }); }
   // 主塔南面巨型局徽
   const te = emblem(6.5, M.goldBright, M.navy); te.position.set(0, Y + 80, -98 + 14 + 0.6); g.add(te);
   b.add('stoneDark', new THREE.CylinderGeometry(8, 8, 0.4, 48), { pos: [0, Y + 80, -98 + 14 + 0.2], rot: [Math.PI / 2, 0, 0] }, { uv: 0.5 });
   // 主塔四角高耸副尖塔
-  for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const f = new Frame([sx * 16.5, Y + 96, -98 + sz * 16.5], 0); b.add('stone', new THREE.CylinderGeometry(1.8, 2.0, 10, 8), f.at(0, 5, 0), { uv: 0.4 }); spire(b, f, 0, 10, 0, 2.0, 22, { lucarnes: false, bands: [0, 0.5] }); }
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const f = new Frame([sx * 16.5, Y + 92, -98 + sz * 16.5], 0); b.add('stone', new THREE.CylinderGeometry(1.8, 2.0, 10, 8), f.at(0, 5, 0), { uv: 0.4 }); spire(b, f, 0, 10, 0, 2.0, 22, { lucarnes: false, bands: [0, 0.5] }); }
   // —— 立面雕像（门券两侧壁龛）——
   for (const sx of [-1, 1]) for (let k = 0; k < 2; k++) {
     const x = sx * (pW / 2 + 2.6 + k * 2.6);
@@ -451,8 +471,8 @@ function buildCity(g, M, ctx) {
           diffuseColor.rgb *= 0.85 + 0.15 * step(0.08, fract(wp.y / 12.6)) ;
         }`);
   };
-  const stoneCity = new THREE.MeshStandardMaterial({ color: 0x2a2b31, roughness: 0.72, metalness: 0.15, envMapIntensity: 0.6 });
-  stoneCity.onBeforeCompile = (sh) => winShader(sh, 0.3);
+  const stoneCity = new THREE.MeshStandardMaterial({ color: TOD.cityColor, roughness: 0.72, metalness: 0.15, envMapIntensity: 0.6 });
+  stoneCity.onBeforeCompile = (sh) => winShader(sh, TOD.cityLit);
   const roofCity = new THREE.MeshStandardMaterial({ color: 0x1c1d24, roughness: 0.42, metalness: 0.55, envMapIntensity: 0.9 });
   const goldCity = new THREE.MeshStandardMaterial({ color: 0xd8a850, roughness: 0.3, metalness: 1, emissive: 0x6a4410, emissiveIntensity: 0.4 });
   const boxG = new THREE.BoxGeometry(1, 1, 1); boxG.translate(0, 0.5, 0);

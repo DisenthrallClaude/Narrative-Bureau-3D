@@ -47,7 +47,16 @@ export function weather(mat, o = {}) {
         // 金属氧化
         float nbTar = smoothstep(0.45, 0.8, nbF(nbP * 0.9 + 5.0)) * ${P.tarnish.toFixed(3)};
         diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.5, 0.42, 0.33), nbTar);
-        float nbRoughAdd = (nbFine - 0.5) * ${P.rough.toFixed(3)} + nbStreak * 0.25 + nbGr * 0.2 + nbDu * 0.35 + nbTar * 0.35;`)
+        float nbRoughAdd = (nbFine - 0.5) * ${P.rough.toFixed(3)} + nbStreak * 0.25 + nbGr * 0.2 + nbDu * 0.35 + nbTar * 0.35;
+        ${P.blocks ? `{ // 砌缝：错缝石块（块 ${P.blocks[0]}×${P.blocks[1]} m），缝内压暗、粗糙
+          vec2 bw = vec2(nbAlong, vNbW.y) / vec2(${P.blocks[0].toFixed(3)}, ${P.blocks[1].toFixed(3)});
+          bw.x += 0.5 * mod(floor(bw.y), 2.0);
+          vec2 bf = abs(fract(bw) - 0.5) * vec2(${P.blocks[0].toFixed(3)}, ${P.blocks[1].toFixed(3)});
+          vec2 lim = vec2(${P.blocks[0].toFixed(3)}, ${P.blocks[1].toFixed(3)}) * 0.5 - 0.012;
+          float joint = max(smoothstep(lim.x - 0.006, lim.x, bf.x), smoothstep(lim.y - 0.006, lim.y, bf.y)) * nbWall;
+          float blockTone = 0.92 + 0.16 * nbH(floor(vec3(bw, 1.0)));
+          diffuseColor.rgb *= mix(blockTone, 0.55, joint);
+          nbRoughAdd += joint * 0.3; }` : ''}`)
       .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n roughnessFactor = clamp(roughnessFactor + nbRoughAdd, 0.04, 1.0);');
   };
   const prevKey = mat.customProgramCacheKey?.bind(mat);

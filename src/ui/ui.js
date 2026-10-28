@@ -114,7 +114,8 @@ export function docPages(id, extra = {}) {
 }
 
 // —— 暂停菜单 ——
-export function initPause({ quality, setQuality, setSens, setFov, setVol, setMusic, setFps, credits }) {
+export function initPause({ quality, setQuality, tod, setTod, setSens, setFov, setVol, setMusic, setFps, credits }) {
+  const ts = $('todseg'); if (ts) { ts.querySelectorAll('span').forEach((s) => s.classList.toggle('on', s.dataset.t === tod)); ts.onclick = (e) => { const t = e.target.dataset.t; if (t && t !== tod) setTod(t); }; }
   const qs = $('qseg');
   qs.innerHTML = Object.entries(quality).map(([k, v]) => `<span data-q="${k}">${v.label}</span>`).join('');
   qs.onclick = (e) => { const q = e.target.dataset.q; if (!q) return; setQuality(q); markQ(q); };

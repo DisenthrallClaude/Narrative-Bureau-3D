@@ -10,11 +10,12 @@ import { content } from '../engine/content.js';
 import { FLOOR, T } from './exterior.js';
 import { wallX, wallZ, rectLight, spot, point, person, signMaterial, brassPlaqueMaterial, woodChair, bankerLamp, posterMaterial } from './interiors.js';
 import { FLOORS, FLOOR_ORDER, HALL_TEXT, room, elevatorHall, vaultMats, tagMaterial } from './vault.js';
+import { dressMats, spineMaterial, spineGeo } from './dress.js';
 
 export const UPPER = { '2F': FLOOR + 7, '3F': FLOOR + 14, '4F': FLOOR + 21, '12F': FLOOR + 70 };
 
 export function buildUpper(scene, world, ctx) {
-  const M = mats(); const Mx = vaultMats(M); const MAT = { ...M, ...Mx };
+  const M = mats(); const Mx = vaultMats(M); const MAT = { ...M, ...Mx, ...dressMats(M), spine: spineMaterial() };
   const jobs = [];
   const mk = (name) => { const g = new THREE.Group(); g.name = name; scene.add(g); ctx.zones[name] = g; return g; };
   const addTo = (g) => (p) => { jobs.push(p.then((o) => { g.add(o); return o; })); return p; };
@@ -121,14 +122,19 @@ export function buildUpper(scene, world, ctx) {
       for (let k = 0; k < 40; k++) { const a = (k / 40) * Math.PI * 2; if (lv === 0 && Math.abs(Math.sin(a / 2 - Math.PI / 2 + 0.0)) < 0.2 && Math.cos(a) > 0.9) continue;
         const x = cx + Math.sin(a) * (R + 0.1), z = cz + Math.cos(a) * (R + 0.1);
         if (lv === 0 && z > cz + R - 2 && Math.abs(x) < 3) continue; // 入口
-        b.add('wood', new THREE.BoxGeometry(2.0, 5.4, 0.7), { pos: [x, ly + 2.7, z], rot: [0, a, 0] }, { uv: 0.6 });
-        for (let s = 0; s < 6; s++) for (let n = 0; n < 7; n++) { const hh = 0.5 + ((k * 7 + s * 3 + n * 5 + lv) % 5) * 0.035; const off = -0.78 + n * 0.26; b.add(['leather', 'navy', 'kraftDark', 'leather', 'wood'][(k + s + n + lv) % 5], new THREE.BoxGeometry(0.22, hh, 0.3), { pos: [x - Math.sin(a) * 0.25 + Math.cos(a) * off, ly + 0.2 + s * 0.85 + hh / 2, z - Math.cos(a) * 0.25 - Math.sin(a) * off], rot: [0, a, ((n * 13 + s) % 7 === 0) ? 0.12 : 0] }, { uv: 2 }); }
+        // 书架：背板 + 侧板 + 层板 + 细书脊面（M4：替换原 0.22 m 粗方格书块）
+        const f = new Frame([x, ly, z], a + Math.PI);
+        b.add('dz_wain', new THREE.BoxGeometry(2.0, 5.4, 0.3), f.at(0, 2.7, -0.2), { uv: 0.6 });
+        for (const sx of [-0.97, 0.97]) b.add('dz_wain', new THREE.BoxGeometry(0.06, 5.4, 0.7), f.at(sx, 2.7, 0), { uv: 0.6 });
+        for (let s = 0; s <= 6; s++) b.add('dz_wain', new THREE.BoxGeometry(1.94, 0.045, 0.7), f.at(0, 0.18 + s * 0.85, 0), { uv: 0.6 });
+        for (let s = 0; s < 6; s++) b.add('spine', spineGeo(1.88, 0.78, k * 7.3 + s * 3.1 + lv * 11.7), f.at(0, 0.2 + s * 0.85 + 0.4, 0.2), { uv: false });
+        b.add('gold', new THREE.BoxGeometry(2.0, 0.025, 0.02), f.at(0, 5.32, 0.36), { uv: 1 });
       }
       if (lv > 0) { const g = new THREE.RingGeometry(R - 2.2, R, 64); g.rotateX(-Math.PI / 2); b.add('woodFloor', g, { pos: [cx, ly - 0.05, cz] }, { uv: 0.3 }); b.add('gold', new THREE.TorusGeometry(R - 2.2, 0.05, 6, 96), { pos: [cx, ly + 1.0, cz], rot: [Math.PI / 2, 0, 0] }, { uv: 1 }); b.add('iron', new THREE.CylinderGeometry(R - 2.2, R - 2.2, 1.0, 96, 1, true), { pos: [cx, ly + 0.5, cz] }, { uv: 2 }); b.add('stoneDark', new THREE.TorusGeometry(R - 1.1, 0.2, 6, 96), { pos: [cx, ly - 0.25, cz], rot: [Math.PI / 2, 0, 0] }, { uv: 1 }); }
     }
     // 穹顶天窗 + 光柱
     b.add('vault', new THREE.SphereGeometry(R + 0.6, 48, 12, 0, Math.PI * 2, 0, Math.PI / 2), { pos: [cx, y + H, cz] }, { uv: 0.25 });
-    const oc = new THREE.Mesh(new THREE.CircleGeometry(2.4, 48), new THREE.MeshBasicMaterial({ color: 0xfff0d0 })); oc.rotation.x = Math.PI / 2; oc.position.set(cx, y + H + R - 0.2, cz); zone.add(oc);
+    
     zone.add(lightShaft({ from: [cx, y + H + 10, cz], to: [cx, y, cz], r0: 2.2, r1: 4.4, intensity: 0.22, color: 0xffe2b0 }));
     // 中央：讲经台与「本册」（只有封面的巨书）+ 三处阅读龛
     b.add('blackMarble', new THREE.CylinderGeometry(2.4, 2.8, 0.6, 48), { pos: [cx, y + 0.3, cz] }, { uv: 0.5, collide: true });
@@ -171,8 +177,7 @@ export function buildUpper(scene, world, ctx) {
     // 齐凌云（落地窗前）
     const ql = person(M, { coat: 0x15161c }); ql.position.set(-3, y, -110); ql.rotation.y = 0; zone.add(ql); ctx.anchors.int_dir_qilingyun = { box: [-3, y + 1, -110, 1.2, 2, 1.2] };
     // 书柜墙（南墙两侧）+ 地毯 + 灯
-    for (const x of [-10, -6, 6, 10]) { b.box('wood', 3.4, 4.6, 0.6, [x, y + 2.3, Z0 - 0.5], { uv: 0.6, collide: true }); for (let s = 0; s < 5; s++) b.box(['leather', 'navy'][s % 2], 3.1, 0.6, 0.3, [x, y + 0.5 + s * 0.88, Z0 - 0.75], { uv: 2 }); }
-    b.box('carpet', 9, 0.02, 7, [0, y + 0.01, -104], { uv: 0.3 });
+    // 南墙书柜与地毯：见 dressing.js（细书脊书柜 + 图案地毯）
     add(placeModel('chandelier', { height: 1.6, pos: [0, y + 4.8, -102] }));
     point(zone, 0xffd8a8, 12, [0, y + 4.5, -102], 14); spot(zone, 0xffe0b0, 80, [2, y + H - 0.2, -103], [0, y + 0.9, -104], 0.5, true, 10);
     rectLight(zone, 0xc8b8e8, 2.0, 22, 5, [0, y + 2.5, Z1 + 0.6], [0, y + 2, -100]);

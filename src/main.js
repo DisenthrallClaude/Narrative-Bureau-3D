@@ -16,11 +16,13 @@ import { bindAll, runInteractable } from './engine/binder.js';
 import { buildVault, updateVault, setupElevator } from './world/vault.js';
 import { buildRooms, updateRooms } from './world/rooms.js';
 import { buildUpper, updateUpper } from './world/upper.js';
+import { buildDressing, updateDressing } from './world/dressing.js';
 import { installSkyFog } from './engine/skyfog.js';
 import { mats } from './world/mats.js';
 import { setupStory } from './story.js';
 import * as UI from './ui/ui.js';
 import { SHOTS } from './shots.js';
+import { TOD, TOD_NAME, setTod } from './engine/tod.js';
 
 const params = new URLSearchParams(location.search);
 const SHOT = params.get('shot');
@@ -45,15 +47,15 @@ const G = { scene, camera, ctx, world, player, inter, audio, zone: null, onUpdat
 window.G = G;
 
 // —— 光照 ——
-const sun = new THREE.DirectionalLight(0xffb27c, 3.4);
+const sun = new THREE.DirectionalLight(TOD.sunColor, 3.4);
 sun.castShadow = true; sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.04;
 // 黄昏：太阳在西南方低空（与天空盒全景图中落日方向一致，见 public/assets/tex/sky_dusk.jpg）
-const SUN_DIR = new THREE.Vector3(-0.80, 0.2, 0.57).normalize();
+const SUN_DIR = TOD.sunDir.clone();
 scene.add(sun, sun.target);
-const hemi = new THREE.HemisphereLight(0x9a96c8, 0x3a2c26, 0.25); scene.add(hemi);
+const hemi = new THREE.HemisphereLight(TOD.hemiSky, TOD.hemiGround, 0.25); scene.add(hemi);
 function setShadowSize(s) { sun.shadow.mapSize.set(s, s); sun.shadow.map?.dispose(); sun.shadow.map = null; const c = sun.shadow.camera; c.left = -110; c.right = 110; c.top = 110; c.bottom = -110; c.near = 1; c.far = 600; c.updateProjectionMatrix(); }
 
-const SKY_I = 1.45;
+const SKY_I = TOD.skyI;
 let envSky = null, envHall = null, skyTex = null;
 const reflector = new PlanarReflector(R.gl, { y: FLOOR });
 
@@ -73,7 +75,7 @@ async function boot() {
   await content.load();
   await audio.init();
   const pm = new THREE.PMREMGenerator(R.gl);
-  const [sky, hall] = await Promise.all([new THREE.TextureLoader(manager).loadAsync('./assets/tex/sky_dusk.jpg').catch(() => null), loadHDR('hall_1k')]);
+  const [sky, hall] = await Promise.all([new THREE.TextureLoader(manager).loadAsync('./assets/tex/' + TOD.sky).catch(() => null), loadHDR('hall_1k')]);
   if (sky) { sky.mapping = THREE.EquirectangularReflectionMapping; sky.colorSpace = THREE.SRGBColorSpace; sky.generateMipmaps = true; sky.minFilter = THREE.LinearMipmapLinearFilter; sky.anisotropy = 4; }
   skyTex = sky;
   installSkyFog(sky, SKY_I);
@@ -82,7 +84,7 @@ async function boot() {
   scene.background = sky; scene.backgroundIntensity = SKY_I;
   scene.environment = envSky;
   LOG('hdr ok'); UI.loadProgress(0.1, '建造主楼……');
-  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx);
+  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx); await buildDressing(scene, world, ctx);
   LOG('world built'); scene.add(world.build()); inter.blocker = world.collider; LOG('bvh ok');
   // 反射地面
   const M = mats();
@@ -90,12 +92,14 @@ async function boot() {
   scene.traverse((o) => { if (o.isMesh && (o.material === M.hallFloor || o.material === M.hallFloorDark)) reflector.hide.push(o); if (o.userData.isShaft) reflector.hide.push(o); });
   // 主屏射线代理
   const proxy = new THREE.Mesh(new THREE.BoxGeometry(15, 6.6, 0.8), new THREE.MeshBasicMaterial({ visible: false })); proxy.position.copy(ctx.mainScreenPos); inter.proxies.add(proxy); G.mainScreenProxy = proxy;
+  // 分区补光只在本区生效（多个分组同时可见时不叠加）
+  scene.traverse((o) => { if (o.userData?.isFill) { let a = o; while (a.parent && a.parent !== scene) a = a.parent; o.userData.fillOf = a.name; FILLS.push(o); } });
   setupStory(G);
   bindAll(G);
   setupElevator(G, { toast: UI.toast, dialog: UI.dialog, fade: UI.fade, runInteractable });
   applyQuality(savedQ);
   UI.initPause({
-    quality: QUALITY, setQuality: applyQuality,
+    quality: QUALITY, setQuality: applyQuality, tod: TOD_NAME, setTod,
     setSens: (v) => { sens = v; }, setFov: (v) => { camera.fov = v; camera.updateProjectionMatrix(); },
     setVol: (v) => audio.setVolumes({ master: v }), setMusic: (v) => audio.setVolumes({ music: v }), setFps: (v) => { showFps = v; if (!v) UI.setFpsText(''); },
     credits: await fetch('./assets/CREDITS.txt').then((r) => (r.ok ? r.text() : '')).catch(() => ''),
@@ -192,19 +196,20 @@ const ZONE_LOOK = {
   training: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x060a14, 0.012], hemi: 0.05 },
   east_stair: { env: 'hall', envI: 0.55, sun: 0, exp: 1.1, fog: [0x1d1915, 0.012], hemi: 0.12 },
 };
-let targetExp = 1, curExp = 1;
+let targetExp = 1, curExp = 1; const FILLS = [];
 function setZone(z, force = false) {
   if (z === G.zone && !force) return;
   const prev = G.zone; G.zone = z;
   const vis = VIS[z];
   scene.getObjectByName('exterior').visible = !!vis.exterior;
   for (const [k, g] of Object.entries(ctx.zones)) g.visible = !!vis[k] || GROUP_OF[z] === k || k === z;
+  for (const f of FILLS) f.visible = f.userData.fillOf === (GROUP_OF[z] ?? z);
   const L = ZONE_LOOK[z] ?? ZONE_LOOK.spine_b3;
   scene.environment = L.env === 'sky' ? envSky : envHall;
   scene.environmentIntensity = L.envI;
-  sun.intensity = L.sun; sun.castShadow = L.sun > 0; hemi.intensity = L.hemi;
+  sun.intensity = L.sun * TOD.sunMul; sun.castShadow = L.sun > 0; hemi.intensity = L.env === 'sky' && L.sun > 0 ? L.hemi * TOD.hemiMul : L.hemi;
   scene.fog = new THREE.FogExp2(L.fog[0], L.fog[1]);
-  targetExp = L.exp;
+  targetExp = z === 'plaza' ? TOD.plazaExp : L.exp;
   reflector.enabled = z === 'gate' || z === 'security_hall';
   if (prev && AREA_NAMES[z]) UI.showArea(...AREA_NAMES[z]);
   audio.setZone(z);
@@ -257,6 +262,7 @@ function loop() {
   requestAnimationFrame(loop);
   const dt = Math.min(clock.getDelta(), 0.1);
   if (!envSky && !SHOT && !started) return;
+  if (SHOT && !shotStarted) return; // 截图模式：加载期间不渲染（SwiftShader 下每帧数秒，会拖慢资源回调）
   time.value += dt;
   const t = time.value;
   // 控制
@@ -281,7 +287,7 @@ function loop() {
   curExp += (targetExp - curExp) * Math.min(1, dt * 1.5);
   R.setExposure(curExp);
   for (const s of ctx.screens) s.update(dt, t);
-  updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t);
+  updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t); updateDressing(ctx, dt, t);
   reflector.setY(FLOOR); reflector.update(scene, camera, R.q.reflect);
   R.render(dt);
   frames++;

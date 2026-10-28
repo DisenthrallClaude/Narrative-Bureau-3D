@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { pbr } from '../engine/assets.js';
 import { stainedGlassTexture } from '../engine/fx.js';
 import { weather } from '../engine/weather.js';
+import { TOD } from '../engine/tod.js';
 
 let M = null;
 export function mats() {
@@ -12,7 +13,7 @@ export function mats() {
   M.stone = pbr('Granite003A', { color: 0x3a3c44, roughness: 0.62, env: 0.9, normalScale: 0.8 });
   M.stoneDark = pbr('Marble016', { color: 0x1b1c22, roughness: 0.4, env: 1.0 });
   M.blackMarble = pbr('Marble016', { color: 0x9a9aa2, roughness: 0.35, env: 1.1, physical: true, clearcoat: 0.6, clearcoatRoughness: 0.12 });
-  M.gold = pbr('Metal048A', { color: 0xffe2a0, metalness: 1, roughness: 0.28, env: 1.3 });
+  M.gold = pbr('Metal048A', { color: 0xffe2a0, metalness: 1, roughness: 0.32, env: 1.3 });
   M.goldBright = new THREE.MeshStandardMaterial({ color: 0xf0c66e, metalness: 1, roughness: 0.18, envMapIntensity: 1.5 });
   M.goldEmis = new THREE.MeshStandardMaterial({ color: 0xf6d27e, metalness: 1, roughness: 0.25, emissive: 0xc8902e, emissiveIntensity: 0.8, envMapIntensity: 1.4 });
   M.slate = pbr('Metal027', { color: 0x2a2d36, metalness: 0.6, roughness: 0.45, env: 1.0 });
@@ -27,13 +28,13 @@ export function mats() {
         { vec3 cell = floor(vGw / vec3(3.0, 5.0, 3.0)); float on = step(0.55, gh(cell));
           float flick = 0.85 + 0.15 * gh(cell + 7.0);
           float grad = 0.6 + 0.4 * smoothstep(0.0, 1.0, fract(vGw.y / 5.0));
-          totalEmissiveRadiance += vec3(1.0, 0.58, 0.26) * on * flick * grad * 1.7; }`);
+          totalEmissiveRadiance += vec3(1.0, 0.58, 0.26) * on * flick * grad * ${TOD.winLit.toFixed(2)}; }`);
   };
-  M.glassOut.customProgramCacheKey = () => 'glassOutDusk';
+  M.glassOut.customProgramCacheKey = () => 'glassOut' + TOD.label;
   const sgt = stainedGlassTexture(3); sgt.repeat.set(0.3, 0.115); sgt.offset.set(0.5, 0);
   M.glassIn = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: sgt, emissiveIntensity: 2.4, roughness: 1, side: THREE.DoubleSide });
   M.glassIn.userData.noShadow = true;
-  M.glassClear = new THREE.MeshPhysicalMaterial({ color: 0xdde6ee, metalness: 0, roughness: 0.02, transmission: 0, transparent: true, opacity: 0.16, envMapIntensity: 1.5, depthWrite: false });
+  M.glassClear = new THREE.MeshPhysicalMaterial({ color: 0xc8d2da, metalness: 0, roughness: 0.04, transmission: 0, transparent: true, opacity: 0.1, envMapIntensity: 0.65, depthWrite: false }); // M4：降反射，避免玻璃在掠射角泛白成「悬空板」
   M.glassClear.userData.noShadow = true;
   M.navy = pbr('Fabric023', { color: 0x1a2c66, roughness: 0.85 });
   // 广场
@@ -47,14 +48,14 @@ export function mats() {
   M.hallFloor = pbr('Marble012', { color: 0x7e7e84, roughness: 0.26, env: 0.9, physical: true, clearcoat: 0.8, clearcoatRoughness: 0.05 });
   M.hallFloorDark = pbr('Marble006', { color: 0x58585e, roughness: 0.28, env: 0.9, physical: true, clearcoat: 0.8, clearcoatRoughness: 0.06 });
   M.terrazzo = pbr('Terrazzo005', { color: 0xa8a8ac, roughness: 0.3, env: 0.8 });
-  M.wallStone = pbr('Granite003A', { color: 0x4c4d55, roughness: 0.5, env: 0.8 });
+  M.wallStone = pbr('Marble016', { color: 0x6a6a72, roughness: 0.48, env: 0.8 }); // M4：原花岗岩在暖光下呈锈斑，改黑金纹大理石
   M.vault = pbr('Concrete034', { color: 0x8a8478, roughness: 0.85, env: 0.6 }); M.vault.side = THREE.DoubleSide; M.vault.userData.noShadow = true; // 双面薄壳自投影会出现橙黑色阴影痤疮
   M.panelWall = pbr('Marble006', { color: 0x5e5850, roughness: 0.62, env: 0.45 });
   M.wallPlaster = pbr('Concrete034', { color: 0x3e4a44, roughness: 0.8 });
   M.onyx = pbr('Onyx013', { color: 0x8a8a90, roughness: 0.22, env: 1.2 });
   M.wood = pbr('Wood051', { color: 0x6e4e38, roughness: 0.45, env: 0.8 });
   M.doorWood = pbr('Wood051', { color: 0x6a4e3a, roughness: 0.55, repeat: [1.5, 4] });
-  M.woodFloor = pbr('WoodFloor064', { color: 0x9a8676, roughness: 0.42, env: 0.8 });
+  M.woodFloor = pbr('WoodFloor064', { color: 0x8a7666, roughness: 0.58, env: 0.55 });
   M.carpet = pbr('Carpet012', { color: 0x6a2228, roughness: 1 });
   M.steel = pbr('Metal009', { color: 0xc8ccd0, metalness: 1, roughness: 0.32 });
   M.blackMetal = pbr('Metal046A', { color: 0x3a3c42, metalness: 1, roughness: 0.38 });
@@ -74,14 +75,15 @@ export function mats() {
   M.waxRed = new THREE.MeshStandardMaterial({ color: 0x7a1016, roughness: 0.35, metalness: 0.05 });
   M.foliage = new THREE.MeshStandardMaterial({ color: 0x55704c, map: leaf.map, normalMap: leaf.normal, normalScale: new THREE.Vector2(1.8, 1.8), roughness: 0.9 });
   M.rubber = new THREE.MeshStandardMaterial({ color: 0x111214, roughness: 0.8 });
+  M.faceScreen = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x3aa8ff, emissiveIntensity: 1.3, roughness: 0.2 }); M.faceScreen.userData.noShadow = true;
   // —— 老化与脏污（世界空间，打破平铺与“新模型感”）——
-  weather(M.stone, { macro: 0.28, streak: 0.85, grime: 0.7, ground: 0, rough: 0.22 });
+  weather(M.stone, { macro: 0.28, streak: 0.85, grime: 0.7, ground: 0, rough: 0.22, blocks: [1.2, 0.6] });
   weather(M.stoneDark, { macro: 0.18, streak: 0.5, grime: 0.4, ground: 0, rough: 0.16 });
   weather(M.slate, { macro: 0.2, streak: 0.4, tarnish: 0.25, dust: 0.3 });
   weather(M.gold, { macro: 0.1, tarnish: 0.32, rough: 0.12, scale: 2.0 });
   weather(M.goldBright, { macro: 0.06, tarnish: 0.18, rough: 0.08, scale: 2.0 });
   weather(M.iron, { macro: 0.15, tarnish: 0.5, rough: 0.2, scale: 1.5 });
-  weather(M.wallStone, { macro: 0.2, streak: 0.25, grime: 0.45, ground: 1.8, rough: 0.14 });
+  weather(M.wallStone, { macro: 0.2, streak: 0.25, grime: 0.45, ground: 1.8, rough: 0.14, blocks: [1.0, 0.5] });
   weather(M.paving, { macro: 0.32, dust: 0.25, rough: 0.2 });
   weather(M.plazaTile, { macro: 0.18, dust: 0.15, rough: 0.12 });
   weather(M.blackMarble, { macro: 0.1, rough: 0.08 });
