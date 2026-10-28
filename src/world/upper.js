@@ -161,7 +161,10 @@ export function buildUpper(scene, world, ctx) {
     // 北墙：整面落地尖拱窗（能看见暮色中的巨城）
     for (let k = -2; k <= 2; k++) { const f = new Frame([k * 4.6, y, Z1 + 0.25], 0); b.add('glassClear', new THREE.ShapeGeometry(archShape(3.6, 4.4)), f.at(0, 0.3, 0.0), { uv: false }); b.add('stoneDark', archRingGeo(4.2, 4.4, 3.6, 4.4, 0.4), f.at(0, 0.3, 0.05), { uv: 0.5 }); b.add('gold', archRingGeo(4.3, 4.4, 4.2, 4.4, 0.42), f.at(0, 0.3, 0.05), { uv: 1 }); }
     // 书桌 + 镇纸 + 玻璃板手稿 + 抽屉信
-    b.box('wood', 3.2, 0.9, 1.4, [0, y + 0.45, -104], { uv: 0.6, collide: true }); b.box('glassClear', 3.0, 0.02, 1.2, [0, y + 0.915, -104], { uv: false }); b.box('leather', 1.6, 0.01, 0.8, [0, y + 0.905, -104], { uv: 1 });
+    // M4：大班台——双柜体（抽屉 + 黄铜拉手）+ 凹进的挡板 + 出沿台面 + 金色包边 + 底座线脚
+    b.box('wood', 3.34, 0.07, 1.52, [0, y + 0.855, -104], { uv: 0.6, collide: true }); b.box('gold', 3.36, 0.02, 1.54, [0, y + 0.83, -104], { uv: 1 });
+    for (const sx of [-1, 1]) { b.box('wood', 0.95, 0.8, 1.36, [sx * 1.15, y + 0.42, -104], { uv: 0.6, collide: true }); b.box('dz_base', 1.0, 0.1, 1.42, [sx * 1.15, y + 0.05, -104], { uv: 0.5 }); for (let k = 0; k < 3; k++) { b.box('dz_wain2', 0.82, 0.2, 0.02, [sx * 1.15, y + 0.2 + k * 0.24, -103.31], { uv: 0.6 }); b.box('brass', 0.16, 0.025, 0.03, [sx * 1.15, y + 0.24 + k * 0.24, -103.29], { uv: 1 }); } for (const ex of [-1, 1]) b.box('dz_wain2', 0.06, 0.8, 0.06, [sx * 1.15 + ex * 0.47, y + 0.42, -103.33], { uv: 0.6 }); }
+    b.box('dz_wain', 1.36, 0.62, 0.05, [0, y + 0.5, -104.55], { uv: 0.6 }); b.box('glassClear', 3.0, 0.02, 1.2, [0, y + 0.915, -104], { uv: false }); b.box('leather', 1.6, 0.01, 0.8, [0, y + 0.905, -104], { uv: 1 });
     const md = paper('doc_dir_motto_draft', '手稿'); md.position.set(-0.6, y + 0.91, -104); zone.add(md); ctx.anchors.doc_dir_motto_draft = md;
     const pw = emblem(0.07, M.goldBright, M.navy); pw.rotation.x = -Math.PI / 2; pw.position.set(0.5, y + 0.95, -104); zone.add(pw); ctx.anchors.int_dir_paperweight = { box: [0.5, y + 0.95, -104, 0.3, 0.2, 0.3] };
     const lt = paper('doc_dir_letter_k', '致 K'); lt.position.set(1.2, y + 0.75, -103.25); zone.add(lt); ctx.anchors.doc_dir_letter_k = { box: [1.2, y + 0.7, -103.2, 0.6, 0.3, 0.4] };

@@ -150,28 +150,37 @@ export class CanvasScreen {
 
 /** 彩色玻璃（程序化铅条花窗），用于室内侧发光窗 */
 export function stainedGlassTexture(seed = 1) {
-  const W = 512, H = 1024, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  // M4：整窗构图（UV 已按每扇窗归一化）：宝石红/金边框 + 深蓝菱格底 + 三个纹章圆（罗盘十字 / 翻开的书 / 天平与钥匙）+ 粗铅条
+  const W = 512, H = 1400, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
   const c = cv.getContext('2d');
   let s = seed * 9301 + 49297; const rnd = () => ((s = (s * 9301 + 49297) % 233280) / 233280);
-  const pick = () => { const r = rnd(); return r < 0.5 ? ['#123a9a', '#0c2a78', '#1b4fb8'][Math.floor(rnd() * 3)] : r < 0.68 ? '#8f1a26' : r < 0.86 ? ['#d9a640', '#f0c95a'][Math.floor(rnd() * 2)] : r < 0.95 ? '#1d6f80' : '#e8e0c8'; };
-  c.fillStyle = '#0a0a0c'; c.fillRect(0, 0, W, H);
-  // 菱形格底
-  const cell = 46;
-  for (let y = -cell; y < H + cell; y += cell / 2) for (let x = -cell; x < W + cell; x += cell) {
-    const ox = ((y / (cell / 2)) % 2) * cell / 2;
-    c.fillStyle = pick(); c.beginPath(); c.moveTo(x + ox, y - cell / 2 + 3); c.lineTo(x + ox + cell / 2 - 3, y); c.lineTo(x + ox, y + cell / 2 - 3); c.lineTo(x + ox - cell / 2 + 3, y); c.closePath(); c.fill();
+  const lead = '#060606';
+  c.fillStyle = lead; c.fillRect(0, 0, W, H);
+  // 菱格底（深蓝明暗变化）
+  const cell = 40;
+  for (let y = 0; y < H + cell; y += cell / 2) for (let x = 0; x < W + cell; x += cell) {
+    const ox = ((y / (cell / 2)) % 2) * cell / 2, v = rnd();
+    c.fillStyle = v < 0.08 ? '#d9a640' : v < 0.14 ? '#8f1a26' : ['#123a9a', '#0c2a78', '#1b4fb8', '#163a8a'][Math.floor(rnd() * 4)];
+    c.beginPath(); c.moveTo(x + ox, y - cell / 2 + 3); c.lineTo(x + ox + cell / 2 - 3, y); c.lineTo(x + ox, y + cell / 2 - 3); c.lineTo(x + ox - cell / 2 + 3, y); c.closePath(); c.fill();
   }
-  // 圆形纹章（每块面板一个）
-  for (let k = 0; k < 3; k++) {
-    const cy = H * (0.2 + k * 0.3), r = W * 0.3;
-    c.fillStyle = '#0a0a0c'; c.beginPath(); c.arc(W / 2, cy, r + 8, 0, Math.PI * 2); c.fill();
-    for (let j = 0; j < 12; j++) { c.fillStyle = j % 2 ? '#123a9a' : '#d9a640'; c.beginPath(); c.moveTo(W / 2, cy); c.arc(W / 2, cy, r, (j / 12) * Math.PI * 2 + 0.03, ((j + 1) / 12) * Math.PI * 2 - 0.03); c.closePath(); c.fill(); }
-    c.fillStyle = '#0a0a0c'; c.beginPath(); c.arc(W / 2, cy, r * 0.45, 0, Math.PI * 2); c.fill();
-    c.fillStyle = '#f0c95a'; c.beginPath(); for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2 - Math.PI / 2; const rr = i % 2 ? r * 0.12 : r * 0.4; c.lineTo(W / 2 + Math.cos(a) * rr, cy + Math.sin(a) * rr); } c.closePath(); c.fill();
-  }
-  // 竖向铅条
-  c.fillStyle = '#0a0a0c'; for (const x of [W * 0.33, W * 0.66]) c.fillRect(x - 4, 0, 8, H);
-  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  // 边框：宝石红与金色交替小块
+  for (let y = 0; y < H; y += 28) for (const x of [0, W - 34]) { c.fillStyle = lead; c.fillRect(x, y, 34, 28); c.fillStyle = (y / 28) % 2 ? '#8f1a26' : '#d9a640'; c.fillRect(x + 5, y + 4, 24, 20); }
+  const medal = (cy, r, draw) => {
+    c.fillStyle = lead; c.beginPath(); c.arc(W / 2, cy, r + 12, 0, 7); c.fill();
+    c.fillStyle = '#d9a640'; c.beginPath(); c.arc(W / 2, cy, r + 6, 0, 7); c.fill();
+    c.fillStyle = lead; c.beginPath(); c.arc(W / 2, cy, r, 0, 7); c.fill();
+    c.fillStyle = '#0e2c74'; c.beginPath(); c.arc(W / 2, cy, r - 6, 0, 7); c.fill();
+    c.save(); c.translate(W / 2, cy); draw(r - 6); c.restore();
+  };
+  const star = (R, ri, n, rot, col) => { c.fillStyle = col; c.beginPath(); for (let i = 0; i < n * 2; i++) { const a = (i / (n * 2)) * Math.PI * 2 + rot; const rr = i % 2 ? ri : R; c.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } c.closePath(); c.fill(); };
+  medal(H * 0.24, W * 0.3, (r) => { star(r * 0.92, r * 0.14, 4, -Math.PI / 2, '#f0c95a'); star(r * 0.5, r * 0.1, 4, -Math.PI / 4, '#e8e0c8'); c.strokeStyle = lead; c.lineWidth = 5; c.beginPath(); c.arc(0, 0, r * 0.62, 0, 7); c.stroke(); c.fillStyle = '#8f1a26'; c.beginPath(); c.arc(0, 0, r * 0.12, 0, 7); c.fill(); });
+  medal(H * 0.52, W * 0.3, (r) => { c.fillStyle = '#e8e0c8'; for (const sx of [-1, 1]) { c.beginPath(); c.moveTo(0, r * 0.25); c.quadraticCurveTo(sx * r * 0.4, r * 0.05, sx * r * 0.78, r * 0.2); c.lineTo(sx * r * 0.78, -r * 0.35); c.quadraticCurveTo(sx * r * 0.4, -r * 0.5, 0, -r * 0.3); c.closePath(); c.fill(); } c.strokeStyle = lead; c.lineWidth = 4; c.beginPath(); c.moveTo(0, -r * 0.3); c.lineTo(0, r * 0.25); c.stroke(); c.fillStyle = '#d9a640'; c.beginPath(); c.moveTo(r * 0.1, -r * 0.85); c.lineTo(r * 0.2, -r * 0.82); c.lineTo(-r * 0.05, r * 0.05); c.closePath(); c.fill(); for (let k = 0; k < 5; k++) { c.fillStyle = '#f0c95a'; c.fillRect(-r * 0.9 + k * r * 0.4, r * 0.45, r * 0.18, r * 0.35); } });
+  medal(H * 0.8, W * 0.3, (r) => { c.strokeStyle = '#f0c95a'; c.lineWidth = 8; c.beginPath(); c.moveTo(0, -r * 0.7); c.lineTo(0, r * 0.6); c.moveTo(-r * 0.65, -r * 0.4); c.lineTo(r * 0.65, -r * 0.4); c.stroke(); for (const sx of [-1, 1]) { c.fillStyle = '#d9a640'; c.beginPath(); c.arc(sx * r * 0.55, r * 0.05, r * 0.25, 0, Math.PI); c.fill(); } c.fillStyle = '#e8e0c8'; c.fillRect(-r * 0.4, r * 0.55, r * 0.8, r * 0.12); c.fillStyle = '#8f1a26'; c.beginPath(); c.arc(0, -r * 0.75, r * 0.1, 0, 7); c.fill(); });
+  // 顶部三叶花格
+  for (const [x, y, r] of [[W / 2, H * 0.06, 34], [W / 2 - 46, H * 0.09, 26], [W / 2 + 46, H * 0.09, 26]]) { c.fillStyle = lead; c.beginPath(); c.arc(x, y, r + 7, 0, 7); c.fill(); c.fillStyle = '#d9a640'; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill(); }
+  // 横向铅条（窗格）
+  c.fillStyle = lead; for (let y = H * 0.38; y < H; y += H * 0.28) c.fillRect(0, y - 5, W, 10);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
   return t;
 }
 

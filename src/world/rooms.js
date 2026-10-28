@@ -98,7 +98,7 @@ export function buildRooms(scene, world, ctx) {
     const wb = docMesh('doc_arm_briefing', 3.0, 1.6, signMaterial('出勤白板', ['外勤一组：京-朝阳-001 · 复查', '外勤二组：雾港联络 · 待命', '外勤三组：第二草稿线索 · 跟进', '', '今日口令：别回答'], 600, 320));
     wb.position.set(-X + 0.25, y + 1.8, -108); wb.rotation.y = Math.PI / 2; zone.add(wb); ctx.anchors.doc_arm_briefing = wb;
     b.box('paintedSteel', 0.06, 1.7, 3.1, [-X + 0.22, y + 1.8, -108], { uv: 1 });
-    for (let r = 0; r < 3; r++) for (let k = 0; k < 4; k++) add(placeModel('office_chair', { height: 1.0, pos: [-X + 4 + r * 1.6, y, -97.5 - k * 1.3], rotY: -Math.PI / 2 }));
+    for (let r = 0; r < 3; r++) { const x = -X + 4 + r * 1.6; b.box('wood', 0.4, 0.06, 5.0, [x, y + 0.45, -99.5], { uv: 0.6 }); for (const z of [-97.4, -101.6]) b.box('blackMetal', 0.36, 0.44, 0.06, [x, y + 0.22, z], { uv: 1 }); b.box('wood', 0.05, 0.4, 5.0, [x - 0.2, y + 0.72, -99.5], { uv: 0.6 }); world.box(x, y + 0.4, -99.5, 0.45, 0.8, 5); } // M4：简报长凳替代办公转椅
     // A 级通缉档案柜
     add(placeModel('file_cabinet', { height: 1.4, pos: [-X + 1.0, y, -114], rotY: Math.PI / 2 }));
     const fl = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.12), tagMaterial('A 级　高危通缉')); fl.position.set(-X + 1.45, y + 1.2, -114); fl.rotation.y = Math.PI / 2; zone.add(fl); ctx.anchors.doc_arm_wanted_files = { obj: fl, range: 3 };
@@ -187,7 +187,7 @@ export function buildRooms(scene, world, ctx) {
     const X = 32, Z0 = -92, Z1 = -156, H = 16, cz = (Z0 + Z1) / 2;
     room(b, world, M, -X, X, Z0, Z1, y, H, 'blackFloor', 'vaultWall', { frontHole: { x0: -9.4, x1: 9.4, h: 5.2 } });
     // 地面网格灯带
-    const grid = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x3a8cff, emissiveIntensity: 1.4 });
+    const grid = new THREE.MeshStandardMaterial({ color: 0x1a1610, emissive: 0xc9a052, emissiveIntensity: 0.35 }); // M4：纸张折痕般的暗金网格
     for (let x = -X + 4; x < X; x += 4) { const m = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.01, Z0 - Z1), grid); m.position.set(x, y + 0.006, cz); zone.add(m); }
     for (let z = Z0 - 4; z > Z1; z -= 4) { const m = new THREE.Mesh(new THREE.BoxGeometry(2 * X, 0.01, 0.04), grid); m.position.set(0, y + 0.006, z); zone.add(m); }
     // 六扇副本门（弧形排列）
@@ -199,8 +199,8 @@ export function buildRooms(scene, world, ctx) {
       b.add('stoneDark', archRingGeo(5.2, 5, 4.0, 5, 0.9), f.at(0, 0, 0), { uv: 0.5 });
       b.add('gold', archRingGeo(5.4, 5, 5.2, 5, 0.95), f.at(0, 0, 0), { uv: 1 });
       b.add('stoneDark', new THREE.BoxGeometry(6.4, 0.4, 2.0), f.at(0, 0.2, 0.2), { uv: 0.5, collide: true });
-      const pm = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: i === 5 ? 0.15 : 0.55, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false });
-      const portal = new THREE.Mesh(new THREE.ShapeGeometry(archShape(4.0, 5)), pm); portal.applyMatrix4(f.at(0, 0, 0.0)); zone.add(portal); ctx.rooms.portals.push(portal);
+      const pm = pageDoorMaterial(col, i === 5); // M4：书页拱门（纸面 + 流动墨字），替换纯色发光面
+      const pg = new THREE.ShapeGeometry(archShape(4.0, 5)); { const pa = pg.attributes.position, uv = pg.attributes.uv; for (let k = 0; k < pa.count; k++) { uv.setXY(k, pa.getX(k) / 4.0 + 0.5, pa.getY(k) / 8.5); pa.setZ(k, -Math.pow(Math.abs(pa.getX(k)) / 2, 3) * 0.35); } pg.computeVertexNormals(); } const portal = new THREE.Mesh(pg, pm); portal.applyMatrix4(f.at(0, 0, 0.0)); zone.add(portal); ctx.rooms.portals.push(portal);
       const pl = point(zone, col, i === 5 ? 3 : 14, [gx + Math.sin(a) * -2, y + 3, gz + Math.cos(a) * 2], 12);
       const plq = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.5), brassPlaqueMaterial(code, [i === 5 ? '未经第七局许可 严禁启封' : '驯化切片 · 训练用'])); plq.applyMatrix4(f.at(0, 9.6, 0.5)); zone.add(plq); ctx.anchors[docId] = plq;
       world.box(gx, y + 4, gz, 4.4, 8, 0.6, -a);
@@ -232,7 +232,7 @@ export function buildRooms(scene, world, ctx) {
 }
 
 export function updateRooms(ctx, dt, t) {
-  for (const [i, p] of (ctx.rooms?.portals ?? []).entries()) p.material.opacity = (i === 5 ? 0.1 : 0.4) + Math.sin(t * 1.3 + i) * 0.12;
+  for (const [i, p] of (ctx.rooms?.portals ?? []).entries()) { p.material.map.offset.y = (t * 0.03 + i * 0.17) % 1; p.material.emissiveIntensity = (i === 5 ? 0.15 : 0.55) + Math.sin(t * 1.3 + i) * 0.12; }
   for (const bc of ctx.rooms?.beacons ?? []) { const a = t * 3; bc.userData.rot.position.set(Math.cos(a), -0.3, Math.sin(a)); }
 }
 
@@ -272,6 +272,10 @@ function quiltPad() {
   c.strokeStyle = '#7a7872'; c.lineWidth = 4; c.beginPath(); c.moveTo(0, 128); c.lineTo(128, 0); c.lineTo(256, 128); c.lineTo(128, 256); c.closePath(); c.stroke();
   c.fillStyle = '#6a6862'; for (const [x, y] of [[128, 0], [0, 128], [256, 128], [128, 256]]) { c.beginPath(); c.arc(x, y, 6, 0, 7); c.fill(); }
   const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace;
-  const bt = new THREE.CanvasTexture(cv); bt.wrapS = bt.wrapT = THREE.RepeatWrapping;
+  const bt = new THREE.CanvasTexture(cv); bt.wrapS = bt.wrapT = THREE.RepeatWrapping; t.repeat.set(6, 6); bt.repeat.set(6, 6); // 世界 UV 每 4 m 一张 → 菱格约 0.65 m
   return new THREE.MeshStandardMaterial({ color: 0xd8d6ce, map: t, bumpMap: bt, bumpScale: 4, roughness: 0.95 });
 }
+
+// 副本门：纸页材质，竖排墨字列向上流动；颜色只作为墨迹微光
+let _pageCvC = null; const _pageCv = () => _pageCvC ??= (() => { const cv = document.createElement('canvas'); cv.width = 512; cv.height = 1024; const c = cv.getContext('2d'); c.fillStyle = '#e8dcc0'; c.fillRect(0, 0, 512, 1024); const g = c.createRadialGradient(256, 512, 100, 256, 512, 620); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(90,60,30,0.45)'); c.fillStyle = g; c.fillRect(0, 0, 512, 1024); c.fillStyle = '#1a140e'; c.font = '30px "NB Serif", serif'; const txt = '万物皆文本作者在上叙事安全第一请勿回头阅读此页即进入副本时间不计工时听见第二个脚步立即撤离'; for (let x = 470; x > 20; x -= 44) for (let y = 30, i = (x * 7) % txt.length; y < 1024; y += 34, i++) { c.globalAlpha = 0.55 + 0.45 * Math.abs(Math.sin(x * 0.1 + y * 0.03)); c.fillText(txt[i % txt.length], x - 15, y); } c.globalAlpha = 1; return cv; })();
+function pageDoorMaterial(col, sealed) { const t = new THREE.CanvasTexture(_pageCv()); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; return new THREE.MeshStandardMaterial({ map: t, color: sealed ? 0x3a3430 : 0xffffff, emissive: new THREE.Color(col).lerp(new THREE.Color(0xffe8c0), 0.5), emissiveMap: t, emissiveIntensity: sealed ? 0.15 : 0.55, roughness: 0.9, side: THREE.DoubleSide }); }

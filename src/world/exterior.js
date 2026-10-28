@@ -281,7 +281,7 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
     const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), M.doorWood); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
     // M4：门扇分格（2 列 × 4 行凸起镶板 + 金边框 + 三道铁箍），双面
     for (const fz of [-1, 1]) {
-      for (let c = 0; c < 2; c++) for (let r = 0; r < 4; r++) { const pw = w * 0.38, ph = r === 3 ? 1.9 : 1.55, px = sx * -(w * 0.27 + c * w * 0.46), py = 0.9 + r * 1.95 + ph / 2; const pnl = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.06), M.wood); pnl.position.set(px, py, fz * 0.16); leaf.add(pnl); const fr = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.12, ph + 0.12, 0.03), M.gold); fr.position.set(px, py, fz * 0.145); leaf.add(fr); }
+      for (let c = 0; c < 2; c++) for (let r = 0; r < 4; r++) { const pw = w * 0.38, ph = r === 3 ? 1.9 : 1.55, px = sx * -(w * 0.27 + c * w * 0.46), py = 0.9 + r * 1.95 + ph / 2; const pnl = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.06), M.wood); pnl.position.set(px, py, fz * 0.16); leaf.add(pnl); const fr = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.12, ph + 0.12, 0.03), M.brass); fr.position.set(px, py, fz * 0.145); leaf.add(fr); }
       for (const k of [0, 2, 4]) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.12, 0.05), M.iron); strap.position.set(sx * -w / 2, 0.55 + k * 1.95, fz * 0.17); leaf.add(strap); for (let r = 0; r < 5; r++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 4), M.gold); st.position.set(sx * -(0.3 + r * 0.7), 0.55 + k * 1.95, fz * 0.2); leaf.add(st); } }
     }
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 6, 20), M.gold); ring.position.set(sx * -(w - 0.5), h * 0.45, 0.2); leaf.add(ring);
@@ -484,6 +484,7 @@ function buildCity(g, M, ctx) {
   const roofs = new THREE.InstancedMesh(roofG, roofCity, N);
   const spires = new THREE.InstancedMesh(spireG, roofCity, NS * 5);
   const tips = new THREE.InstancedMesh(tipG, goldCity, NS);
+  const bandG = new THREE.CylinderGeometry(1, 1, 1, 8, 1, true); const bands = new THREE.InstancedMesh(bandG, goldCity, NS * 3); let nbd = 0; // M4：远景尖塔金箍
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0);
   let nb = 0, nr = 0, ns = 0, nt = 0;
   const place = (x, z) => riverDist(x, z) > 100 && !(Math.abs(x) < 70 && z > 90 && z < 1600);
@@ -513,8 +514,9 @@ function buildCity(g, M, ctx) {
       m4.compose(new THREE.Vector3(x + v.x, -4.4 + bh, z + v.z), q, new THREE.Vector3(bw * 0.09, sh * 0.32, bw * 0.09)); spires.setMatrixAt(ns++, m4);
     }
     m4.compose(new THREE.Vector3(x, -4.4 + bh + sh * 0.98, z), q, new THREE.Vector3(1.2, sh * 0.12 + 2, 1.2)); tips.setMatrixAt(nt++, m4);
+    for (const tt of [0.04, 0.3, 0.58]) { const rr = bw * 0.5 * (1 - tt) * 1.03; m4.compose(new THREE.Vector3(x, -4.4 + bh + sh * tt, z), q, new THREE.Vector3(rr, Math.max(0.5, sh * 0.012), rr)); bands.setMatrixAt(nbd++, m4); }
   }
-  for (const im of [bodies, roofs, spires, tips]) { im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; im.computeBoundingSphere?.(); g.add(im); }
+  for (const im of [bodies, roofs, spires, tips, bands]) { im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; im.computeBoundingSphere?.(); g.add(im); }
   ctx.cityMats = { stoneCity };
   loadModel('cathedral').then((src) => {
     const spots = [[-420, -640, 0.4], [520, -900, 2.1], [-900, 300, 1.2], [880, 260, -0.6], [-260, -1300, 0.9], [1300, -500, 3.0], [-1500, -600, 2.4], [300, 900, 0.2]];

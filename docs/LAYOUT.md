@@ -49,3 +49,13 @@
 - 地下：B1 外勤整备库 y=−10，B2 审讯羁押 y=−18，B3 开架收容 y=−26，B4 收容柜走廊 y=−34，B5 深库 y=−42（圆形金库门 z=−100，靠近自动开启），B6 训练场 y=−52。
 - 地上：后楼 1F 食堂中庭 x±18 z −110…−140（安检大厅北墙铁门 → 连廊 z −76…−110），2F 联络处+宣传处 y=8.8，3F 办公/医务/实验室 y=15.8，4F–11F 藏书阁书井 y=22.8（圆心 0,−106，半径 13），12F 局长室 y=71.8。
 - 区域判定 `zoneAt()`（main.js）按坐标 + 高度；场景分组可见性 `VIS` / `GROUP_OF`；区域 → manifest 区域 id 映射 `AREA_OF`（用于 enter_area）。
+
+## M4 布景加密（2026-10-29，build-lead 第三任）
+- 新模块：`src/world/dress.js`（工具包：wallDress/roomDress 护墙板·壁柱·檐口·壁灯，coffered 藻井，tGrid 吊顶格栅，bunkerCeiling 桥架风管，rug/floorInlay，deskSet/cabinetRow/bookcase/spineShelf 成组家具，Props = GLB→InstancedMesh），`src/world/dressing.js`（按区域在 M3 结构上加布景，坐标见各段注释）。
+- 面光 `rectLight()` 改为分区半球补光（RectAreaLight 在光泽墙面映出矩形高光，是「悬空半透明板」的根因）；`main.js` 的 `FILLS` 只在当前分区生效。
+- 时段：`src/engine/tod.js`，默认白昼（`public/assets/tex/sky_day.jpg`，由 Poly Haven kloofendal_48d_partly_cloudy 4k 色调映射），设置菜单「时段」切换黄昏（保存到 localStorage 后重载）。截图 `--tod dusk`。
+- `zoneAt()`：地上楼层用平面包围盒判定，包围盒外高空一律算室外（修 R2 P0-1 俯瞰隐藏外景）。食堂挑台脚底 y≈8.25，floor2 下界 8.55。
+- 电梯 `WIP` 集合（vault.js）：放入楼层名即在面板显示「施工中」并拒绝到达。
+- 主塔：92 m 方塔 + 30 m 收分方塔 + 16 m 八角灯笼亭 + 108 m 尖顶（总高约 250 m）。
+- 截图：`tools/shotq.sh` 排队（等其它 shot.mjs 结束再跑，防 OOM）；截图模式加载期间不渲染（11 秒加载完）。
+- 食堂二层挑台可登临：西侧楼梯 x=−13，z −112.2→−128（`ctx.canteenStair`）。B6 控制塔挪到 (−22, −99)。

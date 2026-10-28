@@ -44,6 +44,10 @@ export class Batch {
       mtx = new THREE.Matrix4().compose(new THREE.Vector3(...pos), new THREE.Quaternion().setFromEuler(new THREE.Euler(...rot)), new THREE.Vector3(...(Array.isArray(scale) ? scale : [scale, scale, scale])));
     }
     const g = normalizeGeo(geo);
+    if (o.fitUV || (key === 'glassIn' && o.uv === false)) { // 彩窗：每扇窗 UV 归一化到 0..1，整窗构图贴图不被裁切
+      g.computeBoundingBox(); const bb = g.boundingBox, uv = g.attributes.uv, p = g.attributes.position;
+      for (let i = 0; i < uv.count; i++) uv.setXY(i, (p.getX(i) - bb.min.x) / Math.max(1e-4, bb.max.x - bb.min.x), (p.getY(i) - bb.min.y) / Math.max(1e-4, bb.max.y - bb.min.y));
+    }
     g.applyMatrix4(mtx);
     if (o.uv !== false) boxUV(g, o.uv ?? 0.25);
     if (!this.parts.has(key)) this.parts.set(key, []);

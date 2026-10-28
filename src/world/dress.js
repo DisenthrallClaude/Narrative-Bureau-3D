@@ -36,8 +36,8 @@ export function dressMats(M) {
     dz_damaskRed: W(new THREE.MeshStandardMaterial({ map: damask('#3a1416', '#6a2a26', '#4a1c1c'), roughness: 0.85, envMapIntensity: 0.4 }), { macro: 0.15, grime: 0.15 }),
     dz_damaskGreen: W(new THREE.MeshStandardMaterial({ map: damask('#1a2a22', '#3e5a48', '#22362c'), roughness: 0.85, envMapIntensity: 0.4 }), { macro: 0.15, grime: 0.15 }),
     dz_plaster: W(pbr('Concrete034', { color: 0x8a8070, roughness: 0.85, env: 0.3 }), { macro: 0.2, grime: 0.25, streak: 0.1 }),
-    dz_ceil: W(pbr('Concrete034', { color: 0x5a5248, roughness: 0.9, env: 0.25 }), { macro: 0.2 }),
-    dz_beam: W(pbr('Wood051', { color: 0x3a281c, roughness: 0.55, env: 0.5 }), { macro: 0.12 }),
+    dz_ceil: W(new THREE.MeshStandardMaterial({ color: 0x3e3830, roughness: 0.92, envMapIntensity: 0.2 }), { macro: 0.25, grime: 0.1 }),
+    dz_beam: W(pbr('Wood051', { color: 0x2a1c14, roughness: 0.6, env: 0.3 }), { macro: 0.12 }),
     dz_tileW: W(new THREE.MeshStandardMaterial({ map: tile('#c8ccc6', '#7a7e7a', 8), roughness: 0.3, envMapIntensity: 0.6 }), { macro: 0.15, grime: 0.35, ground: 1.2 }),
     dz_tileG: W(new THREE.MeshStandardMaterial({ map: tile('#4c6658', '#2a3430', 8), roughness: 0.3, envMapIntensity: 0.6 }), { macro: 0.15, grime: 0.3, ground: 1.2 }),
     dz_tileB: W(new THREE.MeshStandardMaterial({ map: tile('#1a1c22', '#3a3a40', 4), roughness: 0.35, envMapIntensity: 0.5 }), { macro: 0.12, grime: 0.3 }),
@@ -174,7 +174,7 @@ export function roomDress(b, x0, x1, z0, z1, y, h, o = {}) {
 
 /** 藻井天花：主次梁格栅 + 凹板 + 金线 + 每格中央筒灯（发光） */
 export function coffered(b, x0, x1, z0, z1, y, o = {}) {
-  const cell = o.cell ?? 3, d = o.depth ?? 0.38, beam = o.beam ?? 'dz_beam', trim = o.trim ?? 'gold';
+  const cell = o.cell ?? 3, d = o.depth ?? 0.38, beam = o.beam ?? 'dz_beam', trim = o.trim ?? 'brass';
   const nx = Math.max(1, Math.round((x1 - x0) / cell)), nz = Math.max(1, Math.round((z0 - z1) / cell));
   const cx = (x1 - x0) / nx, cz = (z0 - z1) / nz;
   b.box(o.panel ?? 'dz_ceil', x1 - x0, 0.04, z0 - z1, [(x0 + x1) / 2, y - 0.02, (z0 + z1) / 2], { uv: 0.3 });

@@ -178,7 +178,7 @@ const ZONE_LOOK = {
   plaza: { env: 'sky', envI: 1.1, sun: 3.2, exp: 1.05, fog: [0x8a7a86, 0.0011], hemi: 0.3 },
   gate: { env: 'hall', envI: 0.7, sun: 3.2, exp: 0.95, fog: [0x2a241c, 0.006], hemi: 0.15 },
   security_hall: { env: 'hall', envI: 0.6, sun: 0, exp: 1.0, fog: [0x1d1915, 0.010], hemi: 0.12 },
-  archive: { env: 'hall', envI: 0.6, sun: 0, exp: 1.15, fog: [0x241c14, 0.012], hemi: 0.1 },
+  archive: { env: 'hall', envI: 0.35, sun: 0, exp: 1.1, fog: [0x241c14, 0.012], hemi: 0.1 },
   archive_b1: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x10141a, 0.02], hemi: 0.05 },
   citizen_service: { env: 'hall', envI: 0.65, sun: 0, exp: 1.05, fog: [0x221d17, 0.010], hemi: 0.14 },
   exam_center: { env: 'hall', envI: 0.6, sun: 0, exp: 1.05, fog: [0x1a1c22, 0.010], hemi: 0.12 },

@@ -55,7 +55,7 @@ export function weather(mat, o = {}) {
           vec2 lim = vec2(${P.blocks[0].toFixed(3)}, ${P.blocks[1].toFixed(3)}) * 0.5 - 0.012;
           float joint = max(smoothstep(lim.x - 0.006, lim.x, bf.x), smoothstep(lim.y - 0.006, lim.y, bf.y)) * nbWall;
           float blockTone = 0.92 + 0.16 * nbH(floor(vec3(bw, 1.0)));
-          diffuseColor.rgb *= mix(blockTone, 0.55, joint);
+          diffuseColor.rgb *= mix(blockTone, ${(P.jointDark ?? 0.55).toFixed(2)}, joint);
           nbRoughAdd += joint * 0.3; }` : ''}`)
       .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n roughnessFactor = clamp(roughnessFactor + nbRoughAdd, 0.04, 1.0);');
   };

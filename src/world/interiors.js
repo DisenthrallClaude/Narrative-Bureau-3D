@@ -121,7 +121,7 @@ export function slabWithHole(b, key, x0, x1, z0, z1, y, t, h, collide) {
 // 改为分区内的半球补光（无镜面高光）；分区组隐藏时灯同样失效。强度按原面光面积粗略折算。
 export function rectLight(zone, color, intensity, w, h, pos, look) {
   const c = new THREE.Color(color); const g = c.clone().multiplyScalar(0.18);
-  const k = Math.min(1.1, intensity * Math.sqrt(w * h) / 40 + 0.15);
+  const k = Math.min(0.6, intensity * Math.sqrt(w * h) / 60 + 0.1);
   const l = new THREE.HemisphereLight(c, g, k); l.position.set(...pos); l.userData.isFill = true; zone.add(l); void look; return l;
 }
 export function spot(zone, color, intensity, pos, target, angle = 0.5, shadow = false, dist = 40) {
@@ -210,8 +210,8 @@ function buildGate(zone, world, ctx, M, add) {
   // 吊灯
   for (const z of [-12, -24]) add(placeModel('chandelier', { height: 2.4, pos: [0, Y + 15.6, z] }));
   // 灯光
-  for (const z of [-12, -24]) point(zone, 0xffd9a8, 60, [0, Y + 14.5, z], 30);
-  spot(zone, 0xffe6c2, 260, [6, Y + 13.5, -17], [12, Y + 3, -17], 0.6, true, 30);
+  for (const z of [-12, -24]) point(zone, 0xffd9a8, 26, [0, Y + 13.5, z], 22);
+  spot(zone, 0xffe6c2, 140, [6, Y + 13.5, -17], [12, Y + 3, -17], 0.55, true, 26);
   spot(zone, 0xffe6c2, 120, [-6, Y + 13.5, -17], [-11, Y, -17], 0.7, false, 30);
   rectLight(zone, 0xffe0b8, 3, 10, 3, [0, Y + 13.9, -18], [0, Y, -18]);
 
@@ -441,9 +441,9 @@ function buildHall(zone, world, ctx, M, add) {
   }
   zone.add(dust([0, Y, cz], [32, 22, 44], 700));
   // 灯光
-  spot(zone, 0xffd6a0, 700, [0, Y + 21, -33], [0, Y, -50], 0.42, true, 60);
+  spot(zone, 0xffd6a0, 520, [0, Y + 21, -33], [0, Y, -50], 0.42, true, 60);
   spot(zone, 0xcfe0ff, 250, [14, Y + 11, -48], [-2, Y, -54], 0.55, true, 40);
-  for (const z of [-36.5, -47.5, -58.5, -69.5]) for (const sx of [-1, 1]) point(zone, 0xffcf96, 25, [sx * 14.7, Y + 10.5, z], 14);
+  for (const z of [-36.5, -47.5, -58.5, -69.5]) for (const sx of [-1, 1]) point(zone, 0xffcf96, 22, [sx * 14.7, Y + 10.5, z], 10);
   rectLight(zone, 0xffe2c0, 4, 12, 40, [0, crownY - 1, cz], [0, Y, cz]);
   rectLight(zone, 0x7fb4ff, 6, 14, 6, [0, SY - SH / 2 - 0.4, SZ], [0, Y, SZ + 2]);
   // 吊灯
@@ -476,7 +476,7 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   const X0 = -56, X1 = -20, Z0 = -32, Z1 = -70, H = 13, GY = Y + 6.2;
   const cz = (Z0 + Z1) / 2, cx = (X0 + X1) / 2, W = X1 - X0, L = Z0 - Z1;
   // 连廊（大厅西门 → 档案馆东门）
-  b.box('terrazzo', 2.8, 0.1, 8, [-18.6, Y - 0.05, -51.5], { uv: 0.3, collide: true });
+  b.box('terrazzo', 2.8, 0.1, 8, [-18.6, Y - 0.05, -51.5], { uv: 0.8, collide: true });
   b.box('wallStone', 2.8, 0.4, 8.6, [-18.6, Y + 8.2, -51.5], { uv: 0.3 });
   for (const ez of [-1, 1]) b.box('wallStone', 2.8, 8.4, 0.4, [-18.6, Y + 4.2, -51.5 + ez * 4.2], { uv: 0.3, collide: true });
   // 地面
@@ -702,7 +702,7 @@ function buildB1(zone, world, ctx, M, add, X0, X1, Z0, Z1, BY) {
   const b = new Batch();
   const H = 5.2, cz = (Z0 + Z1) / 2, cx = (X0 + X1) / 2, W = X1 - X0, L = Z0 - Z1;
   b.box('concrete', W, 0.2, L, [cx, BY - 0.1, cz], { uv: 0.3, collide: true });
-  b.box('terrazzo', W, 0.02, 4.6, [cx, BY + 0.01, Z0 - 5.4], { uv: 0.4 });
+  b.box('terrazzo', W, 0.02, 4.6, [cx, BY + 0.01, Z0 - 5.4], { uv: 1.0 });
   slabWithHole(b, 'concrete', X0, X1, Z0, Z1, BY + H, 0.3, ctx.b1Hole, false);
   wallX(b, 'concrete', X0 - 0.2, Z0, Z1, BY, H, 0.4, [], true);
   wallX(b, 'concrete', X1 + 0.2, Z0, Z1, BY, H, 0.4, [], true);
@@ -720,7 +720,13 @@ function buildB1(zone, world, ctx, M, add, X0, X1, Z0, Z1, BY) {
     lb.box('paintedSteel', 2.0, 3.0, 0.12, [0, 1.5, 0.06], { uv: 0.6 }); // 端板
     lb.box('blackMetal', 2.0, 0.12, rowLen + 0.1, [0, 0.06, -rowLen / 2], { uv: 1 });
     lb.box('gold', 1.6, 0.04, 0.02, [0, 2.75, 0.13], { uv: 1 });
+    // M4：端板细节——凹线分格、黄铜卡槽（索引卡）、踢脚护板、推拉把手
+    for (const yy of [0.55, 2.55]) lb.box('blackMetal', 1.9, 0.02, 0.01, [0, yy, 0.125], { uv: 1 });
+    for (const xx of [-0.92, 0.92]) lb.box('blackMetal', 0.02, 2.0, 0.01, [xx, 1.55, 0.125], { uv: 1 });
+    lb.box('brass', 0.62, 0.36, 0.015, [0.35, 1.95, 0.128], { uv: 1 }); lb.box('steel', 1.96, 0.3, 0.02, [0, 0.27, 0.13], { uv: 1 });
+    for (const yy of [1.05, 1.5]) lb.box('steel', 0.04, 0.22, 0.05, [-0.85, yy, 0.15], { uv: 1 });
     lb.build(grp, M);
+    { const cv = document.createElement('canvas'); cv.width = 256; cv.height = 150; const c = cv.getContext('2d'); c.fillStyle = '#ece4cc'; c.fillRect(0, 0, 256, 150); c.fillStyle = '#7a1a1a'; c.fillRect(0, 0, 256, 26); c.fillStyle = '#fff'; c.font = '700 20px "NB Sans", sans-serif'; c.fillText(`第 ${String(i + 1).padStart(2, '0')} 排`, 10, 20); c.fillStyle = '#2a241c'; c.font = '18px "NB Sans", sans-serif'; c.fillText(['人事卷宗', '外勤记录', '叙事者备案', '考务档案', '收容登记', '联络函件', '（空）', '离职归档', '内部审查', '证物清单', '市民来信', '其他'][i], 10, 60); c.fillText(`07-${String(2016 + i)}　至　07-${String(2020 + i)}`, 10, 92); c.fillStyle = '#8a8070'; c.fillText(i === 6 ? '请勿调阅' : '管理员：叶寻', 10, 128); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; const card = new THREE.Mesh(new THREE.PlaneGeometry(0.56, 0.3), new THREE.MeshStandardMaterial({ map: t, roughness: 0.8 })); card.position.set(0.35, 1.95, 0.137); grp.add(card); }
     // 手摇轮
     const wheel = new THREE.Group();
     const rim = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.025, 8, 32), M.steel); wheel.add(rim);
@@ -753,8 +759,9 @@ function buildB1(zone, world, ctx, M, add, X0, X1, Z0, Z1, BY) {
   // 冷光灯管
   for (let k = 0; k < 5; k++) for (let z = Z0 - 2; z > Z1; z -= 7) b.box('lampCold', 0.12, 0.05, 2.2, [X0 + 5 + k * 6.5, BY + H - 0.05, z], { uv: false });
   for (let k = 0; k < 3; k++) rectLight(zone, 0xdfe8ff, 2.2, 6, L - 4, [X0 + 6 + k * 12, BY + H - 0.1, cz], [X0 + 6 + k * 12, BY, cz]);
-  point(zone, 0xcfe0ff, 30, [cx, BY + 4.5, Z0 - 5], 22);
-  spot(zone, 0xe8f0ff, 200, [r7.x + 2, BY + 4.8, Z0 - 4.5], [r7.x, BY + 1, rowZ0], 0.5, true, 16);
+  // B1 灯在楼板下方，无阴影的点光会穿过楼板照亮档案馆南墙（R2 白光溢出）→ 标为分区补光，只在 B1 生效
+  point(zone, 0xcfe0ff, 20, [cx, BY + 3.6, Z0 - 5], 14).userData.isFill = true;
+  spot(zone, 0xe8f0ff, 200, [r7.x + 2, BY + 4.8, Z0 - 4.5], [r7.x, BY + 1, rowZ0], 0.5, true, 16).userData.isFill = true;
   // 管线
   for (const z of [Z0 - 1, Z0 - 2]) b.box('steel', W, 0.16, 0.16, [cx, BY + H - 0.4, z], { uv: 1 });
   add(placeModel('box_stack', { width: 1.2, pos: [X1 - 1.5, BY, Z0 - 2] }));

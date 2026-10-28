@@ -44,7 +44,7 @@ function quiltMat() { const m = canvasMat(256, 256, (c, w, h) => { c.fillStyle =
 export async function buildDressing(scene, world, ctx) {
   const M = mats(); const Mx = vaultMats(M); const D = dressMats(M);
   D.dz_quilt = D.dz_quilt ?? quiltMat();
-  D.dz_blueGlow = D.dz_blueGlow ?? new THREE.MeshStandardMaterial({ color: 0, emissive: 0x3a8cff, emissiveIntensity: 1.6 });
+  D.dz_blueGlow = D.dz_blueGlow ?? new THREE.MeshStandardMaterial({ color: 0x1a1408, emissive: 0xd8a850, emissiveIntensity: 1.1 });
   D.dz_rose = D.dz_rose ?? new THREE.MeshStandardMaterial({ color: 0, emissive: 0xffffff, emissiveMap: roseGlassTexture(), emissiveIntensity: 1.8, side: THREE.DoubleSide });
   D.dz_redGlow = D.dz_redGlow ?? new THREE.MeshStandardMaterial({ color: 0x300000, emissive: 0xff2010, emissiveIntensity: 3 });
   D.dz_grate = D.dz_grate ?? new THREE.MeshStandardMaterial({ color: 0x2a2c30, metalness: 0.9, roughness: 0.45 });
@@ -198,10 +198,10 @@ export async function buildDressing(scene, world, ctx) {
   // ================= 1F 职工食堂与中庭 =================
   if (zoneOf('canteen')) {
     const zone = zoneOf('canteen'), b = new Batch(), P = new Props(), X = 18, Z0 = -110, Z1 = -140;
-    WX(b, -X, Z0 - 0.2, Z1 + 0.2, 1, Y, 6.15, { style: 'stone', pitch: 6, sconce: true });
-    WX(b, X, Z0 - 0.2, Z1 + 0.2, -1, Y, 6.15, { style: 'stone', pitch: 6, sconce: true, skip: [[-111.3, -115.1]] });
-    WZ(b, Z1 + 0.2, -X, X, 1, Y, 6.8, { style: 'stone', pilSkip: [[-7.4, 7.4]] });
-    WZ(b, Z0 - 0.2, -X, X, -1, Y, 6.8, { style: 'stone', skip: [[-2.5, 2.5]], pilSkip: [[-3.4, 3.4]] });
+    WX(b, -X, Z0 - 0.2, Z1 + 0.2, 1, Y, 6.15, { style: 'green', pitch: 6, sconce: true });
+    WX(b, X, Z0 - 0.2, Z1 + 0.2, -1, Y, 6.15, { style: 'green', pitch: 6, sconce: true, skip: [[-111.3, -115.1]] });
+    WZ(b, Z1 + 0.2, -X, X, 1, Y, 6.8, { style: 'green', pilSkip: [[-7.4, 7.4]] });
+    WZ(b, Z0 - 0.2, -X, X, -1, Y, 6.8, { style: 'green', skip: [[-2.5, 2.5]], pilSkip: [[-3.4, 3.4]] });
     // 上层墙：哥特高窗（彩窗）+ 壁柱
     for (const sx of [-1, 1]) for (let z = Z0 - 4; z > Z1 + 2; z -= 6) { const f = new Frame([sx * (X - 0.02), Y + 7.6, z], -sx * Math.PI / 2); b.add('glassIn', new THREE.ShapeGeometry(archShape(1.7, 3.2)), f.at(0, 0, 0.02), { uv: false }); b.add('stoneDark', archRingGeo(2.2, 3.2, 1.7, 3.2, 0.25), f.at(0, 0, 0.1), { uv: 0.5 }); b.add('gold', archRingGeo(2.3, 3.2, 2.2, 3.2, 0.27), f.at(0, 0, 0.1), { uv: 1 }); b.box('dz_pil', 0.5, 6.0, 0.18, [sx * (X - 0.09), Y + 9.9, z - 3], { uv: 0.5 }); }
     for (const z of [Z0, Z1]) { const f = new Frame([0, Y + 7.3, z + (z === Z0 ? -0.22 : 0.22)], z === Z0 ? Math.PI : 0); for (const dx of [-4.2, 0, 4.2]) { b.add('glassIn', new THREE.ShapeGeometry(archShape(2.2, dx === 0 ? 3.6 : 2.8)), f.at(dx, 0, 0.02), { uv: false }); b.add('gold', archRingGeo(2.5, dx === 0 ? 3.6 : 2.8, 2.2, dx === 0 ? 3.6 : 2.8, 0.25), f.at(dx, 0, 0.1), { uv: 1 }); } }
@@ -219,7 +219,7 @@ export async function buildDressing(scene, world, ctx) {
     // 挑台：栏杆立柱（替换整片铁板）+ 托架 + 挑台下吊顶
     for (const sx of [-1, 1]) { const x = sx * (X - 4); for (let z = Z0 - 0.3; z > Z1; z -= 0.18) { if (sx < 0 && z < -127.6 && z > -129.4) continue; b.box('iron', 0.025, 0.95, 0.025, [x, Y + 6.93, z], { uv: 1 }); } b.box('iron', 0.05, 0.05, Z0 - Z1, [x, Y + 6.5, (Z0 + Z1) / 2], { uv: 1 }); b.box('dz_beam', 0.12, 0.3, Z0 - Z1, [x, Y + 6.0, (Z0 + Z1) / 2], { uv: 0.5 }); for (let z = Z0 - 1.5; z > Z1; z -= 3) { b.box('dz_beam', 4, 0.22, 0.18, [sx * (X - 2), Y + 6.03, z], { uv: 0.5 }); b.box('gold', 0.3, 0.3, 0.3, [x, Y + 5.95, z], { uv: 1 }); } for (let z = Z0 - 3; z > Z1; z -= 6) { b.box('dz_glow', 0.3, 0.02, 0.3, [sx * (X - 2), Y + 5.9, z], { uv: false }); } }
     // 地面：水磨石拼花 + 走道黑石带
-    floorInlay(b, -X, X, Z0, Z1, Y, { field: 'terrazzo', margin: 0.5, rep: 0.3, band: 'dz_pil' });
+    floorInlay(b, -X, X, Z0, Z1, Y, { field: 'terrazzo', margin: 0.5, rep: 0.8, band: 'dz_pil' });
     for (const x of [-4.5, 4.5]) b.box('dz_pil', 1.2, 0.014, Z0 - Z1 - 2, [x, Y + 0.012, (Z0 + Z1) / 2], { uv: 0.5 });
     // 桌面：餐盘、杯、调味架
     for (let r = 0; r < 5; r++) for (const x of [-9, 0, 9]) { const z = Z0 - 5 - r * 4.2, t = Y + 0.8; b.box('dz_bakelite', 0.5, 0.012, 0.5, [x, t + 0.006, z], { uv: false }); b.add('brass', new THREE.CylinderGeometry(0.025, 0.025, 0.12, 8), { pos: [x - 0.1, t + 0.06, z] }, { uv: 1 }); b.add('dz_glassDark', new THREE.CylinderGeometry(0.025, 0.025, 0.11, 8), { pos: [x + 0.1, t + 0.055, z] }, { uv: false }); for (let c = 0; c < 3; c++) { const cx = x - 2 + c * 2 + ((r + c) % 2) * 0.5, cz = z + (c % 2 ? 0.3 : -0.3); if ((r * 3 + c + x) % 3 === 0) continue; b.box('steel', 0.42, 0.02, 0.3, [cx, t + 0.01, cz], { uv: 1 }); b.add('whiteMarble', new THREE.CylinderGeometry(0.045, 0.04, 0.1, 12), { pos: [cx + 0.25, t + 0.05, cz] }, { uv: 1 }); } }

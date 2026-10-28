@@ -25,7 +25,7 @@ export function buildEastWing(scene, world, ctx) {
   const slot = (area, pos, yaw, w = 0.9, h = 1.2) => (ctx.slots[area] = ctx.slots[area] ?? []).push({ pos, yaw, w, h });
 
   // —— 安检大厅东门洞 → 连廊 ——
-  b.box('terrazzo', 2.8, 0.1, 6, [18.6, Y - 0.05, -48], { uv: 0.3, collide: true });
+  b.box('terrazzo', 2.8, 0.1, 6, [18.6, Y - 0.05, -48], { uv: 0.8, collide: true });
   b.box('wallStone', 2.8, 0.4, 6.6, [18.6, Y + 6.2, -48], { uv: 0.3 });
   for (const ez of [-1, 1]) b.box('wallStone', 2.8, 6.4, 0.4, [18.6, Y + 3.2, -48 + ez * 3.2], { uv: 0.3, collide: true });
   // —— 楼板与外墙 ——
