@@ -207,7 +207,7 @@ const ZONE_LOOK = {
   wall_posts: { env: 'sky', envI: 1.0, sun: 3.2, exp: 1.05, fog: [0x8a7a86, 0.0011], hemi: 0.3 }, helipad: { env: 'sky', envI: 0.9, sun: 3.2, exp: 1.1, fog: [0x8a7a86, 0.0011], hemi: 0.25 },
   abyss_gate: { env: 'hall', envI: 0.35, sun: 0, exp: 1.25, fog: [0x0c0a08, 0.008], hemi: 0.14 }, abyss_city: { env: 'hall', envI: 0.35, sun: 0, exp: 1.25, fog: [0x0c0a08, 0.008], hemi: 0.14 }, abyss_core: { env: 'hall', envI: 0.35, sun: 0, exp: 1.25, fog: [0x0c0a08, 0.008], hemi: 0.14 }, abyss_exam: { env: 'hall', envI: 0.35, sun: 0, exp: 1.25, fog: [0x0c0a08, 0.008], hemi: 0.14 }, abyss_tide: { env: 'hall', envI: 0.35, sun: 0, exp: 1.25, fog: [0x0c0a08, 0.012], hemi: 0.14 },
   seventh_entry: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_gutter: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_ops: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_wrap: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_rewrite: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 },
-  dorm: { env: 'hall', envI: 0.45, sun: 3.2, exp: 1.15, fog: [0x221d17, 0.006], hemi: 0.14 }, east_cloister: { env: 'hall', envI: 0.4, sun: 0, exp: 1.15, fog: [0x1d1915, 0.012], hemi: 0.1 },
+  dorm: { env: 'hall', envI: 0.22, sun: 3.2, exp: 1.15, fog: [0x221d17, 0.006], hemi: 0.14 }, east_cloister: { env: 'hall', envI: 0.4, sun: 0, exp: 1.15, fog: [0x1d1915, 0.012], hemi: 0.1 },
   gate: { env: 'hall', envI: 0.7, sun: 3.2, exp: 0.95, fog: [0x2a241c, 0.006], hemi: 0.15 },
   security_hall: { env: 'hall', envI: 0.6, sun: 0, exp: 1.0, fog: [0x1d1915, 0.010], hemi: 0.12 },
   archive: { env: 'hall', envI: 0.35, sun: 0, exp: 1.3, fog: [0x241c14, 0.012], hemi: 0.1 },
@@ -349,6 +349,8 @@ function applyShot(name) {
   shotFrames = Number(params.get('frames') || 8);
   shotStarted = true;
   window.__SHOT_INFO__ = () => ({ calls: R.gl.info.render.calls, tris: R.gl.info.render.triangles, zone: G.zone });
+  window.__PICK__ = (x, y) => { const rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(x, y), camera); const h = rc.intersectObjects(scene.children, true).find((i) => i.object.visible && i.object.material); if (!h) return null; const m = Array.isArray(h.object.material) ? h.object.material[0] : h.object.material; const tx = (t) => t ? { img: !!t.image, w: t.image?.width, ver: t.version } : null;
+    return { d: +h.distance.toFixed(2), p: h.point.toArray().map((v) => +v.toFixed(2)), obj: h.object.name || h.object.type, parent: h.object.parent?.name, mat: m.name || m.type, color: m.color?.getHexString(), rough: m.roughness, metal: m.metalness, envI: m.envMapIntensity, env: !!m.envMap, map: tx(m.map), rmap: tx(m.roughnessMap), refl: m.userData.reflStrength, inst: !!h.object.isInstancedMesh }; };
 }
 loop();
 boot().catch((e) => { console.error(e); UI.loadProgress(1, '加载失败：' + e.message); });

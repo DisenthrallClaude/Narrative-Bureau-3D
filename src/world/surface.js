@@ -13,6 +13,7 @@ import { vaultMats, tagMaterial } from './vault.js';
 import { dressMats, Props, wallDress, wallSeg, rug, hangingSign, plantPot, bin, paperStack, folderStack, telephone, greenLamp } from './dress.js';
 import { m5Mats } from './dress_m5.js';
 import { RING, FLOOR, cypress, blob } from './exterior.js';
+import { dormMats, bunkBed, singleBed, desk, wardrobe, thermos, mug, washstand, windowCurtain, noticeBoard, thermosRack, tubeLamp } from './dorm.js';
 
 const rnd = (() => { let s = 11; return () => ((s = (s * 16807) % 2147483647) / 2147483647); })();
 const cvMat = (w, h, draw, o = {}) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.7, ...(o.emis ? { emissive: 0xffffff, emissiveMap: t, emissiveIntensity: o.emis } : {}), ...(o.side ? { side: o.side } : {}) }); };
@@ -28,7 +29,8 @@ function annex(b, cx, cz, w, d, h, o = {}) {
   }
   gableRoof(b, cx, h + 0.5, cz, o.roofAlongX ? d : w, o.roofAlongX ? w : d, o.rh ?? 6, { yaw: o.roofAlongX ? Math.PI / 2 : 0, dormers: o.dormers ?? 0 });
   if (o.corner !== false) for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const f = new Frame([cx + sx * (w / 2 + 0.4), 0, cz + sz * (d / 2 + 0.4)], 0); pinnacle(b, f, 0, h, 0, 1.2); }
-  b.box('stoneDark', w + 1.2, 0.5, d + 1.2, [cx, 0.25, cz], { uv: 0.4 });
+  // M7：勒脚改为沿外墙一圈（原实心 0.5 m 石台填满室内，盖住宿舍地坪，抛光大理石成了「金色镜面地面」）
+  for (const [bw, bd, ox, oz] of [[w + 1.2, 0.9, 0, d / 2 + 0.15], [w + 1.2, 0.9, 0, -d / 2 - 0.15], [0.9, d + 1.2, w / 2 + 0.15, 0], [0.9, d + 1.2, -w / 2 - 0.15, 0]]) b.box('stoneDark', bw, 0.5, bd, [cx + ox, 0.25, cz + oz], { uv: 0.4 });
 }
 /** 带门洞的立面（沿 x=at 的墙，门洞 holes），外侧加尖窗框与金腰线 */
 function frontWallX(b, at, z0, z1, h, holes, n, outward) {
@@ -43,7 +45,7 @@ function litWindow(b, x, y, z, yaw, w = 1.2, h = 2.2) { b.add('dz_shade', new TH
 
 export async function buildSurface(scene, world, ctx) {
   const M = mats(); const Mx = vaultMats(M); const D = dressMats(M); const X5 = m5Mats(M);
-  const MAT = { ...M, ...Mx, ...D, ...X5 };
+  const MAT = { ...M, ...Mx, ...D, ...X5, ...dormMats() };
   const jobs = [];
   const mk = (name) => { const g = new THREE.Group(); g.name = name; scene.add(g); ctx.zones[name] = g; return g; };
   const zone = mk('surface');
@@ -72,10 +74,11 @@ export async function buildSurface(scene, world, ctx) {
     { const f = new Frame([X0 - 0.2, 0, 20], -Math.PI / 2); b.add('stoneDark', archRingGeo(4.4, 3.2, 3.2, 3.2, 1.2), f.at(0, 0, 0.3), { uv: 0.5 }); b.add('gold', archRingGeo(4.6, 3.2, 4.4, 3.2, 0.2), f.at(0, 0, 0.92), { uv: 1 }); b.box('stoneDark', 3, 0.3, 2, [X0 - 1.2, 0.15, 20], { uv: 0.5 }); }
     const sg = goldText('职工宿舍　三号楼', 5, 0.55, M.goldBright, { res: 128 }); sg.position.set(X0 - 0.9, 5.6, 20); sg.rotation.y = -Math.PI / 2; zone.add(sg);
     // 楼层板
-    b.box('terrazzo', X1 - X0 - 2.4, 0.04, Z0 - Z1 - 2.4, [cx, 0.02, cz], { uv: 2.2, collide: true });
+    b.box('dm_terrazzo', X1 - X0 - 2.4, 0.04, Z0 - Z1 - 2.4, [cx, 0.02, cz], { uv: 0.4, collide: true });
+    b.box('dm_wood', 13.7, 0.012, 18.7, [71.95, 0.046, 10.6], { uv: 0.8 }); // 101/102 木地板
     const hole = { x0: 54, x1: 61.6, z0: 28, z1: 26 };
     for (const [a, c, d, e] of [[53.2, hole.x0, 38.8, 1.2], [hole.x1, 78.8, 38.8, 1.2], [hole.x0, hole.x1, 38.8, hole.z0], [hole.x0, hole.x1, hole.z1, 1.2]]) b.box('dz_ceil', c - a, 0.3, d - e, [(a + c) / 2, F2 - 0.15, (d + e) / 2], { uv: 0.3, collide: true });
-    b.box('dz_parquet', 78.8 - 53.2, 0.04, 37.6, [cx, F2 + 0.02, cz], { uv: 0.42 });
+    b.box('dm_wood', 78.8 - 53.2, 0.04, 37.6, [cx, F2 + 0.02, cz], { uv: 0.8 });
     b.box('dz_ceil', 25.6, 0.3, 37.6, [cx, 9.2 - 0.15, cz], { uv: 0.3 });
     // 楼梯（大厅北侧，向东上 2F）
     { const n = 26, run = 7.4 / n, rise = F2 / n; for (let i = 0; i < n; i++) b.box('dz_beam', run + 0.02, 0.18, 1.6, [54.2 + run * (i + 0.5), rise * (i + 1) - 0.09, 27], { uv: 0.6 }); world.ramp([53.8, 0, 27], [61.6, F2, 27], 1.6); b.box('brass', 7.8, 0.05, 0.05, [57.9, F2 / 2 + 1.0, 26.15], { uv: 1, rot: [0, 0, Math.atan2(F2, 7.4)] }); world.box(57.9, F2 / 2 + 0.6, 26.1, 7.6, F2 + 1.2, 0.1); }
@@ -114,20 +117,58 @@ export async function buildSurface(scene, world, ctx) {
     hangingSign(zone, M, '洗衣房', 56.3, 2.9, 28.0, Math.PI, 1.4);
     // 回收箱
     b.box('navy', 0.6, 1.0, 0.5, [63.6, 0.5, 30.5], { uv: 1, collide: true }); plane(zone, tagMaterial('叙事残页回收箱'), 0.5, 0.14, 63.29, 0.8, 30.5, Math.PI / 2 * 0 - Math.PI / 2 + Math.PI);
-    // 101 四人间：上下铺 ×2、储物柜（加油海报）、书桌
-    const bunk = (x, z) => { for (const yy of [0.45, 1.75]) { b.box('steel', 0.95, 0.06, 2.0, [x, yy, z], { uv: 1 }); b.box('whitePad', 0.9, 0.14, 1.95, [x, yy + 0.1, z], { uv: 1 }); b.box('navy', 0.88, 0.05, 1.3, [x, yy + 0.19, z + 0.3], { uv: 1 }); } for (const dx of [-0.46, 0.46]) for (const dz of [-0.98, 0.98]) b.box('steel', 0.04, 2.3, 0.04, [x + dx, 1.15, z + dz], { uv: 1 }); world.box(x, 1.1, z, 1, 2.2, 2); };
-    bunk(67, 3.4); bunk(67, 8.4); for (let k = 0; k < 4; k++) { b.box('paintedGreen', 0.55, 1.9, 0.5, [78.3, 0.95, 2.6 + k * 0.6], { uv: 1 }); } plane(zone, posterMaterial('叙事高考', '加油！'), 0.4, 0.6, 78.02, 1.3, 3.2, -Math.PI / 2);
-    b.box('wood', 1.2, 0.05, 0.6, [75.5, 0.76, 9.9], { uv: 0.6, collide: true }); greenLamp(b, 75.0, 0.79, 9.9, Math.PI); paperStack(b, 75.8, 0.79, 9.9, 0.2, 5);
-    point(zone, 0xffe0b8, 4, [72, 3.4, 6], 8);
-    // 102 单间
-    { b.box('wood', 1.0, 0.45, 2.0, [77.8, 0.23, 15], { uv: 0.6, collide: true }); b.box('whitePad', 0.95, 0.15, 1.95, [77.8, 0.52, 15], { uv: 1 }); b.box('m5_olive', 0.9, 0.06, 1.2, [77.8, 0.62, 15.3], { uv: 1 }); b.box('wood', 1.2, 0.05, 0.6, [72, 0.76, 19.3], { uv: 0.6, collide: true }); P.add('desk_lamp', [71.5, 0.79, 19.3], { h: 0.4 }); folderStack(b, 72.4, 0.79, 19.3, 0, 3); P.add('wall_clock', [72, 2.6, 19.85], { w: 0.4, yaw: Math.PI }); point(zone, 0xffd8b0, 3, [72, 3.4, 15], 7); }
+    // 101 六人间（M7 重做）：铁架上下铺 ×5、窗下长书桌、木衣柜、脸盆架、暖瓶、窗帘、值日表
+    for (const [x, z, o] of [[67.0, 2.35, { top: 'tofu' }], [69.7, 2.35, { top: 'bare', towel2: true }], [72.4, 2.35, { top: 'tofu' }], [68.6, 9.45, { top: 'tofu', bottom: 'quilt', towel2: true }], [71.3, 9.45, { top: 'none' }]]) bunkBed(b, world, x, 0.046, z, 0, { ...o });
+    windowCurtain(b, 78.72, 0.95, 5.9, -Math.PI / 2, 2.0, 1.7);
+    desk(b, world, 78.3, 0.046, 5.0, -Math.PI / 2, 1.2); desk(b, world, 78.3, 0.046, 6.8, -Math.PI / 2, 1.2);
+    P.add('desk_lamp', [78.4, 0.83, 4.6], { h: 0.42, yaw: -Math.PI / 2 }); greenLamp(b, 78.35, 0.83, 7.2, -Math.PI / 2);
+    for (const [x, z] of [[78.1, 5.35], [78.15, 6.35]]) mug(b, x, 0.83, z); thermos(b, 78.45, 0.83, 5.7); folderStack(b, 78.2, 0.83, 7.0, 0.3, 3); paperStack(b, 78.0, 0.83, 4.9, 0.2, 5);
+    for (let k = 0; k < 6; k++) b.box(['dm_bookA', 'dm_bookB', 'dm_bookC'][k % 3], 0.17, 0.24, 0.035, [78.52, 0.95, 6.05 + k * 0.04], { uv: false });
+    for (const z of [1.85, 2.95, 8.85, 9.95]) wardrobe(b, world, 78.42, 0.046, z, -Math.PI / 2, { suitcase: z !== 2.95 });
+    washstand(b, world, 65.55, 0.046, 8.2, Math.PI / 2); washstand(b, world, 65.55, 0.046, 3.4, Math.PI / 2);
+    for (let k = 0; k < 3; k++) thermos(b, 66.0 + k * 0.2, 0.046, 10.3);
+    { b.box('dm_desk', 0.8, 0.04, 0.8, [70.6, 0.76, 6.0], { uv: 1 }); for (const sx of [-1, 1]) for (const sz of [-1, 1]) b.box('dm_desk', 0.04, 0.72, 0.04, [70.6 + sx * 0.35, 0.4, 6.0 + sz * 0.35], { uv: 1 }); world.box(70.6, 0.4, 6.0, 0.8, 0.8, 0.8); for (const [dx, dz] of [[-0.7, 0], [0.7, 0.1], [0, 0.75]]) { b.add('dm_desk', new THREE.CylinderGeometry(0.16, 0.16, 0.03, 12), { pos: [70.6 + dx, 0.47, 6.0 + dz] }, { uv: 1 }); b.add('dm_frame', new THREE.CylinderGeometry(0.012, 0.012, 0.45, 5), { pos: [70.6 + dx, 0.24, 6.0 + dz] }, { uv: false }); } mug(b, 70.5, 0.78, 5.9); thermos(b, 70.8, 0.78, 6.15); }
+    plane(zone, signMaterial('101 室值日表', ['周一　清扫　打水', '周二　倒垃圾', '周三　擦窗　拖地', '周四　——', '熄灯前互相点名'], 400, 560), 0.5, 0.7, 65.13, 1.55, 4.6, Math.PI / 2);
+    plane(zone, posterMaterial('叙事高考', '加油！'), 0.42, 0.6, 65.13, 1.6, 7.3, Math.PI / 2);
+    for (const x of [68.5, 72.5, 76.0]) tubeLamp(b, x, F2 - 0.3, 6.0, Math.PI / 2);
+    point(zone, 0xffe8cc, 4, [71, 3.6, 6], 9); point(zone, 0xffe8cc, 3, [67.5, 3.4, 3.0], 7); point(zone, 0xffe8cc, 3, [74.5, 3.4, 8.5], 7);
+    b.add('dm_frame', new THREE.CylinderGeometry(0.006, 0.006, 9.5, 4), { pos: [71.0, 2.25, 5.6], rot: [0, 0, Math.PI / 2] }, { uv: false }); // 晾衣绳
+    for (let k = 0; k < 7; k++) b.add(['dm_towel', 'dm_towel2', 'dm_sheet', 'navy', 'dm_olive', 'dm_towel2', 'dm_sheet'][k], new THREE.PlaneGeometry(k % 3 === 2 ? 0.7 : 0.45, k % 3 === 2 ? 0.9 : 0.55, 1, 1), { pos: [67.0 + k * 1.25, 2.25 - (k % 3 === 2 ? 0.45 : 0.27), 5.6], rot: [0, (k % 2) * 0.15, 0] }, { uv: false }); point(zone, 0xd8e4f4, 2.5, [77.6, 1.9, 5.9], 6);
+    // 102 单间（M7 重做）
+    { singleBed(b, world, 77.75, 0.046, 15.2, 0, { olive: true }); windowCurtain(b, 78.72, 0.95, 18.2, -Math.PI / 2, 1.6, 1.7);
+      desk(b, world, 72, 0.046, 19.62, Math.PI, 1.2); P.add('desk_lamp', [71.6, 0.83, 19.65], { h: 0.4, yaw: Math.PI }); folderStack(b, 72.4, 0.83, 19.6, 0, 3); thermos(b, 72.85, 0.046, 19.7); mug(b, 72.2, 0.83, 19.45);
+      P.add('wall_clock', [72, 2.6, 19.85], { w: 0.4, yaw: Math.PI }); wardrobe(b, world, 65.42, 0.046, 18.9, Math.PI / 2); washstand(b, world, 65.55, 0.046, 11.6, Math.PI / 2);
+      noticeBoard(zone, b, 70.0, 1.75, 10.74, 0, 1.4, 0.8, '个人备忘', [['待办', ['领工牌', '交体检表'], '#efe8d6'], ['电话', ['宿管 8207', '后勤 8113'], '#e8eef4'], ['注意', ['别在走廊', '朗读'], '#f4e8c8']]);
+      tubeLamp(b, 72, F2 - 0.3, 15.3, Math.PI / 2); point(zone, 0xffd8b0, 3, [72, 3.4, 15], 7); }
     // 二层活动室 + 207
     for (const z of [14, 18]) { b.box('wood', 2.2, 0.05, 1.0, [57.5, F2 + 0.76, z], { uv: 0.6, collide: true }); for (const dx of [-0.7, 0.7]) b.box('wood', 0.45, 0.45, 0.45, [57.5 + dx, F2 + 0.23, z + 0.8], { uv: 0.6 }); }
     b.box('blackMetal', 0.1, 1.0, 1.7, [53.4, F2 + 1.8, 20], { uv: 1 }); plane(zone, cvMat(512, 300, (c, w, h) => { c.fillStyle = '#081018'; c.fillRect(0, 0, w, h); c.fillStyle = '#e8c87a'; c.font = '700 34px "NB Title", "NB Serif", serif'; c.fillText('京城新闻　·　稳定度 97.3%', 20, 60); c.fillStyle = '#9fb4e0'; c.font = '24px "NB Sans", sans-serif'; c.fillText('通州区连续三日低于 96%', 20, 120); }, { emis: 0.7 }), 1.6, 0.92, 53.47, F2 + 1.8, 20, Math.PI / 2);
-    { const z0 = 20.2, x = 72; b.box('wood', 1.0, 0.45, 2.0, [77.8, F2 + 0.23, 22.2], { uv: 0.6, collide: true }); b.box('whitePad', 0.95, 0.15, 1.95, [77.8, F2 + 0.52, 22.2], { uv: 1 }); b.box('wood', 1.4, 0.05, 0.65, [x, F2 + 0.76, 28.8], { uv: 0.6, collide: true }); b.box('wood', 0.5, 0.18, 0.55, [x + 0.3, F2 + 0.62, 28.8], { uv: 0.6 }); greenLamp(b, x - 0.5, F2 + 0.79, 28.9, Math.PI); P.add('picture_frame', [x + 0.4, F2 + 0.79, 28.95], { h: 0.22, yaw: Math.PI });
-      const env = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.006, 0.12), M.kraft); env.position.set(x + 0.3, F2 + 0.72, 28.62); env.rotation.y = 0.2; zone.add(env); anchor('doc_dorm_letter', env, 2.4); point(zone, 0xffd0a0, 3, [x, F2 + 3, 25], 7); void z0; }
+    { const z0 = 20.2, x = 72; bunkBed(b, world, 77.85, F2 + 0.04, 21.35, 0, { bottom: 'quilt', top: 'bare', suitcase: false }); windowCurtain(b, 78.72, F2 + 0.95, 25.6, -Math.PI / 2, 1.8, 1.7); wardrobe(b, world, 65.42, F2 + 0.04, 21.2, Math.PI / 2); washstand(b, world, 65.55, F2 + 0.04, 28.4, Math.PI / 2); thermos(b, 73.0, F2 + 0.04, 29.0); thermos(b, 73.2, F2 + 0.04, 29.05); mug(b, 71.7, F2 + 0.79, 28.7); tubeLamp(b, 72, 8.9, 24.8, Math.PI / 2);
+      bunkBed(b, world, 75.0, F2 + 0.04, 21.35, 0, { bottom: 'bare', top: 'none', suitcase: false }); // 室友的空铺
+      for (let k = 0; k < 9; k++) b.box('dm_frameCream', 0.08, 0.6, 0.05, [78.6, F2 + 0.45, 24.9 + k * 0.17], { uv: false }); b.box('dm_frameCream', 0.1, 0.05, 1.5, [78.6, F2 + 0.13, 25.6], { uv: false }); // 暖气片
+      rug(b, 71.5, 24.8, 2.4, 3.2, F2 + 0.05, 'dz_rugNavy');
+      { const sx0 = 68.4, sz = 29.12; for (const ly of [0.05, 0.45, 0.85, 1.25, 1.65]) b.box('dm_desk', 1.2, 0.03, 0.3, [sx0, F2 + ly, sz], { uv: 1 }); for (const dx of [-0.6, 0.6]) b.box('dm_desk', 0.03, 1.7, 0.3, [sx0 + dx, F2 + 0.85, sz], { uv: 1 }); for (let r = 0; r < 4; r++) for (let k = 0; k < 18 - r * 3; k++) b.box(['dm_bookA', 'dm_bookB', 'dm_bookC', 'kraft'][(k + r) % 4], 0.035, 0.22 + (k % 3) * 0.03, 0.2, [sx0 - 0.55 + k * 0.045, F2 + 0.18 + r * 0.4 + (k % 3) * 0.015, sz], { uv: false }); world.box(sx0, F2 + 0.9, sz, 1.2, 1.8, 0.32); }
+      for (let k = 0; k < 3; k++) b.add('dm_brass', new THREE.CylinderGeometry(0.012, 0.012, 0.1, 6), { pos: [65.17, F2 + 1.75, 23.6 + k * 0.3], rot: [0, 0, Math.PI / 2 - 0.4] }, { uv: false }); b.add('navy', new THREE.BoxGeometry(0.08, 0.8, 0.5), { pos: [65.2, F2 + 1.35, 23.9] }, { uv: 1 }); // 衣钩+制服外套
+      point(zone, 0xd8e4f4, 2.2, [77.5, F2 + 1.9, 25.6], 6); point(zone, 0xffe0b8, 2.5, [70, F2 + 3, 22.5], 7); b.add('dm_case', new THREE.BoxGeometry(0.7, 0.45, 0.25), { pos: [76.6, F2 + 0.27, 23.2], rot: [0, 0.3, 0] }, { uv: false }); desk(b, world, x, F2 + 0.04, 28.95, Math.PI, 1.4); greenLamp(b, x - 0.5, F2 + 0.83, 29.0, Math.PI); P.add('picture_frame', [x + 0.4, F2 + 0.83, 29.05], { h: 0.22, yaw: Math.PI });
+      const env = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.006, 0.12), M.kraft); env.position.set(x + 0.3, F2 + 0.83, 28.75); env.rotation.y = 0.2; zone.add(env); anchor('doc_dorm_letter', env, 2.4); point(zone, 0xffd0a0, 3, [x, F2 + 3, 25], 7); void z0; }
     point(zone, 0xffe4c0, 6, [57.5, 3.6, 20], 12); point(zone, 0xffe4c0, 5, [57.5, F2 + 3.4, 20], 10); point(zone, 0xdfe8ff, 3, [63.5, 3.5, 30], 9);
-    for (const [x, z] of [[53.8, 26.6 - 3], [61.4, 19]]) plantPot(b, x, 0, z, 1.0);
+    for (const [x, z] of [[53.8, 21.9], [61.4, 19]]) plantPot(b, x, 0, z, 1.0);
+    // M7：外墙内侧刷漆衬层（原外立面石材直接作室内墙面，映出金色大厅环境图）
+    for (const [y0, hh] of [[0, F2 - 0.3], [F2, 4.3]]) {
+      for (const [z0, z1] of [[1.2, 18.35], [21.65, 38.8]]) { if (y0 && z0 > 20) continue; b.box('dz_paintUp', 0.04, hh, z1 - z0, [53.24, y0 + hh / 2, (z0 + z1) / 2], { uv: 0.6 }); }
+      if (y0) b.box('dz_paintUp', 0.04, hh, 17.15, [53.24, y0 + hh / 2, 30.225], { uv: 0.6 });
+      if (!y0) b.box('dz_paintUp', 0.04, hh - 3.65, 3.3, [53.24, 3.65 + (hh - 3.65) / 2, 20], { uv: 0.6 });
+      b.box('dz_paintUp', 0.04, hh, 37.6, [78.76, y0 + hh / 2, 20], { uv: 0.6 }); b.box('dz_paintLow', 0.05, 0.9, 37.6, [78.75, y0 + 0.45, 20], { uv: 0.6 });
+      for (const z of [1.24, 38.76]) { b.box('dz_paintUp', 25.6, hh, 0.04, [66, y0 + hh / 2, z], { uv: 0.6 }); b.box('dz_paintLow', 25.6, 1.1, 0.05, [66, y0 + 0.55, z + (z < 20 ? 0.01 : -0.01)], { uv: 0.6 }); }
+    }
+    point(zone, 0xffe4c0, 4, [57.5, 3.4, 15.5], 9);
+    // M7 大厅加密：暖瓶架（开水房）、公告栏、长椅、日光灯、挂钟、雨伞桶
+    thermosRack(b, world, 53.55, 0.04, 24.75, Math.PI / 2, 10); hangingSign(zone, M, '开水房　6:30–22:30', 54.0, 2.7, 24.75, Math.PI / 2, 1.8);
+    noticeBoard(zone, b, 64.86, 1.75, 23.2, -Math.PI / 2, 2.6, 1.3, '三号楼公告栏', [['熄灯通知', ['本周起 23:00 熄灯', '走廊灯 23:30 关闭', '　　——宿管科'], '#efe8d6'], ['卫生评比', ['一等　101 室', '二等　205 室', '待改进　207 室'], '#f4ead0'], ['失物招领', ['黑色钢笔一支', '（笔帽刻「南」）', '请到宿管室认领'], '#e6edf2'], ['复习小组', ['叙事高考模拟卷', '每周三晚 活动室', '自带草稿纸'], '#f2e2d6']]);
+    for (const z of [17.6, 19.6]) { b.box('dm_desk', 0.42, 0.04, 1.6, [64.6, 0.45, z], { uv: 1 }); for (const dz of [-0.7, 0.7]) b.box('dm_frame', 0.38, 0.43, 0.04, [64.6, 0.22, z + dz], { uv: false }); world.box(64.6, 0.25, z, 0.45, 0.5, 1.6); }
+    for (const [x, z] of [[57.5, 15], [57.5, 19.5], [57.5, 24], [63.5, 21]]) tubeLamp(b, x, F2 - 0.3, z, 0);
+    P.add('wall_clock', [57.5, 3.1, 12.48], { w: 0.5 });
+    b.add('dm_frame', new THREE.CylinderGeometry(0.15, 0.13, 0.55, 14, 1, true), { pos: [61.5, 0.32, 21.8] }, { uv: false }); for (let k = 0; k < 3; k++) b.add(['navy', 'dm_case', 'dm_shoe'][k], new THREE.CylinderGeometry(0.02, 0.02, 0.9, 5), { pos: [61.48 + k * 0.04, 0.6, 21.8 + (k - 1) * 0.05], rot: [0.08 * (k - 1), 0, 0.06] }, { uv: false });
     rug(b, 57.5, 20, 4.4, 6, 0.06, 'dz_rugNavy');
     for (let k = 0; k < 6; k++) litWindow(b, X1 + 0.62, F2 + 1.4, 3 + k * 6.6, Math.PI / 2, 1.1, 2.2);
     world.surface(X0, Z1, X1, Z0, 'stone', -1, 12);

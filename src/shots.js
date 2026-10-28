@@ -47,6 +47,8 @@ export const SHOTS = {
   publicity: { pos: [-3, 8.8 + 1.65, -95], look: [-20, 8.8 + 2.4, -113], fov: 75 },
   dorm_lobby: { pos: [60.5, 1.65, 13.4], look: [55, 1.4, 22], fov: 78 },
   dorm_room: { pos: [66, 1.65, 9.6], look: [76, 1.0, 3], fov: 75 },
+  dorm_207: { pos: [66.6, 4.6 + 1.65, 27.8], look: [77, 4.6 + 0.9, 22.5], fov: 75 },
+  dorm_101b: { pos: [77.4, 1.6, 9.8], look: [67, 1.0, 3.6], fov: 75 },
   hangar: { pos: [75, 1.7, -72], look: [92, 3, -64], fov: 75 },
   helipad_roof: { pos: [77.5, 14.1, -57.5], look: [86, 13, -72], fov: 75 },
   wall_post: { pos: [-43.6, 1.7, 54.6], look: [-47.3, 2.2, 62.1], fov: 70 },
