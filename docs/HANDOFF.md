@@ -15,3 +15,5 @@
 - [07:20] 宿舍第二轮：外墙内衬、207 加室友空铺/书架/暖气片/地毯/衣钩、101 晾衣绳+补光；已 build；下一步复拍 dorm 4 张
 - 技巧：长命令后台用 `( setsid nohup bash tools/shotq.sh ... > /tmp/x.log 2>&1 < /dev/null & )`，再 sleep 轮询日志；普通 nohup & 会在 shell 超时时被杀。1280×720 medium 每张约 100–330 s。
 - [07:45] 宿舍完成（m7/dorm_lobby, dorm_room, dorm_101b, dorm_207）。下一步：walk.mjs 走查
+- [08:05] 走查第1轮 23/8：根因 physics.js y<-60 一律重生到广场 → 墨渊(-300)/装订线(-500) 进不去；已修（深区带例外）。test 模式改为不预编译不渲染（加载 60s）。重跑中
+- [08:25] 走查 31/0 通过，WALKTHROUGH.md 已写。下一步：m7 复拍第1批 abyss_core,abyss_tide,seventh_gutter,seventh_rewrite

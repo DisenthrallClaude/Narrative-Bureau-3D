@@ -29,6 +29,7 @@ import { TOD, TOD_NAME, setTod } from './engine/tod.js';
 
 const params = new URLSearchParams(location.search);
 const SHOT = params.get('shot');
+const TEST = !!params.get('test'); // M7：走查模式不预编译、不渲染（SwiftShader 下整场景编译+渲染要十几分钟）
 const LOG = (...a) => { if (SHOT) console.log('[NB]', ...a); };
 window.__SHOT__ = !!SHOT;
 RectAreaLightUniformsLib.init();
@@ -115,7 +116,7 @@ async function boot() {
   // 预编译
   UI.loadProgress(0.95, '点亮灯光……');
   for (const z of Object.values(ctx.zones)) z.visible = true;
-  if (!SHOT) { try { await R.gl.compileAsync(scene, camera); } catch { /* 旧浏览器 */ } }
+  if (!SHOT && !TEST) { try { await R.gl.compileAsync(scene, camera); } catch { /* 旧浏览器 */ } }
   LOG('compiled');
   setZone('plaza', true);
   UI.updateObjective();
@@ -299,6 +300,7 @@ function loop() {
   requestAnimationFrame(loop);
   const dt = Math.min(clock.getDelta(), 0.1);
   if (!envSky && !SHOT && !started) return;
+  if (TEST && !started) return;
   if (SHOT && !shotStarted) return; // 截图模式：加载期间不渲染（SwiftShader 下每帧数秒，会拖慢资源回调）
   time.value += dt;
   const t = time.value;
@@ -325,6 +327,7 @@ function loop() {
   R.setExposure(curExp);
   for (const s of ctx.screens) s.update(dt, t);
   updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t); updateDressing(ctx, dt, t); updateDepths(ctx, dt, t);
+  if (TEST) { frames++; return; }
   R.gl.info.autoReset = false; R.gl.info.reset(); // M6：统计整帧（反射 + 阴影 + 后期全部 pass）
   reflector.setY(FLOOR); reflector.update(scene, camera, R.q.reflect);
   R.render(dt);

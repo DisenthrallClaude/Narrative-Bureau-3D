@@ -308,7 +308,7 @@ export function setupDepths(G, { toast, dialog, fade, chapterCard, updateObjecti
   const md = ctx.depths?.b6Door; if (md) inter.add({ id: 'depth_b6_door', obj: md, range: 3, prompt: () => '按 E 打开维护通道', use: async () => { const c = await dialog(['（门上写着：维护通道 · 通往书芯。下方一行小字被划掉了。）', '> 选项 A：推门进去', '> 选项 B：离开']); if (c === 'A') await G.toAbyss(); } });
   const b5 = ctx.depths?.b5Door; if (b5) inter.add({ id: 'depth_b5_door', obj: b5, range: 3, prompt: () => '按 E 推开深库后门', use: async () => { await G.toAbyss(); } });
   if (ctx.depths?.returnDoor) inter.add({ id: 'depth_return', obj: ctx.depths.returnDoor, range: 4, prompt: () => '按 E 乘维护梯返回 B6', use: () => G.toB6() });
-  if (ctx.depths?.coreSeam) inter.add({ id: 'depth_core_seam', obj: ctx.depths.coreSeam, range: 3, prompt: () => '按 E 跟着红线走进页缝', use: () => go([0, SY + 0.05, -70], Math.PI, '（红线把你领进两页纸之间。）') });
+  if (ctx.depths?.coreSeam) inter.add({ id: 'depth_core_seam', obj: ctx.depths.coreSeam, range: 3, prompt: () => '按 E 跟着红线走进页缝', use: () => go([1.2, SY + 0.05, -68], Math.PI, '（红线把你领进两页纸之间。）') });
   if (ctx.depths?.exitSeam) inter.add({ id: 'depth_seventh_exit', obj: ctx.depths.exitSeam, range: 3, prompt: () => '按 E 从缝隙回到 B1', use: () => go([-35.7, (ctx.b1Y ?? -4.2) + 0.05, -39.0], Math.PI, null) });
   // 折页门：交互后穿门（transition 由 manifest 提供文本）
   ctx.hooks = ctx.hooks ?? {};

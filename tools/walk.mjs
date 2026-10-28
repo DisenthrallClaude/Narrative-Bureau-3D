@@ -62,7 +62,7 @@ log('—— B1 第 7 排缝隙 → 装订线 ——');
 ok(await ev(() => window.__NB__.spot('depth_b1_seam')?.enabled?.() ?? false), '缝隙热点已启用');
 await use('depth_b1_seam'); await page.waitForTimeout(3000);
 let z = await zone(); ok(z === 'seventh_entry', '进入装订线入口 zone=' + z);
-for (const [nm, p] of [['seventh_gutter', [4, -499.95, -80]], ['seventh_ops', [0, -499.95, -120]], ['seventh_wrap', [0, -499.95, -140]], ['seventh_rewrite', [0, -499.95, -166]]]) { await tp(...p, Math.PI); await page.waitForTimeout(1200); const zz = await zone(); const py = await ev(() => window.__NB__.player.pos.y); ok(zz === nm && py > -501 && py < -498, `走到 ${nm}（zone=${zz}，脚底 y=${py.toFixed(2)} 未掉出地面）`); }
+for (const [nm, p] of [['seventh_gutter', [7.3, -499.95, -80]], ['seventh_ops', [0, -499.95, -120]], ['seventh_wrap', [0, -499.95, -140]], ['seventh_rewrite', [0, -499.95, -166]]]) { await tp(...p, Math.PI); await page.waitForTimeout(1200); const zz = await zone(); const py = await ev(() => window.__NB__.player.pos.y); ok(zz === nm && py > -501 && py < -498, `走到 ${nm}（zone=${zz}，脚底 y=${py.toFixed(2)} 未掉出地面）`); }
 
 // ===== 三结局 =====
 const endings = [['A', 'end_a_name'], ['B', 'end_b_seal'], ['C', 'end_c_close']];

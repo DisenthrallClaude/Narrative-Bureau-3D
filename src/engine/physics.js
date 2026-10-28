@@ -111,7 +111,10 @@ export class Player {
     this.pos.add(delta);
     if (this.onGround) this.vel.y = 0; else if (delta.y < 0 && this.vel.y > 0) this.vel.y = 0;
     else { delta.normalize(); this.vel.addScaledVector(delta, -delta.dot(this.vel)); }
-    if (this.pos.y < -60) { this.pos.copy(this.spawn ?? new THREE.Vector3(0, 2, 60)); this.vel.set(0, 0, 0); }
+    // M7：坠落重生——墨渊（地坪 −300）与装订线（地坪 −500）在深处，原先 y<−60 一律拉回广场，导致两大隐藏区一进去就被弹回开场
+    { const y = this.pos.y, deep = (y > -340 && y < -150) || (y > -540 && y < -380); if ((y < -60 && !deep) || y < -540) { this.pos.copy(this.spawn ?? new THREE.Vector3(0, 2, 60)); this.vel.set(0, 0, 0); }
+      else if (deep && y < -315 && y > -340) { this.pos.set(0, -299.95, -58); this.vel.set(0, 0, 0); } // 墨渊坠落 → 折页门
+      else if (deep && y < -515) { this.pos.set(0, -499.95, -57); this.vel.set(0, 0, 0); } } // 装订线坠落 → 页缝入口
     const moved = Math.hypot(this.pos.x - before.x, this.pos.z - before.z);
     if (this.onGround) { this.stepDist += moved; this.bob += moved * 2.2; }
   }
