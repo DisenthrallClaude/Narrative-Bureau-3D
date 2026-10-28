@@ -395,7 +395,7 @@ function buildHall(zone, world, ctx, M, add) {
   for (const side of [1, -1]) { const sm = new THREE.Mesh(new THREE.PlaneGeometry(SW, SH), hud.mat); sm.position.set(0, SY, SZ + side * 0.26); sm.rotation.y = side > 0 ? 0 : Math.PI; zone.add(sm); }
   ctx.mainScreenPos = new THREE.Vector3(0, SY, SZ);
   // 东墙通缉公告栏
-  const wb = content.tex('tex_sec_wanted_board');
+  const wb = content.texPatched('tex_sec_wanted_board', [{ rect: [814 / 2176, 1322 / 1632, 72 / 2176, 72 / 1632], fill: '#161617', text: '叙', color: '#d8b56c', size: 0.86 }]); // 生图底部「敘事管理局」改简体
   b.box('wood', 0.2, 2.6, 5.6, [X - 0.1, Y + 2.2, -64], { uv: 0.5 });
   b.box('gold', 0.22, 2.7, 0.08, [X - 0.1, Y + 2.2, -61.2], { uv: 1 }); b.box('gold', 0.22, 2.7, 0.08, [X - 0.1, Y + 2.2, -66.8], { uv: 1 });
   const wbm = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 2.4), wb ? new THREE.MeshStandardMaterial({ map: wb, roughness: 0.6 }) : wantedBoardMaterial());
@@ -830,7 +830,7 @@ export function grandClock(M, pos, yaw) {
 }
 export function clockFaceTexture() {
   const cv = document.createElement('canvas'); cv.width = cv.height = 256; const c = cv.getContext('2d');
-  c.fillStyle = '#efe6cc'; c.fillRect(0, 0, 256, 256); c.translate(128, 128); c.fillStyle = '#222'; c.font = '700 22px "NB Serif", serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.fillStyle = '#efe6cc'; c.fillRect(0, 0, 256, 256); c.translate(128, 128); c.fillStyle = '#222'; c.font = '700 22px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
   const R = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
   R.forEach((r, i) => { const a = (i / 12) * Math.PI * 2 - Math.PI / 2; c.fillText(r, Math.cos(a) * 100, Math.sin(a) * 100); });
   // 3:07
@@ -853,7 +853,7 @@ export function stickyMaterial() {
 export function signMaterial(title, lines, w = 512, h = 680) {
   const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
   c.fillStyle = '#0d0f14'; c.fillRect(0, 0, w, h); c.strokeStyle = '#c9a052'; c.lineWidth = 6; c.strokeRect(14, 14, w - 28, h - 28);
-  c.fillStyle = '#e6c67c'; c.font = `700 ${w * 0.09}px "NB Serif", serif`; c.textAlign = 'center'; c.fillText(title, w / 2, h * 0.14);
+  c.fillStyle = '#e6c67c'; c.font = `700 ${w * 0.09}px \"NB Title\", \"NB Serif\", serif`; c.textAlign = 'center'; c.fillText(title, w / 2, h * 0.14);
   c.fillStyle = '#d8d2c2'; c.font = `${w * 0.05}px "NB Sans", sans-serif`; c.textAlign = 'left'; lines.forEach((l, i) => c.fillText(l, w * 0.1, h * 0.26 + i * w * 0.1));
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.15 });
 }
@@ -861,7 +861,7 @@ export function brassPlaqueMaterial(title, lines) {
   const w = 512, h = 680; const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
   const gr = c.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#b8924a'); gr.addColorStop(0.5, '#e2c27a'); gr.addColorStop(1, '#9a7638'); c.fillStyle = gr; c.fillRect(0, 0, w, h);
   c.strokeStyle = '#5a4018'; c.lineWidth = 8; c.strokeRect(18, 18, w - 36, h - 36);
-  c.fillStyle = '#2a1c08'; c.font = '700 44px "NB Serif", serif'; c.textAlign = 'center'; c.fillText(title, w / 2, 96);
+  c.fillStyle = '#2a1c08'; c.font = '700 44px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.fillText(title, w / 2, 96);
   c.font = '28px "NB Serif", serif'; c.textAlign = 'left'; lines.forEach((l, i) => c.fillText(l, 50, 170 + i * 52));
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, metalness: 0.7, roughness: 0.35 });
 }
@@ -869,7 +869,7 @@ export function posterMaterial(title, sub) {
   const w = 512, h = 732; const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
   const gr = c.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#0d1838'); gr.addColorStop(1, '#03050c'); c.fillStyle = gr; c.fillRect(0, 0, w, h);
   c.strokeStyle = '#c9a052'; c.lineWidth = 4; c.strokeRect(20, 20, w - 40, h - 40);
-  c.fillStyle = '#e8c87a'; c.font = '700 76px "NB Serif", serif'; c.textAlign = 'center'; c.fillText(title, w / 2, h * 0.45);
+  c.fillStyle = '#e8c87a'; c.font = '700 76px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.fillText(title, w / 2, h * 0.45);
   c.fillStyle = '#aab4cc'; c.font = '26px "NB Sans", sans-serif'; c.fillText(sub, w / 2, h * 0.56);
   c.fillStyle = '#c9a052'; c.font = '22px "NB Serif", serif'; c.fillText('叙事管理局', w / 2, h * 0.9);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.4, roughness: 0.4 });
@@ -878,14 +878,14 @@ export function wantedBoardMaterial() {
   const w = 1350, h = 600; const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
   c.fillStyle = '#5a4630'; c.fillRect(0, 0, w, h);
   const items = [['通缉令', '秦骁　【王寇】', '高危'], ['通缉令', '江戾　【冥礼】', '高危'], ['通缉令', '第二草稿　在逃成员', '协查'], ['通告', '余辉剧团　演出一律取消', '']];
-  items.forEach(([t, n, l], i) => { const x = 30 + i * 330; c.fillStyle = i < 3 ? '#e9e1cc' : '#d8e2ee'; c.fillRect(x, 40, 300, 520); c.fillStyle = '#7a1a1a'; c.font = '700 54px "NB Serif", serif'; c.textAlign = 'center'; c.fillText(t, x + 150, 110); c.fillStyle = '#222'; c.fillRect(x + 60, 140, 180, 220); c.fillStyle = '#2a2a2a'; c.font = '700 30px "NB Serif", serif'; c.fillText(n, x + 150, 410); c.fillStyle = '#a3262a'; c.font = '26px "NB Sans", sans-serif'; c.fillText(l, x + 150, 460); });
+  items.forEach(([t, n, l], i) => { const x = 30 + i * 330; c.fillStyle = i < 3 ? '#e9e1cc' : '#d8e2ee'; c.fillRect(x, 40, 300, 520); c.fillStyle = '#7a1a1a'; c.font = '700 54px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.fillText(t, x + 150, 110); c.fillStyle = '#222'; c.fillRect(x + 60, 140, 180, 220); c.fillStyle = '#2a2a2a'; c.font = '700 30px \"NB Title\", \"NB Serif\", serif'; c.fillText(n, x + 150, 410); c.fillStyle = '#a3262a'; c.font = '26px "NB Sans", sans-serif'; c.fillText(l, x + 150, 460); });
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.8 });
 }
 
 // ——— 屏幕绘制 ———
 function drawQueue(c, t, W, H) {
   c.fillStyle = '#030814'; c.fillRect(0, 0, W, H);
-  c.fillStyle = '#e8c87a'; c.font = '700 54px "NB Serif", serif'; c.textAlign = 'left'; c.fillText('请 XS-2026-1029-07 号', 40, 110);
+  c.fillStyle = '#e8c87a'; c.font = '700 54px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'left'; c.fillText('请 XS-2026-1029-07 号', 40, 110);
   c.fillStyle = '#ffffff'; c.fillText('到 3 号窗口', 40, 190);
   c.fillStyle = '#7f8db0'; c.font = '28px "NB Sans", sans-serif'; c.textAlign = 'right'; c.fillText('叙事管理局 · 人事处', W - 40, 230);
 }
@@ -904,7 +904,7 @@ function drawMainScreen(c, t, W, H, ctx) {
     const gr = c.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#061028'); gr.addColorStop(1, '#02040c'); c.fillStyle = gr; c.fillRect(0, 0, W, H);
     c.strokeStyle = '#1d3a7a'; c.lineWidth = 2; for (let x = 0; x < W; x += 64) { c.beginPath(); c.moveTo(x, 120); c.lineTo(x, H); c.stroke(); } for (let y = 120; y < H; y += 64) { c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
     c.fillStyle = '#0c1d48'; c.fillRect(0, 0, W, 110);
-    c.fillStyle = '#e8c87a'; c.font = '700 60px "NB Serif", serif'; c.textAlign = 'left'; c.fillText('叙事管理局 · 京城总部　安检大厅实时监测', 50, 76);
+    c.fillStyle = '#e8c87a'; c.font = '700 60px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'left'; c.fillText('叙事管理局 · 京城总部　安检大厅实时监测', 50, 76);
     c.textAlign = 'right'; c.fillStyle = '#9fb4e0'; c.font = '40px "NB Sans", sans-serif'; const d = new Date(); c.fillText(`2026-10-29　${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`, W - 50, 72);
     // 左：污染指数
     c.textAlign = 'left'; c.fillStyle = '#9fb4e0'; c.font = '44px "NB Sans", sans-serif'; c.fillText('今日叙事污染指数', 70, 210);

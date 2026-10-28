@@ -328,13 +328,13 @@ export function goldText(text, w, h, mat, o = {}) {
   const ctx = cv.getContext('2d');
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, cv.width, cv.height);
   ctx.fillStyle = '#fff';
-  ctx.font = `${o.weight ?? 700} ${Math.round(scale * 0.78)}px ${o.font ?? '"NB Serif","Noto Serif SC","Source Han Serif SC","Songti SC",serif'}`;
+  ctx.font = `${o.weight ?? 400} ${Math.round(scale * 0.78)}px ${o.font ?? '"NB Title","NB Serif","Noto Serif SC",serif'}`; // M5：标题字体换 站酷小薇（仅简体字形，「叙」右部为「又」，不会被看成「敘」）
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   if (o.spacing) ctx.letterSpacing = `${o.spacing}px`;
-  ctx.fillText(text, cv.width / 2, cv.height * 0.54);
+  ctx.fillText(text, cv.width / 2, cv.height * 0.54); if (o.stroke !== 0) { ctx.strokeStyle = '#fff'; ctx.lineJoin = 'round'; ctx.lineWidth = scale * (o.stroke ?? 0.05); ctx.strokeText(text, cv.width / 2, cv.height * 0.54); }
   const tex = new THREE.CanvasTexture(cv);
   const m = mat.clone();
-  m.alphaMap = tex; m.transparent = false; m.alphaTest = 0.5; m.bumpMap = tex; m.bumpScale = 2;
+  m.alphaMap = tex; m.transparent = false; m.alphaTest = 0.5; m.bumpMap = tex; m.bumpScale = o.bump ?? 0.6; tex.anisotropy = 8; tex.colorSpace = THREE.NoColorSpace;
   m.map = null;
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m);
   return mesh;

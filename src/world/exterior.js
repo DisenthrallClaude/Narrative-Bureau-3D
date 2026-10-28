@@ -136,12 +136,12 @@ export async function buildExterior(scene, world, ctx) {
   return g;
 }
 
-function blob(r, seed) {
+export function blob(r, seed) {
   const g = new THREE.IcosahedronGeometry(r, 3); const p = g.attributes.position; const v = new THREE.Vector3();
   for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); const n = Math.sin(v.x * 3.1 + seed) * Math.sin(v.y * 2.7 + seed * 2) * Math.sin(v.z * 3.3 + seed * 3); v.multiplyScalar(1 + n * 0.18 + (Math.random() - 0.5) * 0.06); p.setXYZ(i, v.x, v.y, v.z); }
   g.computeVertexNormals(); return g;
 }
-function cypress(b, x, z) {
+export function cypress(b, x, z) {
   const H = 8 + Math.random() * 2.5;
   for (let k = 0; k < 6; k++) { const t = k / 5; const r = 1.45 * (1 - t * 0.78); b.add('foliage', blob(r, x + z + k), { pos: [x + (Math.random() - 0.5) * 0.2, 1.2 + t * H, z + (Math.random() - 0.5) * 0.2], scale: [1, 1.5, 1] }, { uv: 0.8 }); }
   b.add('wood', new THREE.CylinderGeometry(0.2, 0.25, 1, 6), { pos: [x, 0.5, z] }, { uv: 1 });
@@ -168,7 +168,7 @@ function lawTileTexture() {
   const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 1024; const c = cv.getContext('2d');
   c.fillStyle = '#1a140c'; c.fillRect(0, 0, 1024, 1024);
   const laws = ['第一条　叙事安全，人人有责', '第二条　凡畸变之物，应即上交', '第三条　禁止私自续写他人命运', '第四条　现实稳定度为国家安全指标', '第五条　叙事高考依法组织', '第六条　不得以文字伤人', '第八条　归档者之档号永久保留', '第九条　废稿不得流入人间'];
-  c.font = '700 38px "NB Serif", serif'; c.textBaseline = 'middle';
+  c.font = '700 38px \"NB Title\", \"NB Serif\", serif'; c.textBaseline = 'middle';
   for (let i = 0; i < 16; i++) {
     const y = 32 + i * 64; c.fillStyle = i % 2 ? '#2a2014' : '#231a10'; c.fillRect(0, y - 30, 1024, 60);
     c.fillStyle = '#c9a052'; c.fillText(laws[i % laws.length], 40 + (i % 3) * 30, y);
@@ -268,7 +268,7 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
     const em = emblem(1.1, M.gold, M.navy); em.position.set(0, Y + archApex(pW, hs) + 0.9, -5 + pDepth + 0.25); g.add(em);
     // 山花两斜边卷叶饰
     for (let k = 1; k < 9; k++) { const t = k / 9; for (const sx of [-1, 1]) b.add('stone', new THREE.ConeGeometry(0.14, 0.5, 4), front.at(sx * hw * (1 - t), archApex(pW, hs) - 3.2 + 9 * t + 0.25, pDepth), { uv: 1 }); }
-    pinnacle(b, front, 0, archApex(pW, hs) - 3.2 + 8.6, pDepth, 0.5);
+    pinnacle(b, front, 0, archApex(pW, hs) - 3.2 + 8.6, pDepth, 0.22); // M5：缩小，避免挡住招牌「管」字
   }
   // 门洞内：鼓室（tympanum）与局徽浮雕
   b.add('stoneDark', archSolidGeo(DW, 0.01, 0.3), front.at(0, hs, 0.1), { uv: 0.4 });
@@ -292,7 +292,7 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
   b.add('stoneDark', new THREE.BoxGeometry(17, 3.6, 0.5), front.at(0, textBandY, 0.2), { uv: 0.5 });
   b.add('gold', new THREE.BoxGeometry(17.4, 0.14, 0.6), front.at(0, textBandY + 1.85, 0.2), { uv: 1 });
   b.add('gold', new THREE.BoxGeometry(17.4, 0.14, 0.6), front.at(0, textBandY - 1.85, 0.2), { uv: 1 });
-  const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 256, spacing: 30 }); txt.position.set(0, Y + textBandY, -5 + 0.5); g.add(txt);
+  const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + textBandY, -5 + 0.5); g.add(txt);
   const big = emblem(4.2, M.goldBright, M.navy); big.position.set(0, Y + 37, -5 + 0.5); g.add(big); ctx.facadeEmblem = big;
   b.add('stoneDark', new THREE.CylinderGeometry(5.3, 5.3, 0.3, 48), { pos: [0, Y + 37, -5 + 0.2], rot: [Math.PI / 2, 0, 0] }, { uv: 0.5 });
   lancetWindow(b, front, -9.2, 31.5, 0.05, 2.2, 8.5);
@@ -590,10 +590,10 @@ function drawCountdown(c, t, W, H) {
   const days = Math.max(0, Math.ceil((target - Date.now()) / 86400000));
   c.fillStyle = '#03060c'; c.fillRect(0, 0, W, H);
   const g = c.createLinearGradient(0, 0, W, 0); g.addColorStop(0, '#0d1d44'); g.addColorStop(1, '#050a18'); c.fillStyle = g; c.fillRect(0, 0, W, 96);
-  c.fillStyle = '#e8c87a'; c.font = '700 48px "NB Serif", serif'; c.textAlign = 'left'; c.fillText('叙事管理局 · 公告', 36, 66);
-  c.fillStyle = '#cfd8ea'; c.font = '700 54px "NB Serif", serif'; c.fillText('距 2027 全国叙事高考', 36, 200);
-  c.fillStyle = '#ffd36e'; c.font = '700 190px "NB Serif", serif'; c.textAlign = 'right'; c.fillText(String(days), W - 190, 400);
-  c.fillStyle = '#cfd8ea'; c.font = '700 70px "NB Serif", serif'; c.fillText('天', W - 70, 400);
+  c.fillStyle = '#e8c87a'; c.font = '700 48px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'left'; c.fillText('叙事管理局 · 公告', 36, 66);
+  c.fillStyle = '#cfd8ea'; c.font = '700 54px \"NB Title\", \"NB Serif\", serif'; c.fillText('距 2027 全国叙事高考', 36, 200);
+  c.fillStyle = '#ffd36e'; c.font = '700 190px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'right'; c.fillText(String(days), W - 190, 400);
+  c.fillStyle = '#cfd8ea'; c.font = '700 70px \"NB Title\", \"NB Serif\", serif'; c.fillText('天', W - 70, 400);
   c.textAlign = 'left'; c.fillStyle = '#7f8db0'; c.font = '30px "NB Sans", sans-serif'; c.fillText('京城 · 现实稳定度 97.3%　叙事污染指数 37 良', 36, 480);
 }
 

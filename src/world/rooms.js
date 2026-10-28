@@ -10,6 +10,7 @@ import { FLOOR, T } from './exterior.js';
 import { wallX, wallZ, rectLight, spot, point, person, signMaterial, brassPlaqueMaterial, woodChair, posterMaterial } from './interiors.js';
 import { FLOORS, room, elevatorHall, vaultMats, tagMaterial, steelShelf, beacon } from './vault.js';
 import { dressMats } from './dress.js';
+import { m5Mats } from './dress_m5.js';
 import { pbr } from '../engine/assets.js';
 
 export const UNDER = { B1: -10, B2: -18, B6: -52 };
@@ -21,7 +22,7 @@ export function buildRooms(scene, world, ctx) {
   const mk = (name) => { const g = new THREE.Group(); g.name = name; scene.add(g); ctx.zones[name] = g; return g; };
   const addTo = (g) => (p) => { jobs.push(p.then((o) => { g.add(o); return o; })); return p; };
   const docMesh = (id, w, h, fallback) => { const d = content.get(id); const t = d?.texture ? content.tex(d.texture) : null; return new THREE.Mesh(new THREE.PlaneGeometry(w, h), t ? new THREE.MeshStandardMaterial({ map: t, roughness: 0.6 }) : fallback); };
-  const MAT = { ...M, ...Mx, ...dressMats(M), b2Floor: b2FloorMat(M), quilt: quiltPad() };
+  const MAT = { ...M, ...Mx, ...dressMats(M), ...m5Mats(M), b2Floor: b2FloorMat(M), quilt: quiltPad() };
   ctx.rooms = {};
 
   // ================= 1F 职工食堂与中庭 =================
@@ -37,17 +38,27 @@ export function buildRooms(scene, world, ctx) {
     // 大厅本体
     b.box('woodFloor', 2 * X, 0.1, Z0 - Z1, [0, Y - 0.05, cz], { uv: 0.35, collide: true });
     // 墙体碰撞只到 6.8 m（上方与 2F 楼板在同一位置，避免挡住楼上的玩家）
-    wallX(b, 'panelWall', -X - 0.2, Z0, Z1, Y, 6.8, 0.4, [], true); wallX(b, 'panelWall', X + 0.2, Z0, Z1, Y, 6.8, 0.4, [], true);
+    wallX(b, 'panelWall', -X - 0.2, Z0, Z1, Y, 6.8, 0.4, [], true); wallX(b, 'panelWall', X + 0.2, Z0, Z1, Y, 6.8, 0.4, [{ z0: -111.4, z1: -114.6, h: 3.4 }], true); // M5：东墙门洞 → 东廊
     wallZ(b, 'panelWall', Z0, -X, X, Y, 6.8, 0.4, [{ x0: -2.4, x1: 2.4, h: 6.2 }], true); wallZ(b, 'panelWall', Z1, -X, X, Y, 6.8, 0.4, [], true);
     for (const sx of [-1, 1]) b.box('panelWall', 0.4, H - 6.8, Z0 - Z1, [sx * (X + 0.2), Y + 6.8 + (H - 6.8) / 2, cz], { uv: 0.3 });
     for (const z of [Z0, Z1]) b.box('panelWall', 2 * X, H - 6.8, 0.4, [0, Y + 6.8 + (H - 6.8) / 2, z], { uv: 0.3 });
     // 两层回廊（二层挑台）
     for (const sx of [-1, 1]) { b.box('wood', 4, 0.3, Z0 - Z1, [sx * (X - 2), Y + 6.3, cz], { uv: 0.5 }); b.box('gold', 0.08, 0.05, Z0 - Z1, [sx * (X - 4), Y + 7.45, cz], { uv: 1 }); for (let z = Z0 - 3; z > Z1; z -= 6) { b.add('stoneDark', new THREE.CylinderGeometry(0.28, 0.32, 6.2, 12), { pos: [sx * (X - 4), Y + 3.1, z] }, { uv: 0.5, collide: true }); } }
-    // 玻璃顶（钢桁架 + 透明玻璃，能看见黄昏天空）
-    for (let z = Z0; z >= Z1; z -= 3) { b.box('blackMetal', 2 * X, 0.18, 0.12, [0, Y + H, z], { uv: 1 }); b.add('blackMetal', new THREE.BoxGeometry(0.1, 0.1, 2 * X * 0.56), { pos: [-X / 2, Y + H + 2.2, z], rot: [0, Math.PI / 2, 0.28] }, { uv: 1 }); b.add('blackMetal', new THREE.BoxGeometry(0.1, 0.1, 2 * X * 0.56), { pos: [X / 2, Y + H + 2.2, z], rot: [0, Math.PI / 2, -0.28] }, { uv: 1 }); }
-    for (const sx of [-1, 1]) { const g = new THREE.PlaneGeometry(Z0 - Z1, X * 1.04); const m = new THREE.Mesh(g, M.glassClear); m.position.set(sx * X / 2, Y + H + 2.4, cz); m.rotation.set(-Math.PI / 2, 0, Math.PI / 2); m.rotateX(sx * 0.28); zone.add(m); }
-    b.box('gold', 0.14, 0.14, Z0 - Z1, [0, Y + H + 4.8, cz], { uv: 1 });
-    for (const z of [Z0, Z1]) { const s = new THREE.Shape(); s.moveTo(-X, 0); s.lineTo(0, 4.9); s.lineTo(X, 0); b.add('panelWall', new THREE.ShapeGeometry(s), { pos: [0, Y + H, z + (z === Z0 ? -0.01 : 0.01)], rot: [0, z === Z0 ? Math.PI : 0, 0] }, { uv: 0.3 }); }
+    // 玻璃顶（M5：规则的哥特铁艺尖拱玻璃顶——尖拱主肋每 3 m 一榀、每 9 m 一道加粗金饰主肋，纵向檩条，拱脚圆形花窗格，脊线金条）
+    { const a = X, rise = 6.2, c = (rise * rise - a * a) / (2 * a), R = a + c, prof = []; const NS = 12;
+      for (let i = 0; i <= NS; i++) { const t = i / NS, x = -a + a * t; prof.push([x, Math.sqrt(Math.max(0, R * R - (x - c) * (x - c)))]); }
+      for (let i = NS - 1; i >= 0; i--) prof.push([-prof[i][0], prof[i][1]]);
+      ctx.canteenRoof = (x) => { const ax = Math.abs(x); return Math.sqrt(Math.max(0, R * R - (-ax - c) * (-ax - c))); };
+      const L = Z0 - Z1, pos = [], idx = []; prof.forEach(([x, yy], i) => { pos.push(x, Y + H + yy, Z0, x, Y + H + yy, Z1); if (i) { const k = i * 2; idx.push(k - 2, k - 1, k, k - 1, k + 1, k); } });
+      const gg = new THREE.BufferGeometry(); gg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); gg.setIndex(idx); gg.computeVertexNormals(); const glass = new THREE.Mesh(gg, M.glassClear); glass.material = M.glassClear.clone(); glass.material.side = THREE.DoubleSide; glass.material.opacity = 0.14; zone.add(glass);
+      const curve = new THREE.CatmullRomCurve3(prof.map(([x, yy]) => new THREE.Vector3(x, yy - 0.05, 0)));
+      for (let k = 0, z = Z0; z >= Z1 - 0.01; z -= 3, k++) { const major = k % 3 === 0; b.add(major ? 'iron' : 'blackMetal', new THREE.TubeGeometry(curve, 48, major ? 0.13 : 0.07, 6), { pos: [0, Y + H, z] }, { uv: 1 }); if (major) b.add('gold', new THREE.TubeGeometry(curve, 48, 0.035, 4), { pos: [0, Y + H - 0.12, z + 0.1] }, { uv: 1 });
+        for (const sx of [-1, 1]) { b.add('iron', new THREE.TorusGeometry(0.75, 0.05, 6, 24), { pos: [sx * (a - 1.25), Y + H + 1.1, z] }, { uv: 1 }); for (let q = 0; q < 4; q++) { const qa = q * Math.PI / 2 + Math.PI / 4; b.add('iron', new THREE.TorusGeometry(0.28, 0.03, 4, 16), { pos: [sx * (a - 1.25) + Math.cos(qa) * 0.36, Y + H + 1.1 + Math.sin(qa) * 0.36, z] }, { uv: 1 }); } b.box('iron', 0.08, 2.2, 0.08, [sx * (a - 0.25), Y + H + 0.6, z], { uv: 1 }); }
+        if (major) { b.add('gold', new THREE.TorusGeometry(0.42, 0.05, 6, 24), { pos: [0, Y + H + rise - 0.9, z] }, { uv: 1 }); b.add('gold', new THREE.SphereGeometry(0.12, 10, 8), { pos: [0, Y + H + rise - 0.9, z] }, { uv: 1 }); } }
+      for (let i = 2; i < prof.length - 1; i += 2) { const [x, yy] = prof[i]; b.box('blackMetal', 0.06, 0.06, L, [x, Y + H + yy - 0.06, (Z0 + Z1) / 2], { uv: 1 }); }
+      b.box('gold', 0.16, 0.12, L, [0, Y + H + rise - 0.02, (Z0 + Z1) / 2], { uv: 1 });
+      for (const z of [Z0, Z1]) { const sh = new THREE.Shape(); sh.moveTo(-a, 0); prof.forEach(([x, yy]) => sh.lineTo(x, yy)); sh.lineTo(a, 0); b.add('panelWall', new THREE.ShapeGeometry(sh), { pos: [0, Y + H, z + (z === Z0 ? -0.01 : 0.01)], rot: [0, z === Z0 ? Math.PI : 0, 0] }, { uv: 0.3 }); b.add('gold', new THREE.TubeGeometry(curve, 48, 0.06, 5), { pos: [0, Y + H, z + (z === Z0 ? -0.08 : 0.08)] }, { uv: 1 }); }
+    }
     // 打饭窗口（北墙）+ 电子菜单屏
     b.box('steel', 22, 1.0, 1.2, [0, Y + 0.5, Z1 + 1.4], { uv: 1, collide: true });
     b.box('blackMarble', 22.2, 0.06, 1.3, [0, Y + 1.03, Z1 + 1.4], { uv: 0.5 });
@@ -75,6 +86,7 @@ export function buildRooms(scene, world, ctx) {
     // 绿植、吊灯
     for (const [x, z] of [[-15, -113], [15, -113], [-15, -136], [15, -136], [-4.5, -125], [4.5, -125]]) add(placeModel('potted_plant', { height: 2.0, pos: [x, Y, z] }));
     for (let r = 0; r < 3; r++) for (const x of [-9, 0, 9]) add(placeModel('chandelier', { height: 1.6, pos: [x, Y + 9.2, Z0 - 7 - r * 8] }));
+    for (let r = 0; r < 3; r++) for (const x of [-9, 0, 9]) { const top = Y + H + ctx.canteenRoof(x), bot = Y + 10.75; b.add('iron', new THREE.CylinderGeometry(0.02, 0.02, top - bot, 6), { pos: [x, (top + bot) / 2, Z0 - 7 - r * 8] }, { uv: 1 }); b.add('gold', new THREE.CylinderGeometry(0.12, 0.08, 0.15, 10), { pos: [x, bot, Z0 - 7 - r * 8] }, { uv: 1 }); } // M5：吊杆，吊灯不再悬空
     for (const x of [-9, 0, 9]) point(zone, 0xffd8a8, 18, [x, Y + 8, cz], 20);
     rectLight(zone, 0xfff0dc, 1.4, 34, 28, [0, Y + 12.5, cz], [0, Y, cz]);
     spot(zone, 0xffc890, 260, [10, Y + 17, -118], [-4, Y, -128], 0.55, true, 40);
@@ -90,15 +102,15 @@ export function buildRooms(scene, world, ctx) {
     FLOORS.B1 = { y, label: 'B1　外勤缉拿处 · 整备库' };
     elevatorHall(b, zone, world, ctx, M, Mx, 'B1', y);
     const X = 16, Z0 = -92, Z1 = -126, H = 5.6, cz = (Z0 + Z1) / 2;
-    room(b, world, M, -X, X, Z0, Z1, y, H, 'darkTile', 'concreteWall', { frontHole: { x0: -9.4, x1: 9.4, h: 5.2 } });
-    for (let x = -X + 2; x < X; x += 4) b.box('hazard', 0.12, 0.01, Z0 - Z1, [x, y + 0.005, cz], { uv: 0.8 });
+    room(b, world, M, -X, X, Z0, Z1, y, H, 'epoxy', 'concreteWall', { frontHole: { x0: -9.4, x1: 9.4, h: 5.2 } }); // M5：哑光环氧地坪
+    // M5：通长黄斜纹改为 dress_m5 里的车位/人行道标线
     // 作战简报室（西侧）：大屏 + 白板 + 座椅
     const brief = new CanvasScreen(1280, 640, drawBriefing, { fps: 0.5, intensity: 1.2 }); ctx.screens.push(brief);
     const bs = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 3.2), brief.mat); bs.position.set(-X + 0.25, y + 2.7, -100); bs.rotation.y = Math.PI / 2; zone.add(bs);
     const wb = docMesh('doc_arm_briefing', 3.0, 1.6, signMaterial('出勤白板', ['外勤一组：京-朝阳-001 · 复查', '外勤二组：雾港联络 · 待命', '外勤三组：第二草稿线索 · 跟进', '', '今日口令：别回答'], 600, 320));
     wb.position.set(-X + 0.25, y + 1.8, -108); wb.rotation.y = Math.PI / 2; zone.add(wb); ctx.anchors.doc_arm_briefing = wb;
     b.box('paintedSteel', 0.06, 1.7, 3.1, [-X + 0.22, y + 1.8, -108], { uv: 1 });
-    for (let r = 0; r < 3; r++) { const x = -X + 4 + r * 1.6; b.box('wood', 0.4, 0.06, 5.0, [x, y + 0.45, -99.5], { uv: 0.6 }); for (const z of [-97.4, -101.6]) b.box('blackMetal', 0.36, 0.44, 0.06, [x, y + 0.22, z], { uv: 1 }); b.box('wood', 0.05, 0.4, 5.0, [x - 0.2, y + 0.72, -99.5], { uv: 0.6 }); world.box(x, y + 0.4, -99.5, 0.45, 0.8, 5); } // M4：简报长凳替代办公转椅
+    for (let r = 0; r < 3; r++) { const x = -X + 4 + r * 1.6; b.box('wood', 0.4, 0.06, 5.0, [x, y + 0.45, -99.5], { uv: 0.6 }); for (const z of [-97.4, -99.5, -101.6]) { for (const dx of [-0.15, 0.15]) b.box('blackMetal', 0.05, 0.44, 0.05, [x + dx, y + 0.22, z], { uv: 1 }); b.box('blackMetal', 0.36, 0.04, 0.05, [x, y + 0.12, z], { uv: 1 }); } b.box('blackMetal', 0.04, 0.04, 4.3, [x, y + 0.12, -99.5], { uv: 1 }); b.box('wood', 0.05, 0.4, 5.0, [x - 0.2, y + 0.72, -99.5], { uv: 0.6 }); world.box(x, y + 0.4, -99.5, 0.45, 0.8, 5); } // M4：简报长凳替代办公转椅
     // A 级通缉档案柜
     add(placeModel('file_cabinet', { height: 1.4, pos: [-X + 1.0, y, -114], rotY: Math.PI / 2 }));
     const fl = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.12), tagMaterial('A 级　高危通缉')); fl.position.set(-X + 1.45, y + 1.2, -114); fl.rotation.y = Math.PI / 2; zone.add(fl); ctx.anchors.doc_arm_wanted_files = { obj: fl, range: 3 };
@@ -185,9 +197,9 @@ export function buildRooms(scene, world, ctx) {
     FLOORS.B6 = { y, label: 'B6　驯化副本训练场' };
     elevatorHall(b, zone, world, ctx, M, Mx, 'B6', y);
     const X = 32, Z0 = -92, Z1 = -156, H = 16, cz = (Z0 + Z1) / 2;
-    room(b, world, M, -X, X, Z0, Z1, y, H, 'blackFloor', 'vaultWall', { frontHole: { x0: -9.4, x1: 9.4, h: 5.2 } });
+    room(b, world, M, -X, X, Z0, Z1, y, H, 'trainFloor', 'vaultWall', { frontHole: { x0: -9.4, x1: 9.4, h: 5.2 } });
     // 地面网格灯带
-    const grid = new THREE.MeshStandardMaterial({ color: 0x1a1610, emissive: 0xc9a052, emissiveIntensity: 0.35 }); // M4：纸张折痕般的暗金网格
+    const grid = new THREE.MeshStandardMaterial({ color: 0x1a1610, emissive: 0xc9a052, emissiveIntensity: 0.12 }); // M5 降亮；M4：纸张折痕般的暗金网格
     for (let x = -X + 4; x < X; x += 4) { const m = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.01, Z0 - Z1), grid); m.position.set(x, y + 0.006, cz); zone.add(m); }
     for (let z = Z0 - 4; z > Z1; z -= 4) { const m = new THREE.Mesh(new THREE.BoxGeometry(2 * X, 0.01, 0.04), grid); m.position.set(0, y + 0.006, z); zone.add(m); }
     // 六扇副本门（弧形排列）
@@ -250,7 +262,7 @@ function armoredCar(M) {
   return g;
 }
 function canvasMat(w, h, draw) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.85 }); }
-function lineTexture(title) { const cv = document.createElement('canvas'); cv.width = 256; cv.height = 340; const c = cv.getContext('2d'); c.fillStyle = '#ece6d6'; c.fillRect(0, 0, 256, 340); c.fillStyle = '#1a1612'; c.font = '700 22px "NB Serif", serif'; c.fillText(title, 16, 36); c.fillStyle = '#8a8276'; for (let y = 60; y < 330; y += 14) c.fillRect(16, y, 150 + ((y * 17) % 80), 5); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; }
+function lineTexture(title) { const cv = document.createElement('canvas'); cv.width = 256; cv.height = 340; const c = cv.getContext('2d'); c.fillStyle = '#ece6d6'; c.fillRect(0, 0, 256, 340); c.fillStyle = '#1a1612'; c.font = '700 22px \"NB Title\", \"NB Serif\", serif'; c.fillText(title, 16, 36); c.fillStyle = '#8a8276'; for (let y = 60; y < 330; y += 14) c.fillRect(16, y, 150 + ((y * 17) % 80), 5); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; }
 function scratchMaterial() { const m = canvasMat(256, 160, (c, w, h) => { c.clearRect(0, 0, w, h); c.strokeStyle = 'rgba(255,255,255,0.55)'; c.lineWidth = 1.5; c.font = '40px "NB Serif", serif'; c.strokeText('我 没 有 写', 20, 70); c.strokeText('这 一 段', 50, 130); }); m.transparent = true; m.map.premultiplyAlpha = false; m.metalness = 1; m.roughness = 0.3; return m; }
 function madWallMaterial() {
   return canvasMat(1100, 1050, (c, w, h) => {
@@ -259,9 +271,9 @@ function madWallMaterial() {
     for (let i = 0; i < 160; i++) { c.save(); c.translate(Math.random() * w, Math.random() * h); c.rotate((Math.random() - 0.5) * 0.9); c.fillStyle = `rgba(${20 + Math.random() * 60},${10 + Math.random() * 20},${10 + Math.random() * 20},${0.5 + Math.random() * 0.5})`; c.font = `${18 + Math.random() * 46}px "NB Serif", serif`; c.fillText(L[i % L.length], 0, 0); c.restore(); }
   });
 }
-function drawMenu(c, t, W, H) { c.fillStyle = '#060a10'; c.fillRect(0, 0, W, H); c.fillStyle = '#e8c87a'; c.font = '700 54px "NB Serif", serif'; c.fillText('今日菜单', 30, 70); const items = ['红烧狮子头　12', '番茄炒蛋　6', '清炒时蔬　4', '老鸭汤　8', '米饭　1', '「回忆」　售罄']; c.font = '40px "NB Sans", sans-serif'; items.forEach((s, i) => { c.fillStyle = i === 5 ? '#ff6a4a' : '#cfd8ea'; c.fillText(s, 30 + (i % 3) * 500, 160 + Math.floor(i / 3) * 90); }); }
-function drawBriefing(c, t, W, H) { c.fillStyle = '#04070e'; c.fillRect(0, 0, W, H); c.fillStyle = '#e8c87a'; c.font = '700 44px "NB Serif", serif'; c.fillText('外勤作战简报　·　今日出勤', 30, 60); c.strokeStyle = '#2a5aa8'; c.lineWidth = 2; for (let i = 0; i < 12; i++) { c.beginPath(); c.moveTo(60 + i * 90, 120); c.lineTo(60 + i * 90, 600); c.stroke(); } for (let i = 0; i < 6; i++) { c.beginPath(); c.moveTo(60, 120 + i * 96); c.lineTo(1050, 120 + i * 96); c.stroke(); } for (let i = 0; i < 9; i++) { const v = 0.5 + 0.5 * Math.sin(t + i); c.fillStyle = i % 4 === 0 ? `rgba(255,80,60,${v})` : `rgba(120,200,255,${v})`; c.beginPath(); c.arc(120 + ((i * 271) % 900), 170 + ((i * 113) % 400), 10, 0, 7); c.fill(); } c.fillStyle = '#9fb4e0'; c.font = '28px "NB Sans", sans-serif'; c.fillText('高危：秦骁【王寇】　江戾【冥礼】　—— 发现即报', 30, 630); }
-function drawBoard(c, t, W, H) { c.fillStyle = '#05070c'; c.fillRect(0, 0, W, H); c.fillStyle = '#e8c87a'; c.font = '700 52px "NB Serif", serif'; c.fillText('训练成绩榜', 40, 80); const rows = [['1', '　　　　', '—'], ['2', '周也', '98.2'], ['3', '殷泽', '97.6'], ['4', '叶寻', '91.0'], ['5', '齐仇', '88.4'], ['6', '实习生', '—']]; c.font = '40px "NB Sans", sans-serif'; rows.forEach((r, i) => { c.fillStyle = i === 0 ? '#ffd36e' : '#cfd8ea'; c.fillText(r[0], 60, 170 + i * 92); c.fillText(r[1], 160, 170 + i * 92); c.fillText(r[2], 700, 170 + i * 92); }); }
+function drawMenu(c, t, W, H) { c.fillStyle = '#060a10'; c.fillRect(0, 0, W, H); c.fillStyle = '#e8c87a'; c.font = '700 54px \"NB Title\", \"NB Serif\", serif'; c.fillText('今日菜单', 30, 70); const items = ['红烧狮子头　12', '番茄炒蛋　6', '清炒时蔬　4', '老鸭汤　8', '米饭　1', '「回忆」　售罄']; c.font = '40px "NB Sans", sans-serif'; items.forEach((s, i) => { c.fillStyle = i === 5 ? '#ff6a4a' : '#cfd8ea'; c.fillText(s, 30 + (i % 3) * 500, 160 + Math.floor(i / 3) * 90); }); }
+function drawBriefing(c, t, W, H) { c.fillStyle = '#04070e'; c.fillRect(0, 0, W, H); c.fillStyle = '#e8c87a'; c.font = '700 44px \"NB Title\", \"NB Serif\", serif'; c.fillText('外勤作战简报　·　今日出勤', 30, 60); c.strokeStyle = '#2a5aa8'; c.lineWidth = 2; for (let i = 0; i < 12; i++) { c.beginPath(); c.moveTo(60 + i * 90, 120); c.lineTo(60 + i * 90, 600); c.stroke(); } for (let i = 0; i < 6; i++) { c.beginPath(); c.moveTo(60, 120 + i * 96); c.lineTo(1050, 120 + i * 96); c.stroke(); } for (let i = 0; i < 9; i++) { const v = 0.5 + 0.5 * Math.sin(t + i); c.fillStyle = i % 4 === 0 ? `rgba(255,80,60,${v})` : `rgba(120,200,255,${v})`; c.beginPath(); c.arc(120 + ((i * 271) % 900), 170 + ((i * 113) % 400), 10, 0, 7); c.fill(); } c.fillStyle = '#9fb4e0'; c.font = '28px "NB Sans", sans-serif'; c.fillText('高危：秦骁【王寇】　江戾【冥礼】　—— 发现即报', 30, 630); }
+function drawBoard(c, t, W, H) { c.fillStyle = '#05070c'; c.fillRect(0, 0, W, H); c.fillStyle = '#e8c87a'; c.font = '700 52px \"NB Title\", \"NB Serif\", serif'; c.fillText('训练成绩榜', 40, 80); const rows = [['1', '　　　　', '—'], ['2', '周也', '98.2'], ['3', '殷泽', '97.6'], ['4', '叶寻', '91.0'], ['5', '齐仇', '88.4'], ['6', '实习生', '—']]; c.font = '40px "NB Sans", sans-serif'; rows.forEach((r, i) => { c.fillStyle = i === 0 ? '#ffd36e' : '#cfd8ea'; c.fillText(r[0], 60, 170 + i * 92); c.fillText(r[1], 160, 170 + i * 92); c.fillText(r[2], 700, 170 + i * 92); }); }
 
 // B2：哑光深色防滑地面（M4：原抛光深砖在冷光下过亮）
 function b2FloorMat(M) { const m = pbr('Tiles138', { color: 0x2a2c30, roughness: 0.78, env: 0.25 }); m.userData = {}; return m; }

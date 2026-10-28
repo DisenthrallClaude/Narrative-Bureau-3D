@@ -45,17 +45,17 @@ export function mats() {
   M.hedge = new THREE.MeshStandardMaterial({ color: 0x6f8a62, map: leaf.map, normalMap: leaf.normal, normalScale: new THREE.Vector2(1.6, 1.6), roughness: 0.92 });
   M.grass = new THREE.MeshStandardMaterial({ color: 0x8aa070, map: leaf.grass, roughness: 0.95 });
   // 室内
-  M.hallFloor = pbr('Marble012', { color: 0x5a5a60, roughness: 0.38, env: 0.3, physical: true, clearcoat: 0.12, clearcoatRoughness: 0.25 });
-  M.hallFloorDark = pbr('Marble006', { color: 0x4c4c52, roughness: 0.38, env: 0.3, physical: true, clearcoat: 0.12, clearcoatRoughness: 0.25 });
-  M.terrazzo = pbr('Terrazzo005', { color: 0x8a8a8e, roughness: 0.4, env: 0.5 });
-  M.wallStone = pbr('Marble016', { color: 0x6a6a72, roughness: 0.48, env: 0.8 }); // M4：原花岗岩在暖光下呈锈斑，改黑金纹大理石
+  M.hallFloor = pbr('Marble012', { rn: true, color: 0x55555b, roughness: 0.3, env: 0.3, physical: true, clearcoat: 0.12, clearcoatRoughness: 0.25 });
+  M.hallFloorDark = pbr('Marble006', { rn: true, color: 0x46464c, roughness: 0.3, env: 0.3, physical: true, clearcoat: 0.12, clearcoatRoughness: 0.25 });
+  M.terrazzo = pbr('Terrazzo005', { rn: true, color: 0x8a8a8e, roughness: 0.55, env: 0.3 });
+  M.wallStone = pbr('Marble016', { rn: true, color: 0x5e5e66, roughness: 0.5, env: 0.6 }); // M4：原花岗岩在暖光下呈锈斑，改黑金纹大理石
   M.vault = pbr('Concrete034', { color: 0x8a8478, roughness: 0.85, env: 0.6 }); M.vault.side = THREE.DoubleSide; M.vault.userData.noShadow = true; // 双面薄壳自投影会出现橙黑色阴影痤疮
-  M.panelWall = pbr('Marble006', { color: 0x5e5850, roughness: 0.62, env: 0.45 });
+  M.panelWall = pbr('Marble006', { rn: true, color: 0x5e5850, roughness: 0.6, env: 0.35 });
   M.wallPlaster = pbr('Concrete034', { color: 0x3e4a44, roughness: 0.8 });
   M.onyx = pbr('Onyx013', { color: 0x8a8a90, roughness: 0.22, env: 1.2 });
   M.wood = pbr('Wood051', { color: 0x4a3020, roughness: 0.55, env: 0.3 }); // M4：深胡桃
   M.doorWood = pbr('Wood051', { color: 0x6a4e3a, roughness: 0.55, repeat: [1.5, 4] });
-  M.woodFloor = pbr('WoodFloor064', { color: 0x7a6656, roughness: 0.66, env: 0.25 }); // M4：掠射角环境反射是档案馆「白光溢出」的主因
+  M.woodFloor = pbr('WoodFloor064', { rn: true, color: 0x6e5a4a, roughness: 0.72, env: 0.2 }); // M4：掠射角环境反射是档案馆「白光溢出」的主因
   M.carpet = pbr('Carpet012', { color: 0x6a2228, roughness: 1 });
   M.steel = pbr('Metal009', { color: 0xc8ccd0, metalness: 1, roughness: 0.32 });
   M.blackMetal = pbr('Metal046A', { color: 0x3a3c42, metalness: 1, roughness: 0.38 });

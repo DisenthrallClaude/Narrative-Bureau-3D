@@ -31,7 +31,7 @@ export function dressMats(M) {
     dz_wain: W(pbr('Wood051', { color: 0x4a3222, roughness: 0.5, env: 0.6 }), { macro: 0.12, grime: 0.2, ground: 1.0 }),
     dz_wain2: W(pbr('Wood051', { color: 0x5e4230, roughness: 0.42, env: 0.7 }), { macro: 0.1 }),
     dz_base: M.stoneDark,
-    dz_pil: W(pbr('Marble016', { color: 0x2a2a30, roughness: 0.38, env: 0.8 }), { macro: 0.12, grime: 0.2, ground: 1.2 }),
+    dz_pil: W(pbr('Marble016', { rn: true, color: 0x2a2a30, roughness: 0.34, env: 0.6 }), { macro: 0.12, grime: 0.2, ground: 1.2 }),
     dz_damask: W(new THREE.MeshStandardMaterial({ map: damask('#1d2232', '#4a5270', '#2a3046'), roughness: 0.85, envMapIntensity: 0.4 }), { macro: 0.15, grime: 0.15 }),
     dz_damaskRed: W(new THREE.MeshStandardMaterial({ map: damask('#3a1416', '#6a2a26', '#4a1c1c'), roughness: 0.85, envMapIntensity: 0.4 }), { macro: 0.15, grime: 0.15 }),
     dz_damaskGreen: W(new THREE.MeshStandardMaterial({ map: damask('#1a2a22', '#3e5a48', '#22362c'), roughness: 0.85, envMapIntensity: 0.4 }), { macro: 0.15, grime: 0.15 }),
@@ -61,6 +61,7 @@ export function dressMats(M) {
     dz_glassDark: new THREE.MeshPhysicalMaterial({ color: 0x0a0e14, roughness: 0.08, metalness: 0.2, envMapIntensity: 0.6, clearcoat: 1 }),
     dz_leaves: M.foliage,
     dz_soil: new THREE.MeshStandardMaterial({ color: 0x1c140e, roughness: 1 }),
+    dz_brassDim: W(new THREE.MeshStandardMaterial({ color: 0x7a5e34, metalness: 0.85, roughness: 0.55, envMapIntensity: 0.5 }), { macro: 0.15, tarnish: 0.4 }),
     dz_cork: new THREE.MeshStandardMaterial({ color: 0x8a6440, roughness: 1 }),
   };
   for (const m of [DM.dz_glow, DM.dz_glowCold, DM.dz_shade, DM.dz_glassDark]) m.userData.noShadow = true;
@@ -174,7 +175,7 @@ export function roomDress(b, x0, x1, z0, z1, y, h, o = {}) {
 
 /** 藻井天花：主次梁格栅 + 凹板 + 金线 + 每格中央筒灯（发光） */
 export function coffered(b, x0, x1, z0, z1, y, o = {}) {
-  const cell = o.cell ?? 3, d = o.depth ?? 0.38, beam = o.beam ?? 'dz_beam', trim = o.trim ?? 'brass';
+  const cell = o.cell ?? 3, d = o.depth ?? 0.38, beam = o.beam ?? 'dz_beam', trim = o.trim ?? 'dz_brassDim'; // M5：藻井金线改哑光暗铜，原抛光黄铜偏亮
   const nx = Math.max(1, Math.round((x1 - x0) / cell)), nz = Math.max(1, Math.round((z0 - z1) / cell));
   const cx = (x1 - x0) / nx, cz = (z0 - z1) / nz;
   b.box(o.panel ?? 'dz_ceil', x1 - x0, 0.04, z0 - z1, [(x0 + x1) / 2, y - 0.02, (z0 + z1) / 2], { uv: 0.3 });
@@ -285,7 +286,7 @@ export function bookcase(b, world, x, y, z, yaw, w = 2.4, h = 3.2, d = 0.45, o =
 export function hangingSign(zone, M, text, x, y, z, yaw = 0, w = 1.6) {
   const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128; const c = cv.getContext('2d');
   c.fillStyle = '#0c0d10'; c.fillRect(0, 0, 512, 128); c.strokeStyle = '#c9a052'; c.lineWidth = 5; c.strokeRect(8, 8, 496, 112);
-  c.fillStyle = '#e8c87a'; c.font = '700 54px "NB Serif", serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 256, 66, 470);
+  c.fillStyle = '#e8c87a'; c.font = '700 54px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 256, 66, 470);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
   const m = new THREE.MeshStandardMaterial({ map: t, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.35, roughness: 0.4 });
   const g = new THREE.Group(); const p = new THREE.Mesh(new THREE.BoxGeometry(w, w / 4, 0.04), [M.blackMetal, M.blackMetal, M.blackMetal, M.blackMetal, m, m]); g.add(p);

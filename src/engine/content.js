@@ -20,6 +20,17 @@ export class Content {
   /** 贴图 URL（仅 status=ready） */
   texUrl(id) { const t = this.byId.get(id); if (!t || !t.path) return null; if (t.status !== 'ready' && !this.files?.has(t.path)) return null; return `content/${t.path}`; }
   tex(id, opts = {}) { const u = this.texUrl(id); if (!u) return null; const t = loadTex(u, { srgb: true }); if (opts.flipY === false) t.flipY = false; return t; }
+  /** 生图贴图上的错字修补（如繁体「敘」→简体「叙」）：载入后画到画布，按比例坐标盖底色并重写文字 */
+  texPatched(id, patches) {
+    const u = this.texUrl(id); if (!u) return null;
+    const cv = document.createElement('canvas'); cv.width = cv.height = 4; const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+    const img = new Image(); img.onload = async () => {
+      try { await document.fonts.load('700 40px \"NB Title\", \"NB Serif\"', '叙'); } catch { /* */ }
+      cv.width = img.naturalWidth; cv.height = img.naturalHeight; const c = cv.getContext('2d'); c.drawImage(img, 0, 0); const W = cv.width, H = cv.height;
+      for (const p of patches) { const [x, y, w, h] = [p.rect[0] * W, p.rect[1] * H, p.rect[2] * W, p.rect[3] * H]; c.fillStyle = p.fill; c.fillRect(x, y, w, h); c.fillStyle = p.color; c.font = `700 ${Math.round(h * (p.size ?? 0.8))}px \"NB Title\", \"NB Serif\", serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(p.text, x + w / 2, y + h * 0.54); }
+      t.needsUpdate = true;
+    }; img.src = u; return t;
+  }
   // —— 任务状态 ——
   has(flag) { return this.flags.has(flag) || this.items.has(flag); }
   set(flag) { if (this.flags.has(flag)) return; this.flags.add(flag); this.emit(flag); }

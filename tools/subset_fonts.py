@@ -11,6 +11,6 @@ chars|=set(base)
 txt=''.join(sorted(c for c in chars if ord(c)>=32))
 open('/tmp/nb_chars.txt','w',encoding='utf-8').write(txt)
 F=os.path.join(ROOT,'..','work','fonts')
-for src,dst in [('NotoSerifSC-Bold.otf','serif-bold.woff2'),('NotoSerifSC-Regular.otf','serif-regular.woff2'),('NotoSansSC-Regular.otf','sans-regular.woff2')]:
+for src,dst in [('NotoSerifSC-Bold.otf','serif-bold.woff2'),('NotoSerifSC-Regular.otf','serif-regular.woff2'),('NotoSansSC-Regular.otf','sans-regular.woff2'),('ZCOOLXiaoWei-Regular.ttf','title.woff2')]:
     subprocess.run([sys.executable,'-m','fontTools.subset',os.path.join(F,src),'--text-file=/tmp/nb_chars.txt','--flavor=woff2',f'--output-file={os.path.join(ROOT,"public/fonts",dst)}','--layout-features=*'],check=True)
 print(len(txt),'chars')
