@@ -25,7 +25,7 @@ export async function buildInteriors(scene, world, ctx) {
 }
 
 // ——— 通用：墙（带门洞）———
-function wallX(b, key, x, z0, z1, y0, h, t, holes = [], collide = true) {
+export function wallX(b, key, x, z0, z1, y0, h, t, holes = [], collide = true) {
   // 沿 z 方向的墙，holes: [{z0,z1,h}]
   let cur = z0; const segs = [];
   const hs = holes.slice().sort((a, b2) => b2.z0 - a.z0);
@@ -34,20 +34,20 @@ function wallX(b, key, x, z0, z1, y0, h, t, holes = [], collide = true) {
   if (cur > z1) segs.push([cur, z1]);
   for (const [a, c] of segs) b.add(key, new THREE.BoxGeometry(t, h, a - c), { pos: [x, y0 + h / 2, (a + c) / 2] }, { uv: 0.25, collide });
 }
-function wallZ(b, key, z, x0, x1, y0, h, t, holes = [], collide = true) {
+export function wallZ(b, key, z, x0, x1, y0, h, t, holes = [], collide = true) {
   let cur = x0; const hs = holes.slice().sort((a, b2) => a.x0 - b2.x0);
   for (const ho of hs) { if (ho.x0 > cur) b.add(key, new THREE.BoxGeometry(ho.x0 - cur, h, t), { pos: [(cur + ho.x0) / 2, y0 + h / 2, z] }, { uv: 0.25, collide }); b.add(key, new THREE.BoxGeometry(ho.x1 - ho.x0, h - ho.h, t), { pos: [(ho.x0 + ho.x1) / 2, y0 + ho.h + (h - ho.h) / 2, z] }, { uv: 0.25 }); cur = ho.x1; }
   if (x1 > cur) b.add(key, new THREE.BoxGeometry(x1 - cur, h, t), { pos: [(cur + x1) / 2, y0 + h / 2, z] }, { uv: 0.25, collide });
 }
 /** 尖拱门洞装饰框（面向 +z 的 Frame） */
-function archPortal(b, f, w, hs, depth, gold = true) {
+export function archPortal(b, f, w, hs, depth, gold = true) {
   b.add('wallStone', archRingGeo(w + 1.2, hs, w, hs, depth), f.at(0, 0, 0), { uv: 0.5 });
   b.add('stoneDark', archRingGeo(w + 0.5, hs, w, hs, depth + 0.2), f.at(0, 0, 0), { uv: 0.5 });
   if (gold) b.add('gold', archRingGeo(w + 1.3, hs, w + 1.2, hs, depth + 0.1), f.at(0, 0, 0), { uv: 1 });
   for (const sx of [-1, 1]) b.add('stoneDark', new THREE.CylinderGeometry(0.22, 0.22, hs, 10), f.at(sx * (w / 2 + 0.3), hs / 2, depth / 2 + 0.05), { uv: 0.5 });
 }
 /** 束柱 */
-function pier(b, x, z, y0, h, r = 0.7) {
+export function pier(b, x, z, y0, h, r = 0.7) {
   b.add('wallStone', new THREE.CylinderGeometry(r, r, h, 16), { pos: [x, y0 + h / 2, z] }, { uv: 0.4, collide: true });
   for (let k = 0; k < 8; k++) { const a = (k / 8) * Math.PI * 2; b.add('stoneDark', new THREE.CylinderGeometry(r * 0.28, r * 0.28, h, 8), { pos: [x + Math.cos(a) * r * 0.95, y0 + h / 2, z + Math.sin(a) * r * 0.95] }, { uv: 0.5 }); }
   b.add('stoneDark', new THREE.CylinderGeometry(r * 1.5, r * 1.6, 0.8, 16), { pos: [x, y0 + 0.4, z] }, { uv: 0.5 });
@@ -56,7 +56,7 @@ function pier(b, x, z, y0, h, r = 0.7) {
 }
 /** 管状肋（沿曲线） */
 /** 带尖拱洞的墙片（局部 x 居中，y 从 0 到 h，挤出厚 1.2 沿 z） */
-function wallWithArch(w, h, aw, ahs, ay) {
+export function wallWithArch(w, h, aw, ahs, ay) {
   const sh = new THREE.Shape(); sh.moveTo(-w / 2, 0); sh.lineTo(w / 2, 0); sh.lineTo(w / 2, h); sh.lineTo(-w / 2, h); sh.lineTo(-w / 2, 0);
   const pts = archShape(aw, ahs).getPoints().map((p) => new THREE.Vector2(p.x, p.y + ay));
   if (ay <= 0.001) { // 洞通到底：改为 U 形轮廓
@@ -68,9 +68,9 @@ function wallWithArch(w, h, aw, ahs, ay) {
   sh.holes.push(new THREE.Path(pts.reverse()));
   return new THREE.ExtrudeGeometry(sh, { depth: 1.2, bevelEnabled: false });
 }
-function rib(b, key, pts, r = 0.12) { const c = new THREE.CatmullRomCurve3(pts); b.add(key, new THREE.TubeGeometry(c, Math.max(8, pts.length * 4), r, 6, false), null, { uv: 1 }); }
+export function rib(b, key, pts, r = 0.12) { const c = new THREE.CatmullRomCurve3(pts); b.add(key, new THREE.TubeGeometry(c, Math.max(8, pts.length * 4), r, 6, false), null, { uv: 1 }); }
 /** 尖拱筒形拱顶（沿 z）：宽 w，起拱高 y0，拱高 rise */
-function pointedVault(b, key, cx, cz, w, len, y0, rise, ribEvery = 4) {
+export function pointedVault(b, key, cx, cz, w, len, y0, rise, ribEvery = 4) {
   const g = archRingGeo(w + 0.6, 0.001, w, 0.001, len);
   g.scale(1, rise / (w * 0.866), 1);
   b.add(key, g, { pos: [cx, y0, cz] }, { uv: 0.25 });
@@ -98,7 +98,7 @@ function pointedVault(b, key, cx, cz, w, len, y0, rise, ribEvery = 4) {
   rib(b, 'gold', [new THREE.Vector3(cx, y0 + rise - 0.15, cz - len / 2), new THREE.Vector3(cx, y0 + rise - 0.15, cz + len / 2)], 0.09);
 }
 /** 扇形拱：在 (x,z) 柱顶 y0 处旋转出喇叭形穹面 + 放射金肋 */
-function fanConoid(b, x, z, y0, R, H, sectors = [0, Math.PI * 2]) {
+export function fanConoid(b, x, z, y0, R, H, sectors = [0, Math.PI * 2]) {
   const pts = [];
   for (let i = 0; i <= 14; i++) { const t = i / 14; const r = 0.5 + (R - 0.5) * (1 - Math.cos(t * Math.PI / 2)); const y = H * Math.sin(t * Math.PI / 2); pts.push(new THREE.Vector2(r, y)); }
   const geo = new THREE.LatheGeometry(pts, 48, sectors[0], sectors[1] - sectors[0]);
@@ -113,19 +113,19 @@ function fanConoid(b, x, z, y0, R, H, sectors = [0, Math.PI * 2]) {
 }
 
 /** 带矩形洞的楼板 */
-function slabWithHole(b, key, x0, x1, z0, z1, y, t, h, collide) {
+export function slabWithHole(b, key, x0, x1, z0, z1, y, t, h, collide) {
   const parts = [[x0, h.x0, z0, z1], [h.x1, x1, z0, z1], [h.x0, h.x1, z0, h.z0], [h.x0, h.x1, h.z1, z1]];
   for (const [a, c, d, e] of parts) if (c - a > 0.01 && d - e > 0.01) b.box(key, c - a, t, d - e, [(a + c) / 2, y + t / 2, (d + e) / 2], { uv: 0.35, collide });
 }
-function rectLight(zone, color, intensity, w, h, pos, look) {
+export function rectLight(zone, color, intensity, w, h, pos, look) {
   const l = new THREE.RectAreaLight(color, intensity, w, h); l.position.set(...pos); l.lookAt(...look); zone.add(l); return l;
 }
-function spot(zone, color, intensity, pos, target, angle = 0.5, shadow = false, dist = 40) {
+export function spot(zone, color, intensity, pos, target, angle = 0.5, shadow = false, dist = 40) {
   const s = new THREE.SpotLight(color, intensity, dist, angle, 0.6, 1.6); s.position.set(...pos); s.target.position.set(...target); zone.add(s, s.target);
   if (shadow) { s.castShadow = true; s.shadow.mapSize.set(1024, 1024); s.shadow.bias = -0.0004; s.shadow.normalBias = 0.02; s.userData.qualityShadow = true; }
   return s;
 }
-function point(zone, color, intensity, pos, dist = 12) { const p = new THREE.PointLight(color, intensity, dist, 2); p.position.set(...pos); zone.add(p); return p; }
+export function point(zone, color, intensity, pos, dist = 12) { const p = new THREE.PointLight(color, intensity, dist, 2); p.position.set(...pos); zone.add(p); return p; }
 
 // =============================== 正门门廊 / 服务台 ===============================
 function buildGate(zone, world, ctx, M, add) {
@@ -246,7 +246,9 @@ function buildHall(zone, world, ctx, M, add) {
   { const r = new THREE.RingGeometry(6.8, 7.0, 96); r.rotateX(-Math.PI / 2); b.add('gold', r, { pos: [0, Y + 0.008, -58] }, { uv: 1 }); const r2 = new THREE.RingGeometry(4.8, 4.9, 96); r2.rotateX(-Math.PI / 2); b.add('gold', r2, { pos: [0, Y + 0.008, -58] }, { uv: 1 }); }
   // 侧廊外墙（带窗）与通往档案馆的西门洞
   wallX(b, 'wallStone', -X - 0.3, Z0, Z1, Y, 26, 0.6, [{ z0: -47.5, z1: -55.5, h: 8 }], true);
-  wallX(b, 'wallStone', X + 0.3, Z0, Z1, Y, 26, 0.6, [], true);
+  wallX(b, 'wallStone', X + 0.3, Z0, Z1, Y, 26, 0.6, [{ z0: -45, z1: -51, h: 6 }], true);
+  { const f = new Frame([X - 0.05, Y, -48], -Math.PI / 2); b.add('stoneDark', archRingGeo(7.0, 4.2, 6.0, 4.2, 0.7), f.at(0, 0, 0.3), { uv: 0.5 }); b.add('gold', archRingGeo(7.2, 4.2, 7.0, 4.2, 0.72), f.at(0, 0, 0.3), { uv: 1 });
+    const t = goldText('东翼 → 市民服务 · 叙事高考 · 监测指挥中心', 5.6, 0.3, M.goldBright, { res: 96 }); t.position.set(X - 0.3, Y + 7.6, -48); t.rotation.y = -Math.PI / 2; zone.add(t); }
   // 北墙（电梯厅金门、中庭铁门）
   wallZ(b, 'wallStone', Z1 - 0.3, -X, X, Y, 26, 0.6, [], true);
   // 南墙（与门厅之间）
@@ -278,10 +280,16 @@ function buildHall(zone, world, ctx, M, add) {
       b.add('stoneDark', new THREE.BoxGeometry(0.14, 5.2, 1.0), f.at(0, 18.6, 0), { uv: 1 });
       // 侧廊外墙彩窗
       const fw = new Frame([sx * (X - 0.01), Y, z], sx > 0 ? -Math.PI / 2 : Math.PI / 2);
-      b.add('glassIn', new THREE.ShapeGeometry(archShape(3.2, 6)), fw.at(0, 2.5, 0.02), { uv: false });
-      b.add('stoneDark', archRingGeo(3.8, 6, 3.2, 6, 0.3), fw.at(0, 2.5, 0.1), { uv: 0.6 });
-      b.add('gold', archRingGeo(3.9, 6, 3.8, 6, 0.32), fw.at(0, 2.5, 0.1), { uv: 1 });
-      b.add('stone', new THREE.BoxGeometry(0.14, 6 + 3.2 * 0.6, 0.2), fw.at(0, 2.5 + 4, 0.1), { uv: 1 });
+      if (k !== 1) {
+        b.add('glassIn', new THREE.ShapeGeometry(archShape(3.2, 6)), fw.at(0, 2.5, 0.02), { uv: false });
+        b.add('stoneDark', archRingGeo(3.8, 6, 3.2, 6, 0.3), fw.at(0, 2.5, 0.1), { uv: 0.6 });
+        b.add('gold', archRingGeo(3.9, 6, 3.8, 6, 0.32), fw.at(0, 2.5, 0.1), { uv: 1 });
+        b.add('stone', new THREE.BoxGeometry(0.14, 6 + 3.2 * 0.6, 0.2), fw.at(0, 2.5 + 4, 0.1), { uv: 1 });
+      } else {
+        // 侧门洞上方的高窗
+        b.add('glassIn', new THREE.ShapeGeometry(archShape(2.4, 1.2)), fw.at(0, 8.6, 0.02), { uv: false });
+        b.add('gold', archRingGeo(2.6, 1.2, 2.4, 1.2, 0.32), fw.at(0, 8.6, 0.1), { uv: 1 });
+      }
     }
   }
   // 中殿扇形拱顶
@@ -377,11 +385,11 @@ function buildHall(zone, world, ctx, M, add) {
   ctx.mainScreenPos = new THREE.Vector3(0, SY, SZ);
   // 东墙通缉公告栏
   const wb = content.tex('tex_sec_wanted_board');
-  b.box('wood', 0.2, 2.6, 5.6, [X - 0.1, Y + 2.2, -50], { uv: 0.5 });
-  b.box('gold', 0.22, 2.7, 0.08, [X - 0.1, Y + 2.2, -47.2], { uv: 1 }); b.box('gold', 0.22, 2.7, 0.08, [X - 0.1, Y + 2.2, -52.8], { uv: 1 });
+  b.box('wood', 0.2, 2.6, 5.6, [X - 0.1, Y + 2.2, -64], { uv: 0.5 });
+  b.box('gold', 0.22, 2.7, 0.08, [X - 0.1, Y + 2.2, -61.2], { uv: 1 }); b.box('gold', 0.22, 2.7, 0.08, [X - 0.1, Y + 2.2, -66.8], { uv: 1 });
   const wbm = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 2.4), wb ? new THREE.MeshStandardMaterial({ map: wb, roughness: 0.6 }) : wantedBoardMaterial());
-  wbm.position.set(X - 0.21, Y + 2.2, -50); wbm.rotation.y = -Math.PI / 2; zone.add(wbm);
-  const wbg = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 2.5), M.glassClear); wbg.position.set(X - 0.3, Y + 2.2, -50); wbg.rotation.y = -Math.PI / 2; zone.add(wbg);
+  wbm.position.set(X - 0.21, Y + 2.2, -64); wbm.rotation.y = -Math.PI / 2; zone.add(wbm);
+  const wbg = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 2.5), M.glassClear); wbg.position.set(X - 0.3, Y + 2.2, -64); wbg.rotation.y = -Math.PI / 2; zone.add(wbg);
   ctx.wantedBoard = wbm;
   // 西墙违禁品展示柜（相框）
   b.box('blackMarble', 1.0, 1.0, 4.4, [-X + 0.6, Y + 0.5, -62], { uv: 0.5, collide: true });
@@ -748,14 +756,14 @@ function buildB1(zone, world, ctx, M, add, X0, X1, Z0, Z1, BY) {
 }
 
 // ——— 小件与材质 ———
-function woodChair(b, x, y, z, face) {
+export function woodChair(b, x, y, z, face) {
   b.box('wood', 0.46, 0.05, 0.44, [x, y + 0.46, z], { uv: 2 });
   for (const ex of [-1, 1]) for (const ez of [-1, 1]) b.box('wood', 0.045, 0.46, 0.045, [x + ex * 0.2, y + 0.23, z + ez * 0.19], { uv: 2 });
   for (const ex of [-1, 1]) b.box('wood', 0.045, 0.5, 0.045, [x + ex * 0.2, y + 0.72, z + face * 0.2], { uv: 2 });
   b.box('wood', 0.44, 0.22, 0.03, [x, y + 0.86, z + face * 0.2], { uv: 2 });
   b.box('leather', 0.4, 0.03, 0.38, [x, y + 0.5, z], { uv: 2 });
 }
-function bankerLamp(b, zone, M, x, y, z) {
+export function bankerLamp(b, zone, M, x, y, z) {
   b.add('brass', new THREE.CylinderGeometry(0.09, 0.11, 0.03, 16), { pos: [x, y + 0.015, z] }, { uv: 1 });
   b.add('brass', new THREE.CylinderGeometry(0.012, 0.012, 0.32, 8), { pos: [x, y + 0.18, z] }, { uv: 1 });
   const shade = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.3, 16, 1, true, 0, Math.PI), M.lampGreen); shade.rotation.set(0, 0, Math.PI / 2); shade.position.set(x, y + 0.36, z); shade.scale.set(0.7, 1, 1); zone.add(shade);
@@ -788,7 +796,7 @@ export function person(M, { coat = 0x1a1d26, glasses = false, cap = false, mater
   if (cap) { add(new THREE.CylinderGeometry(0.125, 0.13, 0.07, 16), mc, 0, 1.9, 0); add(new THREE.BoxGeometry(0.2, 0.012, 0.1), mc, 0, 1.87, 0.12); add(new THREE.BoxGeometry(0.05, 0.03, 0.01), material ?? M.gold, 0, 1.91, 0.13); }
   return g;
 }
-function grandClock(M, pos, yaw) {
+export function grandClock(M, pos, yaw) {
   const g = new THREE.Group();
   const add = (geo, m, x, y, z) => { const me = new THREE.Mesh(geo, m); me.position.set(x, y, z); me.castShadow = me.receiveShadow = true; g.add(me); return me; };
   add(new THREE.BoxGeometry(0.62, 0.3, 0.42), M.wood, 0, 0.15, 0);
@@ -803,9 +811,9 @@ function grandClock(M, pos, yaw) {
   add(new THREE.CylinderGeometry(0.08, 0.08, 0.02, 20), M.brass, 0, 0.82, 0.12).rotation.x = Math.PI / 2;
   g.position.set(...pos); g.rotation.y = yaw; return g;
 }
-function clockFaceTexture() {
+export function clockFaceTexture() {
   const cv = document.createElement('canvas'); cv.width = cv.height = 256; const c = cv.getContext('2d');
-  c.fillStyle = '#efe6cc'; c.fillRect(0, 0, 256, 256); c.translate(128, 128); c.fillStyle = '#222'; c.font = '700 22px serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.fillStyle = '#efe6cc'; c.fillRect(0, 0, 256, 256); c.translate(128, 128); c.fillStyle = '#222'; c.font = '700 22px "NB Serif", serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
   const R = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
   R.forEach((r, i) => { const a = (i / 12) * Math.PI * 2 - Math.PI / 2; c.fillText(r, Math.cos(a) * 100, Math.sin(a) * 100); });
   // 3:07
@@ -820,7 +828,7 @@ function ledgerTexture() {
   c.fillStyle = '#3a3226'; c.font = '13px "NB Sans", sans-serif'; for (let y = 44; y < 350; y += 18) c.fillText('2023-06-0' + ((y / 18) % 9 | 0) + '　07-0-' + ((y * 37) % 10000).toString().padStart(4, '0'), 14, y);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
-function stickyMaterial() {
+export function stickyMaterial() {
   const cv = document.createElement('canvas'); cv.width = cv.height = 128; const c = cv.getContext('2d');
   c.fillStyle = '#f2df5a'; c.fillRect(0, 0, 128, 128); c.fillStyle = '#333'; c.font = '16px "NB Sans", sans-serif'; c.fillText('记得问它', 16, 50); c.fillText('别问我', 16, 80);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.8, side: THREE.DoubleSide });
@@ -840,7 +848,7 @@ export function brassPlaqueMaterial(title, lines) {
   c.font = '28px "NB Serif", serif'; c.textAlign = 'left'; lines.forEach((l, i) => c.fillText(l, 50, 170 + i * 52));
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, metalness: 0.7, roughness: 0.35 });
 }
-function posterMaterial(title, sub) {
+export function posterMaterial(title, sub) {
   const w = 512, h = 732; const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
   const gr = c.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#0d1838'); gr.addColorStop(1, '#03050c'); c.fillStyle = gr; c.fillRect(0, 0, w, h);
   c.strokeStyle = '#c9a052'; c.lineWidth = 4; c.strokeRect(20, 20, w - 40, h - 40);
@@ -849,7 +857,7 @@ function posterMaterial(title, sub) {
   c.fillStyle = '#c9a052'; c.font = '22px "NB Serif", serif'; c.fillText('叙事管理局', w / 2, h * 0.9);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.4, roughness: 0.4 });
 }
-function wantedBoardMaterial() {
+export function wantedBoardMaterial() {
   const w = 1350, h = 600; const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
   c.fillStyle = '#5a4630'; c.fillRect(0, 0, w, h);
   const items = [['通缉令', '秦骁　【王寇】', '高危'], ['通缉令', '江戾　【冥礼】', '高危'], ['通缉令', '第二草稿　在逃成员', '协查'], ['通告', '余辉剧团　演出一律取消', '']];

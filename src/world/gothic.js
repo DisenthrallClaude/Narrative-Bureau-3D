@@ -322,7 +322,7 @@ export function goldText(text, w, h, mat, o = {}) {
   const ctx = cv.getContext('2d');
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, cv.width, cv.height);
   ctx.fillStyle = '#fff';
-  ctx.font = `${o.weight ?? 700} ${Math.round(scale * 0.78)}px ${o.font ?? '"Noto Serif SC","Source Han Serif SC","Songti SC","SimSun",serif'}`;
+  ctx.font = `${o.weight ?? 700} ${Math.round(scale * 0.78)}px ${o.font ?? '"NB Serif","Noto Serif SC","Source Han Serif SC","Songti SC",serif'}`;
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   if (o.spacing) ctx.letterSpacing = `${o.spacing}px`;
   ctx.fillText(text, cv.width / 2, cv.height * 0.54);

@@ -11,6 +11,10 @@ import { PlanarReflector } from './engine/reflect.js';
 import { time } from './engine/fx.js';
 import { buildExterior, updateExterior, FLOOR } from './world/exterior.js';
 import { buildInteriors, updateInteriors } from './world/interiors.js';
+import { buildEastWing, updateEastWing } from './world/eastwing.js';
+import { bindAll, runInteractable } from './engine/binder.js';
+import { buildVault, updateVault, setupElevator } from './world/vault.js';
+import { installSkyFog } from './engine/skyfog.js';
 import { mats } from './world/mats.js';
 import { setupStory } from './story.js';
 import * as UI from './ui/ui.js';
@@ -39,13 +43,15 @@ const G = { scene, camera, ctx, world, player, inter, audio, zone: null, onUpdat
 window.G = G;
 
 // —— 光照 ——
-const sun = new THREE.DirectionalLight(0xfff0dc, 3.4);
+const sun = new THREE.DirectionalLight(0xffb27c, 3.4);
 sun.castShadow = true; sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.04;
-const SUN_DIR = new THREE.Vector3(0.45, 0.62, 0.64).normalize();
+// 黄昏：太阳在西南方低空（与天空盒全景图中落日方向一致，见 public/assets/tex/sky_dusk.jpg）
+const SUN_DIR = new THREE.Vector3(-0.80, 0.2, 0.57).normalize();
 scene.add(sun, sun.target);
-const hemi = new THREE.HemisphereLight(0xbfd4ff, 0x3a3428, 0.25); scene.add(hemi);
+const hemi = new THREE.HemisphereLight(0x9a96c8, 0x3a2c26, 0.25); scene.add(hemi);
 function setShadowSize(s) { sun.shadow.mapSize.set(s, s); sun.shadow.map?.dispose(); sun.shadow.map = null; const c = sun.shadow.camera; c.left = -110; c.right = 110; c.top = 110; c.bottom = -110; c.near = 1; c.far = 600; c.updateProjectionMatrix(); }
 
+const SKY_I = 1.45;
 let envSky = null, envHall = null, skyTex = null;
 const reflector = new PlanarReflector(R.gl, { y: FLOOR });
 
@@ -65,14 +71,16 @@ async function boot() {
   await content.load();
   await audio.init();
   const pm = new THREE.PMREMGenerator(R.gl);
-  const [sky, hall] = await Promise.all([loadHDR('sky_2k'), loadHDR('hall_1k')]);
+  const [sky, hall] = await Promise.all([new THREE.TextureLoader(manager).loadAsync('./assets/tex/sky_dusk.jpg').catch(() => null), loadHDR('hall_1k')]);
+  if (sky) { sky.mapping = THREE.EquirectangularReflectionMapping; sky.colorSpace = THREE.SRGBColorSpace; sky.generateMipmaps = true; sky.minFilter = THREE.LinearMipmapLinearFilter; sky.anisotropy = 4; }
   skyTex = sky;
+  installSkyFog(sky, SKY_I);
   envSky = sky ? pm.fromEquirectangular(sky).texture : null;
   envHall = hall ? pm.fromEquirectangular(hall).texture : null;
-  scene.background = sky; scene.backgroundIntensity = 1.0;
+  scene.background = sky; scene.backgroundIntensity = SKY_I;
   scene.environment = envSky;
   LOG('hdr ok'); UI.loadProgress(0.1, '建造主楼……');
-  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx);
+  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx);
   LOG('world built'); scene.add(world.build()); inter.blocker = world.collider; LOG('bvh ok');
   // 反射地面
   const M = mats();
@@ -81,6 +89,8 @@ async function boot() {
   // 主屏射线代理
   const proxy = new THREE.Mesh(new THREE.BoxGeometry(15, 6.6, 0.8), new THREE.MeshBasicMaterial({ visible: false })); proxy.position.copy(ctx.mainScreenPos); inter.proxies.add(proxy); G.mainScreenProxy = proxy;
   setupStory(G);
+  bindAll(G);
+  setupElevator(G, { toast: UI.toast, dialog: UI.dialog, fade: UI.fade, runInteractable });
   applyQuality(savedQ);
   UI.initPause({
     quality: QUALITY, setQuality: applyQuality,
@@ -111,27 +121,55 @@ async function start() {
 }
 
 // —— 分区与可见性 ——
-const AREA_NAMES = { plaza: ['中轴广场 · 规则之泉', 'CENTRAL PLAZA'], gate: ['正门 · 服务台', 'MAIN GATE'], security_hall: ['安检大厅', 'SECURITY HALL'], archive: ['人事档案馆', 'PERSONNEL ARCHIVE'], archive_b1: ['B1 · 密集库', 'ARCHIVE STACKS · B1'] };
+const AREA_NAMES = { plaza: ['中轴广场 · 规则之泉', 'CENTRAL PLAZA'], gate: ['正门 · 服务台', 'MAIN GATE'], security_hall: ['安检大厅', 'SECURITY HALL'], archive: ['人事档案馆', 'PERSONNEL ARCHIVE'], archive_b1: ['B1 · 密集库', 'ARCHIVE STACKS · B1'],
+  citizen_service: ['东翼 1F · 市民服务大厅', 'CITIZEN SERVICES'], exam_center: ['东翼 · 叙事高考考务中心', 'NARRATIVE EXAM CENTER'], command_center: ['东翼 2F · 现实稳定度监测指挥中心', 'STABILITY COMMAND'], zone_control: ['东翼 3F · 禁区封锁调度厅', 'ZONE CONTROL'], east_stair: ['东翼楼梯', 'EAST STAIR'],
+  spine_b3: ['书脊井 · B3 电梯厅', 'SPINE SHAFT · B3'], spine_b4: ['书脊井 · B4 电梯厅', 'SPINE SHAFT · B4'], spine_b5: ['书脊井 · B5 电梯厅', 'SPINE SHAFT · B5'],
+  vault_b3: ['B3 · 证物收容库　开架区', 'EVIDENCE VAULT · B3'], vault_b4: ['B4 · 单独收容柜', 'CONTAINMENT · B4'], vault_b5: ['B5 · 深库', 'DEEP VAULT · B5'] };
+// 区域 → manifest 区域 id（用于 enter_area 条件）
+const AREA_OF = { spine_b3: 'spine_shaft', spine_b4: 'spine_shaft', spine_b5: 'spine_shaft', vault_b3: 'vault', vault_b4: 'vault', vault_b5: 'vault' };
+// 区域 → 场景分组（多个区域共用一个分组）
+const GROUP_OF = { spine_b3: 'vault_b3', spine_b4: 'vault_b4', spine_b5: 'vault_b5', citizen_service: 'east_wing', exam_center: 'east_wing', command_center: 'east_wing', zone_control: 'east_wing', east_stair: 'east_wing' };
 function zoneAt(p) {
   const Y = FLOOR;
+  if (p.y < -15) { const L = p.y > -30 ? 'b3' : p.y > -38 ? 'b4' : 'b5'; return (p.z > -92 ? 'spine_' : 'vault_') + L; }
   if (p.x < -17.6 && p.x > -57 && p.z < -31 && p.z > -71) return p.y < Y - 2.5 ? 'archive_b1' : 'archive';
+  if (p.x > 17.4 && p.x < 57 && p.z < -31 && p.z > -77) {
+    if (p.x > 50 && p.z < -53.5 && p.z > -64.5) return 'east_stair';
+    const fl = p.y < Y + 6.2 ? 1 : p.y < Y + 13.2 ? 2 : 3;
+    if (fl === 1) return p.z > -53 ? 'citizen_service' : 'exam_center';
+    if (fl === 2) return p.z > -61 ? 'command_center' : 'exam_center';
+    return p.z > -61 ? 'zone_control' : 'exam_center';
+  }
   if (Math.abs(p.x) < 18 && p.z < -29.9 && p.z > -77) return 'security_hall';
   if (Math.abs(p.x) < 14.5 && p.z < -5.6 && p.z > -30) return 'gate';
   return 'plaza';
 }
+const EW = { exterior: 0, gate: 0, security_hall: 1, archive: 0, archive_b1: 0, east_wing: 1 };
 const VIS = {
-  plaza: { exterior: 1, gate: 1, security_hall: 1, archive: 0, archive_b1: 0 },
-  gate: { exterior: 1, gate: 1, security_hall: 1, archive: 0, archive_b1: 0 },
-  security_hall: { exterior: 0, gate: 1, security_hall: 1, archive: 1, archive_b1: 0 },
+  plaza: { exterior: 1, gate: 1, security_hall: 1 },
+  gate: { exterior: 1, gate: 1, security_hall: 1 },
+  security_hall: { exterior: 0, gate: 1, security_hall: 1, archive: 1, east_wing: 1 },
   archive: { exterior: 0, gate: 0, security_hall: 1, archive: 1, archive_b1: 1 },
-  archive_b1: { exterior: 0, gate: 0, security_hall: 0, archive: 1, archive_b1: 1 },
+  archive_b1: { exterior: 0, archive: 1, archive_b1: 1 },
+  spine_b3: {}, spine_b4: {}, spine_b5: {}, vault_b3: {}, vault_b4: {}, vault_b5: {},
+  citizen_service: EW, exam_center: EW, command_center: { east_wing: 1 }, zone_control: { east_wing: 1 }, east_stair: EW,
 };
 const ZONE_LOOK = {
-  plaza: { env: 'sky', envI: 1.0, sun: 3.4, exp: 1.0, fog: [0xb4c2d2, 0.0009], hemi: 0.25 },
-  gate: { env: 'hall', envI: 0.7, sun: 3.4, exp: 0.95, fog: [0x2a241c, 0.006], hemi: 0.15 },
+  plaza: { env: 'sky', envI: 1.1, sun: 3.2, exp: 1.05, fog: [0x8a7a86, 0.0011], hemi: 0.3 },
+  gate: { env: 'hall', envI: 0.7, sun: 3.2, exp: 0.95, fog: [0x2a241c, 0.006], hemi: 0.15 },
   security_hall: { env: 'hall', envI: 0.6, sun: 0, exp: 1.0, fog: [0x1d1915, 0.010], hemi: 0.12 },
   archive: { env: 'hall', envI: 0.6, sun: 0, exp: 1.15, fog: [0x241c14, 0.012], hemi: 0.1 },
   archive_b1: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x10141a, 0.02], hemi: 0.05 },
+  citizen_service: { env: 'hall', envI: 0.65, sun: 0, exp: 1.05, fog: [0x221d17, 0.010], hemi: 0.14 },
+  exam_center: { env: 'hall', envI: 0.6, sun: 0, exp: 1.05, fog: [0x1a1c22, 0.010], hemi: 0.12 },
+  command_center: { env: 'hall', envI: 0.4, sun: 0, exp: 1.15, fog: [0x0a1020, 0.012], hemi: 0.08 },
+  zone_control: { env: 'hall', envI: 0.5, sun: 0, exp: 1.1, fog: [0x1a140e, 0.012], hemi: 0.1 },
+  spine_b3: { env: 'hall', envI: 0.35, sun: 0, exp: 1.15, fog: [0x15130f, 0.02], hemi: 0.06 },
+  vault_b3: { env: 'hall', envI: 0.35, sun: 0, exp: 1.1, fog: [0x12161c, 0.022], hemi: 0.06 },
+  vault_b4: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a120a, 0.03], hemi: 0.05 },
+  vault_b5: { env: 'hall', envI: 0.3, sun: 0, exp: 1.25, fog: [0x0c0d12, 0.025], hemi: 0.04 },
+  spine_b4: null, spine_b5: null,
+  east_stair: { env: 'hall', envI: 0.55, sun: 0, exp: 1.1, fog: [0x1d1915, 0.012], hemi: 0.12 },
 };
 let targetExp = 1, curExp = 1;
 function setZone(z, force = false) {
@@ -139,8 +177,8 @@ function setZone(z, force = false) {
   const prev = G.zone; G.zone = z;
   const vis = VIS[z];
   scene.getObjectByName('exterior').visible = !!vis.exterior;
-  for (const [k, g] of Object.entries(ctx.zones)) g.visible = !!vis[k];
-  const L = ZONE_LOOK[z];
+  for (const [k, g] of Object.entries(ctx.zones)) g.visible = !!vis[k] || GROUP_OF[z] === k;
+  const L = ZONE_LOOK[z] ?? ZONE_LOOK.spine_b3;
   scene.environment = L.env === 'sky' ? envSky : envHall;
   scene.environmentIntensity = L.envI;
   sun.intensity = L.sun; sun.castShadow = L.sun > 0; hemi.intensity = L.hemi;
@@ -150,6 +188,7 @@ function setZone(z, force = false) {
   if (prev && AREA_NAMES[z]) UI.showArea(...AREA_NAMES[z]);
   audio.setZone(z);
   for (const f of G.onZone) f(z, prev);
+  if (AREA_OF[z]) { content.set('area:' + AREA_OF[z]); UI.updateObjective(); }
 }
 
 // —— 输入 ——
@@ -221,7 +260,7 @@ function loop() {
   curExp += (targetExp - curExp) * Math.min(1, dt * 1.5);
   R.setExposure(curExp);
   for (const s of ctx.screens) s.update(dt, t);
-  updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t);
+  updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null);
   reflector.setY(FLOOR); reflector.update(scene, camera, R.q.reflect);
   R.render(dt);
   frames++;
@@ -240,6 +279,7 @@ function applyShot(name) {
   if (s.fov) { camera.fov = s.fov; camera.updateProjectionMatrix(); }
   setZone(s.zone ?? zoneAt(new THREE.Vector3(s.pos[0], s.pos[1] - 1.6, s.pos[2])), true);
   curExp = targetExp; time.value = s.t ?? 12;
+  if (/^b5(?!_door)/.test(name) && ctx.vault?.door) { ctx.vault.door.opened = true; for (const ac of ctx.vault.door.acts) ac.play(); ctx.vault.door.mixer.setTime(10); }
   shotFrames = Number(params.get('frames') || 8);
   shotStarted = true;
   window.__SHOT_INFO__ = () => ({ calls: R.gl.info.render.calls, tris: R.gl.info.render.triangles, zone: G.zone });

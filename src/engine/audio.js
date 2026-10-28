@@ -11,7 +11,13 @@ export const ZONE_AUDIO = {
   archive_b1: { bgm: 'M04', amb: 'A04' },
   seventh_entry: { bgm: 'M06', amb: 'A06' },
   command_center: { bgm: 'M03', amb: 'A03' },
+  citizen_service: { bgm: 'M03', amb: 'A02' },
+  exam_center: { bgm: 'M03', amb: 'A03' },
+  zone_control: { bgm: 'M05', amb: 'A03' },
+  east_stair: { bgm: 'M03', amb: 'A02' },
   vault: { bgm: 'M05', amb: 'A05' },
+  vault_b3: { bgm: 'M05', amb: 'A05' }, vault_b4: { bgm: 'M05', amb: 'A05' }, vault_b5: { bgm: 'M05', amb: 'A05' },
+  spine_b3: { bgm: 'M05', amb: 'A05' }, spine_b4: { bgm: 'M05', amb: 'A05' }, spine_b5: { bgm: 'M05', amb: 'A05' },
   abyss: { bgm: 'M05', amb: 'A06' },
   menu: { bgm: 'M01', amb: null },
 };

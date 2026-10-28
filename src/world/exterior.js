@@ -418,7 +418,7 @@ function buildRingWall(b, g, M, world, ctx) {
 // ---------------- 远景巨城 ----------------
 function buildCity(g, M, ctx) {
   // 城市地面与河流
-  const land = new THREE.Mesh(new THREE.PlaneGeometry(9000, 9000), new THREE.MeshStandardMaterial({ color: 0x3a3f46, roughness: 0.95 }));
+  const land = new THREE.Mesh(new THREE.PlaneGeometry(9000, 9000), new THREE.MeshStandardMaterial({ color: 0x24242a, roughness: 0.95 }));
   land.rotation.x = -Math.PI / 2; land.position.y = -4.4; land.receiveShadow = false; g.add(land);
   const riverMat = waterMaterial(0x23384a); riverMat.opacity = 1; riverMat.transparent = false; riverMat.envMapIntensity = 1.8;
   const riverShape = new THREE.Shape();
@@ -427,57 +427,75 @@ function buildCity(g, M, ctx) {
   const river = new THREE.Mesh(new THREE.ShapeGeometry(riverShape, 4), riverMat); river.rotation.x = -Math.PI / 2; river.position.y = -4.2; river.scale.y = -1; g.add(river);
   // 第二条河（东侧南北向）
   const r2 = new THREE.Mesh(new THREE.PlaneGeometry(150, 6000), riverMat); r2.rotation.x = -Math.PI / 2; r2.position.set(620, -4.25, 0); g.add(r2);
-  // 楼群：实例化方盒 + 程序化窗格着色
-  const geo = new THREE.BoxGeometry(1, 1, 1); geo.translate(0, 0.5, 0);
-  const mat = new THREE.MeshStandardMaterial({ color: 0x8b93a0, roughness: 0.5, metalness: 0.3, envMapIntensity: 1.0 });
-  mat.onBeforeCompile = (sh) => {
-    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vWp; varying vec3 vOn;')
-      .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvWp = (modelMatrix * instanceMatrix * vec4(transformed,1.0)).xyz; vOn = normal;');
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vWp; varying vec3 vOn;\nfloat hh(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5);}')
-      .replace('#include <color_fragment>', `#include <color_fragment>
-        float side = step(0.5, abs(vOn.x)) ; vec2 wp = side > 0.5 ? vWp.zy : vWp.xy; if (abs(vOn.y) > 0.5) wp = vWp.xz;
-        vec2 cell = floor(wp / vec2(3.2, 3.6)); vec2 f = fract(wp / vec2(3.2, 3.6));
-        float win = step(0.18, f.x) * step(f.x, 0.86) * step(0.22, f.y) * step(f.y, 0.85) * (1.0 - step(0.5, abs(vOn.y)));
-        float tone = hh(floor(vWp.xz / 40.0));
-        diffuseColor.rgb *= mix(vec3(0.62,0.64,0.7), vec3(0.85,0.82,0.78), tone);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.16,0.2,0.28) + hh(cell)*0.08, win*0.85);`)
-      .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
-        { float side = step(0.5, abs(vOn.x)); vec2 wp = side > 0.5 ? vWp.zy : vWp.xy; vec2 f = fract(wp / vec2(3.2, 3.6));
-          float win = step(0.18, f.x) * step(f.x, 0.86) * step(0.22, f.y) * step(f.y, 0.85) * (1.0 - step(0.5, abs(vOn.y))); roughnessFactor = mix(roughnessFactor, 0.08, win); }`);
-  };
-  const N = 2600;
-  const inst = new THREE.InstancedMesh(geo, mat, N);
-  const m4 = new THREE.Matrix4(); let n = 0;
+  // 楼群：哥特低模剪影（暗色石体 + 随机亮灯的尖窗 + 四坡尖顶 + 细尖塔），远处由天空盒雾融入生图天空盒
   const rnd = mulberry(7);
   const riverDist = (x, z) => { const t = (x + 3500) / 7000; const rz = -(-520 + Math.sin(t * 7) * 160 + t * 300); return Math.min(Math.abs(z - rz), Math.abs(x - 620)); };
-  while (n < N) {
-    const a = rnd() * Math.PI * 2, r = 190 + Math.pow(rnd(), 0.7) * 2600;
-    const x = Math.sin(a) * r, z = -35 + Math.cos(a) * r;
-    if (riverDist(x, z) < 110) continue;
-    if (Math.abs(x) < 60 && z > 90 && z < 1500) continue; // 迎宾大道
-    const tall = rnd() < 0.08 ? 3 : 1;
-    const h = (12 + Math.pow(rnd(), 2.2) * 90) * tall * (r > 1200 ? 1.2 : 1);
-    const w = 14 + rnd() * 26, d = 14 + rnd() * 26;
-    m4.compose(new THREE.Vector3(x, -4.4, z), new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.round(rnd() * 3) * 0.3), new THREE.Vector3(w, h, d));
-    inst.setMatrixAt(n++, m4);
+  const winShader = (sh, lit = 0.32) => {
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vWp; varying vec3 vOn; varying float vSeed;')
+      .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvec4 nbw = vec4(transformed,1.0);\n#ifdef USE_INSTANCING\nnbw = instanceMatrix * nbw;\n#endif\nvWp = (modelMatrix * nbw).xyz; vOn = normal; vSeed = 0.0;\n#ifdef USE_INSTANCING\nvSeed = instanceMatrix[3].x * 0.013 + instanceMatrix[3].z * 0.007;\n#endif');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vWp; varying vec3 vOn; varying float vSeed;\nfloat hh(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5);}')
+      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+        { float sideX = step(0.5, abs(vOn.x)); vec2 wp = sideX > 0.5 ? vWp.zy : vWp.xy;
+          float wall = 1.0 - step(0.5, abs(vOn.y));
+          vec2 cs = vec2(2.6, 4.2); vec2 cell = floor(wp / cs); vec2 f = fract(wp / cs);
+          // 尖拱窗：矩形 + 顶部收尖
+          float ax = abs(f.x - 0.5);
+          float win = step(ax, 0.17) * step(0.18, f.y) * step(f.y, 0.62 + (0.17 - ax) * 1.1);
+          float on = step(1.0 - ${lit.toFixed(2)}, hh(cell + vSeed * 31.0));
+          float band = step(0.5, fract(cell.y * 0.21 + vSeed)); // 整层亮/暗，像办公楼层
+          float k = win * wall * on * mix(0.55, 1.0, band) * smoothstep(2.0, 8.0, vWp.y);
+          vec3 wc = mix(vec3(1.0, 0.62, 0.30), vec3(1.0, 0.82, 0.55), hh(cell * 1.7));
+          totalEmissiveRadiance += wc * k * 2.4;
+          diffuseColor.rgb *= 1.0 - win * wall * 0.6;
+          // 竖向石肋与层间腰线（法线不变，只做明暗）
+          diffuseColor.rgb *= 0.85 + 0.15 * step(0.08, fract(wp.y / 12.6)) ;
+        }`);
+  };
+  const stoneCity = new THREE.MeshStandardMaterial({ color: 0x2a2b31, roughness: 0.72, metalness: 0.15, envMapIntensity: 0.6 });
+  stoneCity.onBeforeCompile = (sh) => winShader(sh, 0.3);
+  const roofCity = new THREE.MeshStandardMaterial({ color: 0x1c1d24, roughness: 0.42, metalness: 0.55, envMapIntensity: 0.9 });
+  const goldCity = new THREE.MeshStandardMaterial({ color: 0xd8a850, roughness: 0.3, metalness: 1, emissive: 0x6a4410, emissiveIntensity: 0.4 });
+  const boxG = new THREE.BoxGeometry(1, 1, 1); boxG.translate(0, 0.5, 0);
+  const roofG = new THREE.ConeGeometry(Math.SQRT1_2, 1, 4, 1); roofG.rotateY(Math.PI / 4); roofG.translate(0, 0.5, 0);
+  const spireG = new THREE.ConeGeometry(1, 1, 8, 1); spireG.translate(0, 0.5, 0);
+  const tipG = new THREE.CylinderGeometry(0.08, 0.08, 1, 4); tipG.translate(0, 0.5, 0);
+  const N = 1500, NS = 520;
+  const bodies = new THREE.InstancedMesh(boxG, stoneCity, N + NS);
+  const roofs = new THREE.InstancedMesh(roofG, roofCity, N);
+  const spires = new THREE.InstancedMesh(spireG, roofCity, NS * 5);
+  const tips = new THREE.InstancedMesh(tipG, goldCity, NS);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0);
+  let nb = 0, nr = 0, ns = 0, nt = 0;
+  const place = (x, z) => riverDist(x, z) > 100 && !(Math.abs(x) < 70 && z > 90 && z < 1600);
+  // 街区：沿环形放射路网排列（比随机撒点更像城市肌理）
+  while (nb < N) {
+    const a = rnd() * Math.PI * 2, r = 175 + Math.pow(rnd(), 0.85) * 1500;
+    const x = Math.sin(a) * r, z = -35 + Math.cos(a) * r; if (!place(x, z)) continue;
+    const near = r < 450;
+    const h = (14 + Math.pow(rnd(), 1.8) * (near ? 34 : 60)) * (rnd() < 0.06 ? 2.2 : 1);
+    const w = 16 + rnd() * 22, d = 16 + rnd() * 22; q.setFromAxisAngle(up, a + (rnd() < 0.5 ? 0 : Math.PI / 2));
+    m4.compose(new THREE.Vector3(x, -4.4, z), q, new THREE.Vector3(w, h, d)); bodies.setMatrixAt(nb++, m4);
+    const rh = Math.min(w, d) * (0.55 + rnd() * 0.5);
+    m4.compose(new THREE.Vector3(x, -4.4 + h, z), q, new THREE.Vector3(w, rh, d)); roofs.setMatrixAt(nr++, m4);
   }
-  inst.castShadow = false; inst.receiveShadow = false; inst.frustumCulled = false;
-  g.add(inst);
-  // 远景哥特尖塔群（暗色锥体 + 扫描大教堂）
-  const sg = new THREE.ConeGeometry(1, 1, 8); sg.translate(0, 0.5, 0);
-  const sp = new THREE.InstancedMesh(sg, new THREE.MeshStandardMaterial({ color: 0x20232b, roughness: 0.5, metalness: 0.4 }), 260);
-  for (let i = 0; i < 260; i++) {
-    const a = rnd() * Math.PI * 2, r = 240 + rnd() * 2200;
-    const x = Math.sin(a) * r, z = -35 + Math.cos(a) * r; if (riverDist(x, z) < 110) { i--; continue; }
-    const h = 30 + rnd() * 110; const base = 20 + rnd() * 60;
-    m4.compose(new THREE.Vector3(x, -4 + base, z), new THREE.Quaternion(), new THREE.Vector3(h * 0.08, h, h * 0.08)); sp.setMatrixAt(i, m4);
-    const blk = new THREE.Matrix4().compose(new THREE.Vector3(x, -4.4, z), new THREE.Quaternion(), new THREE.Vector3(h * 0.22, base, h * 0.22)); inst.count < N && void blk;
+  // 尖塔楼：细高主体 + 主尖塔 + 四角小尖塔 + 金色塔尖
+  for (let i = 0; i < NS; i++) {
+    const a = rnd() * Math.PI * 2, r = 200 + Math.pow(rnd(), 0.8) * 1500;
+    const x = Math.sin(a) * r, z = -35 + Math.cos(a) * r; if (!place(x, z)) { i--; continue; }
+    const big = rnd() < 0.12;
+    const bw = (big ? 22 : 9) + rnd() * 8, bh = (big ? 70 : 30) + rnd() * (big ? 70 : 50);
+    const sh = bw * (big ? 3.4 : 2.6) * (0.8 + rnd() * 0.5);
+    q.setFromAxisAngle(up, rnd() * Math.PI);
+    m4.compose(new THREE.Vector3(x, -4.4, z), q, new THREE.Vector3(bw, bh, bw)); bodies.setMatrixAt(nb++, m4);
+    m4.compose(new THREE.Vector3(x, -4.4 + bh, z), q, new THREE.Vector3(bw * 0.5, sh, bw * 0.5)); spires.setMatrixAt(ns++, m4);
+    for (const [ox, oz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+      const v = new THREE.Vector3(ox * bw * 0.42, 0, oz * bw * 0.42).applyQuaternion(q);
+      m4.compose(new THREE.Vector3(x + v.x, -4.4 + bh, z + v.z), q, new THREE.Vector3(bw * 0.09, sh * 0.32, bw * 0.09)); spires.setMatrixAt(ns++, m4);
+    }
+    m4.compose(new THREE.Vector3(x, -4.4 + bh + sh * 0.98, z), q, new THREE.Vector3(1.2, sh * 0.12 + 2, 1.2)); tips.setMatrixAt(nt++, m4);
   }
-  sp.frustumCulled = false; g.add(sp);
-  // 支撑尖塔的基座楼
-  const bases = new THREE.InstancedMesh(geo, mat, 260);
-  for (let i = 0; i < 260; i++) { sp.getMatrixAt(i, m4); const p = new THREE.Vector3(), q = new THREE.Quaternion(), s = new THREE.Vector3(); m4.decompose(p, q, s); const base = p.y + 4; bases.setMatrixAt(i, new THREE.Matrix4().compose(new THREE.Vector3(p.x, -4.4, p.z), q, new THREE.Vector3(s.x * 3, base, s.x * 3))); }
-  bases.frustumCulled = false; g.add(bases);
+  for (const im of [bodies, roofs, spires, tips]) { im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; im.computeBoundingSphere?.(); g.add(im); }
+  ctx.cityMats = { stoneCity };
   loadModel('cathedral').then((src) => {
     const spots = [[-420, -640, 0.4], [520, -900, 2.1], [-900, 300, 1.2], [880, 260, -0.6], [-260, -1300, 0.9], [1300, -500, 3.0], [-1500, -600, 2.4], [300, 900, 0.2]];
     for (const [x, z, yaw] of spots) {
