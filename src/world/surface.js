@@ -72,10 +72,10 @@ export async function buildSurface(scene, world, ctx) {
     { const f = new Frame([X0 - 0.2, 0, 20], -Math.PI / 2); b.add('stoneDark', archRingGeo(4.4, 3.2, 3.2, 3.2, 1.2), f.at(0, 0, 0.3), { uv: 0.5 }); b.add('gold', archRingGeo(4.6, 3.2, 4.4, 3.2, 0.2), f.at(0, 0, 0.92), { uv: 1 }); b.box('stoneDark', 3, 0.3, 2, [X0 - 1.2, 0.15, 20], { uv: 0.5 }); }
     const sg = goldText('职工宿舍　三号楼', 5, 0.55, M.goldBright, { res: 128 }); sg.position.set(X0 - 0.9, 5.6, 20); sg.rotation.y = -Math.PI / 2; zone.add(sg);
     // 楼层板
-    b.box('dz_tileB', X1 - X0 - 2.4, 0.04, Z0 - Z1 - 2.4, [cx, 0.02, cz], { uv: 0.6, collide: true });
+    b.box('terrazzo', X1 - X0 - 2.4, 0.04, Z0 - Z1 - 2.4, [cx, 0.02, cz], { uv: 2.2, collide: true });
     const hole = { x0: 54, x1: 61.6, z0: 28, z1: 26 };
     for (const [a, c, d, e] of [[53.2, hole.x0, 38.8, 1.2], [hole.x1, 78.8, 38.8, 1.2], [hole.x0, hole.x1, 38.8, hole.z0], [hole.x0, hole.x1, hole.z1, 1.2]]) b.box('dz_ceil', c - a, 0.3, d - e, [(a + c) / 2, F2 - 0.15, (d + e) / 2], { uv: 0.3, collide: true });
-    b.box('dz_tileB', 78.8 - 53.2, 0.04, 37.6, [cx, F2 + 0.02, cz], { uv: 0.6 });
+    b.box('dz_parquet', 78.8 - 53.2, 0.04, 37.6, [cx, F2 + 0.02, cz], { uv: 0.42 });
     b.box('dz_ceil', 25.6, 0.3, 37.6, [cx, 9.2 - 0.15, cz], { uv: 0.3 });
     // 楼梯（大厅北侧，向东上 2F）
     { const n = 26, run = 7.4 / n, rise = F2 / n; for (let i = 0; i < n; i++) b.box('dz_beam', run + 0.02, 0.18, 1.6, [54.2 + run * (i + 0.5), rise * (i + 1) - 0.09, 27], { uv: 0.6 }); world.ramp([53.8, 0, 27], [61.6, F2, 27], 1.6); b.box('brass', 7.8, 0.05, 0.05, [57.9, F2 / 2 + 1.0, 26.15], { uv: 1, rot: [0, 0, Math.atan2(F2, 7.4)] }); world.box(57.9, F2 / 2 + 0.6, 26.1, 7.6, F2 + 1.2, 0.1); }

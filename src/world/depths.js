@@ -24,7 +24,7 @@ let DMAT = null;
 function depthMats(M) {
   if (DMAT) return DMAT;
   const page = textPage('#e9e1cc', '#1a140e', true, 24, 0.55);
-  const street = textPage('#d9cfb6', '#2a2018', false, 26, 0.45);
+  const street = textPage('#d9cfb6', '#2a2018', false, 20, 0.22);
   const kraftTxt = textPage('#b48f5e', '#3a2410', true, 22, 0.35);
   const inkTex = cvTex(256, 256, (c, w, h) => { c.fillStyle = '#050506'; c.fillRect(0, 0, w, h); c.fillStyle = 'rgba(200,180,120,0.18)'; c.font = '20px "NB Serif", serif'; for (let i = 0; i < 40; i++) c.fillText(TXT[i % TXT.length], rnd() * w, rnd() * h); }, true);
   DMAT = {
@@ -32,7 +32,7 @@ function depthMats(M) {
     dp_pageDark: new THREE.MeshStandardMaterial({ map: page, roughness: 0.92, color: 0x6a6458 }),
     dp_street: new THREE.MeshStandardMaterial({ map: street, roughness: 0.95, color: 0xd8d0bc }),
     dp_kraft: new THREE.MeshStandardMaterial({ map: kraftTxt, roughness: 0.9, color: 0xc8a070 }),
-    dp_ink: new THREE.MeshPhysicalMaterial({ color: 0x030304, map: inkTex, roughness: 0.08, metalness: 0.2, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 1.2 }),
+    dp_ink: new THREE.MeshPhysicalMaterial({ color: 0x030304, map: inkTex, emissive: 0xc89a48, emissiveMap: inkTex, emissiveIntensity: 1.4, roughness: 0.06, metalness: 0.3, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 2.0 }),
     dp_inkMatte: new THREE.MeshStandardMaterial({ color: 0x0b0b0e, roughness: 0.7 }),
     dp_red: new THREE.MeshStandardMaterial({ color: 0x5a0a0c, emissive: 0x9a1014, emissiveIntensity: 1.4, roughness: 0.6 }),
     dp_redText: new THREE.MeshStandardMaterial({ color: 0, emissive: 0xff2a1a, emissiveIntensity: 2.2, transparent: true, side: THREE.DoubleSide, depthWrite: false, map: cvTex(1024, 256, (c, w, h) => { c.clearRect(0, 0, w, h); c.fillStyle = '#fff'; c.font = '700 120px "NB Title", "NB Serif", serif'; c.fillText('此页不应存在', 20, 160); }) }),
@@ -74,7 +74,7 @@ export async function buildDepths(scene, world, ctx) {
   {
     const zone = mk('abyss'), b = new Batch(), P = new Props(), Y = AY;
     // —— 折页门广场 abyss_gate (z −55…−85) ——
-    b.box('dp_street', 30, 0.4, 34, [0, Y - 0.2, -70], { uv: 0.12, collide: true });
+    b.box('dp_street', 30, 0.4, 34, [0, Y - 0.2, -70], { uv: 0.3, collide: true });
     b.box('dp_inkMatte', 32, 0.8, 0.8, [0, Y - 0.4, -53], { uv: 0.4 });
     // 来路：书脊井维护梯厅（南端黑色金门）
     { const f = new Frame([0, Y, -54], Math.PI); b.add('dp_inkMatte', new THREE.BoxGeometry(14, 8, 1), f.at(0, 4, -0.5), { uv: 0.3, collide: true }); b.add('elevDoor', new THREE.BoxGeometry(2.6, 3.6, 0.1), f.at(0, 1.8, 0.02), { uv: false }); b.add('gold', archRingGeo(3.4, 2.4, 2.8, 2.4, 0.2), f.at(0, 0, 0.1), { uv: 1 }); const pl = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.36), tagMaterial('书脊井 · 维护梯　返回')); pl.position.set(0, Y + 4.6, -54.1 + 0.2); pl.rotation.y = 0; zone.add(pl); ctx.depths.returnDoor = pl; }
@@ -89,7 +89,7 @@ export async function buildDepths(scene, world, ctx) {
       ctx.anchors.int_abyss_guard = { box: [-6.4, Y + 1.0, gz + 3.4, 1.2, 2, 1.2] };
       point(zone, 0xffe2b0, 30, [0, Y + 8, gz + 6], 26); }
     // —— 倒悬书城 abyss_city (z −85…−185)：纸页街道、书墙、倒悬塔、漂浮路牌、居民告示 ——
-    b.box('dp_street', 26, 0.4, 104, [0, Y - 0.2, -136], { uv: 0.12, collide: true });
+    b.box('dp_street', 26, 0.4, 104, [0, Y - 0.2, -136], { uv: 0.3, collide: true });
     for (const sx of [-1, 1]) { for (let z = -88; z > -184; z -= 4.2) { const hh = 6 + rnd() * 9; let yy = 0; while (yy < hh) { const bh = 1.4 + rnd() * 1.2; bigBook(b, sx * (13 + rnd() * 0.6), Y + yy, z + (rnd() - 0.5) * 0.4, 2.2 + rnd() * 0.8, bh, 3.8, (rnd() - 0.5) * 0.15 + (sx < 0 ? 0 : Math.PI), ['dp_inkMatte', 'navy', 'leather', 'dp_inkMatte'][Math.floor(rnd() * 4)]); yy += bh + 0.04; } } world.box(sx * 13.5, Y + 6, -136, 3, 12, 104); }
     // 两侧「街巷口」：西 → 考场母本，东 → 墨潮带（书墙留口）
     for (let k = 0; k < 26; k++) hangingTower(b, (rnd() - 0.5) * 70, Y + 70, -90 - rnd() * 100, 4 + rnd() * 6, 14 + rnd() * 26);
@@ -117,7 +117,7 @@ export async function buildDepths(scene, world, ctx) {
       const run = (x0, z0, x1, z1, y0, y1) => { const m = 30; for (let i = 0; i < m; i++) { const t = (i + 0.5) / m; b.box('dp_page', 3, 0.25, Math.hypot(x1 - x0, z1 - z0) / m + 0.05, [x0 + (x1 - x0) * t, Y + y0 + (y1 - y0) * (i + 1) / m - 0.12, z0 + (z1 - z0) * t], { uv: 0.6, rot: [0, Math.atan2(x1 - x0, z1 - z0), 0] }); } world.ramp([x0, Y + y0, z0], [x1, Y + y1, z1], 3); };
       run(-10, -160, -10, -188, 0, 10); b.box('dp_page', 6, 0.4, 6, [-10, Y + 9.8, -191], { uv: 0.4, collide: true }); run(-10, -194, 6, -210, 10, 20); }
     b.box('dp_street', 46, 0.5, 46, [8, Y + 19.75, -228], { uv: 0.12, collide: true });
-    { const cx = 8, cz = -228, R = 16; for (let k = 0; k < 28; k++) { const a = k / 28 * Math.PI * 2; if (a > 3.7 && a < 4.5) continue; bigBook(b, cx + Math.sin(a) * R, Y + 20, cz + Math.cos(a) * R, 2.6, 14 + rnd() * 6, 3.4, a, k % 4 ? 'dp_inkMatte' : 'navy'); }
+    { const cx = 8, cz = -228, R = 16; for (let k = 0; k < 28; k++) { const a = k / 28 * Math.PI * 2; if (a < 0.42 || a > Math.PI * 2 - 0.42) continue; /* 北侧留口迎上行阶梯 */ bigBook(b, cx + Math.sin(a) * R, Y + 20, cz + Math.cos(a) * R, 2.6, 14 + rnd() * 6, 3.4, a, k % 4 ? 'dp_inkMatte' : 'navy'); }
       // 环形书桌 + 摊开的「京城」一章
       const ring = new THREE.RingGeometry(5.2, 6.6, 64); ring.rotateX(-Math.PI / 2); b.add('wood', ring, { pos: [cx, Y + 21.0, cz] }, { uv: 0.5 }); const ringS = new THREE.CylinderGeometry(6.6, 6.6, 1.0, 64, 1, true); b.add('dp_inkMatte', ringS, { pos: [cx, Y + 20.5, cz] }, { uv: 0.4 }); world.box(cx, Y + 20.5, cz - 6, 6, 1, 1.4);
       const rev = plane(zone, docMat('doc_abyss_revisions', new THREE.MeshStandardMaterial({ map: textPage('#efe8d6', '#20180f', true, 18, 0.7), roughness: 0.9 })), 1.6, 1.1, cx, Y + 21.03, cz - 5.9, 0, -Math.PI / 2); anchor('doc_abyss_revisions', rev, 3);
@@ -144,7 +144,7 @@ export async function buildDepths(scene, world, ctx) {
       const post = plane(zone, docMat('doc_abyss_tide_post', signMaterial('边界警示', ['墨潮带', '禁止越过红桩', '不要读它们身上的字'], 420, 520)), 0.7, 0.86, 43.3, Y + 1.0, -139.2, -Math.PI / 2); anchor('doc_abyss_tide_post', post);
       const rec = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 0.2), M.blackMetal); rec.position.set(42.6, Y + 0.03, -141.4); rec.rotation.set(0.3, 0.6, 0.1); zone.add(rec); const rl = new THREE.Mesh(new THREE.PlaneGeometry(0.03, 0.03), new THREE.MeshBasicMaterial({ color: 0xff3020 })); rl.position.set(42.6, Y + 0.07, -141.35); rl.rotation.x = -Math.PI / 2; zone.add(rl); anchor('doc_abyss_recorder', rec, 2.4);
       for (let k = 0; k < 14; k++) { const p = person(M, { coat: 0x050506 }); p.position.set(52 + rnd() * 30, Y - 0.9 - rnd() * 0.6, -125 - rnd() * 30); p.rotation.y = rnd() * 6; zone.add(p); }
-      point(zone, 0x9a2018, 10, [40, Y + 4, -140], 20); }
+      point(zone, 0x9a2018, 10, [40, Y + 4, -140], 20); spot(zone, 0xffe0b0, 160, [60, Y + 18, -125], [75, Y, -145], 0.6, false, 40); }
     zone.add(dust([0, Y, -140], [80, 30, 140], 900, 0xe8dcc0));
     b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); jobs.push(P.build(zone));
     world.surface(-80, -240, 80, -50, 'wood', Y - 2, Y + 30);
@@ -155,8 +155,8 @@ export async function buildDepths(scene, world, ctx) {
     const zone = mk('seventh'), b = new Batch(), P = new Props(), Y = SY;
     // 入口 seventh_entry（z −55…−66）：牛皮纸页缝，头顶暗红线
     b.box('dp_kraft', 8, 0.3, 14, [0, Y - 0.15, -60], { uv: 0.2, collide: true });
-    for (const sx of [-1, 1]) { b.box('dp_kraft', 0.4, 9, 14, [sx * 3.2, Y + 4.5, -60], { uv: 0.15, collide: true }); }
-    b.box('dp_kraft', 7, 9, 0.4, [0, Y + 4.5, -53], { uv: 0.15, collide: true });
+    for (const sx of [-1, 1]) { b.box('dp_kraft', 0.4, 9, 14, [sx * 3.2, Y + 4.5, -60], { uv: 0.45, collide: true }); }
+    b.box('dp_kraft', 7, 9, 0.4, [0, Y + 4.5, -53], { uv: 0.45, collide: true });
     const back = plane(zone, new THREE.MeshStandardMaterial({ color: 0, emissive: 0xffeedd, emissiveIntensity: 0.6 }), 0.3, 6, 0, Y + 3, -53.3, Math.PI); back.userData.exit = true; ctx.depths.exitSeam = back;
     { const frag = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.14), docMat('doc_seventh_metro_fragment', new THREE.MeshStandardMaterial({ map: cvTex(128, 90, (c, w, h) => { c.fillStyle = '#efe9dc'; c.fillRect(0, 0, w, h); c.fillStyle = '#222'; c.font = '13px "NB Sans", sans-serif'; c.fillText('7. 若你已在车上', 6, 30); c.fillText('　 请……', 6, 52); }), roughness: 0.9 }))); frag.rotation.x = -Math.PI / 2; frag.rotation.z = 0.4; frag.position.set(0.8, Y + 0.01, -58); zone.add(frag); anchor('doc_seventh_metro_fragment', frag, 2.2);
       const card = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.005, 0.18), new THREE.MeshStandardMaterial({ color: 0xe8dcc0, roughness: 0.8 })); card.position.set(-2.9, Y + 1.3, -61); card.rotation.set(0, 0, Math.PI / 2 - 0.1); zone.add(card); anchor('doc_seventh_punchcard', card, 2.2); }
@@ -165,17 +165,17 @@ export async function buildDepths(scene, world, ctx) {
     const gcur = new THREE.CatmullRomCurve3(gpts);
     for (let i = 0; i < 46; i++) { const t0 = i / 46, t1 = (i + 1) / 46; const p0 = gcur.getPoint(t0), p1 = gcur.getPoint(t1); const mid = p0.clone().add(p1).multiplyScalar(0.5); const yaw = Math.atan2(p1.x - p0.x, p1.z - p0.z); const len = p0.distanceTo(p1) + 0.08; const nx = Math.cos(yaw), nz = -Math.sin(yaw);
       b.add('dp_kraft', new THREE.BoxGeometry(3.6, 0.3, len), { pos: [mid.x, Y - 0.15, mid.z], rot: [0, yaw, 0] }, { uv: 0.2, collide: true });
-      b.add('dp_kraft', new THREE.BoxGeometry(0.3, 12, len), { pos: [mid.x + nx * 1.9, Y + 6, mid.z + nz * 1.9], rot: [0, yaw, 0] }, { uv: 0.15, collide: true });
-      b.add(i % 2 ? 'dp_page' : 'dp_pageDark', new THREE.BoxGeometry(0.3, 12, len), { pos: [mid.x - nx * 1.9, Y + 6, mid.z - nz * 1.9], rot: [0, yaw, 0] }, { uv: 0.15, collide: true });
+      b.add('dp_kraft', new THREE.BoxGeometry(0.3, 12, len), { pos: [mid.x + nx * 1.9, Y + 6, mid.z + nz * 1.9], rot: [0, yaw, 0] }, { uv: 0.45, collide: true });
+      b.add(i % 2 ? 'dp_page' : 'dp_pageDark', new THREE.BoxGeometry(0.3, 12, len), { pos: [mid.x - nx * 1.9, Y + 6, mid.z - nz * 1.9], rot: [0, yaw, 0] }, { uv: 0.45, collide: true });
       if (i % 3 === 0) { b.add('dp_red', new THREE.CylinderGeometry(0.03, 0.03, 3.8, 5), { pos: [mid.x, Y + 7.5, mid.z], rot: [0, yaw, Math.PI / 2] }, { uv: false }); }
       if (i % 6 === 3) { const kn = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.18), tagMaterial(['2019 · 三号 · 已缝合', '2021 · 五号 · 已缝合', '2023 · 七号 · 未缝合', '2024 · 七号 · 未缝合', '2025 · 七号 · 未缝合', '2026 · 七号 · ——', '——', '——'][(i / 6) | 0])); kn.position.set(mid.x, Y + 7.0, mid.z); kn.rotation.y = yaw + Math.PI / 2; zone.add(kn); if (i === 15) anchor('doc_gutter_knots', kn, 6); }
       if (i % 8 === 4) point(zone, 0xc02018, 3, [mid.x, Y + 6.5, mid.z], 9); }
     b.add('dp_red', new THREE.TubeGeometry(new THREE.CatmullRomCurve3(gpts.map((p) => p.clone().setY(Y + 7.6))), 80, 0.05, 5), null, { uv: false });
     { const p = gcur.getPoint(0.5); const mt = plane(zone, docMat('doc_gutter_mirror_text', new THREE.MeshStandardMaterial({ map: cvTex(512, 256, (c, w, h) => { c.fillStyle = '#e9e1cc'; c.fillRect(0, 0, w, h); c.save(); c.translate(w, 0); c.scale(-1, 1); c.fillStyle = '#5a1010'; c.font = '700 40px "NB Title", "NB Serif", serif'; c.fillText('第七局人员守则', 40, 70); c.font = '28px "NB Serif", serif'; c.fillText('一、我们不存在', 40, 130); c.fillText('二、所以我们记得', 40, 180); c.restore(); }), roughness: 0.9 })), 2.6, 1.3, p.x - 1.74, Y + 2.4, p.z, Math.PI / 2 * 0 + Math.atan2(1, 0)); anchor('doc_gutter_mirror_text', mt, 3); }
     // 作战室 seventh_ops（z −112…−134，x −10…10）
-    const room = (z0, z1, x0, x1, h, floor = 'dp_kraft') => { b.box(floor, x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, Y - 0.15, (z0 + z1) / 2], { uv: 0.2, collide: true }); b.box('dp_inkMatte', x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, Y + h + 0.15, (z0 + z1) / 2], { uv: 0.2 }); for (const x of [x0, x1]) b.box('dp_kraft', 0.4, h, z0 - z1, [x, Y + h / 2, (z0 + z1) / 2], { uv: 0.15, collide: true }); };
+    const room = (z0, z1, x0, x1, h, floor = 'dp_kraft') => { b.box(floor, x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, Y - 0.15, (z0 + z1) / 2], { uv: 0.45, collide: true }); b.box('dp_inkMatte', x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, Y + h + 0.15, (z0 + z1) / 2], { uv: 0.2 }); for (const x of [x0, x1]) b.box('dp_kraft', 0.4, h, z0 - z1, [x, Y + h / 2, (z0 + z1) / 2], { uv: 0.45, collide: true }); };
     room(-112, -134, -10, 10, 6);
-    b.box('dp_kraft', 7.8, 6, 0.4, [-6.1, Y + 3, -112], { uv: 0.15, collide: true }); b.box('dp_kraft', 7.8, 6, 0.4, [6.1, Y + 3, -112], { uv: 0.15, collide: true });
+    b.box('dp_kraft', 7.8, 6, 0.4, [-6.1, Y + 3, -112], { uv: 0.45, collide: true }); b.box('dp_kraft', 7.8, 6, 0.4, [6.1, Y + 3, -112], { uv: 0.45, collide: true });
     { const bt = cvTex(1024, 512, (c, w, h) => { c.fillStyle = '#120808'; c.fillRect(0, 0, w, h); c.fillStyle = '#e8c87a'; c.font = '700 48px "NB Title", "NB Serif", serif'; c.fillText('S 级以上危机看板　·　第七局', 30, 70); c.font = '28px "NB Sans", sans-serif'; ['S-01　第二草稿：重写计划　进行中', 'S-02　灰塔：档案交换　冻结', 'S-03　余辉剧团：京城巡演　监视', 'S-07　留白：第四次写回　——'].forEach((l, i) => { c.fillStyle = i === 3 ? '#ff5a4a' : '#d8cfc0'; c.fillText(l, 40, 150 + i * 70); }); });
       const bm = new THREE.MeshStandardMaterial({ color: 0, emissive: 0xffffff, emissiveIntensity: 0.6, map: bt, emissiveMap: bt });
       const bd = plane(zone, docMat('doc_ops_board', bm), 8, 4, 0, Y + 3.2, -133.6, 0); anchor('doc_ops_board', bd, 9); }
@@ -188,7 +188,7 @@ export async function buildDepths(scene, world, ctx) {
     point(zone, 0xffc8a0, 10, [0, Y + 5, -118], 16); point(zone, 0xc02018, 6, [0, Y + 4, -130], 10);
     // 杀青室 seventh_wrap（z −134…−158）：档案柜列 + 三只空白档案袋 + 落地镜
     room(-134, -158, -8, 8, 5.4);
-    b.box('dp_kraft', 6.6, 5.4, 0.4, [-4.7, Y + 2.7, -134], { uv: 0.15, collide: true }); b.box('dp_kraft', 6.6, 5.4, 0.4, [4.7, Y + 2.7, -134], { uv: 0.15, collide: true });
+    b.box('dp_kraft', 6.6, 5.4, 0.4, [-4.7, Y + 2.7, -134], { uv: 0.45, collide: true }); b.box('dp_kraft', 6.6, 5.4, 0.4, [4.7, Y + 2.7, -134], { uv: 0.45, collide: true });
     for (let r = 0; r < 4; r++) for (const sx of [-1, 1]) { const f = new Frame([sx * 7.4, Y, -138 - r * 4.6], sx > 0 ? -Math.PI / 2 : Math.PI / 2); spineShelf(b, f, 3.6, 4.4, 0.6, { seed: r * 7 + sx, wood: 'dp_inkMatte' }); world.box(sx * 7.4, Y + 2.2, -138 - r * 4.6, 0.6, 4.4, 3.6); }
     { const wi = plane(zone, docMat('doc_wrap_intro', signMaterial('杀青室', ['此处存放已杀青之人', '请勿唤其名'], 400, 320)), 0.9, 0.72, 2.6, Y + 1.9, -134.25, 0); anchor('doc_wrap_intro', wi); }
     { b.box('wood', 3.4, 0.9, 0.9, [0, Y + 0.45, -146], { uv: 0.6, collide: true }); ['doc_wrap_file_2023', 'doc_wrap_file_2024', 'doc_wrap_file_2025'].forEach((id, k) => { const env = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.012, 0.42), M.kraft); env.position.set(-1 + k, Y + 0.91, -146); env.rotation.y = (k - 1) * 0.08; zone.add(env); const lb = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.06), tagMaterial('07-0-0000 · ' + (2023 + k))); lb.rotation.x = -Math.PI / 2; lb.position.set(-1 + k, Y + 0.92, -146.1); zone.add(lb); anchor(id, env, 2.0); }); point(zone, 0xffe0b0, 4, [0, Y + 2.6, -146], 6); }
@@ -196,7 +196,7 @@ export async function buildDepths(scene, world, ctx) {
     point(zone, 0xd8c8a8, 5, [0, Y + 4.4, -140], 12);
     // 回写台 seventh_rewrite（z −158…−186）：长桌 + 空白巨书 + 墨池金笔 + 柒字印章
     room(-158, -186, -9, 9, 9);
-    b.box('dp_kraft', 7.4, 9, 0.4, [-5.3, Y + 4.5, -158], { uv: 0.15, collide: true }); b.box('dp_kraft', 7.4, 9, 0.4, [5.3, Y + 4.5, -158], { uv: 0.15, collide: true }); b.box('dp_kraft', 18, 9, 0.4, [0, Y + 4.5, -186], { uv: 0.15, collide: true });
+    b.box('dp_kraft', 7.4, 9, 0.4, [-5.3, Y + 4.5, -158], { uv: 0.45, collide: true }); b.box('dp_kraft', 7.4, 9, 0.4, [5.3, Y + 4.5, -158], { uv: 0.45, collide: true }); b.box('dp_kraft', 18, 9, 0.4, [0, Y + 4.5, -186], { uv: 0.45, collide: true });
     { b.box('dp_inkMatte', 3.2, 0.9, 7, [0, Y + 0.45, -174], { uv: 0.4, collide: true }); b.box('gold', 3.24, 0.05, 7.04, [0, Y + 0.92, -174], { uv: 1 });
       const book = new THREE.Group(); for (const s of [-1, 1]) { const pg = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.08, 1.7), D.dp_blank); pg.position.set(s * 0.62, 0.04, 0); pg.rotation.z = s * -0.05; book.add(pg); } const cov = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.04, 1.8), M.leather); cov.position.y = -0.02; book.add(cov); book.position.set(0, Y + 0.95, -173); zone.add(book); anchor('doc_rewrite_last_page', book, 3);
       const pool = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.2, 0.08, 20), D.dp_ink); pool.position.set(1.1, Y + 0.97, -175.3); zone.add(pool); const pen = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.006, 0.32, 8), M.goldBright); pen.position.set(1.1, Y + 1.05, -175.3); pen.rotation.z = 0.6; zone.add(pen);
@@ -204,6 +204,16 @@ export async function buildDepths(scene, world, ctx) {
       const rp = plane(zone, docMat('doc_rewrite_plate', brassPlaqueMaterial('回写台', ['此处可将已归档之人', '写回正文'])), 0.8, 0.6, 0, Y + 0.6, -170.48, 0); anchor('doc_rewrite_plate', rp);
       for (let k = 0; k < 9; k++) b.add('dp_red', new THREE.CylinderGeometry(0.025, 0.025, 9, 5), { pos: [-8 + k * 2, Y + 4.5, -185.7] }, { uv: false });
       spot(zone, 0xffe8c0, 90, [0, Y + 8.6, -170], [0, Y + 1, -174], 0.4, true, 14); point(zone, 0xc02018, 6, [0, Y + 6, -184], 12); }
+    // —— 加密：天花梁与红线网、作战室桌椅地图台灯、档案柜、电报机、回写台红线纸条林、烛台、地面线结圆环 ——
+    for (const [z0, z1, x0, x1, h] of [[-112, -134, -10, 10, 6], [-134, -158, -8, 8, 5.4], [-158, -186, -9, 9, 9]]) { for (let z = z0 - 2; z > z1; z -= 3) b.box('dp_kraft', x1 - x0, 0.35, 0.3, [(x0 + x1) / 2, Y + h - 0.2, z], { uv: 0.5 }); for (let x = x0 + 2; x < x1; x += 4) b.add('dp_red', new THREE.CylinderGeometry(0.015, 0.015, z0 - z1, 4), { pos: [x, Y + h - 0.4, (z0 + z1) / 2], rot: [Math.PI / 2, 0, 0] }, { uv: false }); }
+    for (let k = 0; k < 4; k++) { const x = k * 2.6; for (const dz of [-1.4, 0, 1.4]) P.add('office_chair', [x + 1.2 * (dz ? 1 : 0) - 0.6, Y, -120 + dz * 1.6], { h: 1.0, yaw: (k + dz) * 0.7 }); b.add('dp_page', new THREE.PlaneGeometry(1.6, 1.1), { pos: [x, Y + 0.795, -120.3], rot: [-Math.PI / 2, 0, k * 0.2] }, { uv: false }); greenLamp(b, x - 0.8, Y + 0.79, -121.5, 0); b.add('dz_cable', new THREE.CylinderGeometry(0.01, 0.01, 4, 4), { pos: [x, Y + 4, -120] }, { uv: false }); b.add('dz_shade', new THREE.ConeGeometry(0.35, 0.3, 16, 1, true), { pos: [x, Y + 2.2, -120] }, { uv: false }); }
+    for (let k = 0; k < 8; k++) P.add('file_cabinet', [-9.4, Y, -114 - k * 0.65], { h: 1.4, yaw: Math.PI / 2 }); world.box(-9.4, Y + 0.7, -116.3, 0.7, 1.4, 5.2);
+    P.add('telegraph', [-6.9, Y + 0.79, -126.3], { h: 0.25, yaw: 0.4 }); P.add('wall_clock', [0, Y + 5.2, -133.7], { w: 0.8 });
+    for (let k = 0; k < 120; k++) { const x = (rnd() - 0.5) * 16, z = -160 - rnd() * 24; if (Math.abs(x) < 2.2 && z < -169 && z > -179) continue; const len = 3 + rnd() * 5; b.add('dp_red', new THREE.CylinderGeometry(0.008, 0.008, len, 3), { pos: [x, Y + 9 - len / 2, z] }, { uv: false }); b.add('dp_page', new THREE.PlaneGeometry(0.12, 0.22), { pos: [x, Y + 9 - len - 0.1, z], rot: [0, rnd() * 3, 0] }, { uv: false }); }
+    for (const [x, z] of [[-2.2, -170.5], [2.2, -170.5], [-2.2, -177.5], [2.2, -177.5]]) { b.add('gold', new THREE.CylinderGeometry(0.08, 0.14, 1.3, 10), { pos: [x, Y + 0.65, z] }, { uv: 1 }); b.add('dz_glow', new THREE.CylinderGeometry(0.03, 0.03, 0.18, 6), { pos: [x, Y + 1.4, z] }, { uv: false }); point(zone, 0xffb870, 1.6, [x, Y + 1.6, z], 4); }
+    { const r = new THREE.RingGeometry(4.6, 4.8, 64); r.rotateX(-Math.PI / 2); b.add('dp_red', r, { pos: [0, Y + 0.01, -174] }, { uv: false }); const r2 = new THREE.RingGeometry(5.6, 5.65, 64); r2.rotateX(-Math.PI / 2); b.add('gold', r2, { pos: [0, Y + 0.01, -174] }, { uv: false }); }
+    for (let r = 0; r < 4; r++) for (const sx of [-1, 1]) { b.add('dz_shade', new THREE.ConeGeometry(0.3, 0.26, 14, 1, true), { pos: [sx * 3, Y + 3.6, -138 - r * 4.6] }, { uv: false }); b.add('dz_cable', new THREE.CylinderGeometry(0.01, 0.01, 1.8, 4), { pos: [sx * 3, Y + 4.5, -138 - r * 4.6] }, { uv: false }); }
+    b.box('dp_kraft', 2.4, 0.04, 20, [0, Y + 0.01, -146], { uv: false }); for (let k = 0; k < 6; k++) b.box('wood', 0.5, 0.45, 0.5, [-1.6 + (k % 2) * 3.2, Y + 0.23, -138 - Math.floor(k / 2) * 6], { uv: 0.6 });
     zone.add(dust([0, Y, -120], [24, 10, 140], 400, 0xd8b890));
     b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); jobs.push(P.build(zone));
   }
@@ -219,7 +229,7 @@ export function updateDepths(ctx, dt, t) {
   for (const p of d.pages) { p.position.y += Math.sin(t * p.userData.v + p.id) * 0.004; p.rotation.y += dt * p.userData.v * 0.3; }
   for (const [i, m] of d.redTexts.entries()) { m.material.opacity = 0.55 + 0.45 * Math.sin(t * 1.3 + i); }
   if (d.floatFile) { d.floatFile.position.y = AY + 1.6 + Math.sin(t * 1.1) * 0.08; d.floatFile.rotation.y += dt * 0.4; }
-  if (d.tide) { const pa = d.tide.geometry.attributes.position; for (let i = 0; i < pa.count; i += 1) { const x = pa.getX(i), y = pa.getY(i); pa.setZ(i, Math.sin(x * 0.4 + t * 0.8) * 0.12 + Math.cos(y * 0.33 + t * 0.6) * 0.1); } pa.needsUpdate = true; }
+  if (d.tide) { d.tide.material.map.offset.set(t * 0.01, t * 0.004); const pa = d.tide.geometry.attributes.position; for (let i = 0; i < pa.count; i += 1) { const x = pa.getX(i), y = pa.getY(i); pa.setZ(i, Math.sin(x * 0.4 + t * 0.8) * 0.12 + Math.cos(y * 0.33 + t * 0.6) * 0.1); } pa.needsUpdate = true; }
   if (d.fold) d.fold.material.opacity = 0.85 + Math.sin(t * 0.7) * 0.07;
 }
 
