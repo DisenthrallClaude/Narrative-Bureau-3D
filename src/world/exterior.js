@@ -268,7 +268,7 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
     const em = emblem(1.1, M.gold, M.navy); em.position.set(0, Y + archApex(pW, hs) + 0.9, -5 + pDepth + 0.25); g.add(em);
     // 山花两斜边卷叶饰
     for (let k = 1; k < 9; k++) { const t = k / 9; for (const sx of [-1, 1]) b.add('stone', new THREE.ConeGeometry(0.14, 0.5, 4), front.at(sx * hw * (1 - t), archApex(pW, hs) - 3.2 + 9 * t + 0.25, pDepth), { uv: 1 }); }
-    pinnacle(b, front, 0, archApex(pW, hs) - 3.2 + 8.6, pDepth, 0.22); // M5：缩小，避免挡住招牌「管」字
+    // M5：删去山花顶尖顶（曾穿过招牌「管」字）
   }
   // 门洞内：鼓室（tympanum）与局徽浮雕
   b.add('stoneDark', archSolidGeo(DW, 0.01, 0.3), front.at(0, hs, 0.1), { uv: 0.4 });
@@ -288,15 +288,15 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
     leaf.position.set(sx * DW / 2, Y, -5.6); leaf.rotation.y = sx * -1.25; g.add(leaf);
   }
   // 门楼立面：文字带、局徽、上部尖窗、山墙
-  const textBandY = 29.6;
+  const textBandY = 31.2; // M5：上移 1.6 m，让门洞山花顶点不再顶进文字带
   b.add('stoneDark', new THREE.BoxGeometry(17, 3.6, 0.5), front.at(0, textBandY, 0.2), { uv: 0.5 });
   b.add('gold', new THREE.BoxGeometry(17.4, 0.14, 0.6), front.at(0, textBandY + 1.85, 0.2), { uv: 1 });
   b.add('gold', new THREE.BoxGeometry(17.4, 0.14, 0.6), front.at(0, textBandY - 1.85, 0.2), { uv: 1 });
   const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + textBandY, -5 + 0.5); g.add(txt);
-  const big = emblem(4.2, M.goldBright, M.navy); big.position.set(0, Y + 37, -5 + 0.5); g.add(big); ctx.facadeEmblem = big;
-  b.add('stoneDark', new THREE.CylinderGeometry(5.3, 5.3, 0.3, 48), { pos: [0, Y + 37, -5 + 0.2], rot: [Math.PI / 2, 0, 0] }, { uv: 0.5 });
-  lancetWindow(b, front, -9.2, 31.5, 0.05, 2.2, 8.5);
-  lancetWindow(b, front, 9.2, 31.5, 0.05, 2.2, 8.5);
+  const big = emblem(3.8, M.goldBright, M.navy); big.position.set(0, Y + 37.8, -5 + 0.5); g.add(big); ctx.facadeEmblem = big;
+  b.add('stoneDark', new THREE.CylinderGeometry(4.75, 4.75, 0.3, 48), { pos: [0, Y + 37.8, -5 + 0.2], rot: [Math.PI / 2, 0, 0] }, { uv: 0.5 });
+  lancetWindow(b, front, -10.0, 31.5, 0.05, 2.2, 8.5);
+  lancetWindow(b, front, 10.0, 31.5, 0.05, 2.2, 8.5);
   for (const sx of [-1, 1]) for (let k = 0; k < 3; k++) lancetWindow(b, front, sx * (4 + k * 2.6), 1.5 + 9.6, 0.05, 1.4, 5.2, { tracery: false });
   // 门楼顶部山墙
   { const s = new THREE.Shape(); s.moveTo(-14.7, 0); s.lineTo(0, 13); s.lineTo(14.7, 0); s.lineTo(-14.7, 0);

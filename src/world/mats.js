@@ -63,7 +63,7 @@ export function mats() {
   M.paintedGreen = new THREE.MeshStandardMaterial({ color: 0x3d4a40, metalness: 0.45, roughness: 0.45 });
   M.kraft = pbr('Paper006', { color: 0xd6b88a, roughness: 0.9 });
   M.kraftDark = pbr('Cardboard004', { color: 0xb08a5a, roughness: 0.95 });
-  M.leather = pbr('Leather026', { color: 0x2a1c16, roughness: 0.5 });
+  M.leather = pbr('Leather026', { rn: true, color: 0x2a1c16, roughness: 0.62, env: 0.4 }); // M5：原粗糙度图均值 0.37×0.5 → 偏镜面，桌面泛白
   M.concrete = pbr('Concrete036', { color: 0x7a7a7e, roughness: 0.9 });
   M.screenOff = new THREE.MeshStandardMaterial({ color: 0x050608, roughness: 0.15, metalness: 0.4 });
   M.lampGreen = new THREE.MeshStandardMaterial({ color: 0x0d4a2a, emissive: 0x1d7a45, emissiveIntensity: 0.25, roughness: 0.15, metalness: 0.1 });

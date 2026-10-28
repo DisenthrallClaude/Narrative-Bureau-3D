@@ -259,6 +259,13 @@ function armoredCar(M) {
   const em = emblem(0.35, M.goldBright, M.navy); em.position.set(-0.6, 2.0, 1.06); g.add(em);
   add(new THREE.BoxGeometry(5.62, 0.06, 2.32), M.gold, 0, 1.3, 0);
   for (const z of [-0.8, 0.8]) add(new THREE.BoxGeometry(0.05, 0.16, 0.3), M.lampWarm, 2.81, 1.1, z);
+  // M5：侧窗、轮拱、前格栅、防撞杠、车顶灯排、后门把手——不再是方盒
+  for (const sz of [-1, 1]) { for (const x of [-1.5, -0.2]) add(new THREE.BoxGeometry(1.0, 0.55, 0.03), M.glassOut, x, 2.1, sz * 1.06); for (const x of [-1.8, 1.8]) { const arch = add(new THREE.TorusGeometry(0.58, 0.09, 6, 16, Math.PI), M.blackMetal, x, 0.48, sz * 1.16); arch.rotation.y = 0; } add(new THREE.BoxGeometry(5.0, 0.12, 0.06), M.blackMetal, 0, 0.62, sz * 1.17); }
+  for (let k = 0; k < 7; k++) add(new THREE.BoxGeometry(0.04, 0.5, 0.08), M.blackMetal, 2.82, 0.9, -0.6 + k * 0.2);
+  add(new THREE.BoxGeometry(0.2, 0.25, 2.4), M.blackMetal, 2.95, 0.5, 0);
+  add(new THREE.BoxGeometry(0.4, 0.12, 1.4), M.blackMetal, -0.6, 2.56, 0); for (const z of [-0.5, 0, 0.5]) add(new THREE.BoxGeometry(0.3, 0.08, 0.3), z ? new THREE.MeshStandardMaterial({ color: 0, emissive: z > 0 ? 0x2050ff : 0xff2020, emissiveIntensity: 1.5 }) : M.lampCold, -0.6, 2.66, z);
+  for (const z of [-0.8, 0.8]) add(new THREE.BoxGeometry(0.05, 0.14, 0.24), new THREE.MeshStandardMaterial({ color: 0x400000, emissive: 0xff1010, emissiveIntensity: 0.8 }), -2.81, 1.1, z);
+  add(new THREE.BoxGeometry(0.03, 1.4, 0.02), M.blackMetal, -2.81, 1.2, 0);
   return g;
 }
 function canvasMat(w, h, draw) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.85 }); }

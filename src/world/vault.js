@@ -439,7 +439,7 @@ export function setupElevator(G, { toast, dialog, fade, runInteractable }) {
         if (pick[1] === 'B6x') { toast('B6 的按钮是暗的：「训练场 · 需教官授权」。'); return; }
         if (pick[1] === 'B6+') {
           G.freeze(true); toast('（你按住两个按钮。）', { ms: 7000, whisper: true }); await sleep(7000); G.freeze(false);
-          const it = content.get('int_spine_b7'); if (it) await runInteractable(G, it, null); G.glitch?.(1.2); return;
+          const it = content.get('int_spine_b7'); if (it) await runInteractable(G, it, null); G.glitch?.(1.2); if (G.toSeventh) { await sleep(1200); await G.toSeventh(); } return; // M5：B7 → 装订线
         }
         if (WIP.has(pick[1])) { toast(`${pick[1]} 的按钮贴着一张黄条：「施工中 · 暂停开放」。`, { ms: 4200 }); return; }
         if (pick[1] === 'B5' && !content.has('used:int_vault_qichou')) { toast('B5 按钮亮起红灯：「深库 · 需双人授权」。\n也许该先去 B4 找收容库主管。', { ms: 5200 }); return; }

@@ -26,7 +26,7 @@ export function m5Mats(M) {
   weather(trainFloor, { macro: 0.25, grime: 0.3, dust: 0.3, ground: -60, rough: 0.1 });
   // 地面磨损/轮胎印/油渍贴花（透明）
   const decal = (draw) => { const m = new THREE.MeshStandardMaterial({ map: cvTex(256, 256, draw), transparent: true, depthWrite: false, roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -2 }); m.userData.noShadow = true; return m; };
-  const wear = decal((c, w, h) => { for (let i = 0; i < 900; i++) { const x = w / 2 + (rnd() - 0.5) * w * 0.9 * rnd(), y = h / 2 + (rnd() - 0.5) * h * 0.9 * rnd(); c.fillStyle = `rgba(${150 + rnd() * 40},${150 + rnd() * 40},${140 + rnd() * 40},${0.04 + rnd() * 0.06})`; c.beginPath(); c.arc(x, y, 2 + rnd() * 9, 0, 7); c.fill(); } });
+  const wear = decal((c, w, h) => { c.filter = 'blur(1px)'; for (let i = 0; i < 2600; i++) { const x = w / 2 + (rnd() - 0.5) * w * 0.9 * rnd(), y = h / 2 + (rnd() - 0.5) * h * 0.9 * rnd(); c.fillStyle = `rgba(${110 + rnd() * 30},${108 + rnd() * 30},${100 + rnd() * 30},${0.015 + rnd() * 0.03})`; c.fillRect(x, y, 1 + rnd() * 3, 1 + rnd() * 2); } });
   const tire = decal((c, w, h) => { for (const x0 of [56, 200]) for (let y = 0; y < h; y += 6) { c.fillStyle = `rgba(10,10,10,${0.18 + rnd() * 0.2})`; c.fillRect(x0 + Math.sin(y * 0.02) * 6, y, 34, 4); } });
   const oil = decal((c, w, h) => { const g = c.createRadialGradient(w / 2, h / 2, 6, w / 2, h / 2, w / 2); g.addColorStop(0, 'rgba(8,8,6,0.65)'); g.addColorStop(0.6, 'rgba(14,12,8,0.3)'); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.beginPath(); c.ellipse(w / 2, h / 2, w * 0.48, h * 0.36, 0.4, 0, 7); c.fill(); });
   const paintY = new THREE.MeshStandardMaterial({ color: 0xc8a020, roughness: 0.7 });

@@ -9,6 +9,7 @@ import { Audio } from './engine/audio.js';
 import { content } from './engine/content.js';
 import { buildM5 } from './world/dress_m5.js';
 import { buildSurface } from './world/surface.js';
+import { buildDepths, updateDepths, depthZone, setupDepths } from './world/depths.js';
 import { PlanarReflector } from './engine/reflect.js';
 import { time } from './engine/fx.js';
 import { buildExterior, updateExterior, FLOOR } from './world/exterior.js';
@@ -87,7 +88,7 @@ async function boot() {
   scene.background = sky; scene.backgroundIntensity = SKY_I;
   scene.environment = envSky;
   LOG('hdr ok'); UI.loadProgress(0.1, '建造主楼……');
-  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx); await buildDressing(scene, world, ctx); await buildM5(scene, world, ctx); await buildSurface(scene, world, ctx);
+  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx); await buildDressing(scene, world, ctx); await buildM5(scene, world, ctx); await buildSurface(scene, world, ctx); await buildDepths(scene, world, ctx);
   LOG('world built'); scene.add(world.build()); inter.blocker = world.collider; LOG('bvh ok');
   // 反射地面
   const M = mats();
@@ -98,6 +99,7 @@ async function boot() {
   // 分区补光只在本区生效（多个分组同时可见时不叠加）
   scene.traverse((o) => { if (o.userData?.isFill) { let a = o; while (a.parent && a.parent !== scene) a = a.parent; o.userData.fillOf = a.name; FILLS.push(o); } });
   setupStory(G);
+  setupDepths(G, { toast: UI.toast, dialog: UI.dialog, fade: UI.fade, chapterCard: UI.chapterCard, updateObjective: UI.updateObjective, docPages: UI.docPages });
   bindAll(G);
   setupElevator(G, { toast: UI.toast, dialog: UI.dialog, fade: UI.fade, runInteractable });
   applyQuality(savedQ);
@@ -136,13 +138,15 @@ const AREA_NAMES = { plaza: ['中轴广场 · 规则之泉', 'CENTRAL PLAZA'], g
   vault_b3: ['B3 · 证物收容库　开架区', 'EVIDENCE VAULT · B3'], vault_b4: ['B4 · 单独收容柜', 'CONTAINMENT · B4'], vault_b5: ['B5 · 深库', 'DEEP VAULT · B5'],
   canteen: ['职工食堂 · 中庭', 'STAFF CANTEEN'], armory: ['B1 · 外勤缉拿处', 'FIELD OPS · B1'], interrogation: ['B2 · 审讯室', 'INTERROGATION · B2'], training: ['B6 · 驯化副本训练场', 'TRAINING GROUNDS · B6'],
   floor2: ['2F · 国际联络处 · 宣传处', 'LIAISON & PUBLICITY · 2F'], floor3: ['3F · 办公区 · 医务 · 实验室', 'OFFICES · CLINIC · LAB · 3F'], library: ['典籍藏书阁 · 4F–11F', 'THE LIBRARY'], director: ['12F · 机要室与局长室', 'DIRECTOR · 12F'],
-  dorm: ['职工宿舍 · 三号楼', 'STAFF DORMITORY'], helipad: ['飞行器机库 · 停机坪', 'HANGAR & HELIPAD'], wall_posts: ['环形城墙 · 十二号塔岗哨', 'WALL POST · 12'], memorial: ['无字碑廊', 'THE NAMELESS STELES'], metro_exit: ['地铁管理局站 · B 口', 'METRO · BUREAU STATION'], east_cloister: ['东廊', 'EAST CLOISTER'] };
+  dorm: ['职工宿舍 · 三号楼', 'STAFF DORMITORY'], helipad: ['飞行器机库 · 停机坪', 'HANGAR & HELIPAD'], wall_posts: ['环形城墙 · 十二号塔岗哨', 'WALL POST · 12'], memorial: ['无字碑廊', 'THE NAMELESS STELES'], metro_exit: ['地铁管理局站 · B 口', 'METRO · BUREAU STATION'], east_cloister: ['东廊', 'EAST CLOISTER'],
+  abyss_gate: ['墨渊 · 折页门', 'THE INK ABYSS · GATE'], abyss_city: ['墨渊 · 倒悬书城', 'INVERTED BOOK CITY'], abyss_core: ['墨渊 · 定稿厅', 'THE FINAL DRAFT HALL'], abyss_exam: ['墨渊 · 考场母本', 'THE MASTER EXAM HALL'], abyss_tide: ['墨渊 · 墨潮带', 'INK TIDE'], seventh_entry: ['装订线 · 页缝', 'THE GUTTER · ENTRY'], seventh_gutter: ['装订线 · 回廊', 'THE GUTTER'], seventh_ops: ['第七局 · 作战室', 'SEVENTH BUREAU · OPS'], seventh_wrap: ['第七局 · 杀青室', 'THE WRAP ROOM'], seventh_rewrite: ['第七局 · 回写台', 'THE REWRITING DESK'] };
 // 区域 → manifest 区域 id（用于 enter_area 条件）
-const AREA_OF = { dorm: 'dorm', helipad: 'helipad', wall_posts: 'wall_posts', memorial: 'memorial', metro_exit: 'metro_exit', director: 'director_office',  spine_b3: 'spine_shaft', spine_b4: 'spine_shaft', spine_b5: 'spine_shaft', vault_b3: 'vault', vault_b4: 'vault', vault_b5: 'vault' };
+const AREA_OF = { abyss_gate: 'abyss_gate', abyss_city: 'abyss_city', abyss_core: 'abyss_core', abyss_exam: 'abyss_exam', abyss_tide: 'abyss_tide', seventh_entry: 'seventh_entry', seventh_gutter: 'seventh_gutter', seventh_ops: 'seventh_ops', seventh_wrap: 'seventh_wrap', seventh_rewrite: 'seventh_rewrite', dorm: 'dorm', helipad: 'helipad', wall_posts: 'wall_posts', memorial: 'memorial', metro_exit: 'metro_exit', director: 'director_office',  spine_b3: 'spine_shaft', spine_b4: 'spine_shaft', spine_b5: 'spine_shaft', vault_b3: 'vault', vault_b4: 'vault', vault_b5: 'vault' };
 // 区域 → 场景分组（多个区域共用一个分组）
-const GROUP_OF = { dorm: 'surface', helipad: 'surface', wall_posts: 'surface', memorial: 'surface', metro_exit: 'surface', spine_b3: 'vault_b3', spine_b4: 'vault_b4', spine_b5: 'vault_b5', citizen_service: 'east_wing', exam_center: 'east_wing', command_center: 'east_wing', zone_control: 'east_wing', east_stair: 'east_wing' };
+const GROUP_OF = { abyss_gate: 'abyss', abyss_city: 'abyss', abyss_core: 'abyss', abyss_exam: 'abyss', abyss_tide: 'abyss', seventh_entry: 'seventh', seventh_gutter: 'seventh', seventh_ops: 'seventh', seventh_wrap: 'seventh', seventh_rewrite: 'seventh', dorm: 'surface', helipad: 'surface', wall_posts: 'surface', memorial: 'surface', metro_exit: 'surface', spine_b3: 'vault_b3', spine_b4: 'vault_b4', spine_b5: 'vault_b5', citizen_service: 'east_wing', exam_center: 'east_wing', command_center: 'east_wing', zone_control: 'east_wing', east_stair: 'east_wing' };
 function zoneAt(p) {
   const Y = FLOOR;
+  const dz = depthZone(p); if (dz) return dz;
   // 地上楼层：按 upper.js 实际平面包围盒判定（含电梯厅 z -84…-92）；包围盒外的高空一律算室外
   const inUpper = (hx, z1) => Math.abs(p.x) < hx && p.z < -83.6 && p.z > z1;
   if (p.y > 70 && p.y < 80 && inUpper(13.6, -112.6)) return 'director';
@@ -178,6 +182,8 @@ const VIS = {
   plaza: { exterior: 1, gate: 1, security_hall: 1, surface: 1 },
   dorm: { exterior: 1, surface: 1 }, helipad: { exterior: 1, surface: 1 }, wall_posts: { exterior: 1, surface: 1 }, memorial: { exterior: 1, surface: 1 }, metro_exit: { exterior: 1, surface: 1 },
   east_cloister: { east_cloister: 1, canteen: 1, east_wing: 1 },
+  abyss_gate: { abyss: 1 }, abyss_city: { abyss: 1 }, abyss_core: { abyss: 1 }, abyss_exam: { abyss: 1 }, abyss_tide: { abyss: 1 },
+  seventh_entry: { seventh: 1 }, seventh_gutter: { seventh: 1 }, seventh_ops: { seventh: 1 }, seventh_wrap: { seventh: 1 }, seventh_rewrite: { seventh: 1 },
   gate: { exterior: 1, gate: 1, security_hall: 1 },
   security_hall: { exterior: 0, gate: 1, security_hall: 1, archive: 1, east_wing: 1, canteen: 1 },
   canteen: { security_hall: 1, east_cloister: 1 }, armory: {}, interrogation: {}, training: {}, floor2: {}, floor3: {}, library: {}, director: {},
@@ -190,6 +196,8 @@ const ZONE_LOOK = {
   plaza: { env: 'sky', envI: 1.1, sun: 3.2, exp: 1.05, fog: [0x8a7a86, 0.0011], hemi: 0.3 },
   memorial: { env: 'sky', envI: 1.0, sun: 3.2, exp: 1.05, fog: [0x8a7a86, 0.0016], hemi: 0.3 }, metro_exit: { env: 'sky', envI: 1.1, sun: 3.2, exp: 1.05, fog: [0x8a7a86, 0.0011], hemi: 0.3 },
   wall_posts: { env: 'sky', envI: 1.0, sun: 3.2, exp: 1.05, fog: [0x8a7a86, 0.0011], hemi: 0.3 }, helipad: { env: 'sky', envI: 0.9, sun: 3.2, exp: 1.1, fog: [0x8a7a86, 0.0011], hemi: 0.25 },
+  abyss_gate: { env: 'hall', envI: 0.35, sun: 0, exp: 1.25, fog: [0x0c0a08, 0.008], hemi: 0.14 }, abyss_city: { env: 'hall', envI: 0.35, sun: 0, exp: 1.25, fog: [0x0c0a08, 0.008], hemi: 0.14 }, abyss_core: { env: 'hall', envI: 0.35, sun: 0, exp: 1.25, fog: [0x0c0a08, 0.008], hemi: 0.14 }, abyss_exam: { env: 'hall', envI: 0.35, sun: 0, exp: 1.25, fog: [0x0c0a08, 0.008], hemi: 0.14 }, abyss_tide: { env: 'hall', envI: 0.35, sun: 0, exp: 1.25, fog: [0x0c0a08, 0.012], hemi: 0.14 },
+  seventh_entry: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_gutter: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_ops: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_wrap: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_rewrite: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 },
   dorm: { env: 'hall', envI: 0.45, sun: 3.2, exp: 1.15, fog: [0x221d17, 0.006], hemi: 0.14 }, east_cloister: { env: 'hall', envI: 0.4, sun: 0, exp: 1.15, fog: [0x1d1915, 0.012], hemi: 0.1 },
   gate: { env: 'hall', envI: 0.7, sun: 3.2, exp: 0.95, fog: [0x2a241c, 0.006], hemi: 0.15 },
   security_hall: { env: 'hall', envI: 0.6, sun: 0, exp: 1.0, fog: [0x1d1915, 0.010], hemi: 0.12 },
@@ -227,6 +235,7 @@ function setZone(z, force = false) {
   scene.environmentIntensity = L.envI;
   sun.intensity = L.sun * TOD.sunMul; sun.castShadow = L.sun > 0; hemi.intensity = L.env === 'sky' && L.sun > 0 ? L.hemi * TOD.hemiMul : L.hemi;
   scene.fog = new THREE.FogExp2(L.fog[0], L.fog[1]);
+  { const deep = /^(abyss|seventh)/.test(z); scene.background = deep ? new THREE.Color(L.fog[0]) : skyTex; }
   targetExp = z === 'plaza' ? TOD.plazaExp : L.exp;
   reflector.enabled = z === 'gate' || z === 'security_hall';
   if (prev && AREA_NAMES[z]) UI.showArea(...AREA_NAMES[z]);
@@ -305,7 +314,7 @@ function loop() {
   curExp += (targetExp - curExp) * Math.min(1, dt * 1.5);
   R.setExposure(curExp);
   for (const s of ctx.screens) s.update(dt, t);
-  updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t); updateDressing(ctx, dt, t);
+  updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t); updateDressing(ctx, dt, t); updateDepths(ctx, dt, t);
   reflector.setY(FLOOR); reflector.update(scene, camera, R.q.reflect);
   R.render(dt);
   frames++;
