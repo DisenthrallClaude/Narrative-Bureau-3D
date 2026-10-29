@@ -22,7 +22,7 @@ async function bbox(m) {
   return (cache[m] = max.map((v, k) => v - min[k]));
 }
 for (const it of plan.items) {
-  if (it.fixed) continue;
+  if (it.fixed || it.size) continue;
   if (it.box) { it.size = [it.w, it.h, it.d]; continue; }
   const s0 = await bbox(it.m); if (it.fit) { it.size = it.fit; continue; } const s = it.h ? it.h / s0[1] : it.w ? it.w / s0[0] : it.d ? it.d / s0[2] : (it.s ?? 1);
   it.size = s0.map((v) => +(v * s).toFixed(3));

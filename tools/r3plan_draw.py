@@ -39,9 +39,10 @@ def inside(pt, poly):
         elif sgn != (c > 0): return False
     return True
 
-def name(it): return (it.get('m') or it.get('box')).split('/')[-1]
+def name(it): return (it.get('m') or it.get('box') or it.get('pic') or it.get('sign') or ('part' if it.get('part') else 'x')).split('/')[-1]
 errs, warns = [], []
 floor = [it for it in items if it.get('on') == 'floor']
+parts = [it for it in items if it.get('on') == 'part']
 SOFT = ('chair', 'bin', 'broom', 'dustpan', 'trashbag', 'cleaner')
 for i in range(len(floor)):
     for j in range(i+1, len(floor)):
@@ -51,6 +52,10 @@ for i in range(len(floor)):
         if any(k in na for k in SOFT) and ('desk' in nb or 'table' in nb) or any(k in nb for k in SOFT) and ('desk' in na or 'table' in na): continue  # 椅子塞进桌下、纸篓贴桌是真实的
         if a['tag'].startswith('K4') and b['tag'].startswith('K4'): continue  # 保洁工具靠在一起
         errs.append(f"穿模：{na}@({a['x']:.2f},{a['z']:.2f}) ↔ {nb}@({b['x']:.2f},{b['z']:.2f})")
+for a in floor:
+    if a.get('fixed') and 'm' in a and '展板' in a['m']: continue
+    for w in parts:
+        if sat(obb(a, -0.015), obb(w)): errs.append(f"穿墙：{name(a)}@({a['x']:.2f},{a['z']:.2f}) ↔ 隔墙@({w['x']:.2f},{w['z']:.2f})")
 supports = [it for it in items if it.get('on') == 'floor' and it.get('col')] + [it for it in items if it.get('on') == 'floor' and any(k in name(it) for k in ('cabinet', 'desk', 'table'))]
 for it in items:
     if it.get('on') != 'desk' or it.get('box'): continue
@@ -92,7 +97,13 @@ for dr in R.get('doors', []):
     wallseg(dr['wall'], dr['a'], dr['b'], (232, 228, 218), 9)
     xm = R['x1'] if dr['wall'] == 'E' else R['x0']; d.text((X(xm)+8 if dr['wall'] == 'E' else X(xm)-120, Z((dr['a']+dr['b'])/2)-8), '门 ' + dr.get('label', ''), fill=(180, 40, 40), font=FONTS)
 COL = {'floor': (120, 92, 60), 'desk': (40, 90, 160), 'wall': (160, 60, 160), 'ceil': (200, 160, 40)}
-for it in sorted(items, key=lambda t: {'floor': 0, 'wall': 1, 'desk': 2, 'ceil': 3}[t.get('on', 'floor')]):
+for w in parts: d.polygon([(X(x), Z(z)) for x, z in obb(w)], fill=(70, 62, 52))
+for it in items:
+    if it.get('on') == 'pic': pts = [(X(x), Z(z)) for x, z in obb(dict(it, size=[it['w'], 0, 0.12]))]; d.polygon(pts, fill=(170, 40, 170))
+    if it.get('on') == 'light' and not it.get('win'): d.ellipse([X(it['x'])-6, Z(it['z'])-6, X(it['x'])+6, Z(it['z'])+6], outline=(230, 170, 0), width=3)
+    if it.get('on') == 'sign': d.rectangle([X(it['x'])-4, Z(it['z'])-4, X(it['x'])+4, Z(it['z'])+4], fill=(200, 150, 40))
+for rm in R.get('rooms', []): d.text((X(rm[1])-30, Z(rm[2])-8), rm[0], fill=(150, 30, 30), font=FONT)
+for it in sorted([t for t in items if t.get('on', 'floor') in ('floor', 'wall', 'desk', 'ceil')], key=lambda t: {'floor': 0, 'wall': 1, 'desk': 2, 'ceil': 3}[t.get('on', 'floor')]):
     on = it.get('on', 'floor')
     if on == 'ceil' and it.get('box'): continue
     pts = [(X(x), Z(z)) for x, z in obb(it)]
@@ -115,7 +126,7 @@ for t, lst in groups.items():
 lx = W - 250
 d.text((lx, M), R['name'], fill=(0, 0, 0), font=FONT)
 yy = M + 28
-for lab, c in [('落地家具（轮廓）', COL['floor']), ('桌面小件', COL['desk']), ('挂墙件', COL['wall']), ('顶棚灯/烟感', COL['ceil']), ('红线 = 正面/使用侧', (200, 50, 30)), ('蓝 = 窗　缺口 = 门', (90, 160, 230)), ('绿 = 通道（保持净空）', (120, 170, 120)), ('橙 = 保留的剧情锚点', (230, 80, 30))]:
+for lab, c in [('落地家具（轮廓）', COL['floor']), ('桌面小件', COL['desk']), ('挂墙件', COL['wall']), ('顶棚灯/烟感', COL['ceil']), ('红线 = 正面/使用侧', (200, 50, 30)), ('蓝 = 窗　缺口 = 门', (90, 160, 230)), ('绿 = 通道（保持净空）', (120, 170, 120)), ('橙 = 保留的剧情锚点', (230, 80, 30)), ('深褐实线 = 隔墙（缺口=门）', (70, 62, 52)), ('紫 = 挂画/海报/告示', (170, 40, 170)), ('黄圈 = 台灯/补光', (230, 170, 0))]:
     d.rectangle([lx, yy+3, lx+14, yy+15], outline=c, width=3); d.text((lx+20, yy), lab, fill=(30, 30, 30), font=FONTS); yy += 20
 yy += 10; d.text((lx, yy), f"网格 1 m　物件 {len(items)}", fill=(30, 30, 30), font=FONTS); yy += 18
 d.text((lx, yy), f"检查：穿模/悬空/越界/占道 {len(errs)} 处", fill=(180, 0, 0) if errs else (0, 120, 0), font=FONTS); yy += 18

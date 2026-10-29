@@ -57,8 +57,8 @@ export function buildUpper(scene, world, ctx) {
     b.box('wood', 1.2, 1.15, 0.7, [-14, y + 0.575, -112], { uv: 0.6, collide: true }); const em = emblem(0.25, M.goldBright, M.navy); em.position.set(-14, y + 0.8, -111.63); zone.add(em);
     const press = paper('doc_pub_press', '通稿（草稿）'); press.position.set(-14, y + 1.16, -112.1); press.rotation.set(-0.2, 0, 0); zone.add(press); ctx.anchors.doc_pub_press = press;
     const bg = board('doc_pub_press_bg', 8, 3.4, posterMaterial('叙事管理局 新闻发布会', '京城 · 现实稳定度通报')); bg.position.set(-14, y + 3.0, Z1 + 0.25); zone.add(bg);
-    for (let r = 0; r < 3; r++) for (let k = 0; k < 5; k++) woodChair(b, -18 + k * 2, y, -104 + r * 2.2, 1);
-    for (let k = 0; k < 4; k++) { const x = -25 + k * 3; b.box('blackMetal', 2.6, 0.06, 1.0, [x, y + 0.76, -96], { uv: 1 }); world.box(x, y + 0.4, -96, 2.6, 0.8, 1); add(placeModel('monitor', { height: 0.5, pos: [x, y + 0.79, -96.2] })); add(placeModel('office_chair', { height: 1, pos: [x, y, -95.1], rotY: Math.PI })); }
+    if (!R3.floor2_pub) for (let r = 0; r < 3; r++) for (let k = 0; k < 5; k++) woodChair(b, -18 + k * 2, y, -104 + r * 2.2, 1);
+    if (!R3.floor2_pub) for (let k = 0; k < 4; k++) { const x = -25 + k * 3; b.box('blackMetal', 2.6, 0.06, 1.0, [x, y + 0.76, -96], { uv: 1 }); world.box(x, y + 0.4, -96, 2.6, 0.8, 1); add(placeModel('monitor', { height: 0.5, pos: [x, y + 0.79, -96.2] })); add(placeModel('office_chair', { height: 1, pos: [x, y, -95.1], rotY: Math.PI })); }
     const cm = board('doc_pub_comments', 0.55, 0.32, signMaterial('后台评论', ['「主播背后那栋楼是真的吗」', '「我梦见过这个大厅」', '「第七排有人」'], 550, 320), 0.6); cm.position.set(-22, y + 1.12, -96.18); zone.add(cm); ctx.anchors.doc_pub_comments = cm;
     add(placeModel('shelves_01', { height: 2.2, pos: [-27, y, -102], rotY: Math.PI / 2 }));
     const guide = paper('doc_pub_guide', '宣传口径手册'); guide.position.set(-26.6, y + 1.2, -102); guide.rotation.y = Math.PI / 2; zone.add(guide); ctx.anchors.doc_pub_guide = guide;
