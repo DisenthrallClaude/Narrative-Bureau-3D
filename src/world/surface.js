@@ -13,6 +13,7 @@ import { vaultMats, tagMaterial } from './vault.js';
 import { dressMats, Props, wallDress, wallSeg, rug, hangingSign, plantPot, bin, paperStack, folderStack, telephone, greenLamp } from './dress.js';
 import { m5Mats } from './dress_m5.js';
 import { RING, FLOOR, cypress, blob } from './exterior.js';
+import { R3 } from './r3plan.js';
 import { dormMats, bunkBed, singleBed, desk, wardrobe, thermos, mug, washstand, windowCurtain, noticeBoard, thermosRack, tubeLamp } from './dorm.js';
 
 const rnd = (() => { let s = 11; return () => ((s = (s * 16807) % 2147483647) / 2147483647); })();
@@ -101,7 +102,7 @@ export async function buildSurface(scene, world, ctx) {
     // 大厅：信箱墙、沙发、贩卖机、公告板、绿植、地垫
     for (let i = 0; i < 10; i++) for (let j = 0; j < 4; j++) { b.box('brass', 0.04, 0.3, 0.36, [53.3, 1.0 + j * 0.34, 14.2 + i * 0.4], { uv: 1 }); b.box('dz_bakelite', 0.03, 0.03, 0.1, [53.33, 1.12 + j * 0.34, 14.2 + i * 0.4], { uv: false }); }
     b.box('dz_wain', 0.4, 1.6, 4.2, [53.4, 1.5, 16], { uv: 0.6 });
-    for (const z of [22.4, 24.4]) { b.box('leather', 0.9, 0.45, 1.8, [58.6, 0.23, z], { uv: 1, collide: true }); b.box('leather', 0.2, 0.5, 1.8, [59.0, 0.7, z], { uv: 1 }); } b.box('wood', 0.8, 0.45, 1.2, [57.2, 0.23, 23.4], { uv: 0.6, collide: true }); paperStack(b, 57.2, 0.46, 23.4, 0.3, 4);
+    if (!R3.dorm) for (const z of [22.4, 24.4]) { b.box('leather', 0.9, 0.45, 1.8, [58.6, 0.23, z], { uv: 1, collide: true }); b.box('leather', 0.2, 0.5, 1.8, [59.0, 0.7, z], { uv: 1 }); } if (!R3.dorm) { b.box('wood', 0.8, 0.45, 1.2, [57.2, 0.23, 23.4], { uv: 0.6, collide: true }); paperStack(b, 57.2, 0.46, 23.4, 0.3, 4); }
     { b.box('paintedSteel', 0.8, 1.9, 0.75, [61.3, 0.95, 13.2], { uv: 1, collide: true }); const vm = plane(zone, cvMat(256, 420, (c, w, h) => { c.fillStyle = '#0a1420'; c.fillRect(0, 0, w, h); for (let r = 0; r < 5; r++) for (let k = 0; k < 4; k++) { c.fillStyle = ['#c83a2a', '#2a8ac8', '#e8c040', '#3ab070'][(r + k) % 4]; c.fillRect(20 + k * 56, 40 + r * 64, 40, 50); } c.fillStyle = '#e8c87a'; c.font = '900 26px "NB Title", "NB Serif", serif'; c.fillText('篇幅补充剂', 30, 380); }, { emis: 0.6 }), 0.7, 1.4, 60.9, 1.1, 13.2, -Math.PI / 2); void vm; }
     const rulesM = plane(zone, docMat('doc_dorm_rules', signMaterial('职工宿舍管理条例', ['一、23:00 熄灯', '二、请勿在走廊朗读', '三、发现房间多出一间', '　　请立即上报宿管', '四、残页请投回收箱'], 512, 680)), 0.9, 1.2, 64.88, 1.6, 9.0, -Math.PI / 2); anchor('doc_dorm_rules', rulesM);
     // 宿管室窗口 + 分配表
@@ -141,7 +142,7 @@ export async function buildSurface(scene, world, ctx) {
       noticeBoard(zone, b, 70.0, 1.75, 10.74, 0, 1.4, 0.8, '个人备忘', [['待办', ['领工牌', '交体检表'], '#efe8d6'], ['电话', ['宿管 8207', '后勤 8113'], '#e8eef4'], ['注意', ['别在走廊', '朗读'], '#f4e8c8']]);
       tubeLamp(b, 72, F2 - 0.3, 15.3, Math.PI / 2); point(zone, 0xffd8b0, 3, [72, 3.4, 15], 7); }
     // 二层活动室 + 207
-    for (const z of [14, 18]) { b.box('wood', 2.2, 0.05, 1.0, [57.5, F2 + 0.76, z], { uv: 0.6, collide: true }); for (const dx of [-0.7, 0.7]) b.box('wood', 0.45, 0.45, 0.45, [57.5 + dx, F2 + 0.23, z + 0.8], { uv: 0.6 }); }
+    if (!R3.dorm2) for (const z of [14, 18]) { b.box('wood', 2.2, 0.05, 1.0, [57.5, F2 + 0.76, z], { uv: 0.6, collide: true }); for (const dx of [-0.7, 0.7]) b.box('wood', 0.45, 0.45, 0.45, [57.5 + dx, F2 + 0.23, z + 0.8], { uv: 0.6 }); }
     b.box('blackMetal', 0.1, 1.0, 1.7, [53.4, F2 + 1.8, 20], { uv: 1 }); plane(zone, cvMat(512, 300, (c, w, h) => { c.fillStyle = '#081018'; c.fillRect(0, 0, w, h); c.fillStyle = '#e8c87a'; c.font = '900 34px "NB Title", "NB Serif", serif'; c.fillText('京城新闻　·　稳定度 97.3%', 20, 60); c.fillStyle = '#9fb4e0'; c.font = '24px "NB Sans", sans-serif'; c.fillText('通州区连续三日低于 96%', 20, 120); }, { emis: 0.7 }), 1.6, 0.92, 53.47, F2 + 1.8, 20, Math.PI / 2);
     { const z0 = 20.2, x = 72; bunkBed(b, world, 77.85, F2 + 0.04, 21.35, 0, { bottom: 'quilt', top: 'bare', suitcase: false }); windowCurtain(b, 78.72, F2 + 0.95, 25.6, -Math.PI / 2, 1.8, 1.7); wardrobe(b, world, 65.42, F2 + 0.04, 21.2, Math.PI / 2); washstand(b, world, 65.55, F2 + 0.04, 28.4, Math.PI / 2); thermos(b, 73.0, F2 + 0.04, 29.0); thermos(b, 73.2, F2 + 0.04, 29.05); mug(b, 71.7, F2 + 0.79, 28.7); tubeLamp(b, 72, 8.9, 24.8, Math.PI / 2);
       bunkBed(b, world, 75.0, F2 + 0.04, 21.35, 0, { bottom: 'bare', top: 'none', suitcase: false }); // 室友的空铺
