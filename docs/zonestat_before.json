@@ -1,0 +1,1245 @@
+{
+ "zones": {
+  "plaza": {
+   "groups": [
+    "interactProxies",
+    "exterior",
+    "gate",
+    "security_hall",
+    "surface",
+    "Mesh"
+   ],
+   "meshes": 1691,
+   "tris": 6687223,
+   "sunShadowTris": 3604112,
+   "sun": true
+  },
+  "dorm": {
+   "groups": [
+    "interactProxies",
+    "exterior",
+    "surface",
+    "Mesh"
+   ],
+   "meshes": 1385,
+   "tris": 5752802,
+   "sunShadowTris": 2696779,
+   "sun": true
+  },
+  "helipad": {
+   "groups": [
+    "interactProxies",
+    "exterior",
+    "surface",
+    "Mesh"
+   ],
+   "meshes": 1385,
+   "tris": 5752802,
+   "sunShadowTris": 2696779,
+   "sun": true
+  },
+  "wall_posts": {
+   "groups": [
+    "interactProxies",
+    "exterior",
+    "surface",
+    "Mesh"
+   ],
+   "meshes": 1385,
+   "tris": 5752802,
+   "sunShadowTris": 2696779,
+   "sun": true
+  },
+  "memorial": {
+   "groups": [
+    "interactProxies",
+    "exterior",
+    "surface",
+    "Mesh"
+   ],
+   "meshes": 1385,
+   "tris": 5752802,
+   "sunShadowTris": 2696779,
+   "sun": true
+  },
+  "metro_exit": {
+   "groups": [
+    "interactProxies",
+    "exterior",
+    "surface",
+    "Mesh"
+   ],
+   "meshes": 1385,
+   "tris": 5752802,
+   "sunShadowTris": 2696779,
+   "sun": true
+  },
+  "east_cloister": {
+   "groups": [
+    "interactProxies",
+    "east_wing",
+    "canteen",
+    "east_cloister",
+    "Mesh"
+   ],
+   "meshes": 1059,
+   "tris": 1922249,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "abyss_gate": {
+   "groups": [
+    "interactProxies",
+    "abyss",
+    "Mesh"
+   ],
+   "meshes": 456,
+   "tris": 112083,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "abyss_city": {
+   "groups": [
+    "interactProxies",
+    "abyss",
+    "Mesh"
+   ],
+   "meshes": 456,
+   "tris": 112083,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "abyss_core": {
+   "groups": [
+    "interactProxies",
+    "abyss",
+    "Mesh"
+   ],
+   "meshes": 456,
+   "tris": 112083,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "abyss_exam": {
+   "groups": [
+    "interactProxies",
+    "abyss",
+    "Mesh"
+   ],
+   "meshes": 456,
+   "tris": 112083,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "abyss_tide": {
+   "groups": [
+    "interactProxies",
+    "abyss",
+    "Mesh"
+   ],
+   "meshes": 456,
+   "tris": 112083,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "seventh_entry": {
+   "groups": [
+    "interactProxies",
+    "seventh",
+    "Mesh"
+   ],
+   "meshes": 128,
+   "tris": 573733,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "seventh_gutter": {
+   "groups": [
+    "interactProxies",
+    "seventh",
+    "Mesh"
+   ],
+   "meshes": 128,
+   "tris": 573733,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "seventh_ops": {
+   "groups": [
+    "interactProxies",
+    "seventh",
+    "Mesh"
+   ],
+   "meshes": 128,
+   "tris": 573733,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "seventh_wrap": {
+   "groups": [
+    "interactProxies",
+    "seventh",
+    "Mesh"
+   ],
+   "meshes": 128,
+   "tris": 573733,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "seventh_rewrite": {
+   "groups": [
+    "interactProxies",
+    "seventh",
+    "Mesh"
+   ],
+   "meshes": 128,
+   "tris": 573733,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "gate": {
+   "groups": [
+    "interactProxies",
+    "exterior",
+    "gate",
+    "security_hall",
+    "Mesh"
+   ],
+   "meshes": 984,
+   "tris": 5576485,
+   "sunShadowTris": 2508288,
+   "sun": true
+  },
+  "security_hall": {
+   "groups": [
+    "interactProxies",
+    "gate",
+    "security_hall",
+    "archive",
+    "east_wing",
+    "canteen",
+    "Mesh"
+   ],
+   "meshes": 1671,
+   "tris": 3306944,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "canteen": {
+   "groups": [
+    "interactProxies",
+    "security_hall",
+    "canteen",
+    "east_cloister",
+    "Mesh"
+   ],
+   "meshes": 429,
+   "tris": 1402459,
+   "sunShadowTris": 1372401,
+   "sun": true
+  },
+  "armory": {
+   "groups": [
+    "interactProxies",
+    "armory",
+    "Mesh"
+   ],
+   "meshes": 426,
+   "tris": 1285428,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "interrogation": {
+   "groups": [
+    "interactProxies",
+    "interrogation",
+    "Mesh"
+   ],
+   "meshes": 106,
+   "tris": 260408,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "training": {
+   "groups": [
+    "interactProxies",
+    "training",
+    "Mesh"
+   ],
+   "meshes": 247,
+   "tris": 334287,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "floor2": {
+   "groups": [
+    "interactProxies",
+    "floor2",
+    "Mesh"
+   ],
+   "meshes": 260,
+   "tris": 581747,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "floor3": {
+   "groups": [
+    "interactProxies",
+    "floor3",
+    "Mesh"
+   ],
+   "meshes": 625,
+   "tris": 2460001,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "library": {
+   "groups": [
+    "interactProxies",
+    "library",
+    "Mesh"
+   ],
+   "meshes": 89,
+   "tris": 185382,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "director": {
+   "groups": [
+    "interactProxies",
+    "director",
+    "Mesh"
+   ],
+   "meshes": 203,
+   "tris": 306466,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "archive": {
+   "groups": [
+    "interactProxies",
+    "security_hall",
+    "archive",
+    "archive_b1",
+    "Mesh"
+   ],
+   "meshes": 737,
+   "tris": 1108959,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "archive_b1": {
+   "groups": [
+    "interactProxies",
+    "archive",
+    "archive_b1",
+    "Mesh"
+   ],
+   "meshes": 548,
+   "tris": 502542,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "spine_b3": {
+   "groups": [
+    "interactProxies",
+    "vault_b3",
+    "Mesh"
+   ],
+   "meshes": 104,
+   "tris": 84329,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "spine_b4": {
+   "groups": [
+    "interactProxies",
+    "vault_b4",
+    "Mesh"
+   ],
+   "meshes": 183,
+   "tris": 123117,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "spine_b5": {
+   "groups": [
+    "interactProxies",
+    "vault_b5",
+    "Mesh"
+   ],
+   "meshes": 253,
+   "tris": 298920,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "vault_b3": {
+   "groups": [
+    "interactProxies",
+    "vault_b3",
+    "Mesh"
+   ],
+   "meshes": 104,
+   "tris": 84329,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "vault_b4": {
+   "groups": [
+    "interactProxies",
+    "vault_b4",
+    "Mesh"
+   ],
+   "meshes": 183,
+   "tris": 123117,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "vault_b5": {
+   "groups": [
+    "interactProxies",
+    "vault_b5",
+    "Mesh"
+   ],
+   "meshes": 253,
+   "tris": 298920,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "citizen_service": {
+   "groups": [
+    "interactProxies",
+    "security_hall",
+    "east_wing",
+    "east_cloister",
+    "Mesh"
+   ],
+   "meshes": 1064,
+   "tris": 1743314,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "exam_center": {
+   "groups": [
+    "interactProxies",
+    "security_hall",
+    "east_wing",
+    "east_cloister",
+    "Mesh"
+   ],
+   "meshes": 1064,
+   "tris": 1743314,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "command_center": {
+   "groups": [
+    "interactProxies",
+    "east_wing",
+    "Mesh"
+   ],
+   "meshes": 850,
+   "tris": 1126579,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "zone_control": {
+   "groups": [
+    "interactProxies",
+    "east_wing",
+    "Mesh"
+   ],
+   "meshes": 850,
+   "tris": 1126579,
+   "sunShadowTris": 0,
+   "sun": false
+  },
+  "east_stair": {
+   "groups": [
+    "interactProxies",
+    "security_hall",
+    "east_wing",
+    "east_cloister",
+    "Mesh"
+   ],
+   "meshes": 1064,
+   "tris": 1743314,
+   "sunShadowTris": 0,
+   "sun": false
+  }
+ },
+ "groups": [
+  {
+   "name": "interactProxies",
+   "visible": true,
+   "meshes": 30,
+   "tris": 360,
+   "shadowTris": 0
+  },
+  {
+   "name": "exterior",
+   "visible": true,
+   "meshes": 647,
+   "tris": 4641692,
+   "shadowTris": 1600943
+  },
+  {
+   "name": "gate",
+   "visible": true,
+   "meshes": 117,
+   "tris": 328004,
+   "shadowTris": 327296
+  },
+  {
+   "name": "security_hall",
+   "visible": true,
+   "meshes": 189,
+   "tris": 606417,
+   "shadowTris": 580037
+  },
+  {
+   "name": "archive",
+   "visible": false,
+   "meshes": 331,
+   "tris": 460592,
+   "shadowTris": 457970
+  },
+  {
+   "name": "archive_b1",
+   "visible": false,
+   "meshes": 186,
+   "tris": 41578,
+   "shadowTris": 40824
+  },
+  {
+   "name": "east_wing",
+   "visible": false,
+   "meshes": 819,
+   "tris": 1126207,
+   "shadowTris": 1116442
+  },
+  {
+   "name": "vault_b3",
+   "visible": false,
+   "meshes": 73,
+   "tris": 83957,
+   "shadowTris": 82015
+  },
+  {
+   "name": "vault_b4",
+   "visible": false,
+   "meshes": 152,
+   "tris": 122745,
+   "shadowTris": 122245
+  },
+  {
+   "name": "vault_b5",
+   "visible": false,
+   "meshes": 222,
+   "tris": 298548,
+   "shadowTris": 296898
+  },
+  {
+   "name": "canteen",
+   "visible": false,
+   "meshes": 184,
+   "tris": 785352,
+   "shadowTris": 782864
+  },
+  {
+   "name": "armory",
+   "visible": false,
+   "meshes": 395,
+   "tris": 1285056,
+   "shadowTris": 1283354
+  },
+  {
+   "name": "interrogation",
+   "visible": false,
+   "meshes": 75,
+   "tris": 260036,
+   "shadowTris": 259614
+  },
+  {
+   "name": "training",
+   "visible": false,
+   "meshes": 216,
+   "tris": 333915,
+   "shadowTris": 330315
+  },
+  {
+   "name": "floor2",
+   "visible": false,
+   "meshes": 229,
+   "tris": 581375,
+   "shadowTris": 573549
+  },
+  {
+   "name": "floor3",
+   "visible": false,
+   "meshes": 594,
+   "tris": 2459629,
+   "shadowTris": 2453771
+  },
+  {
+   "name": "library",
+   "visible": false,
+   "meshes": 58,
+   "tris": 185010,
+   "shadowTris": 177904
+  },
+  {
+   "name": "director",
+   "visible": false,
+   "meshes": 172,
+   "tris": 306094,
+   "shadowTris": 303605
+  },
+  {
+   "name": "surface",
+   "visible": true,
+   "meshes": 707,
+   "tris": 1110738,
+   "shadowTris": 1095824
+  },
+  {
+   "name": "east_cloister",
+   "visible": false,
+   "meshes": 25,
+   "tris": 10318,
+   "shadowTris": 9488
+  },
+  {
+   "name": "abyss",
+   "visible": false,
+   "meshes": 425,
+   "tris": 111711,
+   "shadowTris": 87764
+  },
+  {
+   "name": "seventh",
+   "visible": false,
+   "meshes": 97,
+   "tris": 573361,
+   "shadowTris": 572535
+  },
+  {
+   "name": "Mesh",
+   "visible": false,
+   "meshes": 1,
+   "tris": 19016,
+   "shadowTris": 0
+  },
+  {
+   "name": "Mesh",
+   "visible": true,
+   "meshes": 1,
+   "tris": 12,
+   "shadowTris": 12
+  }
+ ],
+ "top": {
+  "exterior": [
+   {
+    "name": "gold",
+    "mat": "Metal048A",
+    "inst": 0,
+    "tris": 414400,
+    "shadow": true
+   },
+   {
+    "name": "stone",
+    "mat": "Granite003A",
+    "inst": 0,
+    "tris": 197504,
+    "shadow": true
+   },
+   {
+    "name": "gold",
+    "mat": "Metal048A",
+    "inst": 0,
+    "tris": 146044,
+    "shadow": true
+   },
+   {
+    "name": "vitral_0",
+    "mat": "piedra",
+    "inst": 0,
+    "tris": 89054,
+    "shadow": false
+   },
+   {
+    "name": "vitral_0",
+    "mat": "piedra",
+    "inst": 0,
+    "tris": 89054,
+    "shadow": false
+   },
+   {
+    "name": "vitral_0",
+    "mat": "piedra",
+    "inst": 0,
+    "tris": 89054,
+    "shadow": false
+   },
+   {
+    "name": "vitral_0",
+    "mat": "piedra",
+    "inst": 0,
+    "tris": 89054,
+    "shadow": false
+   },
+   {
+    "name": "vitral_0",
+    "mat": "piedra",
+    "inst": 0,
+    "tris": 89054,
+    "shadow": false
+   },
+   {
+    "name": "vitral_0",
+    "mat": "piedra",
+    "inst": 0,
+    "tris": 89054,
+    "shadow": false
+   },
+   {
+    "name": "vitral_0",
+    "mat": "piedra",
+    "inst": 0,
+    "tris": 89054,
+    "shadow": false
+   },
+   {
+    "name": "vitral_0",
+    "mat": "piedra",
+    "inst": 0,
+    "tris": 89054,
+    "shadow": false
+   },
+   {
+    "name": "stone",
+    "mat": "Granite003A",
+    "inst": 0,
+    "tris": 62732,
+    "shadow": true
+   }
+  ],
+  "surface": [
+   {
+    "name": "props:street_lamp_02",
+    "mat": "street_lamp_02",
+    "inst": 18,
+    "tris": 360036,
+    "shadow": true
+   },
+   {
+    "name": "gold",
+    "mat": "Metal048A",
+    "inst": 0,
+    "tris": 181844,
+    "shadow": true
+   },
+   {
+    "name": "stone",
+    "mat": "Granite003A",
+    "inst": 0,
+    "tris": 132124,
+    "shadow": true
+   },
+   {
+    "name": "props:military_crate",
+    "mat": "military_crate_m_01",
+    "inst": 4,
+    "tris": 83808,
+    "shadow": true
+   },
+   {
+    "name": "foliage",
+    "mat": "",
+    "inst": 0,
+    "tris": 56960,
+    "shadow": true
+   },
+   {
+    "name": "props:desk_lamp",
+    "mat": "desk_lamp_arm_01",
+    "inst": 2,
+    "tris": 45196,
+    "shadow": true
+   },
+   {
+    "name": "props:park_bench",
+    "mat": "park-bench_body_pbr",
+    "inst": 4,
+    "tris": 34624,
+    "shadow": true
+   },
+   {
+    "name": "props:storage_cart",
+    "mat": "industrial_storage_cart",
+    "inst": 1,
+    "tris": 18902,
+    "shadow": true
+   },
+   {
+    "name": "stoneDark",
+    "mat": "Marble016",
+    "inst": 0,
+    "tris": 15164,
+    "shadow": true
+   },
+   {
+    "name": "props:bollard",
+    "mat": "bollard_body_pbr",
+    "inst": 8,
+    "tris": 9440,
+    "shadow": true
+   },
+   {
+    "name": "props:plastic_container",
+    "mat": "industrial_pastic_container",
+    "inst": 1,
+    "tris": 7118,
+    "shadow": true
+   },
+   {
+    "name": "props:wall_clock",
+    "mat": "wall_clock",
+    "inst": 2,
+    "tris": 6260,
+    "shadow": true
+   }
+  ],
+  "floor3": [
+   {
+    "name": "props:keyboard",
+    "mat": "opaque__plastic__unique_keyboard_a",
+    "inst": 36,
+    "tris": 492804,
+    "shadow": true
+   },
+   {
+    "name": "props:server_rack",
+    "mat": "cables",
+    "inst": 4,
+    "tris": 140540,
+    "shadow": true
+   },
+   {
+    "name": "props:file_cabinet",
+    "mat": "FileCab_01",
+    "inst": 14,
+    "tris": 31178,
+    "shadow": true
+   },
+   {
+    "name": "drawer_cabinet",
+    "mat": "drawer_cabinet",
+    "inst": 0,
+    "tris": 26406,
+    "shadow": true
+   },
+   {
+    "name": "props:chem_set",
+    "mat": "chemistry_set",
+    "inst": 1,
+    "tris": 22622,
+    "shadow": true
+   },
+   {
+    "name": "vintage_microscope_mirror_arm",
+    "mat": "vintage_microscope",
+    "inst": 0,
+    "tris": 20311,
+    "shadow": true
+   },
+   {
+    "name": "props:chem_set",
+    "mat": "chemistry_set_glass",
+    "inst": 1,
+    "tris": 19336,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   }
+  ],
+  "armory": [
+   {
+    "name": "props:fluorescent",
+    "mat": "mounted_fluorescent_lights",
+    "inst": 15,
+    "tris": 226380,
+    "shadow": true
+   },
+   {
+    "name": "props:military_crate",
+    "mat": "military_crate_m_01",
+    "inst": 9,
+    "tris": 188568,
+    "shadow": true
+   },
+   {
+    "name": "props:cardboard_box",
+    "mat": "cardboard_box_01",
+    "inst": 10,
+    "tris": 169520,
+    "shadow": true
+   },
+   {
+    "name": "props:gas_mask",
+    "mat": "old_gas_mask",
+    "inst": 7,
+    "tris": 132300,
+    "shadow": true
+   },
+   {
+    "name": "props:cardboard_box",
+    "mat": "cardboard_box_01",
+    "inst": 3,
+    "tris": 50856,
+    "shadow": true
+   },
+   {
+    "name": "props:road_barrier",
+    "mat": "concrete_road_barrier_02",
+    "inst": 2,
+    "tris": 47644,
+    "shadow": true
+   },
+   {
+    "name": "props:fluorescent",
+    "mat": "mounted_fluorescent_lights_glass",
+    "inst": 15,
+    "tris": 40920,
+    "shadow": true
+   },
+   {
+    "name": "props:extinguisher",
+    "mat": "korean_fire_extinguisher_01_body",
+    "inst": 3,
+    "tris": 28683,
+    "shadow": true
+   },
+   {
+    "name": "old_military_crate_lid_a",
+    "mat": "military_crate_m_01",
+    "inst": 0,
+    "tris": 20952,
+    "shadow": true
+   },
+   {
+    "name": "old_military_crate_lid_a",
+    "mat": "military_crate_m_01",
+    "inst": 0,
+    "tris": 20952,
+    "shadow": true
+   },
+   {
+    "name": "old_military_crate_lid_a",
+    "mat": "military_crate_m_01",
+    "inst": 0,
+    "tris": 20952,
+    "shadow": true
+   },
+   {
+    "name": "old_military_crate_lid_a",
+    "mat": "military_crate_m_01",
+    "inst": 0,
+    "tris": 20952,
+    "shadow": true
+   }
+  ],
+  "east_wing": [
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   },
+   {
+    "name": "Cylinder01_Matteplastic_0",
+    "mat": "Matteplastic",
+    "inst": 0,
+    "tris": 18162,
+    "shadow": true
+   }
+  ],
+  "canteen": [
+   {
+    "name": "props:armchair",
+    "mat": "modern_arm_chair_01_legs",
+    "inst": 16,
+    "tris": 89728,
+    "shadow": true
+   },
+   {
+    "name": "props:extinguisher",
+    "mat": "korean_fire_extinguisher_01_body",
+    "inst": 6,
+    "tris": 57366,
+    "shadow": true
+   },
+   {
+    "name": "props:armchair",
+    "mat": "modern_arm_chair_01_pillow",
+    "inst": 16,
+    "tris": 52928,
+    "shadow": true
+   },
+   {
+    "name": "potted_plant_02_pot",
+    "mat": "potted_plant_02_pot",
+    "inst": 0,
+    "tris": 36925,
+    "shadow": true
+   },
+   {
+    "name": "potted_plant_02_pot",
+    "mat": "potted_plant_02_pot",
+    "inst": 0,
+    "tris": 36925,
+    "shadow": true
+   },
+   {
+    "name": "potted_plant_02_pot",
+    "mat": "potted_plant_02_pot",
+    "inst": 0,
+    "tris": 36925,
+    "shadow": true
+   },
+   {
+    "name": "potted_plant_02_pot",
+    "mat": "potted_plant_02_pot",
+    "inst": 0,
+    "tris": 36925,
+    "shadow": true
+   },
+   {
+    "name": "potted_plant_02_pot",
+    "mat": "potted_plant_02_pot",
+    "inst": 0,
+    "tris": 36925,
+    "shadow": true
+   },
+   {
+    "name": "potted_plant_02_pot",
+    "mat": "potted_plant_02_pot",
+    "inst": 0,
+    "tris": 36925,
+    "shadow": true
+   },
+   {
+    "name": "Line008000",
+    "mat": "basecolor_classic_chandelier_1",
+    "inst": 0,
+    "tris": 26344,
+    "shadow": true
+   },
+   {
+    "name": "Line008000",
+    "mat": "basecolor_classic_chandelier_1",
+    "inst": 0,
+    "tris": 26344,
+    "shadow": true
+   },
+   {
+    "name": "Line008000",
+    "mat": "basecolor_classic_chandelier_1",
+    "inst": 0,
+    "tris": 26344,
+    "shadow": true
+   }
+  ],
+  "security_hall": [
+   {
+    "name": "gold",
+    "mat": "Metal048A",
+    "inst": 0,
+    "tris": 94704,
+    "shadow": true
+   },
+   {
+    "name": "stoneDark",
+    "mat": "Marble016",
+    "inst": 0,
+    "tris": 53404,
+    "shadow": true
+   },
+   {
+    "name": "large_iron_gate_right_door",
+    "mat": "large_iron_gate",
+    "inst": 0,
+    "tris": 38140,
+    "shadow": true
+   },
+   {
+    "name": "large_iron_gate_right_door",
+    "mat": "large_iron_gate",
+    "inst": 0,
+    "tris": 38140,
+    "shadow": true
+   },
+   {
+    "name": "potted_plant_02_pot",
+    "mat": "potted_plant_02_pot",
+    "inst": 0,
+    "tris": 36925,
+    "shadow": true
+   },
+   {
+    "name": "potted_plant_02_pot",
+    "mat": "potted_plant_02_pot",
+    "inst": 0,
+    "tris": 36925,
+    "shadow": true
+   },
+   {
+    "name": "potted_plant_02_pot",
+    "mat": "potted_plant_02_pot",
+    "inst": 0,
+    "tris": 36925,
+    "shadow": true
+   },
+   {
+    "name": "Line008000",
+    "mat": "basecolor_classic_chandelier_1",
+    "inst": 0,
+    "tris": 26344,
+    "shadow": true
+   },
+   {
+    "name": "Line008000",
+    "mat": "basecolor_classic_chandelier_1",
+    "inst": 0,
+    "tris": 26344,
+    "shadow": true
+   },
+   {
+    "name": "Line008000",
+    "mat": "basecolor_classic_chandelier_1",
+    "inst": 0,
+    "tris": 26344,
+    "shadow": true
+   },
+   {
+    "name": "Line008000",
+    "mat": "basecolor_classic_chandelier_1",
+    "inst": 0,
+    "tris": 26344,
+    "shadow": true
+   },
+   {
+    "name": "vault",
+    "mat": "Concrete034",
+    "inst": 0,
+    "tris": 13512,
+    "shadow": false
+   }
+  ]
+ }
+}

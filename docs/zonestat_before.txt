@@ -1,0 +1,131 @@
+plaza               1691 6.69M shadow 3.60M interactProxies,exterior,gate,security_hall,surface,Mesh
+dorm                1385 5.75M shadow 2.70M interactProxies,exterior,surface,Mesh
+helipad             1385 5.75M shadow 2.70M interactProxies,exterior,surface,Mesh
+wall_posts          1385 5.75M shadow 2.70M interactProxies,exterior,surface,Mesh
+memorial            1385 5.75M shadow 2.70M interactProxies,exterior,surface,Mesh
+metro_exit          1385 5.75M shadow 2.70M interactProxies,exterior,surface,Mesh
+east_cloister       1059 1.92M shadow 0.00M interactProxies,east_wing,canteen,east_cloister,Mesh
+abyss_gate           456 0.11M shadow 0.00M interactProxies,abyss,Mesh
+abyss_city           456 0.11M shadow 0.00M interactProxies,abyss,Mesh
+abyss_core           456 0.11M shadow 0.00M interactProxies,abyss,Mesh
+abyss_exam           456 0.11M shadow 0.00M interactProxies,abyss,Mesh
+abyss_tide           456 0.11M shadow 0.00M interactProxies,abyss,Mesh
+seventh_entry        128 0.57M shadow 0.00M interactProxies,seventh,Mesh
+seventh_gutter       128 0.57M shadow 0.00M interactProxies,seventh,Mesh
+seventh_ops          128 0.57M shadow 0.00M interactProxies,seventh,Mesh
+seventh_wrap         128 0.57M shadow 0.00M interactProxies,seventh,Mesh
+seventh_rewrite      128 0.57M shadow 0.00M interactProxies,seventh,Mesh
+gate                 984 5.58M shadow 2.51M interactProxies,exterior,gate,security_hall,Mesh
+security_hall       1671 3.31M shadow 0.00M interactProxies,gate,security_hall,archive,east_wing,canteen,Mesh
+canteen              429 1.40M shadow 1.37M interactProxies,security_hall,canteen,east_cloister,Mesh
+armory               426 1.29M shadow 0.00M interactProxies,armory,Mesh
+interrogation        106 0.26M shadow 0.00M interactProxies,interrogation,Mesh
+training             247 0.33M shadow 0.00M interactProxies,training,Mesh
+floor2               260 0.58M shadow 0.00M interactProxies,floor2,Mesh
+floor3               625 2.46M shadow 0.00M interactProxies,floor3,Mesh
+library               89 0.19M shadow 0.00M interactProxies,library,Mesh
+director             203 0.31M shadow 0.00M interactProxies,director,Mesh
+archive              737 1.11M shadow 0.00M interactProxies,security_hall,archive,archive_b1,Mesh
+archive_b1           548 0.50M shadow 0.00M interactProxies,archive,archive_b1,Mesh
+spine_b3             104 0.08M shadow 0.00M interactProxies,vault_b3,Mesh
+spine_b4             183 0.12M shadow 0.00M interactProxies,vault_b4,Mesh
+spine_b5             253 0.30M shadow 0.00M interactProxies,vault_b5,Mesh
+vault_b3             104 0.08M shadow 0.00M interactProxies,vault_b3,Mesh
+vault_b4             183 0.12M shadow 0.00M interactProxies,vault_b4,Mesh
+vault_b5             253 0.30M shadow 0.00M interactProxies,vault_b5,Mesh
+citizen_service     1064 1.74M shadow 0.00M interactProxies,security_hall,east_wing,east_cloister,Mesh
+exam_center         1064 1.74M shadow 0.00M interactProxies,security_hall,east_wing,east_cloister,Mesh
+command_center       850 1.13M shadow 0.00M interactProxies,east_wing,Mesh
+zone_control         850 1.13M shadow 0.00M interactProxies,east_wing,Mesh
+east_stair          1064 1.74M shadow 0.00M interactProxies,security_hall,east_wing,east_cloister,Mesh
+== exterior
+   414400 0 gold Metal048A S
+   197504 0 stone Granite003A S
+   146044 0 gold Metal048A S
+   89054 0 vitral_0 piedra 
+   89054 0 vitral_0 piedra 
+   89054 0 vitral_0 piedra 
+   89054 0 vitral_0 piedra 
+   89054 0 vitral_0 piedra 
+   89054 0 vitral_0 piedra 
+   89054 0 vitral_0 piedra 
+   89054 0 vitral_0 piedra 
+   62732 0 stone Granite003A S
+== surface
+   360036 18 props:street_lamp_02 street_lamp_02 S
+   181844 0 gold Metal048A S
+   132124 0 stone Granite003A S
+   83808 4 props:military_crate military_crate_m_01 S
+   56960 0 foliage  S
+   45196 2 props:desk_lamp desk_lamp_arm_01 S
+   34624 4 props:park_bench park-bench_body_pbr S
+   18902 1 props:storage_cart industrial_storage_cart S
+   15164 0 stoneDark Marble016 S
+   9440 8 props:bollard bollard_body_pbr S
+   7118 1 props:plastic_container industrial_pastic_container S
+   6260 2 props:wall_clock wall_clock S
+== floor3
+   492804 36 props:keyboard opaque__plastic__unique_keyboard_a S
+   140540 4 props:server_rack cables S
+   31178 14 props:file_cabinet FileCab_01 S
+   26406 0 drawer_cabinet drawer_cabinet S
+   22622 1 props:chem_set chemistry_set S
+   20311 0 vintage_microscope_mirror_arm vintage_microscope S
+   19336 1 props:chem_set chemistry_set_glass S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+== armory
+   226380 15 props:fluorescent mounted_fluorescent_lights S
+   188568 9 props:military_crate military_crate_m_01 S
+   169520 10 props:cardboard_box cardboard_box_01 S
+   132300 7 props:gas_mask old_gas_mask S
+   50856 3 props:cardboard_box cardboard_box_01 S
+   47644 2 props:road_barrier concrete_road_barrier_02 S
+   40920 15 props:fluorescent mounted_fluorescent_lights_glass S
+   28683 3 props:extinguisher korean_fire_extinguisher_01_body S
+   20952 0 old_military_crate_lid_a military_crate_m_01 S
+   20952 0 old_military_crate_lid_a military_crate_m_01 S
+   20952 0 old_military_crate_lid_a military_crate_m_01 S
+   20952 0 old_military_crate_lid_a military_crate_m_01 S
+== east_wing
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+   18162 0 Cylinder01_Matteplastic_0 Matteplastic S
+== canteen
+   89728 16 props:armchair modern_arm_chair_01_legs S
+   57366 6 props:extinguisher korean_fire_extinguisher_01_body S
+   52928 16 props:armchair modern_arm_chair_01_pillow S
+   36925 0 potted_plant_02_pot potted_plant_02_pot S
+   36925 0 potted_plant_02_pot potted_plant_02_pot S
+   36925 0 potted_plant_02_pot potted_plant_02_pot S
+   36925 0 potted_plant_02_pot potted_plant_02_pot S
+   36925 0 potted_plant_02_pot potted_plant_02_pot S
+   36925 0 potted_plant_02_pot potted_plant_02_pot S
+   26344 0 Line008000 basecolor_classic_chandelier_1 S
+   26344 0 Line008000 basecolor_classic_chandelier_1 S
+   26344 0 Line008000 basecolor_classic_chandelier_1 S
+== security_hall
+   94704 0 gold Metal048A S
+   53404 0 stoneDark Marble016 S
+   38140 0 large_iron_gate_right_door large_iron_gate S
+   38140 0 large_iron_gate_right_door large_iron_gate S
+   36925 0 potted_plant_02_pot potted_plant_02_pot S
+   36925 0 potted_plant_02_pot potted_plant_02_pot S
+   36925 0 potted_plant_02_pot potted_plant_02_pot S
+   26344 0 Line008000 basecolor_classic_chandelier_1 S
+   26344 0 Line008000 basecolor_classic_chandelier_1 S
+   26344 0 Line008000 basecolor_classic_chandelier_1 S
+   26344 0 Line008000 basecolor_classic_chandelier_1 S
+   13512 0 vault Concrete034 

@@ -1,0 +1,220 @@
+{
+ "__groups": [
+  {
+   "name": "interactProxies",
+   "visible": true,
+   "meshes": 30,
+   "tris": 360,
+   "shadowTris": 0
+  },
+  {
+   "name": "exterior",
+   "visible": true,
+   "meshes": 647,
+   "tris": 4641692,
+   "shadowTris": 1600943
+  },
+  {
+   "name": "gate",
+   "visible": true,
+   "meshes": 117,
+   "tris": 328004,
+   "shadowTris": 327296
+  },
+  {
+   "name": "security_hall",
+   "visible": true,
+   "meshes": 189,
+   "tris": 606417,
+   "shadowTris": 580037
+  },
+  {
+   "name": "archive",
+   "visible": false,
+   "meshes": 331,
+   "tris": 460592,
+   "shadowTris": 457970
+  },
+  {
+   "name": "archive_b1",
+   "visible": false,
+   "meshes": 186,
+   "tris": 41578,
+   "shadowTris": 40824
+  },
+  {
+   "name": "east_wing",
+   "visible": false,
+   "meshes": 819,
+   "tris": 1126207,
+   "shadowTris": 1116442
+  },
+  {
+   "name": "vault_b3",
+   "visible": false,
+   "meshes": 73,
+   "tris": 83957,
+   "shadowTris": 82015
+  },
+  {
+   "name": "vault_b4",
+   "visible": false,
+   "meshes": 152,
+   "tris": 122745,
+   "shadowTris": 122245
+  },
+  {
+   "name": "vault_b5",
+   "visible": false,
+   "meshes": 222,
+   "tris": 298548,
+   "shadowTris": 296898
+  },
+  {
+   "name": "canteen",
+   "visible": false,
+   "meshes": 184,
+   "tris": 785352,
+   "shadowTris": 782864
+  },
+  {
+   "name": "armory",
+   "visible": false,
+   "meshes": 395,
+   "tris": 1285056,
+   "shadowTris": 1283354
+  },
+  {
+   "name": "interrogation",
+   "visible": false,
+   "meshes": 75,
+   "tris": 260036,
+   "shadowTris": 259614
+  },
+  {
+   "name": "training",
+   "visible": false,
+   "meshes": 216,
+   "tris": 333915,
+   "shadowTris": 330315
+  },
+  {
+   "name": "floor2",
+   "visible": false,
+   "meshes": 229,
+   "tris": 581375,
+   "shadowTris": 573549
+  },
+  {
+   "name": "floor3",
+   "visible": false,
+   "meshes": 594,
+   "tris": 2459629,
+   "shadowTris": 2453771
+  },
+  {
+   "name": "library",
+   "visible": false,
+   "meshes": 58,
+   "tris": 185010,
+   "shadowTris": 177904
+  },
+  {
+   "name": "director",
+   "visible": false,
+   "meshes": 172,
+   "tris": 306094,
+   "shadowTris": 303605
+  },
+  {
+   "name": "surface",
+   "visible": true,
+   "meshes": 707,
+   "tris": 1110738,
+   "shadowTris": 1095824
+  },
+  {
+   "name": "east_cloister",
+   "visible": false,
+   "meshes": 25,
+   "tris": 10318,
+   "shadowTris": 9488
+  },
+  {
+   "name": "abyss",
+   "visible": false,
+   "meshes": 425,
+   "tris": 111711,
+   "shadowTris": 87764
+  },
+  {
+   "name": "seventh",
+   "visible": false,
+   "meshes": 97,
+   "tris": 573361,
+   "shadowTris": 572535
+  },
+  {
+   "name": "Mesh",
+   "visible": false,
+   "meshes": 1,
+   "tris": 19016,
+   "shadowTris": 0
+  },
+  {
+   "name": "Mesh",
+   "visible": true,
+   "meshes": 1,
+   "tris": 12,
+   "shadowTris": 12
+  }
+ ],
+ "plaza": {
+  "calls": 3475,
+  "tris": 13582413,
+  "zone": "plaza",
+  "geometries": 1315,
+  "textures": 307,
+  "programs": 90
+ },
+ "plaza_aerial": {
+  "calls": 3389,
+  "tris": 13691963,
+  "zone": "plaza",
+  "geometries": 1343,
+  "textures": 326,
+  "programs": 94
+ },
+ "plaza_fountain": {
+  "calls": 3361,
+  "tris": 13229525,
+  "zone": "plaza",
+  "geometries": 1343,
+  "textures": 326,
+  "programs": 94
+ },
+ "facade_text": {
+  "calls": 2121,
+  "tris": 11306579,
+  "zone": "plaza",
+  "geometries": 1343,
+  "textures": 326,
+  "programs": 94
+ },
+ "facade": {
+  "calls": 1238,
+  "tris": 6665068,
+  "zone": "plaza",
+  "geometries": 1343,
+  "textures": 326,
+  "programs": 94
+ },
+ "gate": {
+  "calls": 1338,
+  "tris": 8385707,
+  "zone": "gate",
+  "geometries": 1350,
+  "textures": 327,
+  "programs": 138
+ }
+}

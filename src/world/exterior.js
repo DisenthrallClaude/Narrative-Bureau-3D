@@ -574,7 +574,7 @@ function buildCity(g, M, ctx) {
       const o = src.clone(true); const w = new THREE.Group(); w.add(o);
       o.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(o); const s = 110 / (bb.max.y - bb.min.y); o.scale.setScalar(s);
       o.updateMatrixWorld(true); bb.setFromObject(o); const c = bb.getCenter(new THREE.Vector3()); o.position.set(-c.x, -bb.min.y, -c.z);
-      w.position.set(x, -4.4, z); w.rotation.y = yaw; w.traverse((m) => { if (m.isMesh) { m.castShadow = false; m.receiveShadow = false; } }); g.add(w);
+      w.position.set(x, -4.4, z); w.rotation.y = yaw; w.traverse((m) => { if (m.isMesh) { m.castShadow = false; m.receiveShadow = false; if (!m.geometry.attributes.normal) m.geometry.computeVertexNormals(); } }); g.add(w); // M7：远景教堂 357k→32k 面（tools/decimate_soup.mjs，去法线后运行时补）
     }
   });
   // 跨河大桥

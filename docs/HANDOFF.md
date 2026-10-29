@@ -20,3 +20,5 @@
 - [08:50] m7 第1批完成（abyss_core OK、seventh_rewrite OK、seventh_gutter 斑马条纹已改、abyss_tide 潮面白片已改待复拍）；第2批 library,director,metro,hangar 拍摄中
 - [09:15] 第2批完成：library/director 良好；metro 地面略泛光、入口亭灰盒；hangar 灰盒偏重(WIP)。复拍 abyss_tide,seventh_gutter 中
 - [09:40] seventh_gutter 斑马条纹已修；abyss_tide 潮面改 Lambert 复拍中；下一步 perf.mjs → PERF.md
+- [09:50] abyss_tide 白片已消（潮面全黑，细节不足→WIP）。perf.mjs 全机位采样中 → docs/perf.json
+- [10:30] PERF：zonestat.mjs（test 模式静态统计）完成 before；GLB 二次减面 17 个（tools/decimate_m7.sh，备份 P/work/models_pre_m7）、教堂 357k→32k（decimate_soup.mjs）、阳光时室内组不投影。正在跑 after 统计；之后写 PERF.md、复走查、save

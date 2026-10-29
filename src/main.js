@@ -127,6 +127,8 @@ async function boot() {
       tp: (x, y, z, yaw = 0) => { player.pos.set(x, y, z); player.vel?.set(0, 0, 0); player.yaw = yaw; player.pitch = 0; player.applyCamera(camera); setZone(zoneAt(player.pos)); },
       spot: (id) => inter.spots.find((s) => s.id === id),
       use: async (id) => { const s = inter.spots.find((x) => x.id === id); if (!s) throw new Error('no spot ' + id); if (s.enabled && !s.enabled()) throw new Error('spot disabled ' + id); await s.use(); return true; },
+      setZone: (z) => setZone(z, true), zones: () => Object.keys(VIS), sunOf: (z) => (ZONE_LOOK[z] ?? ZONE_LOOK.spine_b3).sun,
+      topMeshes: (group, n = 12) => { const g = scene.getObjectByName(group); const out = []; g?.traverse((o) => { if (!o.isMesh || !o.geometry) return; const t = (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1); out.push({ name: o.name || o.parent?.name || '?', mat: (Array.isArray(o.material) ? o.material[0] : o.material)?.name || '', inst: o.isInstancedMesh ? o.count : 0, tris: Math.round(t), shadow: o.castShadow }); }); return out.sort((a, b) => b.tris - a.tris).slice(0, n); },
       vols: () => inter.volumes.length, flags: () => [...content.flags], items: () => [...content.items], state: () => UI.ui.state };
     started = true; UI.ui.state = 'play'; document.getElementById('loading').classList.add('hidden'); window.__NB_READY__ = true; return;
   }
@@ -243,7 +245,9 @@ function setZone(z, force = false) {
   const L = ZONE_LOOK[z] ?? ZONE_LOOK.spine_b3;
   scene.environment = L.env === 'sky' ? envSky : envHall;
   scene.environmentIntensity = L.envI;
-  sun.intensity = L.sun * TOD.sunMul; sun.castShadow = L.sun > 0; hemi.intensity = L.env === 'sky' && L.sun > 0 ? L.hemi * TOD.hemiMul : L.hemi;
+  sun.intensity = L.sun * TOD.sunMul; sun.castShadow = L.sun > 0;
+  // M7 性能：室外有阳光时，室内组（安检大厅/档案馆/东翼…）只是透过门洞可见，不再投进阳光阴影图（原广场多渲染 ~0.9M 阴影三角面）；室内区恢复（高画质局部阴影要用）
+  { const sunOn = L.sun > 0; for (const [k, g] of Object.entries(ctx.zones)) { if (k === 'surface' || k === 'gate') continue; if (!g.userData.casters) { g.userData.casters = []; g.traverse((o) => { if (o.isMesh && o.castShadow) g.userData.casters.push(o); }); } for (const o of g.userData.casters) o.castShadow = !sunOn; } } hemi.intensity = L.env === 'sky' && L.sun > 0 ? L.hemi * TOD.hemiMul : L.hemi;
   scene.fog = new THREE.FogExp2(L.fog[0], L.fog[1]);
   { const deep = /^(abyss|seventh)/.test(z); scene.background = deep ? new THREE.Color(L.fog[0]) : skyTex; }
   targetExp = z === 'plaza' ? TOD.plazaExp : L.exp;
