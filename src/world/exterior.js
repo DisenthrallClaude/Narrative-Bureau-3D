@@ -8,6 +8,8 @@ import { mats } from './mats.js';
 import { Frame, archRingGeo, archSolidGeo, archShape, archApex, lancetWindow, pinnacle, spire, tower, gableRoof, bayWall, flyingButtress, emblem, goldText } from './gothic.js';
 import { waterMaterial, waterfallMaterial, bannerMaterial, CanvasScreen, time } from '../engine/fx.js';
 import { content } from '../engine/content.js';
+import { placeHero } from './hero.js';
+export const HERO = !new URLSearchParams(location.search).has('legacy'); // R2：主楼外观改用 Blender 精修 GLB（?legacy 回到旧版程序化外观对比）
 
 export const T = (n) => { if (window.__SHOT__) console.log('[NB]', n, (performance.now() / 1000).toFixed(1)); };
 export const FLOOR = 1.8; // 主楼一层地坪
@@ -23,7 +25,9 @@ export async function buildExterior(scene, world, ctx) {
   // ================= 地面 =================
   // 广场铺装（环形城墙内）
   const ground = new THREE.CircleGeometry(RING.R - 2, 96); ground.rotateX(-Math.PI / 2);
-  b.add('paving', ground, { pos: [RING.cx, 0, RING.cz] }, { uv: 0.35, collide: true });
+  b.add('paving', ground, { pos: [RING.cx, HERO ? -0.01 : 0, RING.cz] }, { uv: 1 / 3, collide: true });
+  if (HERO) jobs.push(placeHero(g, world, './assets/hero/hero_plaza.glb'));
+  if (!HERO) {
   // 中轴石材拼花大道
   b.box('plazaTile', 16, 0.06, 84, [0, 0.03, 38], { uv: 0.5 });
   for (const sx of [-1, 1]) { b.box('gold', 0.18, 0.07, 84, [sx * 8.1, 0.035, 38], { uv: 1 }); b.box('whiteMarble', 1.2, 0.065, 84, [sx * 7.3, 0.033, 38], { uv: 0.5 }); }
@@ -37,11 +41,12 @@ export async function buildExterior(scene, world, ctx) {
     const gr = new THREE.RingGeometry(r1 - 0.05, r1 + 0.05, 128); gr.rotateX(-Math.PI / 2); b.add('gold', gr, { pos: [0, 0.071, 30] }, { uv: 1 });
   }
   for (let z = 2; z < 80; z += 4) { if (Math.abs(z - 30) < 19) continue; const d = new THREE.PlaneGeometry(2.2, 2.2); d.rotateX(-Math.PI / 2); d.rotateY(Math.PI / 4); b.add('stoneDark', d, { pos: [0, 0.062, z + 2] }, { uv: 0.5 }); const d2 = new THREE.PlaneGeometry(1.1, 1.1); d2.rotateX(-Math.PI / 2); d2.rotateY(Math.PI / 4); b.add('whiteMarble', d2, { pos: [0, 0.064, z + 2] }, { uv: 0.5 }); for (const sx of [-1, 1]) { const d3 = new THREE.PlaneGeometry(0.9, 0.9); d3.rotateX(-Math.PI / 2); d3.rotateY(Math.PI / 4); b.add('stoneDark', d3, { pos: [sx * 4.5, 0.062, z + 2] }, { uv: 0.5 }); } }
-  for (const [x, z] of [[-12, 8], [12, 8], [-12, 52], [12, 52]]) add(placeModel('manhole', { width: 1.0, pos: [x, 0.03, z] }));
+  }
+  for (const [x, z] of [[-12, 8], [12, 8], [-12, 52], [12, 52]]) add(placeModel('manhole', { width: 1.0, pos: [x, HERO ? 0.035 : 0.03, z] }));
   // 大地徽（南端）
   g.add(groundEmblem(M, [0, 0.06, 64], 9));
   // 绿篱花坛与草坪（两侧）
-  for (const sx of [-1, 1]) {
+  if (!HERO) for (const sx of [-1, 1]) {
     for (const [z0, z1] of [[2, 22], [38, 56], [60, 72]]) {
       const cx = sx * 30, cz = (z0 + z1) / 2, L = z1 - z0;
       b.box('grass', 18, 0.12, L, [cx, 0.06, cz], { uv: 0.3 });
@@ -50,11 +55,10 @@ export async function buildExterior(scene, world, ctx) {
       // 花坛内低矮绿雕
       for (let k = 0; k < Math.floor(L / 6); k++) b.add('hedge', blob(1.1, k + cx), { pos: [cx, 0.9, z0 + 3 + k * 6], scale: [1, 0.8, 1] }, { uv: 0.8 });
     }
-    // 柏树列
-    for (let z = 0; z < 64; z += 7) cypress(b, sx * 42, z);
   }
+  for (const sx of [-1, 1]) for (let z = 0; z < 64; z += 7) cypress(b, sx * 42, z); // 柏树列
   // 南端大台阶（下到迎宾大道 y=-4）
-  for (let i = 0; i < 20; i++) b.box('plazaTile', 44, 0.2, 0.6, [0, -0.1 - i * 0.2, 81 + i * 0.6], { uv: 0.4, collide: true });
+  for (let i = 0; i < 20; i++) { if (HERO) world.box(0, -0.1 - i * 0.2, 81 + i * 0.6, 44, 0.2, 0.6); else b.box('plazaTile', 44, 0.2, 0.6, [0, -0.1 - i * 0.2, 81 + i * 0.6], { uv: 0.4, collide: true }); }
   world.ramp([0, -0.05, 80.6], [0, -4.05, 93], 44);
   b.box('paving', 300, 0.5, 400, [0, -4.25, 290], { uv: 0.2, collide: true });
   // 台阶两侧跌水
@@ -71,13 +75,14 @@ export async function buildExterior(scene, world, ctx) {
   buildFountain(b, g, M, world, ctx);
 
   // ================= 主楼正门台阶 =================
-  for (let i = 0; i < 10; i++) b.box('blackMarble', 34 - i * 0.4, 0.18, 0.5, [0, 0.09 + i * 0.18, 0.6 - i * 0.5], { uv: 0.4, collide: true });
-  b.box('blackMarble', 34, FLOOR, 5, [0, FLOOR / 2, -3], { uv: 0.4, collide: true });
+  if (HERO) { for (let i = 0; i < 10; i++) world.box(0, 0.09 + i * 0.18, 0.6 - i * 0.5, 34 - i * 0.4, 0.18, 0.5); world.box(0, FLOOR / 2, -3, 34, FLOOR, 5); }
+  else { for (let i = 0; i < 10; i++) b.box('blackMarble', 34 - i * 0.4, 0.18, 0.5, [0, 0.09 + i * 0.18, 0.6 - i * 0.5], { uv: 0.4, collide: true });
+  b.box('blackMarble', 34, FLOOR, 5, [0, FLOOR / 2, -3], { uv: 0.4, collide: true }); }
   world.ramp([0, 0.0, 1.0], [0, FLOOR, -4.4], 30);
 
   T('ext fountain');
   // ================= 主楼外观 =================
-  buildMainBuilding(b, g, M, world, ctx, add);
+  if (HERO) jobs.push(heroFacade(g, M, world, ctx, add)); else buildMainBuilding(b, g, M, world, ctx, add);
 
   T('ext building');
   // ================= 环形城墙 =================
@@ -86,11 +91,12 @@ export async function buildExterior(scene, world, ctx) {
   T('ext wall');
   // ================= 广场陈设（GLB） =================
   for (const sx of [-1, 1]) for (let z = 6; z <= 76; z += 14) {
-    add(placeModel('street_lamp_01', { height: 5.2, pos: [sx * 9.4, 0, z], rotY: sx > 0 ? -Math.PI / 2 : Math.PI / 2 }));
-    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), M.lampWarm); bulb.position.set(sx * 9.4, 4.75, z); g.add(bulb);
+    if (HERO) add(placeModel('r2/victorian_street_lamp', { height: 5.4, pos: [sx * 10.0, 0.04, z], rotY: sx > 0 ? -Math.PI / 2 : Math.PI / 2 }));
+    else { add(placeModel('street_lamp_01', { height: 5.2, pos: [sx * 9.4, 0, z], rotY: sx > 0 ? -Math.PI / 2 : Math.PI / 2 }));
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), M.lampWarm); bulb.position.set(sx * 9.4, 4.75, z); g.add(bulb); }
   }
   const benchZ = [10, 24, 44, 52, 68];
-  benchZ.forEach((z, i) => { for (const sx of [-1, 1]) add(placeModel('park_bench', { width: 2.2, pos: [sx * 19.2, 0, z], rotY: sx > 0 ? -Math.PI / 2 : Math.PI / 2 }).then((o) => { world.boundsOf(o, 0.8); if (sx > 0 && i === 2) ctx.newspaperBench = o; return o; })); });
+  benchZ.forEach((z, i) => { for (const sx of [-1, 1]) add(placeModel(HERO ? 'r2/fancy_bench' : 'park_bench', { width: 2.2, pos: [sx * 19.6, HERO ? 0.09 : 0, z], rotY: sx > 0 ? -Math.PI / 2 : Math.PI / 2 }).then((o) => { world.boundsOf(o, 0.8); if (sx > 0 && i === 2) ctx.newspaperBench = o; return o; })); });
   for (let x = -20; x <= 20; x += 2.5) if (Math.abs(x) > 9) add(placeModel('bollard', { height: 0.95, pos: [x, 0, 78.5] }));
   for (const p of [[12, 46], [-12, 14], [5, 74], [-26, 30], [26, 30]]) add(placeModel('manhole', { width: 0.8, pos: [p[0], 0.02, p[1]] }));
   for (const sx of [-1, 1]) add(placeModel('planter', { height: 1.0, pos: [sx * 15.2, FLOOR, -3.2] }));
@@ -100,9 +106,9 @@ export async function buildExterior(scene, world, ctx) {
   for (let i = 0; i < 12; i++) {
     const sx = i < 6 ? -1 : 1, k = i % 6;
     const x = sx * 14.5, z = 8 + k * 12;
-    b.add('blackMarble', new THREE.CylinderGeometry(0.55, 0.65, 0.9, 8), { pos: [x, 0.45, z] }, { uv: 0.5, collide: true });
-    b.add('gold', new THREE.CylinderGeometry(0.58, 0.58, 0.06, 8), { pos: [x, 0.92, z] }, { uv: 1 });
-    b.add('iron', new THREE.CylinderGeometry(0.07, 0.11, 12, 10), { pos: [x, 6.9, z] }, { uv: 1 });
+    if (!HERO) { b.add('blackMarble', new THREE.CylinderGeometry(0.55, 0.65, 0.9, 8), { pos: [x, 0.45, z] }, { uv: 0.5, collide: true });
+    b.add('gold', new THREE.CylinderGeometry(0.58, 0.58, 0.06, 8), { pos: [x, 0.92, z] }, { uv: 1 }); }
+    b.add('iron', new THREE.CylinderGeometry(0.07, 0.11, 12, 10), { pos: [x, HERO ? 7.05 : 6.9, z] }, { uv: 1 });
     b.add('iron', new THREE.BoxGeometry(2.3, 0.08, 0.08), { pos: [x, 11.5, z + 0.1] }, { uv: 1 });
     b.add('gold', new THREE.SphereGeometry(0.16, 10, 8), { pos: [x, 13.0, z] }, { uv: 1 });
     b.add('gold', new THREE.ConeGeometry(0.08, 0.6, 6), { pos: [x, 13.45, z] }, { uv: 1 });
@@ -169,7 +175,7 @@ function lawTileTexture() {
   const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 1024; const c = cv.getContext('2d');
   c.fillStyle = '#1a140c'; c.fillRect(0, 0, 1024, 1024);
   const laws = ['第一条　叙事安全，人人有责', '第二条　凡畸变之物，应即上交', '第三条　禁止私自续写他人命运', '第四条　现实稳定度为国家安全指标', '第五条　叙事高考依法组织', '第六条　不得以文字伤人', '第八条　归档者之档号永久保留', '第九条　废稿不得流入人间'];
-  c.font = '700 38px \"NB Title\", \"NB Serif\", serif'; c.textBaseline = 'middle';
+  c.font = '900 38px \"NB Title\", \"NB Serif\", serif'; c.textBaseline = 'middle';
   for (let i = 0; i < 16; i++) {
     const y = 32 + i * 64; c.fillStyle = i % 2 ? '#2a2014' : '#231a10'; c.fillRect(0, y - 30, 1024, 60);
     c.fillStyle = '#c9a052'; c.fillText(laws[i % laws.length], 40 + (i % 3) * 30, y);
@@ -180,11 +186,13 @@ function lawTileTexture() {
 
 function buildFountain(b, g, M, world, ctx) {
   const C = [0, 0, 30];
-  const lathe = (pts, key) => { const geo = new THREE.LatheGeometry(pts.map((p) => new THREE.Vector2(p[0], p[1])), 96); b.add(key, geo, { pos: C }, { uv: 0.5 }); };
+  const lathe = (pts, key) => { if (HERO) return; const geo = new THREE.LatheGeometry(pts.map((p) => new THREE.Vector2(p[0], p[1])), 96); b.add(key, geo, { pos: C }, { uv: 0.5 }); }; // R2：石作在 hero_plaza.glb
   // 一层池：外沿
   lathe([[13.2, 0], [14.4, 0.05], [14.6, 0.35], [14.4, 0.75], [14.9, 0.85], [14.9, 1.0], [13.6, 1.0], [13.4, 0.9], [13.4, 0.2]], 'blackMarble');
+  if (!HERO) {
   { const r = new THREE.TorusGeometry(14.25, 0.05, 6, 160); r.rotateX(Math.PI / 2); b.add('gold', r, { pos: [C[0], 1.02, C[2]] }, { uv: 1 }); }
   { const r = new THREE.TorusGeometry(14.6, 0.04, 6, 160); r.rotateX(Math.PI / 2); b.add('gold', r, { pos: [C[0], 0.4, C[2]] }, { uv: 1 }); }
+  }
   // 池底铜字地砖
   const law = new THREE.Mesh(new THREE.CircleGeometry(13.4, 96), new THREE.MeshStandardMaterial({ map: lawTileTexture(), metalness: 0.7, roughness: 0.4, color: 0xffffff }));
   law.rotation.x = -Math.PI / 2; law.position.set(C[0], 0.12, C[2]); law.receiveShadow = true; g.add(law);
@@ -194,11 +202,15 @@ function buildFountain(b, g, M, world, ctx) {
   ctx.fountainWater = water;
   // 中央底座与二层盘
   lathe([[0, 0], [3.2, 0], [3.2, 0.9], [2.4, 1.2], [1.6, 1.4], [1.3, 2.4], [1.5, 3.0], [2.4, 3.3], [6.2, 3.55], [6.5, 3.9], [6.1, 4.05], [2.0, 3.9], [0, 3.9]], 'blackMarble');
+  if (!HERO) {
   { const r = new THREE.TorusGeometry(6.38, 0.05, 6, 120); r.rotateX(Math.PI / 2); b.add('gold', r, { pos: [C[0], 3.95, C[2]] }, { uv: 1 }); }
-  const w2 = new THREE.Mesh(new THREE.CircleGeometry(6.05, 64), waterMaterial()); w2.rotation.x = -Math.PI / 2; w2.position.set(C[0], 3.98, C[2]); g.add(w2);
+  }
+  const w2 = new THREE.Mesh(new THREE.CircleGeometry(6.05, 64), waterMaterial()); w2.rotation.x = -Math.PI / 2; w2.position.set(C[0], HERO ? 3.8 : 3.98, C[2]); g.add(w2);
   // 三层盘
   lathe([[0, 3.9], [1.0, 3.9], [0.7, 4.6], [0.7, 5.6], [1.1, 6.2], [3.0, 6.45], [3.2, 6.75], [2.9, 6.85], [0.9, 6.75], [0, 6.75]], 'blackMarble');
+  if (!HERO) {
   { const r = new THREE.TorusGeometry(3.15, 0.04, 6, 90); r.rotateX(Math.PI / 2); b.add('gold', r, { pos: [C[0], 6.8, C[2]] }, { uv: 1 }); }
+  }
   const w3 = new THREE.Mesh(new THREE.CircleGeometry(2.9, 48), waterMaterial()); w3.rotation.x = -Math.PI / 2; w3.position.set(C[0], 6.8, C[2]); g.add(w3);
   // 水帘
   const wfm = waterfallMaterial();
@@ -217,7 +229,9 @@ function buildFountain(b, g, M, world, ctx) {
   // 尖塔顶部罗盘
   const em = emblem(0.55, M.goldBright, M.navy); em.position.set(C[0], 16.9, C[2]); em.rotation.y = 0; g.add(em); ctx.fountainEmblem = em;
   // 铭牌（南侧）
+  if (!HERO) {
   b.add('stoneDark', new THREE.BoxGeometry(1.6, 1.0, 0.5), { pos: [C[0], 0.5, C[2] + 15.4] }, { uv: 1, collide: true });
+  }
   b.add('brass', new THREE.BoxGeometry(1.4, 0.04, 0.6), { pos: [C[0], 1.02, C[2] + 15.4], rot: [-0.35, 0, 0] }, { uv: 1 });
   ctx.fountainPlaque = new THREE.Vector3(C[0], 1.0, C[2] + 15.4);
   // 碰撞：池沿
@@ -391,6 +405,44 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
   // 门楼台阶两侧狮首
   for (const sx of [-1, 1]) { b.box('stone', 1.6, 2.2, 6.5, [sx * 17.8, 1.1, -1.6], { uv: 0.4, collide: true }); b.box('gold', 1.7, 0.12, 6.6, [sx * 17.8, 2.2, -1.6], { uv: 1 }); add(placeModel('lion_head', { height: 0.9, pos: [sx * 17.8, 2.26, 1.0] })); }
   // 门洞内碰撞补充（门扇不阻挡）
+  ctx.doorZ = -5;
+}
+
+// ---------------- R2 精修主楼（tools/blender/facade.py → hero_facade.glb）----------------
+async function heroFacade(g, M, world, ctx, add) {
+  const Y = FLOOR;
+  await placeHero(g, world, './assets/hero/hero_facade.glb');
+  // 门洞内：敞开的大门门扇（深色木 + 铁箍 + 金色铆钉）
+  const DW = 7, DH = 9;
+  for (const sx of [-1, 1]) {
+    const leaf = new THREE.Group(); const w = DW / 2, h = DH;
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), M.doorWood); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
+    for (const fz of [-1, 1]) {
+      for (let c = 0; c < 2; c++) for (let r = 0; r < 4; r++) { const pw = w * 0.38, ph = r === 3 ? 1.9 : 1.55, px = sx * -(w * 0.27 + c * w * 0.46), py = 0.9 + r * 1.95 + ph / 2; const pnl = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.06), M.wood); pnl.position.set(px, py, fz * 0.16); leaf.add(pnl); const fr = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.12, ph + 0.12, 0.03), M.brass); fr.position.set(px, py, fz * 0.145); leaf.add(fr); }
+      for (const k of [0, 2, 4]) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.12, 0.05), M.iron); strap.position.set(sx * -w / 2, 0.55 + k * 1.95, fz * 0.17); leaf.add(strap); }
+    }
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 8, 24), M.gold); ring.position.set(sx * -(w - 0.5), h * 0.45, 0.2); leaf.add(ring);
+    leaf.position.set(sx * DW / 2, Y, -6.2); leaf.rotation.y = sx * -1.25; g.add(leaf);
+  }
+  // 文字带「叙事管理局」（黑色抛光石板上的鎏金字）
+  const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + 31.2, -4.99); g.add(txt);
+  // 玫瑰窗中心局徽、鼓室局徽
+  const big = emblem(1.05, M.goldBright, M.navy); big.position.set(0, Y + 37.6, -5.35); g.add(big); ctx.facadeEmblem = big;
+  { const em = emblem(1.7, M.goldBright, M.navy); em.position.set(0, Y + DH + 2.4, -5.25); g.add(em); }
+  // 雕像：门洞五重退缩券的门柱托座（每侧 5 尊）、列王廊 11 龛、门廊墩柱壁龛、两侧盲龛
+  for (let k = 1; k <= 5; k++) { const wi = DW + k, yk = -k * 0.55; for (const sx of [-1, 1]) add(placeModel('gothic_statue', { height: 2.55, pos: [sx * (wi / 2 - 0.22), Y + 2.36, -5 - (yk - 0.17)], rotY: sx * -0.35 })); }
+  for (let i = 0; i < 11; i++) add(placeModel('gothic_statue', { height: 3.0, pos: [-14 + 1.27 + i * 2.546, Y + 18.71, -5.3] }));
+  for (const sx of [-1, 1]) { add(placeModel('gothic_statue', { height: 2.3, pos: [sx * 7.0, Y + 3.55, -1.5] })); for (const k of [0, 1]) add(placeModel('gothic_statue', { height: 2.5, pos: [sx * (6.5 + 2.4 + k * 2.2), Y + 2.0, -5.0] })); }
+  // 台阶两侧石狮（奥尔良司法宫石狮扫描，对放）
+  for (const sx of [-1, 1]) add(placeModel('lion_justice', { height: 1.9, pos: [sx * 17.9, 3.1, 0.6], rotY: sx * 0.25 }).then((o) => { if (sx > 0) o.scale.x *= -1; return o; }));
+  // 滴水兽：正面双塔每座 8 个（四面 × 两角），伸出扶壁顶石托
+  for (const cx of [-22, 22]) for (const [fx, fz, ry] of [[0, 1, 0], [1, 0, Math.PI / 2], [-1, 0, -Math.PI / 2], [0, -1, Math.PI]]) for (const s of [-1, 1]) {
+    const px = cx + (fx ? fx * 6.5 + fx * 1.4 : s * 5.6), pz = -13 + (fz ? fz * 6.5 + fz * 1.4 : s * 5.6);
+    add(placeModel(s > 0 ? 'gargoyle_a' : 'gargoyle_b', { maxDim: 1.7, pos: [px, Y + 58.6, pz], rotY: ry }));
+  }
+  // 塔身深蓝局旗（竖幅，挂在一层盲拱段）
+  const fm = bannerMaterial(content.tex('tex_flag_bureau'), content.tex('tex_flag_bureau') ? 0xffffff : 0x14244d);
+  for (const sx of [-1, 1]) { const fl = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 12, 6, 18), fm); fl.position.set(sx * 22, Y + 10.2, -6.5 + 0.55); fl.castShadow = true; g.add(fl); }
   ctx.doorZ = -5;
 }
 
@@ -641,10 +693,10 @@ function drawCountdown(c, t, W, H) {
   const days = Math.max(0, Math.ceil((target - Date.now()) / 86400000));
   c.fillStyle = '#03060c'; c.fillRect(0, 0, W, H);
   const g = c.createLinearGradient(0, 0, W, 0); g.addColorStop(0, '#0d1d44'); g.addColorStop(1, '#050a18'); c.fillStyle = g; c.fillRect(0, 0, W, 96);
-  c.fillStyle = '#e8c87a'; c.font = '700 48px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'left'; c.fillText('叙事管理局 · 公告', 36, 66);
-  c.fillStyle = '#cfd8ea'; c.font = '700 54px \"NB Title\", \"NB Serif\", serif'; c.fillText('距 2027 全国叙事高考', 36, 200);
-  c.fillStyle = '#ffd36e'; c.font = '700 190px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'right'; c.fillText(String(days), W - 190, 400);
-  c.fillStyle = '#cfd8ea'; c.font = '700 70px \"NB Title\", \"NB Serif\", serif'; c.fillText('天', W - 70, 400);
+  c.fillStyle = '#e8c87a'; c.font = '900 48px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'left'; c.fillText('叙事管理局 · 公告', 36, 66);
+  c.fillStyle = '#cfd8ea'; c.font = '900 54px \"NB Title\", \"NB Serif\", serif'; c.fillText('距 2027 全国叙事高考', 36, 200);
+  c.fillStyle = '#ffd36e'; c.font = '900 190px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'right'; c.fillText(String(days), W - 190, 400);
+  c.fillStyle = '#cfd8ea'; c.font = '900 70px \"NB Title\", \"NB Serif\", serif'; c.fillText('天', W - 70, 400);
   c.textAlign = 'left'; c.fillStyle = '#7f8db0'; c.font = '30px "NB Sans", sans-serif'; c.fillText('京城 · 现实稳定度 97.3%　叙事污染指数 37 良', 36, 480);
 }
 

@@ -190,7 +190,7 @@ export function noticeBoard(zone, b, x, y, z, yaw, w = 2.4, h = 1.3, title = 'хо
   b.add('dm_desk', new THREE.BoxGeometry(w + 0.12, h + 0.12, 0.05), { pos: P(0, 0, 0.0), rot: R }, { uv: 1 });
   const t = cv(1024, Math.round(1024 * h / w), (c, W, H) => {
     c.fillStyle = '#8a6440'; c.fillRect(0, 0, W, H); noise(c, W, H, 0.12, 9000);
-    c.fillStyle = '#7a1c18'; c.fillRect(W * 0.3, 12, W * 0.4, 52); c.fillStyle = '#e8c87a'; c.font = '700 36px "NB Title", "NB Serif", serif'; c.textAlign = 'center'; c.fillText(title, W / 2, 50); c.textAlign = 'left';
+    c.fillStyle = '#7a1c18'; c.fillRect(W * 0.3, 12, W * 0.4, 52); c.fillStyle = '#e8c87a'; c.font = '900 36px "NB Title", "NB Serif", serif'; c.textAlign = 'center'; c.fillText(title, W / 2, 50); c.textAlign = 'left';
     const n = notes.length; notes.forEach(([head, lines, col], i) => { const cw = (W - 40) / Math.min(n, 4), px = 20 + (i % 4) * cw + 8 + Math.sin(i * 3) * 6, py = 84 + Math.floor(i / 4) * (H * 0.45) + Math.cos(i * 5) * 6; const pw = cw - 22, ph = H - py - 20 - (n > 4 ? H * 0.45 * (1 - Math.floor(i / 4)) : 0);
       c.save(); c.translate(px + pw / 2, py + ph / 2); c.rotate(Math.sin(i * 7.7) * 0.03); c.fillStyle = col || '#efe8d6'; c.shadowColor = 'rgba(0,0,0,0.4)'; c.shadowBlur = 8; c.fillRect(-pw / 2, -ph / 2, pw, ph); c.shadowBlur = 0;
       c.fillStyle = '#222'; c.font = '700 26px "NB Serif", serif'; c.fillText(head, -pw / 2 + 12, -ph / 2 + 38); c.font = '19px "NB Sans", sans-serif'; c.fillStyle = '#333'; lines.forEach((l, k) => c.fillText(l, -pw / 2 + 12, -ph / 2 + 72 + k * 28)); c.fillStyle = '#c0302a'; c.beginPath(); c.arc(0, -ph / 2 + 10, 7, 0, 7); c.fill(); c.restore(); });

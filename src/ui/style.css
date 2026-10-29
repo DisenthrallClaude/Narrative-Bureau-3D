@@ -1,7 +1,11 @@
 :root {
   --gold: #d8b469; --gold2: #f3dc9c; --ink: #07080c; --navy: #0f1b3a; --paper: #e9dcc0; --red: #a3262a;
-  --serif: 'NB Serif', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', serif;
+  /* R2 字体规范见 docs/TYPOGRAPHY.md：西文字形先取 Cormorant / Cinzel，汉字回落到思源宋体 */
+  --title: 'NB Latin Title', 'NB Title', 'Noto Serif SC', 'Songti SC', serif;
+  --serif: 'NB Latin', 'NB Serif', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', serif;
+  --serif-zh: 'NB Serif', 'Noto Serif SC', 'Songti SC', serif;
   --sans: 'NB Sans', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --latin: 'NB Latin Title', 'Cinzel', serif;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; background: #000; color: #eee; font-family: var(--sans); user-select: none; }
@@ -12,7 +16,7 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #loading { position: fixed; inset: 0; z-index: 50; background: radial-gradient(ellipse at 50% 40%, #121a33 0%, #05060a 70%); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1.2s; }
 #loading .emb { width: 132px; height: 132px; opacity: .95; filter: drop-shadow(0 0 18px rgba(216,180,105,.35)); animation: spin 18s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-#loading h1 { font-family: var(--serif); font-weight: 700; letter-spacing: .5em; margin: 28px 0 6px .5em; font-size: 40px; color: var(--gold2); text-shadow: 0 0 24px rgba(216,180,105,.35); }
+#loading h1 { font-family: var(--title); font-weight: 900; letter-spacing: .5em; margin: 28px 0 6px .5em; font-size: 40px; color: var(--gold2); text-shadow: 0 0 24px rgba(216,180,105,.35); }
 #loading .sub { font-family: var(--serif); color: #9aa3b8; letter-spacing: .3em; font-size: 13px; }
 #loading .bar { width: 340px; height: 2px; background: #222a3d; margin-top: 36px; position: relative; overflow: hidden; }
 #loading .bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: linear-gradient(90deg, #8a6b2c, var(--gold2)); transition: width .3s; }
@@ -31,8 +35,8 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #obj .m { font-size: 17px; color: #f2ead8; text-shadow: 0 1px 6px #000; letter-spacing: .06em; border-left: 2px solid var(--gold); padding-left: 12px; }
 #obj .o { font-size: 13px; color: #aab; margin-top: 8px; padding-left: 14px; }
 #area { position: absolute; left: 50%; top: 18%; transform: translateX(-50%); text-align: center; font-family: var(--serif); opacity: 0; transition: opacity 1.4s; }
-#area .n { font-size: 34px; letter-spacing: .45em; color: var(--gold2); text-shadow: 0 0 20px rgba(0,0,0,.9); }
-#area .e { font-size: 12px; letter-spacing: .5em; color: #aab3c6; margin-top: 8px; }
+#area .n { font-family: var(--title); font-weight: 900; font-size: 34px; letter-spacing: .45em; color: var(--gold2); text-shadow: 0 0 20px rgba(0,0,0,.9); }
+#area .e { font-family: var(--latin); font-weight: 600; font-size: 12px; letter-spacing: .5em; color: #aab3c6; margin-top: 8px; }
 #area.on { opacity: 1; }
 #toast { position: absolute; left: 50%; bottom: 16%; transform: translateX(-50%); max-width: 760px; text-align: center; font-family: var(--serif); font-size: 18px; line-height: 1.8; color: #f2ead8; text-shadow: 0 1px 6px #000, 0 0 16px #000; opacity: 0; transition: opacity .6s; white-space: pre-line; }
 #toast.on { opacity: 1; }
@@ -45,7 +49,7 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 
 /* 对话框 */
 #dlg { position: fixed; left: 50%; bottom: 7%; transform: translateX(-50%); width: min(880px, 90vw); z-index: 20; background: linear-gradient(180deg, rgba(8,10,18,.82), rgba(8,10,18,.94)); border-top: 1px solid var(--gold); border-bottom: 1px solid rgba(216,180,105,.3); padding: 22px 36px 18px; font-family: var(--serif); }
-#dlg .who { color: var(--gold2); font-size: 14px; letter-spacing: .3em; margin-bottom: 8px; min-height: 1em; }
+#dlg .who { font-family: var(--serif-zh); font-weight: 600; color: var(--gold2); font-size: 14px; letter-spacing: .3em; margin-bottom: 8px; min-height: 1em; }
 #dlg .line { font-size: 19px; line-height: 1.75; color: #efe8d8; min-height: 3.4em; white-space: pre-line; }
 #dlg .line.narr { color: #b9b4a8; font-style: italic; }
 #dlg .choices { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
@@ -60,7 +64,7 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #reader .paper.dark { background: #0b0b0e; color: #d8b469; box-shadow: 0 30px 80px rgba(0,0,0,.8), inset 0 0 80px rgba(216,180,105,.08); }
 #reader .paper.screen { background: #050a14; color: #9fd0ff; font-family: var(--sans); box-shadow: 0 0 40px rgba(60,140,255,.25); }
 #reader .paper.phone { width: 380px; background: #0d0f14; color: #e6e6e6; font-family: var(--sans); border-radius: 26px; border: 1px solid #333; padding: 46px 28px 40px; }
-#reader h2 { margin: 0 0 22px; font-size: 24px; letter-spacing: .12em; text-align: center; border-bottom: 1px solid rgba(80,50,20,.35); padding-bottom: 14px; }
+#reader h2 { font-family: var(--title); font-weight: 900; margin: 0 0 22px; font-size: 24px; letter-spacing: .12em; text-align: center; border-bottom: 1px solid rgba(80,50,20,.35); padding-bottom: 14px; }
 #reader .paper.dark h2, #reader .paper.screen h2 { border-color: rgba(216,180,105,.3); }
 #reader .paper.phone h2 { font-size: 16px; text-align: left; letter-spacing: .02em; color: #fff; }
 #reader .txt { font-size: 17px; line-height: 2; white-space: pre-wrap; max-height: 56vh; overflow: auto; }

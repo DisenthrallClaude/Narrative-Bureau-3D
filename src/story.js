@@ -199,8 +199,8 @@ export function setupStory(G) {
 function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 function newspaperTexture() {
   const cv = document.createElement('canvas'); cv.width = 420; cv.height = 300; const c = cv.getContext('2d');
-  c.fillStyle = '#e4dccb'; c.fillRect(0, 0, 420, 300); c.fillStyle = '#1a1a1a'; c.font = '700 40px \"NB Title\", \"NB Serif\", serif'; c.fillText('京城晚报', 20, 52);
-  c.font = '700 22px \"NB Title\", \"NB Serif\", serif'; c.fillText('通州区现实稳定度连续三日低于 96%', 20, 100);
+  c.fillStyle = '#e4dccb'; c.fillRect(0, 0, 420, 300); c.fillStyle = '#1a1a1a'; c.font = '900 40px \"NB Title\", \"NB Serif\", serif'; c.fillText('京城晚报', 20, 52);
+  c.font = '900 22px \"NB Title\", \"NB Serif\", serif'; c.fillText('通州区现实稳定度连续三日低于 96%', 20, 100);
   c.fillStyle = '#555'; for (let y = 120; y < 290; y += 14) c.fillRect(20 + (y % 3) * 4, y, 180 + ((y * 7) % 170), 6);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
 }

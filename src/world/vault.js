@@ -322,14 +322,14 @@ export function tagMaterial(text) {
   if (_tagCache.has(text)) return _tagCache.get(text);
   const cv = document.createElement('canvas'); cv.width = 512; cv.height = 160; const c = cv.getContext('2d');
   c.fillStyle = '#efe9d8'; c.fillRect(0, 0, 512, 160); c.strokeStyle = '#7a1a1a'; c.lineWidth = 6; c.strokeRect(6, 6, 500, 148);
-  c.fillStyle = '#7a1a1a'; c.fillRect(6, 6, 90, 148); c.fillStyle = '#f2e6c8'; c.font = '700 40px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('证', 51, 58); c.fillText('物', 51, 108);
-  c.fillStyle = '#1a1612'; c.textAlign = 'left'; c.font = '700 38px \"NB Title\", \"NB Serif\", serif'; c.fillText(text, 112, 64, 384); c.font = '24px "NB Sans", sans-serif'; c.fillStyle = '#5a5248'; c.fillText('叙事管理局 · 收容库　请勿触碰', 112, 118, 384);
+  c.fillStyle = '#7a1a1a'; c.fillRect(6, 6, 90, 148); c.fillStyle = '#f2e6c8'; c.font = '900 40px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('证', 51, 58); c.fillText('物', 51, 108);
+  c.fillStyle = '#1a1612'; c.textAlign = 'left'; c.font = '900 38px \"NB Title\", \"NB Serif\", serif'; c.fillText(text, 112, 64, 384); c.font = '24px "NB Sans", sans-serif'; c.fillStyle = '#5a5248'; c.fillText('叙事管理局 · 收容库　请勿触碰', 112, 118, 384);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
   const m = new THREE.MeshStandardMaterial({ map: t, roughness: 0.75 }); _tagCache.set(text, m); return m;
 }
 function clipTexture() {
   const cv = document.createElement('canvas'); cv.width = 256; cv.height = 340; const c = cv.getContext('2d');
-  c.fillStyle = '#ece6d4'; c.fillRect(0, 0, 256, 340); c.fillStyle = '#1a1612'; c.font = '700 20px \"NB Title\", \"NB Serif\", serif'; c.fillText('事故报告', 16, 34);
+  c.fillStyle = '#ece6d4'; c.fillRect(0, 0, 256, 340); c.fillStyle = '#1a1612'; c.font = '900 20px \"NB Title\", \"NB Serif\", serif'; c.fillText('事故报告', 16, 34);
   c.font = '13px "NB Sans", sans-serif'; c.fillStyle = '#3a342c'; ['B5-01 回响座钟 误敲一次', '值班员认为今天是', '2023 年 6 月 8 日', '持续 7 小时'].forEach((l, i) => c.fillText(l, 16, 70 + i * 22));
   c.fillStyle = '#9a9286'; for (let y = 170; y < 320; y += 14) c.fillRect(16, y, 160 + ((y * 13) % 70), 5);
   c.strokeStyle = '#a01818'; c.lineWidth = 3; c.beginPath(); c.arc(196, 290, 30, 0, Math.PI * 2); c.stroke();
@@ -337,7 +337,7 @@ function clipTexture() {
 }
 function sealMaterial() {
   const cv = document.createElement('canvas'); cv.width = 128; cv.height = 400; const c = cv.getContext('2d');
-  c.fillStyle = '#efe8d4'; c.fillRect(0, 0, 128, 400); c.fillStyle = '#a01818'; c.font = '700 44px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center';
+  c.fillStyle = '#efe8d4'; c.fillRect(0, 0, 128, 400); c.fillStyle = '#a01818'; c.font = '900 44px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center';
   '封存　墨渊'.split('').forEach((ch, i) => c.fillText(ch, 64, 70 + i * 66));
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.8, side: THREE.DoubleSide });
 }
@@ -384,7 +384,7 @@ export function drawFrame(g, t) {
   c.beginPath(); c.moveTo(80 + sway, 320); c.quadraticCurveTo(84 + sway, 150, 128 + sway, 140); c.quadraticCurveTo(172 + sway, 150, 176 + sway, 320); c.fill();
   // 举着的纸
   c.save(); c.translate(88 + sway, 210); c.rotate(-0.08); c.fillStyle = '#e8e2d0'; c.fillRect(-46, -30, 92, 64);
-  c.fillStyle = '#2a2018'; c.font = '700 11px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.fillText('别相信第七局', 0, -6); c.fillText('也别相信我', 0, 14); c.restore();
+  c.fillStyle = '#2a2018'; c.font = '900 11px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.fillText('别相信第七局', 0, -6); c.fillText('也别相信我', 0, 14); c.restore();
   // 敲玻璃的手
   c.fillStyle = '#c8a888'; c.beginPath(); c.ellipse(180 + sway, 150 - knock * 6, 12 + knock * 6, 14 + knock * 6, 0, 0, Math.PI * 2); c.fill();
   tex.needsUpdate = true;

@@ -17,7 +17,9 @@ export class PlanarReflector {
   patch(mat, strength = 0.6, distort = 0.04) {
     const U = this.uniforms;
     mat.userData.reflStrength = strength;
-    mat.onBeforeCompile = (sh) => {
+    const prev = mat.onBeforeCompile; const prevKey = mat.customProgramCacheKey?.bind(mat); // R2：串联已有补丁（光照贴图/老化）
+    mat.onBeforeCompile = (sh, r) => {
+      prev?.call(mat, sh, r);
       sh.uniforms.tReflect = U.tReflect; sh.uniforms.reflMatrix = U.reflMatrix; sh.uniforms.reflOn = U.reflOn;
       sh.uniforms.reflStrength = { value: strength };
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nuniform mat4 reflMatrix;\nvarying vec4 vReflUv;')
@@ -37,7 +39,7 @@ export class PlanarReflector {
           }
           #include <opaque_fragment>`);
     };
-    mat.customProgramCacheKey = () => 'refl' + strength + distort;
+    mat.customProgramCacheKey = () => (prevKey ? prevKey() : '') + 'refl' + strength + distort;
     mat.needsUpdate = true;
     this.materials.add(mat);
   }

@@ -14,8 +14,11 @@ let anisotropy = 8;
 export function setAnisotropy(a) { anisotropy = a; }
 
 const modelCache = new Map();
+// R2：网上模型别名（tools/models_all.mjs 处理进 assets/models/r2/）
+export const ALIAS = { lion_justice: 'r2/lion_palais_de_justice_d_orl_ans_france', gargoyle_a: 'r2/gargoyle_3dst27', gargoyle_b: 'r2/gargoyle_statue_photogrammetry' };
 /** 加载 GLB，返回原始 scene（缓存）。unlit 扫描件转为 PBR。 */
 export function loadModel(name) {
+  name = ALIAS[name] ?? name;
   if (!modelCache.has(name)) {
     modelCache.set(name, new Promise((resIn) => { let res = resIn;
       // 超时保护：单个模型 60 秒没加载完就用空组顶上，不让整个场景卡在加载
@@ -134,7 +137,7 @@ export function screenUI(k) {
     _scr.push(mk((c, w) => { head(c, w, '叙事管理局 · 档案检索系统'); c.font = '15px "NB Sans", sans-serif'; ['编号　姓名　　状态　　等级', 'A-0127　叶寻　　在册　　B', 'A-0341　周也　　外勤　　A', 'C-1102　齐仇　　收容　　—', 'X-0007　——　　无数据　—', 'A-0912　殷泽　　在册　　A'].forEach((r, i) => { c.fillStyle = i ? (i === 4 ? '#e05a4a' : '#b8c8e8') : '#7f93b8'; c.fillText(r, 16, 62 + i * 30); }); c.fillStyle = '#c9a052'; c.fillRect(16, 250, 200, 26); c.fillStyle = '#0a1426'; c.fillText('检索：第七', 24, 268); }));
     _scr.push(mk((c, w) => { head(c, w, '现实稳定度 · 京城 24h'); c.strokeStyle = '#2a4a7a'; for (let x = 20; x < w; x += 40) { c.beginPath(); c.moveTo(x, 40); c.lineTo(x, 300); c.stroke(); } c.strokeStyle = '#5ab0ff'; c.lineWidth = 2; c.beginPath(); for (let x = 20; x < w - 10; x += 6) { const y = 150 + Math.sin(x * 0.05) * 30 + Math.sin(x * 0.17) * 10 + (x > 380 ? (x - 380) * 0.5 : 0); x === 20 ? c.moveTo(x, y) : c.lineTo(x, y); } c.stroke(); c.fillStyle = '#e8c87a'; c.font = '700 40px "NB Sans", sans-serif'; c.fillText('97.3%', 330, 90); c.fillStyle = '#e05a4a'; c.font = '15px "NB Sans", sans-serif'; c.fillText('通州区　95.8%　↓', 330, 290); }));
     _scr.push(mk((c, w) => { head(c, w, '内部邮件'); c.font = '15px "NB Sans", sans-serif'; ['【通知】117 号：本周加试阅卷安排', '【人事】新人报到：请于 9:00 前领证', '【后勤】食堂 21:00 后不供应「回忆」', '【机要】B7 —— 无数据', '【宣传】新闻通稿第三稿待审'].forEach((r, i) => { c.fillStyle = i === 3 ? '#e05a4a' : '#cfd8ea'; c.fillText(r, 16, 66 + i * 38); c.fillStyle = '#1c2c4a'; c.fillRect(16, 76 + i * 38, w - 32, 1); }); }));
-    _scr.push(mk((c, w) => { c.fillStyle = '#05080f'; c.fillRect(0, 0, w, 320); c.strokeStyle = '#c9a052'; c.lineWidth = 3; c.beginPath(); c.arc(w / 2, 140, 60, 0, 7); c.stroke(); c.beginPath(); c.moveTo(w / 2, 70); c.lineTo(w / 2 + 14, 140); c.lineTo(w / 2, 210); c.lineTo(w / 2 - 14, 140); c.closePath(); c.fillStyle = '#c9a052'; c.fill(); c.beginPath(); c.moveTo(w / 2 - 70, 140); c.lineTo(w / 2, 126); c.lineTo(w / 2 + 70, 140); c.lineTo(w / 2, 154); c.closePath(); c.fill(); c.font = '700 20px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.fillText('叙事管理局　·　已锁定', w / 2, 260); }));
+    _scr.push(mk((c, w) => { c.fillStyle = '#05080f'; c.fillRect(0, 0, w, 320); c.strokeStyle = '#c9a052'; c.lineWidth = 3; c.beginPath(); c.arc(w / 2, 140, 60, 0, 7); c.stroke(); c.beginPath(); c.moveTo(w / 2, 70); c.lineTo(w / 2 + 14, 140); c.lineTo(w / 2, 210); c.lineTo(w / 2 - 14, 140); c.closePath(); c.fillStyle = '#c9a052'; c.fill(); c.beginPath(); c.moveTo(w / 2 - 70, 140); c.lineTo(w / 2, 126); c.lineTo(w / 2 + 70, 140); c.lineTo(w / 2, 154); c.closePath(); c.fill(); c.font = '900 20px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.fillText('叙事管理局　·　已锁定', w / 2, 260); }));
   }
   return _scr[k % _scr.length];
 }

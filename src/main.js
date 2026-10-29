@@ -60,6 +60,7 @@ const hemi = new THREE.HemisphereLight(TOD.hemiSky, TOD.hemiGround, 0.25); scene
 function setShadowSize(s) { sun.shadow.mapSize.set(s, s); sun.shadow.map?.dispose(); sun.shadow.map = null; const c = sun.shadow.camera; c.left = -110; c.right = 110; c.top = 110; c.bottom = -110; c.near = 1; c.far = 600; c.updateProjectionMatrix(); }
 
 const SKY_I = TOD.skyI;
+const HALL_PROBE = !params.has('legacy') && !params.has('legacyhall'); // R2：室内反射环境改用 Cycles 渲染的大厅实景探针（bake_lm.py → assets/hdri/hall_probe.hdr）
 let envSky = null, envHall = null, skyTex = null;
 const reflector = new PlanarReflector(R.gl, { y: FLOOR });
 
@@ -75,16 +76,16 @@ function applyQuality(q) {
 manager.onProgress = (url, n, total) => UI.loadProgress(0.1 + 0.8 * (n / total), `正在装订页面…… ${n}/${total}`);
 async function boot() {
   UI.loadProgress(0.02, '读取剧情与档案……');
-  try { await Promise.all([document.fonts.load('700 40px \"NB Title\", \"NB Serif\"', '叙事管理局'), document.fonts.load('400 40px "NB Serif"', '叙'), document.fonts.load('40px "NB Sans"', '叙'), document.fonts.load('40px "NB Title"', '叙事管理局')]); } catch { /* */ }
+  try { await Promise.all([document.fonts.load('900 40px \"NB Title\", \"NB Serif\"', '叙事管理局'), document.fonts.load('400 40px "NB Serif"', '叙'), document.fonts.load('40px "NB Sans"', '叙'), document.fonts.load('900 40px "NB Title"', '叙事管理局'), document.fonts.load('600 40px "NB Serif"', '叙'), document.fonts.load('500 40px "NB Sans"', '叙'), document.fonts.load('600 40px "NB Latin Title"', 'BUREAU'), document.fonts.load('500 40px "NB Latin"', 'Bureau'), document.fonts.load('italic 500 40px "NB Latin"', 'Bureau')]); } catch { /* */ }
   await content.load();
   await audio.init();
   const pm = new THREE.PMREMGenerator(R.gl);
-  const [sky, hall] = await Promise.all([new THREE.TextureLoader(manager).loadAsync('./assets/tex/' + TOD.sky).catch(() => null), loadHDR('hall_1k')]);
+  const [sky, hall] = await Promise.all([new THREE.TextureLoader(manager).loadAsync('./assets/tex/' + TOD.sky).catch(() => null), loadHDR(HALL_PROBE ? 'hall_probe' : 'hall_1k')]);
   if (sky) { sky.mapping = THREE.EquirectangularReflectionMapping; sky.colorSpace = THREE.SRGBColorSpace; sky.generateMipmaps = true; sky.minFilter = THREE.LinearMipmapLinearFilter; sky.anisotropy = 4; }
   skyTex = sky;
   installSkyFog(sky, SKY_I);
   envSky = sky ? pm.fromEquirectangular(sky).texture : null;
-  if (hall) tameHDR(hall, 2.5); // M5：压住室内 HDR 的窗口高光（档案馆/安检大厅地面「白光溢出」与地下地面金色镜面的根因）
+  if (hall) tameHDR(hall, HALL_PROBE ? 6 : 2.5); // M5：压住室内 HDR 的窗口高光（档案馆/安检大厅地面「白光溢出」与地下地面金色镜面的根因）
   envHall = hall ? pm.fromEquirectangular(hall).texture : null;
   scene.background = sky; scene.backgroundIntensity = SKY_I;
   scene.environment = envSky;
@@ -94,7 +95,8 @@ async function boot() {
   // 反射地面
   const M = mats();
   reflector.patch(M.hallFloor, 0.09); reflector.patch(M.hallFloorDark, 0.08);
-  scene.traverse((o) => { if (o.isMesh && (o.material === M.hallFloor || o.material === M.hallFloorDark)) reflector.hide.push(o); if (o.userData.isShaft) reflector.hide.push(o); });
+  const HFM = ctx.hallFloorMats ?? []; if (HFM.length) { reflector.patch(HFM[0], 0.32); reflector.patch(HFM[1], 0.4); reflector.patch(HFM[2], 0.16); } // R2：精修大厅抛光地面
+  scene.traverse((o) => { if (o.isMesh && (o.material === M.hallFloor || o.material === M.hallFloorDark || HFM.includes(o.material))) reflector.hide.push(o); if (o.userData.isShaft) reflector.hide.push(o); });
   // 主屏射线代理
   const proxy = new THREE.Mesh(new THREE.BoxGeometry(15, 6.6, 0.8), new THREE.MeshBasicMaterial({ visible: false })); proxy.position.copy(ctx.mainScreenPos); inter.proxies.add(proxy); G.mainScreenProxy = proxy;
   // 分区补光只在本区生效（多个分组同时可见时不叠加）
@@ -212,7 +214,7 @@ const ZONE_LOOK = {
   seventh_entry: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_gutter: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_ops: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_wrap: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 }, seventh_rewrite: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a0c08, 0.03], hemi: 0.1 },
   dorm: { env: 'hall', envI: 0.22, sun: 3.2, exp: 1.15, fog: [0x221d17, 0.006], hemi: 0.14 }, east_cloister: { env: 'hall', envI: 0.4, sun: 0, exp: 1.15, fog: [0x1d1915, 0.012], hemi: 0.1 },
   gate: { env: 'hall', envI: 0.7, sun: 3.2, exp: 0.95, fog: [0x2a241c, 0.006], hemi: 0.15 },
-  security_hall: { env: 'hall', envI: 0.6, sun: 0, exp: 1.0, fog: [0x1d1915, 0.010], hemi: 0.12 },
+  security_hall: { env: 'hall', envI: HALL_PROBE ? 1.0 : 0.6, sun: 0, exp: 1.0, fog: [0x1d1915, 0.010], hemi: 0.12 },
   archive: { env: 'hall', envI: 0.35, sun: 0, exp: 1.3, fog: [0x241c14, 0.012], hemi: 0.1 },
   archive_b1: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x10141a, 0.02], hemi: 0.05 },
   citizen_service: { env: 'hall', envI: 0.65, sun: 0, exp: 1.05, fog: [0x221d17, 0.010], hemi: 0.14 },

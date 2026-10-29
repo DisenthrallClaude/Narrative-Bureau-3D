@@ -1,3 +1,30 @@
+# HANDOFF · R2 美术重建（blender-lead-2，接手 2026-10-29 19:08 CST）
+崩溃后接续：从「R2 当前进度」最后一条往下做。旧 M7 交接记录保留在文末。
+
+## R2 任务（本轮只做样板 A/B）
+1. 样板 A：主楼外观+广场，远/中/近 3 机位（plaza_aerial / plaza / facade）
+2. 样板 B：安检大厅 4 机位（hall / hall_gates / hall_vault / hall_aisle）
+3. three 接入：buildHall 用 hero_hall.glb（光照贴图 WebP + 反射探针 hall_probe.hdr + 削减实时灯）
+4. 截图 1600×900 → screenshots/r2/，旧版对比拼图（m6/、m4b/）；commit+push；Drive 快照
+下一轮：铺开到其他区域、IMAGE-USAGE 生图落位、全部网上模型落位、Credits 页、极致画质档
+
+## 环境要点（务必看）
+- 机器 2 核 / 7 GB、无 swap：**Blender 烘焙与 SwiftShader 截图不能同时跑**（19:3x 实测 OOM 杀掉了 hall 烘焙）。所有重任务串行。
+- 沙箱会重启：/tmp 会被清空 → 临时文件放 P/work/r2/tmp；OpenCV 装在 /workspace/work/pylib（PYTHONPATH）。
+- 此 arm64 Blender 4.3 **没有 OIDN**：离线渲染不开去噪，渲完用 tools/denoise.py（OpenCV NLM）。
+- 「SwiftShader 截图不出帧」不是死锁：首帧要编译 ~80 个着色器程序（每个 ~4.5 s）+ 3000 drawcall / 850 万三角面。legacy 低画质 960×540 实测 462 s 出图。之前 25 分钟无帧是因为与 Blender 烘焙抢 CPU/内存。
+  调试：`DIAG=1 node tools/shot.mjs ...` 会打印 draws/links 进度；frame 日志不再被过滤。同一会话多机位（逗号分隔）可复用已编译程序。
+- 杀进程别用含路径的 pgrep 模式（命令行里有同样字符串会把自己的 shell 杀掉）。
+
+## R2 当前进度
+- [19:30] 二分结论见上；facade/plaza 已按「碰撞体不遮光」重烘 AO（facade 2.58M 三角，meshopt 后 45 MB；plaza 2.4 MB）→ public/assets/hero/
+- [19:45] 新增 tools/blender/pbr.py（按材质名接 Poly Haven/ambientCG 实拍贴图 + 色差/雨痕/AO 污垢层 + 按角度平滑修黑面）、apply_pbr.py、render_views.py（Cycles 样板渲染）、tools/denoise.py
+- [19:45] three：hero.js hallMats()（与 pbr.py 同贴图同色调）、placeHero lmInPlace；interiors.js buildHall 在 HERO_HALL 下建筑/固定陈设改走 bA 丢弃批次 + heroHall()；reflect.js patch 串联；main.js 大厅探针 hall_probe.hdr、精修地面平面反射；shots.js 加 hall_aisle
+- [20:07] 拱廊墙 t 1.2→0.9（墙面在束柱细柱间露出成黑条）；Cycles 实测 ~7 万采样/秒 → 4096/64spp 要 2 小时，改 2048/24spp（探针 768×384/24spp）重烘中；tools/bake_hall.sh 一键烘焙+转 WebP+探针+meshopt；tools/shot_r2.sh A|B 截图会话；tools/r2_compare.py 拼图
+- 下一步：hall 光照贴图烘焙（apply_pbr + bake_lm，4096/64spp）→ lm 转 WebP、probe → public/assets/hdri/hall_probe.hdr、GLB meshopt → 构建 → A 截图会话 → B 截图会话 → Cycles 样板 → 拼图 → 提交
+
+
+---
 # HANDOFF · build-lead-6（接手 2026-10-29 06:30 CST）
 崩溃后接续：从「当前进度」最后一条往下做。
 

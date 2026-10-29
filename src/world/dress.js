@@ -290,7 +290,7 @@ export function bookcase(b, world, x, y, z, yaw, w = 2.4, h = 3.2, d = 0.45, o =
 export function hangingSign(zone, M, text, x, y, z, yaw = 0, w = 1.6) {
   const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128; const c = cv.getContext('2d');
   c.fillStyle = '#0c0d10'; c.fillRect(0, 0, 512, 128); c.strokeStyle = '#c9a052'; c.lineWidth = 5; c.strokeRect(8, 8, 496, 112);
-  c.fillStyle = '#e8c87a'; c.font = '700 54px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 256, 66, 470);
+  c.fillStyle = '#e8c87a'; c.font = '900 54px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 256, 66, 470);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
   const m = new THREE.MeshStandardMaterial({ map: t, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.35, roughness: 0.4 });
   const g = new THREE.Group(); const p = new THREE.Mesh(new THREE.BoxGeometry(w, w / 4, 0.04), [M.blackMetal, M.blackMetal, M.blackMetal, M.blackMetal, m, m]); g.add(p);

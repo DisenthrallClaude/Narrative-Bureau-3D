@@ -2487,8 +2487,8 @@
    "area": "archive",
    "location": "档案袋模型封面 + 阅读 UI 封面页",
    "type": "document",
-   "path": "textures/b01/B01_10_档案袋封面.png",
-   "source": "B01 生图",
+   "path": "textures/b04/B04_档案袋封面_返工.png",
+   "source": "B04 返工",
    "status": "ready",
    "note": "B01 版的局徽被画成了船锚（锚是雾港的徽），已返工，B04 返工版取回后自动替换"
   },
@@ -2834,7 +2834,7 @@
    "type": "prop_art",
    "path": "textures/b02/B02_写生画板.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_sec_b7_glitch",
@@ -2906,7 +2906,7 @@
    "type": "screen_ui",
    "path": "textures/b02/B02_指挥中心主屏.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_cmd_log_strip",
@@ -2915,7 +2915,7 @@
    "type": "document",
    "path": "textures/b02/B02_监测日志打印条.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_zone_grading",
@@ -2924,7 +2924,7 @@
    "type": "sign",
    "path": "textures/b02/B02_禁区分级标准挂牌.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_zone_cardwall",
@@ -2933,7 +2933,7 @@
    "type": "notice_board",
    "path": "textures/b02/B02_禁区卡片墙.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_cit_windows",
@@ -2942,7 +2942,7 @@
    "type": "screen_ui",
    "path": "textures/b02/B02_市民服务窗口牌.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_cit_letters",
@@ -2951,7 +2951,7 @@
    "type": "notice_board",
    "path": "textures/b02/B02_群众来信墙.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_exam_flow",
@@ -2960,7 +2960,7 @@
    "type": "poster",
    "path": "textures/b02/B02_海报_加试报名大厅.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_exam_spines",
@@ -2969,7 +2969,7 @@
    "type": "prop_art",
    "path": "textures/b02/B02_副本母带书脊.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_spine_panel",
@@ -2978,7 +2978,7 @@
    "type": "prop_art",
    "path": "textures/b02/B02_电梯楼层面板.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_vault_label_clock",
@@ -2987,7 +2987,7 @@
    "type": "label",
    "path": "textures/b02/B02_收容标签_回响座钟.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_vault_label_frame",
@@ -2996,7 +2996,7 @@
    "type": "label",
    "path": "textures/b02/B02_收容标签_活人相框.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_canteen_menu",
@@ -3005,7 +3005,7 @@
    "type": "screen_ui",
    "path": "textures/b02/B02_食堂今日菜单.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_flag_blank",
@@ -3014,7 +3014,7 @@
    "type": "flag",
    "path": "textures/b02/B02_空白局旗.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_memorial_stele",
@@ -3023,7 +3023,7 @@
    "type": "monument",
    "path": "textures/b02/B02_无字碑廊碑文.png",
    "source": "B02 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_liaison_N03",
@@ -3113,7 +3113,7 @@
    "type": "poster",
    "path": "textures/b03/B03_海报_第七局欢迎你.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_dir_painting",
@@ -3122,7 +3122,7 @@
    "type": "prop_art",
    "path": "textures/b03/B03_油画_倒悬之城.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_lib_benche_cover",
@@ -3131,7 +3131,7 @@
    "type": "prop_art",
    "path": "textures/b03/B03_藏书阁_本册封面.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_lib_alien_pages",
@@ -3140,7 +3140,7 @@
    "type": "prop_art",
    "path": "textures/b03/B03_异书残页标本.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_med_sanity_table",
@@ -3149,7 +3149,7 @@
    "type": "chart",
    "path": "textures/b03/B03_理智值分级表.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_med_eye_chart",
@@ -3158,7 +3158,7 @@
    "type": "chart",
    "path": "textures/b03/B03_视力表.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_lab_gauge_screen",
@@ -3167,7 +3167,7 @@
    "type": "screen_ui",
    "path": "textures/b03/B03_篇幅测量仪屏.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_lab_scale_wall",
@@ -3176,7 +3176,7 @@
    "type": "sign",
    "path": "textures/b03/B03_阶位刻度墙.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_train_board",
@@ -3185,7 +3185,7 @@
    "type": "screen_ui",
    "path": "textures/b03/B03_训练场成绩榜.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_train_gate_plates",
@@ -3194,7 +3194,7 @@
    "type": "atlas",
    "path": "textures/b03/B03_副本门铭牌组.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_int_cell_plate",
@@ -3203,7 +3203,7 @@
    "type": "plaque",
    "path": "textures/b03/B03_羁押室门牌.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_int_madwall",
@@ -3212,7 +3212,7 @@
    "type": "material_albedo",
    "path": "textures/b03/B03_狂草隔离间墙面.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_abyss_skybox",
@@ -3221,7 +3221,7 @@
    "type": "skybox",
    "path": "textures/b03/B03_天空盒_墨渊倒悬书城.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_abyss_true_file",
@@ -3230,7 +3230,7 @@
    "type": "document",
    "path": "textures/b03/B03_正本档案.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_abyss_revisions",
@@ -3239,7 +3239,7 @@
    "type": "document",
    "path": "textures/b03/B03_定稿记录批注.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_gutter_wall",
@@ -3248,7 +3248,7 @@
    "type": "material_albedo",
    "path": "textures/b03/B03_无缝_书页内侧缝线.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_ops_board",
@@ -3257,7 +3257,7 @@
    "type": "notice_board",
    "path": "textures/b03/B03_第七局危机看板.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_seventh_seal",
@@ -3266,7 +3266,7 @@
    "type": "decal",
    "path": "textures/b03/B03_柒字印章.png",
    "source": "B03 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_phone_notice",
@@ -3275,7 +3275,7 @@
    "type": "screen_ui",
    "path": "textures/b04/B04_手机报到通知.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_plaza_fountain_plaque",
@@ -3284,7 +3284,7 @@
    "type": "plaque",
    "path": "textures/b04/B04_规则之泉铭牌.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_plaza_newspaper",
@@ -3293,7 +3293,7 @@
    "type": "document",
    "path": "textures/b04/B04_京城晚报残页.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_plaza_countdown",
@@ -3302,7 +3302,7 @@
    "type": "screen_ui",
    "path": "textures/b04/B04_高考倒计时屏.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_plaza_flagpole_plate",
@@ -3311,7 +3311,7 @@
    "type": "plaque",
    "path": "textures/b04/B04_旗杆铭牌.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_gate_brochure",
@@ -3320,7 +3320,7 @@
    "type": "document",
    "path": "textures/b04/B04_入职须知折页.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_gate_misprint",
@@ -3329,7 +3329,7 @@
    "type": "item",
    "path": "textures/b04/B04_作废入职证.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_gate_queue",
@@ -3338,7 +3338,7 @@
    "type": "screen_ui",
    "path": "textures/b04/B04_叫号屏.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_archive_logbook",
@@ -3347,7 +3347,7 @@
    "type": "document",
    "path": "textures/b04/B04_借阅登记簿.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_archive_note_yexun",
@@ -3356,7 +3356,7 @@
    "type": "note",
    "path": "textures/b04/B04_叶寻便签.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_seventh_punchcard",
@@ -3365,7 +3365,7 @@
    "type": "item",
    "path": "textures/b04/B04_打卡卡.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_seventh_plate",
@@ -3374,7 +3374,7 @@
    "type": "plaque",
    "path": "textures/b04/B04_柒字铜牌.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_archive_compactor_panel",
@@ -3383,7 +3383,7 @@
    "type": "prop_art",
    "path": "textures/b04/B04_密集架转盘.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_helipad_roadsign",
@@ -3392,7 +3392,7 @@
    "type": "prop_art",
    "path": "textures/b04/B04_通州路牌证物.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_cit_form7",
@@ -3401,7 +3401,7 @@
    "type": "document",
    "path": "textures/b04/B04_空白附表七.png",
    "source": "B04 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_metro_station_sign",
@@ -3410,7 +3410,7 @@
    "type": "sign",
    "path": "textures/b05/B05_地铁站名牌.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_metro_rules_official",
@@ -3419,7 +3419,7 @@
    "type": "sign",
    "path": "textures/b05/B05_地铁乘车守则_官方版.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_metro_rules_folk",
@@ -3428,7 +3428,7 @@
    "type": "note",
    "path": "textures/b05/B05_午夜地铁守则_民间残版.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_metro_weather",
@@ -3437,7 +3437,7 @@
    "type": "screen_ui",
    "path": "textures/b05/B05_城市信息屏.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_metro_receipt",
@@ -3446,7 +3446,7 @@
    "type": "document",
    "path": "textures/b05/B05_便利店小票.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_metro_shop_poster",
@@ -3455,7 +3455,7 @@
    "type": "poster",
    "path": "textures/b05/B05_海报_篇幅补充剂.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_wall_rules",
@@ -3464,7 +3464,7 @@
    "type": "sign",
    "path": "textures/b05/B05_岗哨执勤守则.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_wall_logbook",
@@ -3473,7 +3473,7 @@
    "type": "document",
    "path": "textures/b05/B05_执勤登记本.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_wall_tower_map",
@@ -3482,7 +3482,7 @@
    "type": "document",
    "path": "textures/b05/B05_城墙塔楼编号附图.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_helipad_log",
@@ -3491,7 +3491,7 @@
    "type": "document",
    "path": "textures/b05/B05_起降日志.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_helipad_safety",
@@ -3500,7 +3500,7 @@
    "type": "sign",
    "path": "textures/b05/B05_乘机安全须知.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_dorm_assign",
@@ -3509,7 +3509,7 @@
    "type": "notice",
    "path": "textures/b05/B05_宿舍分配表.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_dorm_rules",
@@ -3518,7 +3518,7 @@
    "type": "sign",
    "path": "textures/b05/B05_宿舍管理条例.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_dorm_letter",
@@ -3527,7 +3527,7 @@
    "type": "document",
    "path": "textures/b05/B05_没寄出的家书.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_office_notice",
@@ -3536,7 +3536,7 @@
    "type": "document",
    "path": "textures/b05/B05_内部通知117号.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_office_whiteboard",
@@ -3545,7 +3545,7 @@
    "type": "whiteboard",
    "path": "textures/b05/B05_办公区白板.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_office_legal_plate",
@@ -3554,7 +3554,7 @@
    "type": "plaque",
    "path": "textures/b05/B05_法务处门牌.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_arm_briefing",
@@ -3563,7 +3563,7 @@
    "type": "whiteboard",
    "path": "textures/b05/B05_今日出勤白板.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_arm_wanted_files",
@@ -3572,7 +3572,7 @@
    "type": "document",
    "path": "textures/b05/B05_高危通缉档案.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_memorial_guestbook",
@@ -3581,7 +3581,7 @@
    "type": "document",
    "path": "textures/b05/B05_碑廊留言簿.png",
    "source": "B05 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_tide_skybox",
@@ -3590,7 +3590,7 @@
    "type": "skybox",
    "path": "textures/b06/B06_天空盒_墨潮带.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_exam_skybox",
@@ -3599,7 +3599,7 @@
    "type": "skybox",
    "path": "textures/b06/B06_天空盒_考场母本.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_abyss_page_street",
@@ -3608,7 +3608,7 @@
    "type": "material_albedo",
    "path": "textures/b06/B06_无缝_书页街道.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_abyss_ink",
@@ -3617,7 +3617,7 @@
    "type": "material_albedo",
    "path": "textures/b06/B06_无缝_墨潮.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_abyss_gate_plate",
@@ -3626,7 +3626,7 @@
    "type": "plaque",
    "path": "textures/b06/B06_折页门铭牌.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_abyss_city_sign",
@@ -3635,7 +3635,7 @@
    "type": "sign",
    "path": "textures/b06/B06_墨渊路牌.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_abyss_resident_notice",
@@ -3644,7 +3644,7 @@
    "type": "notice",
    "path": "textures/b06/B06_书城居民告示.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_abyss_paperweight",
@@ -3653,7 +3653,7 @@
    "type": "monument",
    "path": "textures/b06/B06_镇纸刻文.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_abyss_exam_paper",
@@ -3662,7 +3662,7 @@
    "type": "document",
    "path": "textures/b06/B06_考场母本试卷.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_abyss_tide_post",
@@ -3671,7 +3671,7 @@
    "type": "sign",
    "path": "textures/b06/B06_墨潮边界警示桩.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_gutter_knots",
@@ -3680,7 +3680,7 @@
    "type": "plaque",
    "path": "textures/b06/B06_线结铭牌.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_gutter_mirror_text",
@@ -3690,7 +3690,7 @@
    "path": "textures/b06/B06_第七局人员守则_正字.png",
    "source": "B06 生图",
    "note": "引擎里水平翻转成反字使用",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_ops_traitor_wall",
@@ -3699,7 +3699,7 @@
    "type": "notice_board",
    "path": "textures/b06/B06_内鬼墙.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_ops_k_notes",
@@ -3708,7 +3708,7 @@
    "type": "document",
    "path": "textures/b06/B06_K的工作笔记.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_wrap_intro",
@@ -3717,7 +3717,7 @@
    "type": "plaque",
    "path": "textures/b06/B06_杀青室木牌.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_wrap_shelves",
@@ -3726,7 +3726,7 @@
    "type": "prop_art",
    "path": "textures/b06/B06_杀青室档案墙.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_wrap_file_2023",
@@ -3735,7 +3735,7 @@
    "type": "document",
    "path": "textures/b06/B06_前次档案_2023.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_wrap_file_2024",
@@ -3744,7 +3744,7 @@
    "type": "document",
    "path": "textures/b06/B06_前次档案_2024.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_wrap_file_2025",
@@ -3753,7 +3753,7 @@
    "type": "document",
    "path": "textures/b06/B06_前次档案_2025.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_rewrite_plate",
@@ -3762,7 +3762,7 @@
    "type": "plaque",
    "path": "textures/b06/B06_回写台铜牌.png",
    "source": "B06 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_cit_report_form",
@@ -3771,7 +3771,7 @@
    "type": "document",
    "path": "textures/b07/B07_污染举报登记表.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_cit_handover",
@@ -3780,7 +3780,7 @@
    "type": "sign",
    "path": "textures/b07/B07_畸变物上交须知.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_exam_paper",
@@ -3789,7 +3789,7 @@
    "type": "document",
    "path": "textures/b07/B07_高考真题卷.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_exam_dispatch",
@@ -3798,7 +3798,7 @@
    "type": "document",
    "path": "textures/b07/B07_副本投放调度单.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_exam_stats",
@@ -3807,7 +3807,7 @@
    "type": "screen_ui",
    "path": "textures/b07/B07_觉醒率统计屏.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_canteen_board",
@@ -3816,7 +3816,7 @@
    "type": "notice_board",
    "path": "textures/b07/B07_员工公告栏.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_cmd_alert_flow",
@@ -3825,7 +3825,7 @@
    "type": "sign",
    "path": "textures/b07/B07_预警发布流程.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_cmd_handover",
@@ -3834,7 +3834,7 @@
    "type": "document",
    "path": "textures/b07/B07_交接班记录.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_zone_dispatch",
@@ -3843,7 +3843,7 @@
    "type": "document",
    "path": "textures/b07/B07_封锁调度单.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_spine_floorplate_b3",
@@ -3852,7 +3852,7 @@
    "type": "plaque",
    "path": "textures/b07/B07_B3楼层铭牌.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_vault_rules",
@@ -3861,7 +3861,7 @@
    "type": "sign",
    "path": "textures/b07/B07_分级收容制度.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_pub_comments",
@@ -3870,7 +3870,7 @@
    "type": "screen_ui",
    "path": "textures/b07/B07_短视频后台评论.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_pub_guide",
@@ -3879,7 +3879,7 @@
    "type": "document",
    "path": "textures/b07/B07_宣传口径手册.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_pub_press",
@@ -3888,7 +3888,7 @@
    "type": "document",
    "path": "textures/b07/B07_新闻通稿第三稿.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_liaison_bookmark",
@@ -3897,7 +3897,7 @@
    "type": "label",
    "path": "textures/b07/B07_黑色书签证物盒.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_liaison_empty_frame",
@@ -3906,7 +3906,7 @@
    "type": "prop_art",
    "path": "textures/b07/B07_势力墙空框.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_med_meds",
@@ -3915,7 +3915,7 @@
    "type": "label",
    "path": "textures/b07/B07_药柜清单.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_lab_flow",
@@ -3924,7 +3924,7 @@
    "type": "sign",
    "path": "textures/b07/B07_能力鉴定流程.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_lib_rules",
@@ -3933,7 +3933,7 @@
    "type": "plaque",
    "path": "textures/b07/B07_藏书阁阅览须知.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_lib_origin",
@@ -3942,7 +3942,7 @@
    "type": "document",
    "path": "textures/b07/B07_叙事学原典扉页.png",
    "source": "B07 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_tile_wall_stone",
@@ -4104,7 +4104,7 @@
    "type": "screen_ui",
    "path": "textures/b08/B08_屏幕_B7无数据.png",
    "source": "B08 生图",
-   "status": "pending"
+   "status": "ready"
   },
   {
    "id": "tex_dir_motto_draft",

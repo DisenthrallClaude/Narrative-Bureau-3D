@@ -9,6 +9,7 @@ export const SHOTS = {
   gate: { pos: [-8, Y + 1.65, -8], look: [11, Y + 3, -18], fov: 72 },
   hall: { pos: [0, Y + 1.65, -32.5], look: [0, Y + 9, -60], fov: 75 },
   hall_vault: { pos: [6, Y + 1.6, -47], look: [-1, Y + 22, -58], fov: 80 },
+  hall_aisle: { pos: [14.6, Y + 1.65, -33.5], look: [11, Y + 2.7, -66], fov: 72 },
   hall_gates: { pos: [-6, Y + 1.7, -35], look: [6, Y + 1.5, -44], fov: 70 },
   archive: { pos: [-22, Y + 1.7, -50], look: [-50, Y + 3, -52], fov: 75 },
   archive_gallery: { pos: [-54.6, Y + 6.2 + 1.6, -36], look: [-30, Y + 5, -40], fov: 75 },
