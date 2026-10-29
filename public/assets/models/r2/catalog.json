@@ -4968,5 +4968,4733 @@
   "kb": 1065,
   "legacy": false,
   "url": "./assets/models/r2/york_minster_cathedral_only.glb"
+ },
+ "victorian_street_lamp_d4006d": {
+  "id": "victorian_street_lamp_d4006d",
+  "src": "01_plaza_exterior/sf_victorian_street_lamp_d4006d",
+  "zone": "01_plaza_exterior",
+  "tris": 29997,
+  "size": [
+   24048.654,
+   65097.445,
+   58523.306
+  ],
+  "kb": 411,
+  "legacy": false,
+  "url": "./assets/models/r2/victorian_street_lamp_d4006d.glb"
+ },
+ "bananas": {
+  "id": "bananas",
+  "src": "09_canteen_dorm_medical/bananas",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 30000,
+  "size": [
+   19660.802,
+   5856.779,
+   7997.645
+  ],
+  "kb": 239,
+  "legacy": false,
+  "url": "./assets/models/r2/bananas.glb"
+ },
+ "brass_pan_01": {
+  "id": "brass_pan_01",
+  "src": "09_canteen_dorm_medical/brass_pan_01",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 4340,
+  "size": [
+   6266.976,
+   1721.316,
+   14734.161
+  ],
+  "kb": 85,
+  "legacy": false,
+  "url": "./assets/models/r2/brass_pan_01.glb"
+ },
+ "carrot_cake": {
+  "id": "carrot_cake",
+  "src": "09_canteen_dorm_medical/carrot_cake",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 13790,
+  "size": [
+   7386.382,
+   3196.701,
+   7385.481
+  ],
+  "kb": 733,
+  "legacy": false,
+  "url": "./assets/models/r2/carrot_cake.glb"
+ },
+ "croissant": {
+  "id": "croissant",
+  "src": "09_canteen_dorm_medical/croissant",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 1990,
+  "size": [
+   6553.4,
+   2031.4,
+   2474.6
+  ],
+  "kb": 120,
+  "legacy": false,
+  "url": "./assets/models/r2/croissant.glb"
+ },
+ "food_apple_01": {
+  "id": "food_apple_01",
+  "src": "09_canteen_dorm_medical/food_apple_01",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 7012,
+  "size": [
+   3196.787,
+   2797.957,
+   3142.543
+  ],
+  "kb": 97,
+  "legacy": false,
+  "url": "./assets/models/r2/food_apple_01.glb"
+ },
+ "hamburger_buns": {
+  "id": "hamburger_buns",
+  "src": "09_canteen_dorm_medical/hamburger_buns",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 11588,
+  "size": [
+   13015.84,
+   2076.687,
+   3729.537
+  ],
+  "kb": 155,
+  "legacy": false,
+  "url": "./assets/models/r2/hamburger_buns.glb"
+ },
+ "lemon": {
+  "id": "lemon",
+  "src": "09_canteen_dorm_medical/lemon",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 4012,
+  "size": [
+   2250.525,
+   3124.966,
+   2236.792
+  ],
+  "kb": 116,
+  "legacy": false,
+  "url": "./assets/models/r2/lemon.glb"
+ },
+ "long_life_food": {
+  "id": "long_life_food",
+  "src": "09_canteen_dorm_medical/long_life_food",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 4712,
+  "size": [
+   17162.156,
+   7783.648,
+   3720.815
+  ],
+  "kb": 129,
+  "legacy": false,
+  "url": "./assets/models/r2/long_life_food.glb"
+ },
+ "medical_tape": {
+  "id": "medical_tape",
+  "src": "09_canteen_dorm_medical/medical_tape",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 1408,
+  "size": [
+   1484.331,
+   820.557,
+   1480.164
+  ],
+  "kb": 40,
+  "legacy": false,
+  "url": "./assets/models/r2/medical_tape.glb"
+ },
+ "russian_food_cans_01": {
+  "id": "russian_food_cans_01",
+  "src": "09_canteen_dorm_medical/russian_food_cans_01",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 1348,
+  "size": [
+   4664.5,
+   2781.874,
+   1514.215
+  ],
+  "kb": 74,
+  "legacy": false,
+  "url": "./assets/models/r2/russian_food_cans_01.glb"
+ },
+ "vintage_crutches_01": {
+  "id": "vintage_crutches_01",
+  "src": "09_canteen_dorm_medical/vintage_crutches_01",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 10628,
+  "size": [
+   17125.066,
+   53393.558,
+   8906.021
+  ],
+  "kb": 141,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_crutches_01.glb"
+ },
+ "portable_cassette_player": {
+  "id": "portable_cassette_player",
+  "src": "11_office_clutter/portable_cassette_player",
+  "zone": "11_office_clutter",
+  "tris": 13307,
+  "size": [
+   5644.289,
+   4269.692,
+   1299.494
+  ],
+  "kb": 219,
+  "legacy": false,
+  "url": "./assets/models/r2/portable_cassette_player.glb",
+  "r3": true
+ },
+ "seadogs_compass": {
+  "id": "seadogs_compass",
+  "src": "11_office_clutter/seadogs_compass",
+  "zone": "11_office_clutter",
+  "tris": 11645,
+  "size": [
+   2663.879,
+   2838.569,
+   4722.829
+  ],
+  "kb": 223,
+  "legacy": false,
+  "url": "./assets/models/r2/seadogs_compass.glb",
+  "r3": true
+ },
+ "binder_78e016": {
+  "id": "binder_78e016",
+  "src": "11_office_clutter/sf_binder_78e016",
+  "zone": "11_office_clutter",
+  "tris": 1620,
+  "size": [
+   4305.016,
+   18159.708,
+   16486.144
+  ],
+  "kb": 73,
+  "legacy": false,
+  "url": "./assets/models/r2/binder_78e016.glb",
+  "r3": true
+ },
+ "cigar_and_ashtray": {
+  "id": "cigar_and_ashtray",
+  "src": "11_office_clutter/sf_cigar_and_ashtray_74159c",
+  "zone": "11_office_clutter",
+  "tris": 7628,
+  "size": [
+   4428.148,
+   1009.28,
+   4428.689
+  ],
+  "kb": 255,
+  "legacy": false,
+  "url": "./assets/models/r2/cigar_and_ashtray.glb",
+  "r3": true
+ },
+ "name_plate": {
+  "id": "name_plate",
+  "src": "11_office_clutter/sf_name_plate_1c809c",
+  "zone": "11_office_clutter",
+  "tris": 692,
+  "size": [
+   205100.944,
+   55864.923,
+   42989.388
+  ],
+  "kb": 25,
+  "legacy": false,
+  "url": "./assets/models/r2/name_plate.glb",
+  "r3": true
+ },
+ "old_paper_cardboard_boxes": {
+  "id": "old_paper_cardboard_boxes",
+  "src": "11_office_clutter/sf_old_paper_cardboard_boxes_72a480",
+  "zone": "11_office_clutter",
+  "tris": 3329,
+  "size": [
+   110508.946,
+   58412.707,
+   138170.971
+  ],
+  "kb": 506,
+  "legacy": false,
+  "url": "./assets/models/r2/old_paper_cardboard_boxes.glb",
+  "r3": true
+ },
+ "organizer": {
+  "id": "organizer",
+  "src": "11_office_clutter/sf_organizer_4f52eb",
+  "zone": "11_office_clutter",
+  "tris": 3168,
+  "size": [
+   65533.997,
+   73670.953,
+   86007.629
+  ],
+  "kb": 64,
+  "legacy": false,
+  "url": "./assets/models/r2/organizer.glb",
+  "r3": true
+ },
+ "paper_stapler": {
+  "id": "paper_stapler",
+  "src": "11_office_clutter/sf_paper_stapler_5cb3f9",
+  "zone": "11_office_clutter",
+  "tris": 10212,
+  "size": [
+   6553400,
+   6553400.171,
+   2942600.78
+  ],
+  "kb": 216,
+  "legacy": false,
+  "url": "./assets/models/r2/paper_stapler.glb",
+  "r3": true
+ },
+ "ptish_exceptionally_full_ashtray": {
+  "id": "ptish_exceptionally_full_ashtray",
+  "src": "11_office_clutter/sf_ptish_exceptionally_full_ashtray_5c59ae",
+  "zone": "11_office_clutter",
+  "tris": 15099,
+  "size": [
+   1754749.188,
+   145888.173,
+   1754749.188
+  ],
+  "kb": 829,
+  "legacy": false,
+  "url": "./assets/models/r2/ptish_exceptionally_full_ashtray.glb",
+  "r3": true
+ },
+ "several_folders": {
+  "id": "several_folders",
+  "src": "11_office_clutter/sf_several_folders_1a493b",
+  "zone": "11_office_clutter",
+  "tris": 5125,
+  "size": [
+   432299.902,
+   1282577.833,
+   1038877.139
+  ],
+  "kb": 142,
+  "legacy": false,
+  "url": "./assets/models/r2/several_folders.glb",
+  "r3": true
+ },
+ "standing_picture_frame_02": {
+  "id": "standing_picture_frame_02",
+  "src": "11_office_clutter/standing_picture_frame_02",
+  "zone": "11_office_clutter",
+  "tris": 2986,
+  "size": [
+   3351.484,
+   8728.884,
+   7107.086
+  ],
+  "kb": 81,
+  "legacy": false,
+  "url": "./assets/models/r2/standing_picture_frame_02.glb",
+  "r3": true
+ },
+ "wicker_basket_01": {
+  "id": "wicker_basket_01",
+  "src": "11_office_clutter/wicker_basket_01",
+  "zone": "11_office_clutter",
+  "tris": 22276,
+  "size": [
+   12557.109,
+   3847.955,
+   9667.599
+  ],
+  "kb": 275,
+  "legacy": false,
+  "url": "./assets/models/r2/wicker_basket_01.glb",
+  "r3": true
+ },
+ "lightbulb_led": {
+  "id": "lightbulb_led",
+  "src": "12_lighting/lightbulb_led",
+  "zone": "12_lighting",
+  "tris": 6420,
+  "size": [
+   2013.244,
+   3284.931,
+   2013.244
+  ],
+  "kb": 90,
+  "legacy": false,
+  "url": "./assets/models/r2/lightbulb_led.glb",
+  "r3": true
+ },
+ "candle_wall_lamp": {
+  "id": "candle_wall_lamp",
+  "src": "12_lighting/sf_candle_wall_lamp_65cbbe",
+  "zone": "12_lighting",
+  "tris": 1560,
+  "size": [
+   557899.94,
+   736323.653,
+   408397.048
+  ],
+  "kb": 113,
+  "legacy": false,
+  "url": "./assets/models/r2/candle_wall_lamp.glb",
+  "r3": true
+ },
+ "rusty_twin_spot_emergency_light": {
+  "id": "rusty_twin_spot_emergency_light",
+  "src": "12_lighting/sf_rusty_twin_spot_emergency_light_4ec589",
+  "zone": "12_lighting",
+  "tris": 11262,
+  "size": [
+   56845.695,
+   68938.719,
+   126634.992
+  ],
+  "kb": 330,
+  "legacy": false,
+  "url": "./assets/models/r2/rusty_twin_spot_emergency_light.glb",
+  "r3": true
+ },
+ "vintage_flashlight": {
+  "id": "vintage_flashlight",
+  "src": "12_lighting/vintage_flashlight",
+  "zone": "12_lighting",
+  "tris": 10562,
+  "size": [
+   3141.696,
+   4728.887,
+   10009.135
+  ],
+  "kb": 153,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_flashlight.glb",
+  "r3": true
+ },
+ "wooden_candlestick": {
+  "id": "wooden_candlestick",
+  "src": "12_lighting/wooden_candlestick",
+  "zone": "12_lighting",
+  "tris": 30009,
+  "size": [
+   3184.41,
+   7197.597,
+   3231.856
+  ],
+  "kb": 591,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_candlestick.glb",
+  "r3": true
+ },
+ "wooden_lantern_01": {
+  "id": "wooden_lantern_01",
+  "src": "12_lighting/wooden_lantern_01",
+  "zone": "12_lighting",
+  "tris": 8321,
+  "size": [
+   7242.196,
+   17370.985,
+   7691.752
+  ],
+  "kb": 195,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_lantern_01.glb",
+  "r3": true
+ },
+ "exit_sign": {
+  "id": "exit_sign",
+  "src": "13_signage_services/sf_exit_sign_46b52e",
+  "zone": "13_signage_services",
+  "tris": 276,
+  "size": [
+   1108254.178,
+   528494.059,
+   111748.771
+  ],
+  "kb": 28,
+  "legacy": false,
+  "url": "./assets/models/r2/exit_sign.glb",
+  "r3": true
+ },
+ "fire_hose_cabinet": {
+  "id": "fire_hose_cabinet",
+  "src": "13_signage_services/sf_fire_hose_cabinet_befe18",
+  "zone": "13_signage_services",
+  "tris": 3948,
+  "size": [
+   132607.492,
+   367454.52,
+   367454.52
+  ],
+  "kb": 97,
+  "legacy": false,
+  "url": "./assets/models/r2/fire_hose_cabinet.glb",
+  "r3": true
+ },
+ "new_york_city_police_investigation_board": {
+  "id": "new_york_city_police_investigation_board",
+  "src": "13_signage_services/sf_new_york_city_police_investigation_board_92ec31",
+  "zone": "13_signage_services",
+  "tris": 2280,
+  "size": [
+   71029.199,
+   44780.456,
+   1673.468
+  ],
+  "kb": 95,
+  "legacy": false,
+  "url": "./assets/models/r2/new_york_city_police_investigation_board.glb",
+  "r3": true
+ },
+ "old_wall_clock": {
+  "id": "old_wall_clock",
+  "src": "13_signage_services/sf_old_wall_clock_8e920e",
+  "zone": "13_signage_services",
+  "tris": 1538,
+  "size": [
+   9791.33,
+   18083.22,
+   6260.998
+  ],
+  "kb": 111,
+  "legacy": false,
+  "url": "./assets/models/r2/old_wall_clock.glb",
+  "r3": true
+ },
+ "smoke_detectors_free_low_poly": {
+  "id": "smoke_detectors_free_low_poly",
+  "src": "13_signage_services/sf_smoke_detectors_free_low_poly_caa8b3",
+  "zone": "13_signage_services",
+  "tris": 1950,
+  "size": [
+   749379393.812,
+   733865585.486,
+   857446709.363
+  ],
+  "kb": 70,
+  "legacy": false,
+  "url": "./assets/models/r2/smoke_detectors_free_low_poly.glb",
+  "r3": true
+ },
+ "schooldesk_01": {
+  "id": "schooldesk_01",
+  "src": "14_furniture_equipment/SchoolDesk_01",
+  "zone": "14_furniture_equipment",
+  "tris": 4162,
+  "size": [
+   23321.729,
+   28921.133,
+   17890.908
+  ],
+  "kb": 72,
+  "legacy": false,
+  "url": "./assets/models/r2/schooldesk_01.glb",
+  "r3": true
+ },
+ "shelf_01": {
+  "id": "shelf_01",
+  "src": "14_furniture_equipment/Shelf_01",
+  "zone": "14_furniture_equipment",
+  "tris": 182,
+  "size": [
+   32879.305,
+   68165.529,
+   8421.096
+  ],
+  "kb": 79,
+  "legacy": false,
+  "url": "./assets/models/r2/shelf_01.glb",
+  "r3": true
+ },
+ "bar_chair_round_01": {
+  "id": "bar_chair_round_01",
+  "src": "14_furniture_equipment/bar_chair_round_01",
+  "zone": "14_furniture_equipment",
+  "tris": 14373,
+  "size": [
+   15832.074,
+   24593.221,
+   15925.142
+  ],
+  "kb": 370,
+  "legacy": false,
+  "url": "./assets/models/r2/bar_chair_round_01.glb",
+  "r3": true
+ },
+ "plastic_monobloc_chair_01": {
+  "id": "plastic_monobloc_chair_01",
+  "src": "14_furniture_equipment/plastic_monobloc_chair_01",
+  "zone": "14_furniture_equipment",
+  "tris": 3356,
+  "size": [
+   21029.964,
+   28829.757,
+   20565.408
+  ],
+  "kb": 129,
+  "legacy": false,
+  "url": "./assets/models/r2/plastic_monobloc_chair_01.glb",
+  "r3": true
+ },
+ "hallway_bench": {
+  "id": "hallway_bench",
+  "src": "14_furniture_equipment/sf_hallway_bench_8d5103",
+  "zone": "14_furniture_equipment",
+  "tris": 660,
+  "size": [
+   66317.581,
+   76195.187,
+   159910.823
+  ],
+  "kb": 44,
+  "legacy": false,
+  "url": "./assets/models/r2/hallway_bench.glb",
+  "r3": true
+ },
+ "old_coat_rack": {
+  "id": "old_coat_rack",
+  "src": "14_furniture_equipment/sf_old_coat_rack_f7125e",
+  "zone": "14_furniture_equipment",
+  "tris": 3142,
+  "size": [
+   4109.186,
+   11145.086,
+   39416.192
+  ],
+  "kb": 81,
+  "legacy": false,
+  "url": "./assets/models/r2/old_coat_rack.glb",
+  "r3": true
+ },
+ "vintage_telephone": {
+  "id": "vintage_telephone",
+  "src": "14_furniture_equipment/sf_vintage_telephone_5b7a79",
+  "zone": "14_furniture_equipment",
+  "tris": 31013,
+  "size": [
+   386693.949,
+   200315.656,
+   492847.084
+  ],
+  "kb": 286,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_telephone.glb",
+  "r3": true
+ },
+ "ww2_german_field_telephone_equipment": {
+  "id": "ww2_german_field_telephone_equipment",
+  "src": "14_furniture_equipment/sf_ww2_german_field_telephone_equipment_bd2148",
+  "zone": "14_furniture_equipment",
+  "tris": 30034,
+  "size": [
+   26563.732,
+   13556.328,
+   17475.101
+  ],
+  "kb": 346,
+  "legacy": false,
+  "url": "./assets/models/r2/ww2_german_field_telephone_equipment.glb",
+  "r3": true
+ },
+ "vintage_wooden_drawer_01": {
+  "id": "vintage_wooden_drawer_01",
+  "src": "14_furniture_equipment/vintage_wooden_drawer_01",
+  "zone": "14_furniture_equipment",
+  "tris": 5184,
+  "size": [
+   28099.57,
+   25122.132,
+   14525.3
+  ],
+  "kb": 166,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_wooden_drawer_01.glb",
+  "r3": true
+ },
+ "antique_globe": {
+  "id": "antique_globe",
+  "src": "15_soft_decor/sf_antique_globe_78b471",
+  "zone": "15_soft_decor",
+  "tris": 6786,
+  "size": [
+   15073.674,
+   16245.865,
+   16573.763
+  ],
+  "kb": 223,
+  "legacy": false,
+  "url": "./assets/models/r2/antique_globe.glb",
+  "r3": true
+ },
+ "edgar_degas_la_classe_de_danse": {
+  "id": "edgar_degas_la_classe_de_danse",
+  "src": "15_soft_decor/sf_edgar_degas_la_classe_de_danse_7925b4",
+  "zone": "15_soft_decor",
+  "tris": 38520,
+  "size": [
+   33910.519,
+   37919.187,
+   3078.25
+  ],
+  "kb": 690,
+  "legacy": false,
+  "url": "./assets/models/r2/edgar_degas_la_classe_de_danse.glb",
+  "r3": true
+ },
+ "lady_bust_benlliure": {
+  "id": "lady_bust_benlliure",
+  "src": "15_soft_decor/sf_lady_bust_benlliure_a66810",
+  "zone": "15_soft_decor",
+  "tris": 30000,
+  "size": [
+   11924.893,
+   21807.287,
+   12244.345
+  ],
+  "kb": 237,
+  "legacy": false,
+  "url": "./assets/models/r2/lady_bust_benlliure.glb",
+  "r3": true
+ },
+ "monstera_deliciosa_potted_mid_century_pl": {
+  "id": "monstera_deliciosa_potted_mid_century_pl",
+  "src": "15_soft_decor/sf_monstera_deliciosa_potted_mid_century_pl_1ab9bf",
+  "zone": "15_soft_decor",
+  "tris": 9310,
+  "size": [
+   32997.623,
+   30153.747,
+   30020.818
+  ],
+  "kb": 338,
+  "legacy": false,
+  "url": "./assets/models/r2/monstera_deliciosa_potted_mid_century_pl.glb",
+  "r3": true
+ },
+ "adjustable_wrench": {
+  "id": "adjustable_wrench",
+  "src": "16_industrial_storage/adjustable_wrench",
+  "zone": "16_industrial_storage",
+  "tris": 5390,
+  "size": [
+   2239.65,
+   8327.088,
+   1002.29
+  ],
+  "kb": 170,
+  "legacy": false,
+  "url": "./assets/models/r2/adjustable_wrench.glb",
+  "r3": true
+ },
+ "barrel_stove": {
+  "id": "barrel_stove",
+  "src": "16_industrial_storage/barrel_stove",
+  "zone": "16_industrial_storage",
+  "tris": 9216,
+  "size": [
+   19417.076,
+   28035.574,
+   19417.076
+  ],
+  "kb": 156,
+  "legacy": false,
+  "url": "./assets/models/r2/barrel_stove.glb",
+  "r3": true
+ },
+ "bench_vice_01": {
+  "id": "bench_vice_01",
+  "src": "16_industrial_storage/bench_vice_01",
+  "zone": "16_industrial_storage",
+  "tris": 2864,
+  "size": [
+   59342,
+   65534,
+   65534
+  ],
+  "kb": 139,
+  "legacy": false,
+  "url": "./assets/models/r2/bench_vice_01.glb",
+  "r3": true
+ },
+ "bolt_cutters_01": {
+  "id": "bolt_cutters_01",
+  "src": "16_industrial_storage/bolt_cutters_01",
+  "zone": "16_industrial_storage",
+  "tris": 3410,
+  "size": [
+   4950.319,
+   26298.171,
+   1181.399
+  ],
+  "kb": 132,
+  "legacy": false,
+  "url": "./assets/models/r2/bolt_cutters_01.glb",
+  "r3": true
+ },
+ "ladder_sectioned_01": {
+  "id": "ladder_sectioned_01",
+  "src": "16_industrial_storage/ladder_sectioned_01",
+  "zone": "16_industrial_storage",
+  "tris": 29140,
+  "size": [
+   21672.172,
+   69943.077,
+   5823.076
+  ],
+  "kb": 280,
+  "legacy": false,
+  "url": "./assets/models/r2/ladder_sectioned_01.glb",
+  "r3": true
+ },
+ "old_tyre": {
+  "id": "old_tyre",
+  "src": "16_industrial_storage/old_tyre",
+  "zone": "16_industrial_storage",
+  "tris": 2880,
+  "size": [
+   19660.201,
+   19660.201,
+   5407.8
+  ],
+  "kb": 117,
+  "legacy": false,
+  "url": "./assets/models/r2/old_tyre.glb",
+  "r3": true
+ },
+ "portable_welding_cart": {
+  "id": "portable_welding_cart",
+  "src": "16_industrial_storage/portable_welding_cart",
+  "zone": "16_industrial_storage",
+  "tris": 29418,
+  "size": [
+   27471.154,
+   51220.4,
+   21460.764
+  ],
+  "kb": 434,
+  "legacy": false,
+  "url": "./assets/models/r2/portable_welding_cart.glb",
+  "r3": true
+ },
+ "diesel_generator": {
+  "id": "diesel_generator",
+  "src": "16_industrial_storage/sf_diesel_generator_7a0b72",
+  "zone": "16_industrial_storage",
+  "tris": 10428,
+  "size": [
+   46343.171,
+   34716.01,
+   22574.035
+  ],
+  "kb": 157,
+  "legacy": false,
+  "url": "./assets/models/r2/diesel_generator.glb",
+  "r3": true
+ },
+ "oil_drum_game_model": {
+  "id": "oil_drum_game_model",
+  "src": "16_industrial_storage/sf_oil_drum_game_model_6a6a7e",
+  "zone": "16_industrial_storage",
+  "tris": 992,
+  "size": [
+   1966257.213,
+   2794671.211,
+   1936235.415
+  ],
+  "kb": 72,
+  "legacy": false,
+  "url": "./assets/models/r2/oil_drum_game_model.glb",
+  "r3": true
+ },
+ "pressure_gauge": {
+  "id": "pressure_gauge",
+  "src": "16_industrial_storage/sf_pressure_gauge_95cf5b",
+  "zone": "16_industrial_storage",
+  "tris": 5620,
+  "size": [
+   91587.07,
+   81568.39,
+   100626.012
+  ],
+  "kb": 124,
+  "legacy": false,
+  "url": "./assets/models/r2/pressure_gauge.glb",
+  "r3": true
+ },
+ "rusted_chain_shackles": {
+  "id": "rusted_chain_shackles",
+  "src": "16_industrial_storage/sf_rusted_chain_shackles_924c7c",
+  "zone": "16_industrial_storage",
+  "tris": 608,
+  "size": [
+   13483.454,
+   3879.363,
+   12874.613
+  ],
+  "kb": 139,
+  "legacy": false,
+  "url": "./assets/models/r2/rusted_chain_shackles.glb",
+  "r3": true
+ },
+ "vintage_boiler": {
+  "id": "vintage_boiler",
+  "src": "16_industrial_storage/sf_vintage_boiler_8a1a85",
+  "zone": "16_industrial_storage",
+  "tris": 29998,
+  "size": [
+   52729.511,
+   106646.99,
+   36101.817
+  ],
+  "kb": 740,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_boiler.glb",
+  "r3": true
+ },
+ "wooden_pallets": {
+  "id": "wooden_pallets",
+  "src": "16_industrial_storage/sf_wooden_pallets_dba5c0",
+  "zone": "16_industrial_storage",
+  "tris": 384,
+  "size": [
+   65536.999,
+   7960.01,
+   65534
+  ],
+  "kb": 100,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_pallets.glb",
+  "r3": true
+ },
+ "wooden_barrels_01": {
+  "id": "wooden_barrels_01",
+  "src": "16_industrial_storage/wooden_barrels_01",
+  "zone": "16_industrial_storage",
+  "tris": 29997,
+  "size": [
+   145499.646,
+   30141.371,
+   61833.02
+  ],
+  "kb": 575,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_barrels_01.glb",
+  "r3": true
+ },
+ "wooden_ladder_02": {
+  "id": "wooden_ladder_02",
+  "src": "16_industrial_storage/wooden_ladder_02",
+  "zone": "16_industrial_storage",
+  "tris": 6126,
+  "size": [
+   32421.756,
+   56430.663,
+   20254.556
+  ],
+  "kb": 121,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_ladder_02.glb",
+  "r3": true
+ },
+ "rollershutter_window_02": {
+  "id": "rollershutter_window_02",
+  "src": "17_exterior_street/rollershutter_window_02",
+  "zone": "17_exterior_street",
+  "tris": 1120,
+  "size": [
+   52429.209,
+   51147.208,
+   5504.001
+  ],
+  "kb": 213,
+  "legacy": false,
+  "url": "./assets/models/r2/rollershutter_window_02.glb",
+  "r3": true
+ },
+ "2001_crown_victoria_taxi_game_prop": {
+  "id": "2001_crown_victoria_taxi_game_prop",
+  "src": "17_exterior_street/sf_2001_crown_victoria_taxi_game_prop_2429a8",
+  "zone": "17_exterior_street",
+  "tris": 29989,
+  "size": [
+   86518.526,
+   52229.987,
+   211674.208
+  ],
+  "kb": 592,
+  "legacy": false,
+  "url": "./assets/models/r2/2001_crown_victoria_taxi_game_prop.glb",
+  "r3": true
+ },
+ "44_pocket_rotating_newspaper_stand": {
+  "id": "44_pocket_rotating_newspaper_stand",
+  "src": "17_exterior_street/sf_44_pocket_rotating_newspaper_stand_c25ccb",
+  "zone": "17_exterior_street",
+  "tris": 178684,
+  "size": [
+   19660.212,
+   56635.235,
+   19660.212
+  ],
+  "kb": 1719,
+  "legacy": false,
+  "url": "./assets/models/r2/44_pocket_rotating_newspaper_stand.glb",
+  "r3": true
+ },
+ "brick_planters": {
+  "id": "brick_planters",
+  "src": "17_exterior_street/sf_brick_planters_9f6cee",
+  "zone": "17_exterior_street",
+  "tris": 5928,
+  "size": [
+   6891195.227,
+   2460995.088,
+   7647109.214
+  ],
+  "kb": 39,
+  "legacy": false,
+  "url": "./assets/models/r2/brick_planters.glb",
+  "r3": true
+ },
+ "dirty_car_cadillac_75_sedan_1953": {
+  "id": "dirty_car_cadillac_75_sedan_1953",
+  "src": "17_exterior_street/sf_dirty_car_cadillac_75_sedan_1953_e08f24",
+  "zone": "17_exterior_street",
+  "tris": 14663,
+  "size": [
+   60580.508,
+   52580.912,
+   185639.343
+  ],
+  "kb": 410,
+  "legacy": false,
+  "url": "./assets/models/r2/dirty_car_cadillac_75_sedan_1953.glb",
+  "r3": true
+ },
+ "old_bicycle": {
+  "id": "old_bicycle",
+  "src": "17_exterior_street/sf_old_bicycle_17ab00",
+  "zone": "17_exterior_street",
+  "tris": 53844,
+  "size": [
+   363184.017,
+   222152.449,
+   124257.193
+  ],
+  "kb": 510,
+  "legacy": false,
+  "url": "./assets/models/r2/old_bicycle.glb",
+  "r3": true
+ },
+ "rusty_kiosk_01": {
+  "id": "rusty_kiosk_01",
+  "src": "17_exterior_street/sf_rusty_kiosk_01_882bfc",
+  "zone": "17_exterior_street",
+  "tris": 289,
+  "size": [
+   123163.789,
+   111376.27,
+   108489.531
+  ],
+  "kb": 55,
+  "legacy": false,
+  "url": "./assets/models/r2/rusty_kiosk_01.glb",
+  "r3": true
+ },
+ "tree_3d_scan_retopo": {
+  "id": "tree_3d_scan_retopo",
+  "src": "17_exterior_street/sf_tree_3d_scan_retopo_9e6778",
+  "zone": "17_exterior_street",
+  "tris": 22369,
+  "size": [
+   26312.671,
+   65710.487,
+   32521.347
+  ],
+  "kb": 308,
+  "legacy": false,
+  "url": "./assets/models/r2/tree_3d_scan_retopo.glb",
+  "r3": true
+ },
+ "trees_of_paris": {
+  "id": "trees_of_paris",
+  "src": "17_exterior_street/sf_trees_of_paris_18b614",
+  "zone": "17_exterior_street",
+  "tris": 29938,
+  "size": [
+   83755.146,
+   6543.57,
+   49950.959
+  ],
+  "kb": 663,
+  "legacy": false,
+  "url": "./assets/models/r2/trees_of_paris.glb",
+  "r3": true
+ },
+ "wooden_bowl_01": {
+  "id": "wooden_bowl_01",
+  "src": "09_canteen_dorm_medical/wooden_bowl_01",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 14122,
+  "size": [
+   10258.746,
+   3069.765,
+   10129.756
+  ],
+  "kb": 144,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_bowl_01.glb",
+  "r3": true
+ },
+ "wooden_spoon": {
+  "id": "wooden_spoon",
+  "src": "09_canteen_dorm_medical/wooden_spoon",
+  "zone": "09_canteen_dorm_medical",
+  "tris": 6576,
+  "size": [
+   2839.929,
+   822.91,
+   9097.269
+  ],
+  "kb": 108,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_spoon.glb",
+  "r3": true
+ },
+ "gothic_window_a11ab8": {
+  "id": "gothic_window_a11ab8",
+  "src": "10_gothic_architecture/sf_gothic_window_a11ab8",
+  "zone": "10_gothic_architecture",
+  "tris": 51117,
+  "size": [
+   177768.194,
+   640038.824,
+   129721.189
+  ],
+  "kb": 393,
+  "legacy": false,
+  "url": "./assets/models/r2/gothic_window_a11ab8.glb",
+  "r3": true
+ },
+ "desk_bell": {
+  "id": "desk_bell",
+  "src": "11_office_clutter/sf_desk_bell_cc21b3",
+  "zone": "11_office_clutter",
+  "tris": 1024,
+  "size": [
+   60735.404,
+   32285.204,
+   60735.404
+  ],
+  "kb": 44,
+  "legacy": false,
+  "url": "./assets/models/r2/desk_bell.glb",
+  "r3": true
+ },
+ "document_letter_tray_documents_organizer": {
+  "id": "document_letter_tray_documents_organizer",
+  "src": "11_office_clutter/sf_document_letter_tray_documents_organizer_f5c4c6",
+  "zone": "11_office_clutter",
+  "tris": 11428,
+  "size": [
+   9808.617,
+   7614.474,
+   11328.93
+  ],
+  "kb": 74,
+  "legacy": false,
+  "url": "./assets/models/r2/document_letter_tray_documents_organizer.glb",
+  "r3": true
+ },
+ "filing_box": {
+  "id": "filing_box",
+  "src": "11_office_clutter/sf_filing_box_53d37f",
+  "zone": "11_office_clutter",
+  "tris": 188,
+  "size": [
+   1775328.872,
+   1691791.91,
+   2759330.289
+  ],
+  "kb": 19,
+  "legacy": false,
+  "url": "./assets/models/r2/filing_box.glb",
+  "r3": true
+ },
+ "medieval_book_stack": {
+  "id": "medieval_book_stack",
+  "src": "11_office_clutter/sf_medieval_book_stack_0ea43f",
+  "zone": "11_office_clutter",
+  "tris": 2968,
+  "size": [
+   1028475.248,
+   883247.201,
+   1351515.879
+  ],
+  "kb": 134,
+  "legacy": false,
+  "url": "./assets/models/r2/medieval_book_stack.glb",
+  "r3": true
+ },
+ "metal_storage_cabinet": {
+  "id": "metal_storage_cabinet",
+  "src": "11_office_clutter/sf_metal_storage_cabinet_4d4969",
+  "zone": "11_office_clutter",
+  "tris": 9009,
+  "size": [
+   1271769.188,
+   2359224,
+   786312
+  ],
+  "kb": 177,
+  "legacy": false,
+  "url": "./assets/models/r2/metal_storage_cabinet.glb",
+  "r3": true
+ },
+ "office_cubical_trash_bin": {
+  "id": "office_cubical_trash_bin",
+  "src": "11_office_clutter/sf_office_cubical_trash_bin_748c8d",
+  "zone": "11_office_clutter",
+  "tris": 30008,
+  "size": [
+   48870.083,
+   57061.825,
+   48870.083
+  ],
+  "kb": 264,
+  "legacy": false,
+  "url": "./assets/models/r2/office_cubical_trash_bin.glb",
+  "r3": true
+ },
+ "old_filing_cabinet": {
+  "id": "old_filing_cabinet",
+  "src": "11_office_clutter/sf_old_filing_cabinet_89729f",
+  "zone": "11_office_clutter",
+  "tris": 3641,
+  "size": [
+   4915049.609,
+   2613900.113,
+   1965750.27
+  ],
+  "kb": 145,
+  "legacy": false,
+  "url": "./assets/models/r2/old_filing_cabinet.glb",
+  "r3": true
+ },
+ "old_victorian_rubber_stamp": {
+  "id": "old_victorian_rubber_stamp",
+  "src": "11_office_clutter/sf_old_victorian_rubber_stamp_be402a",
+  "zone": "11_office_clutter",
+  "tris": 6292,
+  "size": [
+   17930,
+   65534.002,
+   43156.003
+  ],
+  "kb": 119,
+  "legacy": false,
+  "url": "./assets/models/r2/old_victorian_rubber_stamp.glb",
+  "r3": true
+ },
+ "trashbag": {
+  "id": "trashbag",
+  "src": "11_office_clutter/trashbag",
+  "zone": "11_office_clutter",
+  "tris": 4482,
+  "size": [
+   17302.306,
+   18841.005,
+   15167.909
+  ],
+  "kb": 120,
+  "legacy": false,
+  "url": "./assets/models/r2/trashbag.glb",
+  "r3": true
+ },
+ "vintage_pocket_watch": {
+  "id": "vintage_pocket_watch",
+  "src": "11_office_clutter/vintage_pocket_watch",
+  "zone": "11_office_clutter",
+  "tris": 16098,
+  "size": [
+   2009.566,
+   2618.917,
+   445.345
+  ],
+  "kb": 177,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_pocket_watch.glb",
+  "r3": true
+ },
+ "bunker_lamps": {
+  "id": "bunker_lamps",
+  "src": "12_lighting/sf_bunker_lamps_1f7a50",
+  "zone": "12_lighting",
+  "tris": 36264,
+  "size": [
+   436493.103,
+   426236.65,
+   436528.109
+  ],
+  "kb": 189,
+  "legacy": false,
+  "url": "./assets/models/r2/bunker_lamps.glb",
+  "r3": true
+ },
+ "candelabra": {
+  "id": "candelabra",
+  "src": "12_lighting/sf_candelabra_f00558",
+  "zone": "12_lighting",
+  "tris": 13789,
+  "size": [
+   10175.478,
+   9692.277,
+   3018.763
+  ],
+  "kb": 256,
+  "legacy": false,
+  "url": "./assets/models/r2/candelabra.glb",
+  "r3": true
+ },
+ "chandelier_e49112": {
+  "id": "chandelier_e49112",
+  "src": "12_lighting/sf_chandelier_e49112",
+  "zone": "12_lighting",
+  "tris": 30004,
+  "size": [
+   19130628.162,
+   3267158.885,
+   18306248.543
+  ],
+  "kb": 145,
+  "legacy": false,
+  "url": "./assets/models/r2/chandelier_e49112.glb",
+  "r3": true
+ },
+ "copper_wall_sconce": {
+  "id": "copper_wall_sconce",
+  "src": "12_lighting/sf_copper_wall_sconce_069fe3",
+  "zone": "12_lighting",
+  "tris": 92645,
+  "size": [
+   120935.727,
+   272400.547,
+   86906.579
+  ],
+  "kb": 1755,
+  "legacy": false,
+  "url": "./assets/models/r2/copper_wall_sconce.glb",
+  "r3": true
+ },
+ "industrial_pipe_lamp_099147": {
+  "id": "industrial_pipe_lamp_099147",
+  "src": "12_lighting/sf_industrial_pipe_lamp_099147",
+  "zone": "12_lighting",
+  "tris": 13014,
+  "size": [
+   14424999.895,
+   9717921.564,
+   6553621.078
+  ],
+  "kb": 267,
+  "legacy": false,
+  "url": "./assets/models/r2/industrial_pipe_lamp_099147.glb",
+  "r3": true
+ },
+ "classic_siren_with_2_speakers": {
+  "id": "classic_siren_with_2_speakers",
+  "src": "13_signage_services/sf_classic_siren_with_2_speakers_5df79c",
+  "zone": "13_signage_services",
+  "tris": 2760,
+  "size": [
+   426660.722,
+   2619213.691,
+   319506.054
+  ],
+  "kb": 58,
+  "legacy": false,
+  "url": "./assets/models/r2/classic_siren_with_2_speakers.glb",
+  "r3": true
+ },
+ "electrical_panel_c": {
+  "id": "electrical_panel_c",
+  "src": "13_signage_services/sf_electrical_panel_c_ebc82b",
+  "zone": "13_signage_services",
+  "tris": 352,
+  "size": [
+   34755.086,
+   47250.017,
+   11074.032
+  ],
+  "kb": 65,
+  "legacy": false,
+  "url": "./assets/models/r2/electrical_panel_c.glb",
+  "r3": true
+ },
+ "fire_extinguisher_old_rusty_3d_scan": {
+  "id": "fire_extinguisher_old_rusty_3d_scan",
+  "src": "13_signage_services/sf_fire_extinguisher_old_rusty_3d_scan_70a4fd",
+  "zone": "13_signage_services",
+  "tris": 29984,
+  "size": [
+   8891.431,
+   21395.721,
+   6321.359
+  ],
+  "kb": 252,
+  "legacy": false,
+  "url": "./assets/models/r2/fire_extinguisher_old_rusty_3d_scan.glb",
+  "r3": true
+ },
+ "free_modular_air_duct_kit": {
+  "id": "free_modular_air_duct_kit",
+  "src": "13_signage_services/sf_free_modular_air_duct_kit_42c2d8",
+  "zone": "13_signage_services",
+  "tris": 19537,
+  "size": [
+   193756.087,
+   215958.447,
+   140373.765
+  ],
+  "kb": 236,
+  "legacy": false,
+  "url": "./assets/models/r2/free_modular_air_duct_kit.glb",
+  "r3": true
+ },
+ "greenchair_01": {
+  "id": "greenchair_01",
+  "src": "14_furniture_equipment/GreenChair_01",
+  "zone": "14_furniture_equipment",
+  "tris": 4213,
+  "size": [
+   22057.269,
+   34684.257,
+   21769.354
+  ],
+  "kb": 116,
+  "legacy": false,
+  "url": "./assets/models/r2/greenchair_01.glb",
+  "r3": true
+ },
+ "coffee_table_round_01": {
+  "id": "coffee_table_round_01",
+  "src": "14_furniture_equipment/coffee_table_round_01",
+  "zone": "14_furniture_equipment",
+  "tris": 4044,
+  "size": [
+   42639.749,
+   16090.594,
+   42639.749
+  ],
+  "kb": 88,
+  "legacy": false,
+  "url": "./assets/models/r2/coffee_table_round_01.glb",
+  "r3": true
+ },
+ "metal_stool_03": {
+  "id": "metal_stool_03",
+  "src": "14_furniture_equipment/metal_stool_03",
+  "zone": "14_furniture_equipment",
+  "tris": 6576,
+  "size": [
+   15093.878,
+   33524.103,
+   15421.272
+  ],
+  "kb": 148,
+  "legacy": false,
+  "url": "./assets/models/r2/metal_stool_03.glb",
+  "r3": true
+ },
+ "painted_wooden_nightstand": {
+  "id": "painted_wooden_nightstand",
+  "src": "14_furniture_equipment/painted_wooden_nightstand",
+  "zone": "14_furniture_equipment",
+  "tris": 470,
+  "size": [
+   16532.278,
+   20168.776,
+   16670.154
+  ],
+  "kb": 80,
+  "legacy": false,
+  "url": "./assets/models/r2/painted_wooden_nightstand.glb",
+  "r3": true
+ },
+ "coat_rack_bowler_hat": {
+  "id": "coat_rack_bowler_hat",
+  "src": "14_furniture_equipment/sf_coat_rack_bowler_hat_7818b7",
+  "zone": "14_furniture_equipment",
+  "tris": 30001,
+  "size": [
+   88608.689,
+   320008.919,
+   88804.013
+  ],
+  "kb": 303,
+  "legacy": false,
+  "url": "./assets/models/r2/coat_rack_bowler_hat.glb",
+  "r3": true
+ },
+ "conference_meeting_table_and_chairs": {
+  "id": "conference_meeting_table_and_chairs",
+  "src": "14_furniture_equipment/sf_conference_meeting_table_and_chairs_60dc8a",
+  "zone": "14_furniture_equipment",
+  "tris": 35964,
+  "size": [
+   12842212.075,
+   5126353.659,
+   8779907.678
+  ],
+  "kb": 726,
+  "legacy": false,
+  "url": "./assets/models/r2/conference_meeting_table_and_chairs.glb",
+  "r3": true
+ },
+ "exhibit_switchboard": {
+  "id": "exhibit_switchboard",
+  "src": "14_furniture_equipment/sf_exhibit_switchboard_06eb05",
+  "zone": "14_furniture_equipment",
+  "tris": 30764,
+  "size": [
+   14618.8,
+   16928.341,
+   15726.609
+  ],
+  "kb": 1454,
+  "legacy": false,
+  "url": "./assets/models/r2/exhibit_switchboard.glb",
+  "r3": true
+ },
+ "mid_century_mahogany_folding_screen": {
+  "id": "mid_century_mahogany_folding_screen",
+  "src": "14_furniture_equipment/sf_mid_century_mahogany_folding_screen_02d573",
+  "zone": "14_furniture_equipment",
+  "tris": 30002,
+  "size": [
+   41974696.986,
+   55703896,
+   11383199.183
+  ],
+  "kb": 367,
+  "legacy": false,
+  "url": "./assets/models/r2/mid_century_mahogany_folding_screen.glb",
+  "r3": true
+ },
+ "old_computer": {
+  "id": "old_computer",
+  "src": "14_furniture_equipment/sf_old_computer_0bbb3a",
+  "zone": "14_furniture_equipment",
+  "tris": 16152,
+  "size": [
+   8632030.838,
+   4944846.396,
+   10376316.488
+  ],
+  "kb": 327,
+  "legacy": false,
+  "url": "./assets/models/r2/old_computer.glb",
+  "r3": true
+ },
+ "rotary_telephone": {
+  "id": "rotary_telephone",
+  "src": "14_furniture_equipment/sf_rotary_telephone_fc71df",
+  "zone": "14_furniture_equipment",
+  "tris": 29998,
+  "size": [
+   3827825.93,
+   2363726.611,
+   2578207.29
+  ],
+  "kb": 393,
+  "legacy": false,
+  "url": "./assets/models/r2/rotary_telephone.glb",
+  "r3": true
+ },
+ "victorian_umbrella_stand": {
+  "id": "victorian_umbrella_stand",
+  "src": "14_furniture_equipment/sf_victorian_umbrella_stand_08045f",
+  "zone": "14_furniture_equipment",
+  "tris": 8628,
+  "size": [
+   21631.43,
+   44497.277,
+   21631.437
+  ],
+  "kb": 184,
+  "legacy": false,
+  "url": "./assets/models/r2/victorian_umbrella_stand.glb",
+  "r3": true
+ },
+ "small_wooden_table_01": {
+  "id": "small_wooden_table_01",
+  "src": "14_furniture_equipment/small_wooden_table_01",
+  "zone": "14_furniture_equipment",
+  "tris": 3410,
+  "size": [
+   30020.726,
+   17468.037,
+   14414.383
+  ],
+  "kb": 58,
+  "legacy": false,
+  "url": "./assets/models/r2/small_wooden_table_01.glb",
+  "r3": true
+ },
+ "wooden_stool_01": {
+  "id": "wooden_stool_01",
+  "src": "14_furniture_equipment/wooden_stool_01",
+  "zone": "14_furniture_equipment",
+  "tris": 10946,
+  "size": [
+   13937.525,
+   14330.343,
+   14494.902
+  ],
+  "kb": 183,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_stool_01.glb",
+  "r3": true
+ },
+ "brass_vase_03": {
+  "id": "brass_vase_03",
+  "src": "15_soft_decor/brass_vase_03",
+  "zone": "15_soft_decor",
+  "tris": 2616,
+  "size": [
+   2703.58,
+   6565.493,
+   2703.58
+  ],
+  "kb": 78,
+  "legacy": false,
+  "url": "./assets/models/r2/brass_vase_03.glb",
+  "r3": true
+ },
+ "ceramic_vase_03": {
+  "id": "ceramic_vase_03",
+  "src": "15_soft_decor/ceramic_vase_03",
+  "zone": "15_soft_decor",
+  "tris": 11136,
+  "size": [
+   3678.379,
+   13577.721,
+   3678.379
+  ],
+  "kb": 133,
+  "legacy": false,
+  "url": "./assets/models/r2/ceramic_vase_03.glb",
+  "r3": true
+ },
+ "ceramic_vase_04": {
+  "id": "ceramic_vase_04",
+  "src": "15_soft_decor/ceramic_vase_04",
+  "zone": "15_soft_decor",
+  "tris": 9000,
+  "size": [
+   5935.468,
+   11204.486,
+   5935.468
+  ],
+  "kb": 100,
+  "legacy": false,
+  "url": "./assets/models/r2/ceramic_vase_04.glb",
+  "r3": true
+ },
+ "planter_pot_clay": {
+  "id": "planter_pot_clay",
+  "src": "15_soft_decor/planter_pot_clay",
+  "zone": "15_soft_decor",
+  "tris": 3080,
+  "size": [
+   8715.915,
+   7269.956,
+   8632.924
+  ],
+  "kb": 76,
+  "legacy": false,
+  "url": "./assets/models/r2/planter_pot_clay.glb",
+  "r3": true
+ },
+ "aladren_male_bust": {
+  "id": "aladren_male_bust",
+  "src": "15_soft_decor/sf_aladren_male_bust_3e42f8",
+  "zone": "15_soft_decor",
+  "tris": 31642,
+  "size": [
+   620746.04,
+   1571613.793,
+   769812.148
+  ],
+  "kb": 238,
+  "legacy": false,
+  "url": "./assets/models/r2/aladren_male_bust.glb",
+  "r3": true
+ },
+ "curtains": {
+  "id": "curtains",
+  "src": "15_soft_decor/sf_curtains_a83e1b",
+  "zone": "15_soft_decor",
+  "tris": 7864,
+  "size": [
+   150571.355,
+   134120.391,
+   21740.533
+  ],
+  "kb": 82,
+  "legacy": false,
+  "url": "./assets/models/r2/curtains.glb",
+  "r3": true
+ },
+ "persian_qashqai_rug": {
+  "id": "persian_qashqai_rug",
+  "src": "15_soft_decor/sf_persian_qashqai_rug_fa968b",
+  "zone": "15_soft_decor",
+  "tris": 2636,
+  "size": [
+   32508.1,
+   130.957,
+   21137.656
+  ],
+  "kb": 84,
+  "legacy": false,
+  "url": "./assets/models/r2/persian_qashqai_rug.glb",
+  "r3": true
+ },
+ "persian_rug": {
+  "id": "persian_rug",
+  "src": "15_soft_decor/sf_persian_rug_fe13ee",
+  "zone": "15_soft_decor",
+  "tris": 48,
+  "size": [
+   9830334.517,
+   70909.382,
+   17084468.607
+  ],
+  "kb": 112,
+  "legacy": false,
+  "url": "./assets/models/r2/persian_rug.glb",
+  "r3": true
+ },
+ "plant": {
+  "id": "plant",
+  "src": "15_soft_decor/sf_plant_9b9c88",
+  "zone": "15_soft_decor",
+  "tris": 29543,
+  "size": [
+   884251.002,
+   1125869.539,
+   1029267.776
+  ],
+  "kb": 468,
+  "legacy": false,
+  "url": "./assets/models/r2/plant.glb",
+  "r3": true
+ },
+ "potted_plant_04_4k": {
+  "id": "potted_plant_04_4k",
+  "src": "15_soft_decor/sf_potted_plant_04_4k_66b980",
+  "zone": "15_soft_decor",
+  "tris": 30003,
+  "size": [
+   5501.069,
+   8734.061,
+   6020.311
+  ],
+  "kb": 671,
+  "legacy": false,
+  "url": "./assets/models/r2/potted_plant_04_4k.glb",
+  "r3": true
+ },
+ "potted_plant_839868": {
+  "id": "potted_plant_839868",
+  "src": "15_soft_decor/sf_potted_plant_839868",
+  "zone": "15_soft_decor",
+  "tris": 9336,
+  "size": [
+   573692.117,
+   397121.634,
+   544068.194
+  ],
+  "kb": 176,
+  "legacy": false,
+  "url": "./assets/models/r2/potted_plant_839868.glb",
+  "r3": true
+ },
+ "throw_pillows_01": {
+  "id": "throw_pillows_01",
+  "src": "15_soft_decor/throw_pillows_01",
+  "zone": "15_soft_decor",
+  "tris": 6362,
+  "size": [
+   33957.673,
+   14751.77,
+   24739.767
+  ],
+  "kb": 203,
+  "legacy": false,
+  "url": "./assets/models/r2/throw_pillows_01.glb",
+  "r3": true
+ },
+ "barrel_03": {
+  "id": "barrel_03",
+  "src": "16_industrial_storage/barrel_03",
+  "zone": "16_industrial_storage",
+  "tris": 1473,
+  "size": [
+   20773.754,
+   30488.829,
+   20926.352
+  ],
+  "kb": 91,
+  "legacy": false,
+  "url": "./assets/models/r2/barrel_03.glb",
+  "r3": true
+ },
+ "old_drill_press": {
+  "id": "old_drill_press",
+  "src": "16_industrial_storage/old_drill_press",
+  "zone": "16_industrial_storage",
+  "tris": 21842,
+  "size": [
+   17276.699,
+   34405.348,
+   19973.099
+  ],
+  "kb": 240,
+  "legacy": false,
+  "url": "./assets/models/r2/old_drill_press.glb",
+  "r3": true
+ },
+ "propane_tank": {
+  "id": "propane_tank",
+  "src": "16_industrial_storage/propane_tank",
+  "zone": "16_industrial_storage",
+  "tris": 5238,
+  "size": [
+   11054.856,
+   18146.202,
+   11054.856
+  ],
+  "kb": 118,
+  "legacy": false,
+  "url": "./assets/models/r2/propane_tank.glb",
+  "r3": true
+ },
+ "military_wooden_crate": {
+  "id": "military_wooden_crate",
+  "src": "16_industrial_storage/sf_military_wooden_crate_72ffa9",
+  "zone": "16_industrial_storage",
+  "tris": 244,
+  "size": [
+   65534,
+   10880.001,
+   17170
+  ],
+  "kb": 37,
+  "legacy": false,
+  "url": "./assets/models/r2/military_wooden_crate.glb",
+  "r3": true
+ },
+ "old_boiler": {
+  "id": "old_boiler",
+  "src": "16_industrial_storage/sf_old_boiler_376cab",
+  "zone": "16_industrial_storage",
+  "tris": 8628,
+  "size": [
+   4282093.564,
+   8372644.664,
+   4058945.575
+  ],
+  "kb": 243,
+  "legacy": false,
+  "url": "./assets/models/r2/old_boiler.glb",
+  "r3": true
+ },
+ "pallets_and_plastic_barrels": {
+  "id": "pallets_and_plastic_barrels",
+  "src": "16_industrial_storage/sf_pallets_and_plastic_barrels_69a8bf",
+  "zone": "16_industrial_storage",
+  "tris": 31311,
+  "size": [
+   214859.177,
+   55585.302,
+   117753.871
+  ],
+  "kb": 387,
+  "legacy": false,
+  "url": "./assets/models/r2/pallets_and_plastic_barrels.glb",
+  "r3": true
+ },
+ "rusty_metal_warehouse_shelving": {
+  "id": "rusty_metal_warehouse_shelving",
+  "src": "16_industrial_storage/sf_rusty_metal_warehouse_shelving_ccc250",
+  "zone": "16_industrial_storage",
+  "tris": 54651,
+  "size": [
+   12336444.76,
+   6000456.875,
+   1709838.125
+  ],
+  "kb": 1504,
+  "legacy": false,
+  "url": "./assets/models/r2/rusty_metal_warehouse_shelving.glb",
+  "r3": true
+ },
+ "small_lpg_tank": {
+  "id": "small_lpg_tank",
+  "src": "16_industrial_storage/small_lpg_tank",
+  "zone": "16_industrial_storage",
+  "tris": 15042,
+  "size": [
+   13433.968,
+   21035.594,
+   13408.289
+  ],
+  "kb": 217,
+  "legacy": false,
+  "url": "./assets/models/r2/small_lpg_tank.glb",
+  "r3": true
+ },
+ "rock_moss_set_02": {
+  "id": "rock_moss_set_02",
+  "src": "17_exterior_street/rock_moss_set_02",
+  "zone": "17_exterior_street",
+  "tris": 29994,
+  "size": [
+   271250.245,
+   44834.478,
+   111763.346
+  ],
+  "kb": 559,
+  "legacy": false,
+  "url": "./assets/models/r2/rock_moss_set_02.glb",
+  "r3": true
+ },
+ "free_uk_3d_model_bb4ojb": {
+  "id": "free_uk_3d_model_bb4ojb",
+  "src": "17_exterior_street/sf_free_uk_3d_model_bb4OJb",
+  "zone": "17_exterior_street",
+  "tris": 11771,
+  "size": [
+   20771.116,
+   20992.243,
+   44180.926
+  ],
+  "kb": 197,
+  "legacy": false,
+  "url": "./assets/models/r2/free_uk_3d_model_bb4ojb.glb",
+  "r3": true
+ },
+ "guideposts": {
+  "id": "guideposts",
+  "src": "17_exterior_street/sf_guideposts_aacb72",
+  "zone": "17_exterior_street",
+  "tris": 125677,
+  "size": [
+   1420723.243,
+   1437037.769,
+   1403531.593
+  ],
+  "kb": 2450,
+  "legacy": false,
+  "url": "./assets/models/r2/guideposts.glb",
+  "r3": true
+ },
+ "manhole_3d_scan_retopo": {
+  "id": "manhole_3d_scan_retopo",
+  "src": "17_exterior_street/sf_manhole_3d_scan_retopo_955586",
+  "zone": "17_exterior_street",
+  "tris": 29997,
+  "size": [
+   39073.321,
+   2973.686,
+   39226.555
+  ],
+  "kb": 664,
+  "legacy": false,
+  "url": "./assets/models/r2/manhole_3d_scan_retopo.glb",
+  "r3": true
+ },
+ "vintage_bicycle": {
+  "id": "vintage_bicycle",
+  "src": "17_exterior_street/sf_vintage_bicycle_1795f6",
+  "zone": "17_exterior_street",
+  "tris": 30029,
+  "size": [
+   33210448.25,
+   29350494.073,
+   9486184.549
+  ],
+  "kb": 880,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_bicycle.glb",
+  "r3": true
+ },
+ "gothic_window_e7a94e": {
+  "id": "gothic_window_e7a94e",
+  "src": "10_gothic_architecture/sf_gothic_window_e7a94e",
+  "zone": "10_gothic_architecture",
+  "tris": 4820,
+  "size": [
+   343406.966,
+   778552.277,
+   63487.401
+  ],
+  "kb": 29,
+  "legacy": false,
+  "url": "./assets/models/r2/gothic_window_e7a94e.glb",
+  "r3": true
+ },
+ "cassette_player": {
+  "id": "cassette_player",
+  "src": "11_office_clutter/cassette_player",
+  "zone": "11_office_clutter",
+  "tris": 4830,
+  "size": [
+   4242.354,
+   7759.811,
+   1601.837
+  ],
+  "kb": 162,
+  "legacy": false,
+  "url": "./assets/models/r2/cassette_player.glb",
+  "r3": true
+ },
+ "cigarette_case": {
+  "id": "cigarette_case",
+  "src": "11_office_clutter/cigarette_case",
+  "zone": "11_office_clutter",
+  "tris": 16912,
+  "size": [
+   10594.198,
+   801.831,
+   3298.179
+  ],
+  "kb": 167,
+  "legacy": false,
+  "url": "./assets/models/r2/cigarette_case.glb",
+  "r3": true
+ },
+ "modified_thermos": {
+  "id": "modified_thermos",
+  "src": "11_office_clutter/modified_thermos",
+  "zone": "11_office_clutter",
+  "tris": 11576,
+  "size": [
+   4674.512,
+   10034.048,
+   3312.427
+  ],
+  "kb": 179,
+  "legacy": false,
+  "url": "./assets/models/r2/modified_thermos.glb",
+  "r3": true
+ },
+ "binder_clips": {
+  "id": "binder_clips",
+  "src": "11_office_clutter/sf_binder_clips_5e55c3",
+  "zone": "11_office_clutter",
+  "tris": 9676,
+  "size": [
+   3637887.588,
+   4075165.382,
+   3383181.978
+  ],
+  "kb": 110,
+  "legacy": false,
+  "url": "./assets/models/r2/binder_clips.glb",
+  "r3": true
+ },
+ "coffee_mug": {
+  "id": "coffee_mug",
+  "src": "11_office_clutter/sf_coffee_mug_6c9589",
+  "zone": "11_office_clutter",
+  "tris": 1428,
+  "size": [
+   22402.122,
+   16464.367,
+   15151.702
+  ],
+  "kb": 17,
+  "legacy": false,
+  "url": "./assets/models/r2/coffee_mug.glb",
+  "r3": true
+ },
+ "cup_of_coffee": {
+  "id": "cup_of_coffee",
+  "src": "11_office_clutter/sf_cup_of_coffee_8b50e4",
+  "zone": "11_office_clutter",
+  "tris": 29994,
+  "size": [
+   25825.361,
+   37566.35,
+   36818.852
+  ],
+  "kb": 124,
+  "legacy": false,
+  "url": "./assets/models/r2/cup_of_coffee.glb",
+  "r3": true
+ },
+ "glass_ashtray": {
+  "id": "glass_ashtray",
+  "src": "11_office_clutter/sf_glass_ashtray_8c9dea",
+  "zone": "11_office_clutter",
+  "tris": 1144,
+  "size": [
+   586283.87,
+   128126.011,
+   586355.449
+  ],
+  "kb": 16,
+  "legacy": false,
+  "url": "./assets/models/r2/glass_ashtray.glb",
+  "r3": true
+ },
+ "paper_tray_with_paper_for_bank": {
+  "id": "paper_tray_with_paper_for_bank",
+  "src": "11_office_clutter/sf_paper_tray_with_paper_for_bank_cdd20b",
+  "zone": "11_office_clutter",
+  "tris": 8192,
+  "size": [
+   548280.393,
+   538987.163,
+   693048.255
+  ],
+  "kb": 68,
+  "legacy": false,
+  "url": "./assets/models/r2/paper_tray_with_paper_for_bank.glb",
+  "r3": true
+ },
+ "paper_waste_bin": {
+  "id": "paper_waste_bin",
+  "src": "11_office_clutter/sf_paper_waste_bin_44c5af",
+  "zone": "11_office_clutter",
+  "tris": 11460,
+  "size": [
+   1736809.933,
+   1774304.239,
+   1736809.933
+  ],
+  "kb": 197,
+  "legacy": false,
+  "url": "./assets/models/r2/paper_waste_bin.glb",
+  "r3": true
+ },
+ "lightbulb_01": {
+  "id": "lightbulb_01",
+  "src": "12_lighting/lightbulb_01",
+  "zone": "12_lighting",
+  "tris": 4372,
+  "size": [
+   1965.864,
+   3286.169,
+   1965.864
+  ],
+  "kb": 74,
+  "legacy": false,
+  "url": "./assets/models/r2/lightbulb_01.glb",
+  "r3": true
+ },
+ "pastic_torch_6v": {
+  "id": "pastic_torch_6v",
+  "src": "12_lighting/pastic_torch_6v",
+  "zone": "12_lighting",
+  "tris": 4352,
+  "size": [
+   4486.604,
+   4643.556,
+   7346.954
+  ],
+  "kb": 106,
+  "legacy": false,
+  "url": "./assets/models/r2/pastic_torch_6v.glb",
+  "r3": true
+ },
+ "emergency_escape_light": {
+  "id": "emergency_escape_light",
+  "src": "12_lighting/sf_emergency_escape_light_ffef66",
+  "zone": "12_lighting",
+  "tris": 4004,
+  "size": [
+   2586.693,
+   16157.82,
+   32801.145
+  ],
+  "kb": 43,
+  "legacy": false,
+  "url": "./assets/models/r2/emergency_escape_light.glb",
+  "r3": true
+ },
+ "industrial_lamp": {
+  "id": "industrial_lamp",
+  "src": "12_lighting/sf_industrial_lamp_ad87a1",
+  "zone": "12_lighting",
+  "tris": 2684,
+  "size": [
+   6553400,
+   6494611.286,
+   6389400.618
+  ],
+  "kb": 174,
+  "legacy": false,
+  "url": "./assets/models/r2/industrial_lamp.glb",
+  "r3": true
+ },
+ "vintage_desk_lamp": {
+  "id": "vintage_desk_lamp",
+  "src": "12_lighting/sf_vintage_desk_lamp_b8e13a",
+  "zone": "12_lighting",
+  "tris": 39718,
+  "size": [
+   48624.165,
+   48059.261,
+   28879.266
+  ],
+  "kb": 395,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_desk_lamp.glb",
+  "r3": true
+ },
+ "signal_flashlight": {
+  "id": "signal_flashlight",
+  "src": "12_lighting/signal_flashlight",
+  "zone": "12_lighting",
+  "tris": 9730,
+  "size": [
+   2325.826,
+   4912.675,
+   1459.245
+  ],
+  "kb": 144,
+  "legacy": false,
+  "url": "./assets/models/r2/signal_flashlight.glb",
+  "r3": true
+ },
+ "air_vent_01": {
+  "id": "air_vent_01",
+  "src": "13_signage_services/sf_air_vent_01_fac8c4",
+  "zone": "13_signage_services",
+  "tris": 11987,
+  "size": [
+   65534,
+   48060.001,
+   24082.002
+  ],
+  "kb": 280,
+  "legacy": false,
+  "url": "./assets/models/r2/air_vent_01.glb",
+  "r3": true
+ },
+ "apollo_smoke_detector": {
+  "id": "apollo_smoke_detector",
+  "src": "13_signage_services/sf_apollo_smoke_detector_06e8e9",
+  "zone": "13_signage_services",
+  "tris": 29999,
+  "size": [
+   65115.041,
+   31511.263,
+   65115.046
+  ],
+  "kb": 146,
+  "legacy": false,
+  "url": "./assets/models/r2/apollo_smoke_detector.glb",
+  "r3": true
+ },
+ "electric_meters_and_panels_1": {
+  "id": "electric_meters_and_panels_1",
+  "src": "13_signage_services/sf_electric_meters_and_panels_1_ec17e8",
+  "zone": "13_signage_services",
+  "tris": 96610,
+  "size": [
+   8555.6,
+   69469.688,
+   85888.891
+  ],
+  "kb": 2429,
+  "legacy": false,
+  "url": "./assets/models/r2/electric_meters_and_panels_1.glb",
+  "r3": true
+ },
+ "fire_extinguisher": {
+  "id": "fire_extinguisher",
+  "src": "13_signage_services/sf_fire_extinguisher_8b96ed",
+  "zone": "13_signage_services",
+  "tris": 29032,
+  "size": [
+   17709.698,
+   21634.183,
+   5184.228
+  ],
+  "kb": 260,
+  "legacy": false,
+  "url": "./assets/models/r2/fire_extinguisher.glb",
+  "r3": true
+ },
+ "old_radiator": {
+  "id": "old_radiator",
+  "src": "13_signage_services/sf_old_radiator_8a1a2e",
+  "zone": "13_signage_services",
+  "tris": 7534,
+  "size": [
+   29794.133,
+   20020.362,
+   2480.495
+  ],
+  "kb": 143,
+  "legacy": false,
+  "url": "./assets/models/r2/old_radiator.glb",
+  "r3": true
+ },
+ "utility_tunnel_cable_trays_piping_modeli": {
+  "id": "utility_tunnel_cable_trays_piping_modeli",
+  "src": "13_signage_services/sf_utility_tunnel_cable_trays_piping_modeli_5140c7",
+  "zone": "13_signage_services",
+  "tris": 53677,
+  "size": [
+   228724.426,
+   177358.19,
+   242489.186
+  ],
+  "kb": 443,
+  "legacy": false,
+  "url": "./assets/models/r2/utility_tunnel_cable_trays_piping_modeli.glb",
+  "r3": true
+ },
+ "metal_stool_02": {
+  "id": "metal_stool_02",
+  "src": "14_furniture_equipment/metal_stool_02",
+  "zone": "14_furniture_equipment",
+  "tris": 6532,
+  "size": [
+   14682.361,
+   15011.628,
+   15501.754
+  ],
+  "kb": 145,
+  "legacy": false,
+  "url": "./assets/models/r2/metal_stool_02.glb",
+  "r3": true
+ },
+ "painted_wooden_cabinet": {
+  "id": "painted_wooden_cabinet",
+  "src": "14_furniture_equipment/painted_wooden_cabinet",
+  "zone": "14_furniture_equipment",
+  "tris": 2227,
+  "size": [
+   39145.901,
+   38725.376,
+   20206.725
+  ],
+  "kb": 97,
+  "legacy": false,
+  "url": "./assets/models/r2/painted_wooden_cabinet.glb",
+  "r3": true
+ },
+ "18th_century_bench_from_hungarian_opera": {
+  "id": "18th_century_bench_from_hungarian_opera",
+  "src": "14_furniture_equipment/sf_18th_century_bench_from_hungarian_opera__6cf3c0",
+  "zone": "14_furniture_equipment",
+  "tris": 30000,
+  "size": [
+   342300.897,
+   186512.046,
+   123404.66
+  ],
+  "kb": 702,
+  "legacy": false,
+  "url": "./assets/models/r2/18th_century_bench_from_hungarian_opera.glb",
+  "r3": true
+ },
+ "coat_rack": {
+  "id": "coat_rack",
+  "src": "14_furniture_equipment/sf_coat_rack_72e821",
+  "zone": "14_furniture_equipment",
+  "tris": 5580,
+  "size": [
+   1677998.278,
+   5486412.747,
+   1615040.851
+  ],
+  "kb": 157,
+  "legacy": false,
+  "url": "./assets/models/r2/coat_rack.glb",
+  "r3": true
+ },
+ "conference_table_rectangular_6m": {
+  "id": "conference_table_rectangular_6m",
+  "src": "14_furniture_equipment/sf_conference_table_rectangular_6m_1ba845",
+  "zone": "14_furniture_equipment",
+  "tris": 640,
+  "size": [
+   196601.996,
+   32855.999,
+   65525.999
+  ],
+  "kb": 45,
+  "legacy": false,
+  "url": "./assets/models/r2/conference_table_rectangular_6m.glb",
+  "r3": true
+ },
+ "lectern": {
+  "id": "lectern",
+  "src": "14_furniture_equipment/sf_lectern_d44852",
+  "zone": "14_furniture_equipment",
+  "tris": 30864,
+  "size": [
+   687149.981,
+   1430654.214,
+   693072.411
+  ],
+  "kb": 305,
+  "legacy": false,
+  "url": "./assets/models/r2/lectern.glb",
+  "r3": true
+ },
+ "microfiche_reader": {
+  "id": "microfiche_reader",
+  "src": "14_furniture_equipment/sf_microfiche_reader_840847",
+  "zone": "14_furniture_equipment",
+  "tris": 366,
+  "size": [
+   1553994.692,
+   1978003.499,
+   1468939.395
+  ],
+  "kb": 35,
+  "legacy": false,
+  "url": "./assets/models/r2/microfiche_reader.glb",
+  "r3": true
+ },
+ "old_typewriter": {
+  "id": "old_typewriter",
+  "src": "14_furniture_equipment/sf_old_typewriter_3c1a00",
+  "zone": "14_furniture_equipment",
+  "tris": 29994,
+  "size": [
+   14267639.573,
+   3658959.51,
+   16387789.357
+  ],
+  "kb": 637,
+  "legacy": false,
+  "url": "./assets/models/r2/old_typewriter.glb",
+  "r3": true
+ },
+ "phone_vef_ta_68": {
+  "id": "phone_vef_ta_68",
+  "src": "14_furniture_equipment/sf_phone_vef_ta_68_c84803",
+  "zone": "14_furniture_equipment",
+  "tris": 29996,
+  "size": [
+   13385.62,
+   4405.771,
+   11096.335
+  ],
+  "kb": 317,
+  "legacy": false,
+  "url": "./assets/models/r2/phone_vef_ta_68.glb",
+  "r3": true
+ },
+ "retro_computer": {
+  "id": "retro_computer",
+  "src": "14_furniture_equipment/sf_retro_computer_f844c0",
+  "zone": "14_furniture_equipment",
+  "tris": 29995,
+  "size": [
+   65534,
+   50702.002,
+   43380.002
+  ],
+  "kb": 568,
+  "legacy": false,
+  "url": "./assets/models/r2/retro_computer.glb",
+  "r3": true
+ },
+ "typewriter": {
+  "id": "typewriter",
+  "src": "14_furniture_equipment/sf_typewriter_f8339a",
+  "zone": "14_furniture_equipment",
+  "tris": 29991,
+  "size": [
+   1310701.972,
+   701342.362,
+   1410575.764
+  ],
+  "kb": 511,
+  "legacy": false,
+  "url": "./assets/models/r2/typewriter.glb",
+  "r3": true
+ },
+ "vintage_radio_model_95t5": {
+  "id": "vintage_radio_model_95t5",
+  "src": "14_furniture_equipment/sf_vintage_radio_model_95t5_324239",
+  "zone": "14_furniture_equipment",
+  "tris": 30001,
+  "size": [
+   2145330.817,
+   1678644.49,
+   1884751.263
+  ],
+  "kb": 353,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_radio_model_95t5.glb",
+  "r3": true
+ },
+ "vintage_retro_radio": {
+  "id": "vintage_retro_radio",
+  "src": "14_furniture_equipment/sf_vintage_retro_radio_26fb0d",
+  "zone": "14_furniture_equipment",
+  "tris": 2940,
+  "size": [
+   99283.427,
+   40803.326,
+   138967.11
+  ],
+  "kb": 86,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_retro_radio.glb",
+  "r3": true
+ },
+ "ceramic_vase_02": {
+  "id": "ceramic_vase_02",
+  "src": "15_soft_decor/ceramic_vase_02",
+  "zone": "15_soft_decor",
+  "tris": 11128,
+  "size": [
+   7155.155,
+   10131.059,
+   7155.155
+  ],
+  "kb": 127,
+  "legacy": false,
+  "url": "./assets/models/r2/ceramic_vase_02.glb",
+  "r3": true
+ },
+ "metal_jug": {
+  "id": "metal_jug",
+  "src": "15_soft_decor/metal_jug",
+  "zone": "15_soft_decor",
+  "tris": 6040,
+  "size": [
+   6449.741,
+   9422.142,
+   6404.883
+  ],
+  "kb": 83,
+  "legacy": false,
+  "url": "./assets/models/r2/metal_jug.glb",
+  "r3": true
+ },
+ "louvre_demosthenes_photoscan": {
+  "id": "louvre_demosthenes_photoscan",
+  "src": "15_soft_decor/sf_louvre_demosthenes_photoscan_cf5d9d",
+  "zone": "15_soft_decor",
+  "tris": 29988,
+  "size": [
+   62606.937,
+   94880.03,
+   53456.77
+  ],
+  "kb": 257,
+  "legacy": false,
+  "url": "./assets/models/r2/louvre_demosthenes_photoscan.glb",
+  "r3": true
+ },
+ "oil_on_canvas_of_caroline_s_harrison_pre": {
+  "id": "oil_on_canvas_of_caroline_s_harrison_pre",
+  "src": "15_soft_decor/sf_oil_on_canvas_of_caroline_s_harrison_pre_a3647f",
+  "zone": "15_soft_decor",
+  "tris": 59998,
+  "size": [
+   3209676.179,
+   17971883.009,
+   15025474.869
+  ],
+  "kb": 626,
+  "legacy": false,
+  "url": "./assets/models/r2/oil_on_canvas_of_caroline_s_harrison_pre.glb",
+  "r3": true
+ },
+ "plam_tree_planter": {
+  "id": "plam_tree_planter",
+  "src": "15_soft_decor/sf_plam_tree_planter_03de31",
+  "zone": "15_soft_decor",
+  "tris": 34402,
+  "size": [
+   50447.488,
+   65805.272,
+   50181.841
+  ],
+  "kb": 1445,
+  "legacy": false,
+  "url": "./assets/models/r2/plam_tree_planter.glb",
+  "r3": true
+ },
+ "the_bust_of_napoleon_bonaparte": {
+  "id": "the_bust_of_napoleon_bonaparte",
+  "src": "15_soft_decor/sf_the_bust_of_napoleon_bonaparte_a177bf",
+  "zone": "15_soft_decor",
+  "tris": 79994,
+  "size": [
+   11105.051,
+   15930.269,
+   10459.42
+  ],
+  "kb": 666,
+  "legacy": false,
+  "url": "./assets/models/r2/the_bust_of_napoleon_bonaparte.glb",
+  "r3": true
+ },
+ "modular_pipes_plastic_01": {
+  "id": "modular_pipes_plastic_01",
+  "src": "16_industrial_storage/modular_pipes_plastic_01",
+  "zone": "16_industrial_storage",
+  "tris": 30000,
+  "size": [
+   26726.674,
+   2482.864,
+   11853.962
+  ],
+  "kb": 378,
+  "legacy": false,
+  "url": "./assets/models/r2/modular_pipes_plastic_01.glb",
+  "r3": true
+ },
+ "multi_cleaner_5_litre": {
+  "id": "multi_cleaner_5_litre",
+  "src": "16_industrial_storage/multi_cleaner_5_litre",
+  "zone": "16_industrial_storage",
+  "tris": 4332,
+  "size": [
+   7185.881,
+   9841.167,
+   3466.198
+  ],
+  "kb": 73,
+  "legacy": false,
+  "url": "./assets/models/r2/multi_cleaner_5_litre.glb",
+  "r3": true
+ },
+ "oil_tin": {
+  "id": "oil_tin",
+  "src": "16_industrial_storage/oil_tin",
+  "zone": "16_industrial_storage",
+  "tris": 2834,
+  "size": [
+   3758.846,
+   6729.654,
+   5031.375
+  ],
+  "kb": 102,
+  "legacy": false,
+  "url": "./assets/models/r2/oil_tin.glb",
+  "r3": true
+ },
+ "pipe_wrench": {
+  "id": "pipe_wrench",
+  "src": "16_industrial_storage/pipe_wrench",
+  "zone": "16_industrial_storage",
+  "tris": 10746,
+  "size": [
+   2751.723,
+   13259.664,
+   1124.969
+  ],
+  "kb": 225,
+  "legacy": false,
+  "url": "./assets/models/r2/pipe_wrench.glb",
+  "r3": true
+ },
+ "plastic_crate_01": {
+  "id": "plastic_crate_01",
+  "src": "16_industrial_storage/plastic_crate_01",
+  "zone": "16_industrial_storage",
+  "tris": 18320,
+  "size": [
+   9765.171,
+   8655.4,
+   13369.071
+  ],
+  "kb": 326,
+  "legacy": false,
+  "url": "./assets/models/r2/plastic_crate_01.glb",
+  "r3": true
+ },
+ "donkey_boiler": {
+  "id": "donkey_boiler",
+  "src": "16_industrial_storage/sf_donkey_boiler_9ab26e",
+  "zone": "16_industrial_storage",
+  "tris": 29998,
+  "size": [
+   382439.063,
+   228363.985,
+   142030.12
+  ],
+  "kb": 463,
+  "legacy": false,
+  "url": "./assets/models/r2/donkey_boiler.glb",
+  "r3": true
+ },
+ "eur_pallet_rawscan": {
+  "id": "eur_pallet_rawscan",
+  "src": "16_industrial_storage/sf_eur_pallet_rawscan_f318b6",
+  "zone": "16_industrial_storage",
+  "tris": 29992,
+  "size": [
+   179593.793,
+   19314.814,
+   122476.97
+  ],
+  "kb": 297,
+  "legacy": false,
+  "url": "./assets/models/r2/eur_pallet_rawscan.glb",
+  "r3": true
+ },
+ "valve_wheel_3d_scan": {
+  "id": "valve_wheel_3d_scan",
+  "src": "16_industrial_storage/sf_valve_wheel_3d_scan_0264be",
+  "zone": "16_industrial_storage",
+  "tris": 30000,
+  "size": [
+   9783.678,
+   27304.47,
+   9797.011
+  ],
+  "kb": 270,
+  "legacy": false,
+  "url": "./assets/models/r2/valve_wheel_3d_scan.glb",
+  "r3": true
+ },
+ "wooden_crate": {
+  "id": "wooden_crate",
+  "src": "16_industrial_storage/sf_wooden_crate_e12fde",
+  "zone": "16_industrial_storage",
+  "tris": 324,
+  "size": [
+   103291.374,
+   67768.12,
+   70911.812
+  ],
+  "kb": 96,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_crate.glb",
+  "r3": true
+ },
+ "small_oil_can_01": {
+  "id": "small_oil_can_01",
+  "src": "16_industrial_storage/small_oil_can_01",
+  "zone": "16_industrial_storage",
+  "tris": 16746,
+  "size": [
+   8719.116,
+   7759.047,
+   3403.082
+  ],
+  "kb": 216,
+  "legacy": false,
+  "url": "./assets/models/r2/small_oil_can_01.glb",
+  "r3": true
+ },
+ "canyon_75_taxi_low_poly_model": {
+  "id": "canyon_75_taxi_low_poly_model",
+  "src": "17_exterior_street/sf_canyon_75_taxi_low_poly_model_9e8f92",
+  "zone": "17_exterior_street",
+  "tris": 18879,
+  "size": [
+   6558427.257,
+   1909664.655,
+   2613158.299
+  ],
+  "kb": 600,
+  "legacy": false,
+  "url": "./assets/models/r2/canyon_75_taxi_low_poly_model.glb",
+  "r3": true
+ },
+ "cc0_iron_fence": {
+  "id": "cc0_iron_fence",
+  "src": "17_exterior_street/sf_cc0_iron_fence_9c5ad2",
+  "zone": "17_exterior_street",
+  "tris": 3768,
+  "size": [
+   93471.254,
+   57788.039,
+   1277.966
+  ],
+  "kb": 96,
+  "legacy": false,
+  "url": "./assets/models/r2/cc0_iron_fence.glb",
+  "r3": true
+ },
+ "gothic_iron_fence": {
+  "id": "gothic_iron_fence",
+  "src": "17_exterior_street/sf_gothic_iron_fence_4afaf4",
+  "zone": "17_exterior_street",
+  "tris": 1046,
+  "size": [
+   90257.566,
+   202250.294,
+   13400.511
+  ],
+  "kb": 9,
+  "legacy": false,
+  "url": "./assets/models/r2/gothic_iron_fence.glb",
+  "r3": true
+ },
+ "international_harvester_van_nelson_nv": {
+  "id": "international_harvester_van_nelson_nv",
+  "src": "17_exterior_street/sf_international_harvester_van_nelson_nv_1f23c0",
+  "zone": "17_exterior_street",
+  "tris": 80000,
+  "size": [
+   88283.289,
+   53188.895,
+   48237.234
+  ],
+  "kb": 827,
+  "legacy": false,
+  "url": "./assets/models/r2/international_harvester_van_nelson_nv.glb",
+  "r3": true
+ },
+ "low_poly_car_cadillac_75_sedan_1953": {
+  "id": "low_poly_car_cadillac_75_sedan_1953",
+  "src": "17_exterior_street/sf_low_poly_car_cadillac_75_sedan_1953_2935f8",
+  "zone": "17_exterior_street",
+  "tris": 14663,
+  "size": [
+   6376536.477,
+   5470561.538,
+   19539883.172
+  ],
+  "kb": 422,
+  "legacy": false,
+  "url": "./assets/models/r2/low_poly_car_cadillac_75_sedan_1953.glb",
+  "r3": true
+ },
+ "soviet_car_vaz_2103_zhiguli": {
+  "id": "soviet_car_vaz_2103_zhiguli",
+  "src": "17_exterior_street/sf_soviet_car_vaz_2103_zhiguli_0afaec",
+  "zone": "17_exterior_street",
+  "tris": 76609,
+  "size": [
+   63438408.325,
+   50665272.583,
+   147372302.417
+  ],
+  "kb": 591,
+  "legacy": false,
+  "url": "./assets/models/r2/soviet_car_vaz_2103_zhiguli.glb",
+  "r3": true
+ },
+ "volvo_240_styled_sedan_car_downloadable": {
+  "id": "volvo_240_styled_sedan_car_downloadable",
+  "src": "17_exterior_street/sf_volvo_240_styled_sedan_car_downloadable_666976",
+  "zone": "17_exterior_street",
+  "tris": 63044,
+  "size": [
+   6210806.571,
+   4188160.273,
+   15881638.655
+  ],
+  "kb": 308,
+  "legacy": false,
+  "url": "./assets/models/r2/volvo_240_styled_sedan_car_downloadable.glb",
+  "r3": true
+ },
+ "tree_stump_02": {
+  "id": "tree_stump_02",
+  "src": "17_exterior_street/tree_stump_02",
+  "zone": "17_exterior_street",
+  "tris": 29997,
+  "size": [
+   49858.473,
+   17104.376,
+   45622.321
+  ],
+  "kb": 868,
+  "legacy": false,
+  "url": "./assets/models/r2/tree_stump_02.glb",
+  "r3": true
+ },
+ "cashregister_01": {
+  "id": "cashregister_01",
+  "src": "11_office_clutter/CashRegister_01",
+  "zone": "11_office_clutter",
+  "tris": 9927,
+  "size": [
+   19676.818,
+   20360.947,
+   20453.329
+  ],
+  "kb": 216,
+  "legacy": false,
+  "url": "./assets/models/r2/cashregister_01.glb",
+  "r3": true
+ },
+ "television_01": {
+  "id": "television_01",
+  "src": "11_office_clutter/Television_01",
+  "zone": "11_office_clutter",
+  "tris": 1918,
+  "size": [
+   19660.199,
+   14970.599,
+   15426.599
+  ],
+  "kb": 86,
+  "legacy": false,
+  "url": "./assets/models/r2/television_01.glb",
+  "r3": true
+ },
+ "dustpan": {
+  "id": "dustpan",
+  "src": "11_office_clutter/dustpan",
+  "zone": "11_office_clutter",
+  "tris": 4332,
+  "size": [
+   10881.443,
+   3287.137,
+   12057.497
+  ],
+  "kb": 121,
+  "legacy": false,
+  "url": "./assets/models/r2/dustpan.glb",
+  "r3": true
+ },
+ "plastic_thermos": {
+  "id": "plastic_thermos",
+  "src": "11_office_clutter/plastic_thermos",
+  "zone": "11_office_clutter",
+  "tris": 5514,
+  "size": [
+   4605.321,
+   10499.03,
+   3581.276
+  ],
+  "kb": 83,
+  "legacy": false,
+  "url": "./assets/models/r2/plastic_thermos.glb",
+  "r3": true
+ },
+ "book_stack": {
+  "id": "book_stack",
+  "src": "11_office_clutter/sf_book_stack_90944e",
+  "zone": "11_office_clutter",
+  "tris": 1620,
+  "size": [
+   59638,
+   11727.798,
+   65534
+  ],
+  "kb": 114,
+  "legacy": false,
+  "url": "./assets/models/r2/book_stack.glb",
+  "r3": true
+ },
+ "filing_cabinet_closed": {
+  "id": "filing_cabinet_closed",
+  "src": "11_office_clutter/sf_filing_cabinet_closed_2a5424",
+  "zone": "11_office_clutter",
+  "tris": 2638,
+  "size": [
+   38504.378,
+   145003.216,
+   63685.304
+  ],
+  "kb": 95,
+  "legacy": false,
+  "url": "./assets/models/r2/filing_cabinet_closed.glb",
+  "r3": true
+ },
+ "fountain_pens": {
+  "id": "fountain_pens",
+  "src": "11_office_clutter/sf_fountain_pens_48de5f",
+  "zone": "11_office_clutter",
+  "tris": 2158,
+  "size": [
+   1175219.259,
+   119771.812,
+   1175219.259
+  ],
+  "kb": 126,
+  "legacy": false,
+  "url": "./assets/models/r2/fountain_pens.glb",
+  "r3": true
+ },
+ "office_supplies_pack": {
+  "id": "office_supplies_pack",
+  "src": "11_office_clutter/sf_office_supplies_pack_dfc5be",
+  "zone": "11_office_clutter",
+  "tris": 1974,
+  "size": [
+   7164.392,
+   11049.404,
+   7742.602
+  ],
+  "kb": 53,
+  "legacy": false,
+  "url": "./assets/models/r2/office_supplies_pack.glb",
+  "r3": true
+ },
+ "ring_binder": {
+  "id": "ring_binder",
+  "src": "11_office_clutter/sf_ring_binder_a0026e",
+  "zone": "11_office_clutter",
+  "tris": 300,
+  "size": [
+   921251.733,
+   1047747.58,
+   245701.236
+  ],
+  "kb": 22,
+  "legacy": false,
+  "url": "./assets/models/r2/ring_binder.glb",
+  "r3": true
+ },
+ "rusty_filing_cabinet": {
+  "id": "rusty_filing_cabinet",
+  "src": "11_office_clutter/sf_rusty_filing_cabinet_619484",
+  "zone": "11_office_clutter",
+  "tris": 676,
+  "size": [
+   2020447.371,
+   7018339.764,
+   2977445.023
+  ],
+  "kb": 132,
+  "legacy": false,
+  "url": "./assets/models/r2/rusty_filing_cabinet.glb",
+  "r3": true
+ },
+ "set_of_cardboard_boxes": {
+  "id": "set_of_cardboard_boxes",
+  "src": "11_office_clutter/sf_set_of_cardboard_boxes_8986ba",
+  "zone": "11_office_clutter",
+  "tris": 1188,
+  "size": [
+   16411.835,
+   9502.99,
+   15967.039
+  ],
+  "kb": 152,
+  "legacy": false,
+  "url": "./assets/models/r2/set_of_cardboard_boxes.glb",
+  "r3": true
+ },
+ "wooden_flat_filing_tray": {
+  "id": "wooden_flat_filing_tray",
+  "src": "11_office_clutter/sf_wooden_flat_filing_tray_4b8d86",
+  "zone": "11_office_clutter",
+  "tris": 29992,
+  "size": [
+   1267486.568,
+   246480.435,
+   879546.788
+  ],
+  "kb": 1110,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_flat_filing_tray.glb",
+  "r3": true
+ },
+ "vintage_binocular": {
+  "id": "vintage_binocular",
+  "src": "11_office_clutter/vintage_binocular",
+  "zone": "11_office_clutter",
+  "tris": 19362,
+  "size": [
+   6356.989,
+   2242.788,
+   6528.331
+  ],
+  "kb": 258,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_binocular.glb",
+  "r3": true
+ },
+ "vintage_video_camera": {
+  "id": "vintage_video_camera",
+  "src": "11_office_clutter/vintage_video_camera",
+  "zone": "11_office_clutter",
+  "tris": 18682,
+  "size": [
+   2332.904,
+   4751.213,
+   4344.633
+  ],
+  "kb": 273,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_video_camera.glb",
+  "r3": true
+ },
+ "wooden_broom": {
+  "id": "wooden_broom",
+  "src": "11_office_clutter/wooden_broom",
+  "zone": "11_office_clutter",
+  "tris": 14258,
+  "size": [
+   16063.61,
+   45373.538,
+   3686.586
+  ],
+  "kb": 296,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_broom.glb",
+  "r3": true
+ },
+ "banker_lamp": {
+  "id": "banker_lamp",
+  "src": "12_lighting/sf_banker_lamp_9c97e4",
+  "zone": "12_lighting",
+  "tris": 8122,
+  "size": [
+   11789.138,
+   21694.605,
+   16999.085
+  ],
+  "kb": 45,
+  "legacy": false,
+  "url": "./assets/models/r2/banker_lamp.glb",
+  "r3": true
+ },
+ "bankers_lamp": {
+  "id": "bankers_lamp",
+  "src": "12_lighting/sf_bankers_lamp_2427b7",
+  "zone": "12_lighting",
+  "tris": 12743,
+  "size": [
+   361670.991,
+   417946.512,
+   264460.335
+  ],
+  "kb": 141,
+  "legacy": false,
+  "url": "./assets/models/r2/bankers_lamp.glb",
+  "r3": true
+ },
+ "ceiling_light_with_chain": {
+  "id": "ceiling_light_with_chain",
+  "src": "12_lighting/sf_ceiling_light_with_chain_7467af",
+  "zone": "12_lighting",
+  "tris": 10796,
+  "size": [
+   227467.662,
+   301567.198,
+   227467.662
+  ],
+  "kb": 154,
+  "legacy": false,
+  "url": "./assets/models/r2/ceiling_light_with_chain.glb",
+  "r3": true
+ },
+ "emergency_light": {
+  "id": "emergency_light",
+  "src": "12_lighting/sf_emergency_light_4324a9",
+  "zone": "12_lighting",
+  "tris": 15409,
+  "size": [
+   2815.517,
+   9592.295,
+   3036.619
+  ],
+  "kb": 219,
+  "legacy": false,
+  "url": "./assets/models/r2/emergency_light.glb",
+  "r3": true
+ },
+ "exterior_light_sconce": {
+  "id": "exterior_light_sconce",
+  "src": "12_lighting/sf_exterior_light_sconce_e7f6ff",
+  "zone": "12_lighting",
+  "tris": 29485,
+  "size": [
+   8926.374,
+   15723.605,
+   11603.998
+  ],
+  "kb": 304,
+  "legacy": false,
+  "url": "./assets/models/r2/exterior_light_sconce.glb",
+  "r3": true
+ },
+ "medieval_candelabra_free_download": {
+  "id": "medieval_candelabra_free_download",
+  "src": "12_lighting/sf_medieval_candelabra_free_download_a3467b",
+  "zone": "12_lighting",
+  "tris": 9952,
+  "size": [
+   28967.933,
+   64654.47,
+   28967.935
+  ],
+  "kb": 181,
+  "legacy": false,
+  "url": "./assets/models/r2/medieval_candelabra_free_download.glb",
+  "r3": true
+ },
+ "medieval_chandelier": {
+  "id": "medieval_chandelier",
+  "src": "12_lighting/sf_medieval_chandelier_dd8b8b",
+  "zone": "12_lighting",
+  "tris": 13053,
+  "size": [
+   1268510.634,
+   1391493.018,
+   1268510.634
+  ],
+  "kb": 248,
+  "legacy": false,
+  "url": "./assets/models/r2/medieval_chandelier.glb",
+  "r3": true
+ },
+ "air_vent": {
+  "id": "air_vent",
+  "src": "13_signage_services/sf_air_vent_027aa2",
+  "zone": "13_signage_services",
+  "tris": 30002,
+  "size": [
+   7548.728,
+   49433.077,
+   49433.077
+  ],
+  "kb": 334,
+  "legacy": false,
+  "url": "./assets/models/r2/air_vent.glb",
+  "r3": true
+ },
+ "apartment_radiator": {
+  "id": "apartment_radiator",
+  "src": "13_signage_services/sf_apartment_radiator_1f6714",
+  "zone": "13_signage_services",
+  "tris": 29995,
+  "size": [
+   26962,
+   65534.002,
+   45168.39
+  ],
+  "kb": 289,
+  "legacy": false,
+  "url": "./assets/models/r2/apartment_radiator.glb",
+  "r3": true
+ },
+ "cctv_and_keypad_access_panel": {
+  "id": "cctv_and_keypad_access_panel",
+  "src": "13_signage_services/sf_cctv_and_keypad_access_panel_dfbf3e",
+  "zone": "13_signage_services",
+  "tris": 204,
+  "size": [
+   6290.699,
+   12293.25,
+   15762.587
+  ],
+  "kb": 94,
+  "legacy": false,
+  "url": "./assets/models/r2/cctv_and_keypad_access_panel.glb",
+  "r3": true
+ },
+ "notice_board_foam": {
+  "id": "notice_board_foam",
+  "src": "13_signage_services/sf_notice_board_foam_7a4f32",
+  "zone": "13_signage_services",
+  "tris": 29996,
+  "size": [
+   50248.036,
+   33069.228,
+   16072.402
+  ],
+  "kb": 263,
+  "legacy": false,
+  "url": "./assets/models/r2/notice_board_foam.glb",
+  "r3": true
+ },
+ "surveillance_cam": {
+  "id": "surveillance_cam",
+  "src": "13_signage_services/sf_surveillance_cam_3d7f98",
+  "zone": "13_signage_services",
+  "tris": 1370,
+  "size": [
+   2655.641,
+   2704.839,
+   2704.839
+  ],
+  "kb": 192,
+  "legacy": false,
+  "url": "./assets/models/r2/surveillance_cam.glb",
+  "r3": true
+ },
+ "wall_mounted_radiator": {
+  "id": "wall_mounted_radiator",
+  "src": "13_signage_services/sf_wall_mounted_radiator_2078a1",
+  "zone": "13_signage_services",
+  "tris": 30288,
+  "size": [
+   44828.032,
+   29516.01,
+   5455.922
+  ],
+  "kb": 660,
+  "legacy": false,
+  "url": "./assets/models/r2/wall_mounted_radiator.glb",
+  "r3": true
+ },
+ "schoolchair_01": {
+  "id": "schoolchair_01",
+  "src": "14_furniture_equipment/SchoolChair_01",
+  "zone": "14_furniture_equipment",
+  "tris": 5072,
+  "size": [
+   18541.235,
+   32964.767,
+   22126.746
+  ],
+  "kb": 88,
+  "legacy": false,
+  "url": "./assets/models/r2/schoolchair_01.glb",
+  "r3": true
+ },
+ "woodentable_02": {
+  "id": "woodentable_02",
+  "src": "14_furniture_equipment/WoodenTable_02",
+  "zone": "14_furniture_equipment",
+  "tris": 1514,
+  "size": [
+   9852.53,
+   13685.369,
+   9852.53
+  ],
+  "kb": 93,
+  "legacy": false,
+  "url": "./assets/models/r2/woodentable_02.glb",
+  "r3": true
+ },
+ "gallinera_chair": {
+  "id": "gallinera_chair",
+  "src": "14_furniture_equipment/gallinera_chair",
+  "zone": "14_furniture_equipment",
+  "tris": 11560,
+  "size": [
+   19030.215,
+   33870.888,
+   19786.875
+  ],
+  "kb": 171,
+  "legacy": false,
+  "url": "./assets/models/r2/gallinera_chair.glb",
+  "r3": true
+ },
+ "round_wooden_table_02": {
+  "id": "round_wooden_table_02",
+  "src": "14_furniture_equipment/round_wooden_table_02",
+  "zone": "14_furniture_equipment",
+  "tris": 4254,
+  "size": [
+   26088.366,
+   24445.054,
+   26088.366
+  ],
+  "kb": 104,
+  "legacy": false,
+  "url": "./assets/models/r2/round_wooden_table_02.glb",
+  "r3": true
+ },
+ "eumig_film_projector": {
+  "id": "eumig_film_projector",
+  "src": "14_furniture_equipment/sf_eumig_film_projector_151d8e",
+  "zone": "14_furniture_equipment",
+  "tris": 24551,
+  "size": [
+   5494.815,
+   7822.771,
+   16031.952
+  ],
+  "kb": 329,
+  "legacy": false,
+  "url": "./assets/models/r2/eumig_film_projector.glb",
+  "r3": true
+ },
+ "old_computer_chair": {
+  "id": "old_computer_chair",
+  "src": "14_furniture_equipment/sf_old_computer_chair_a31152",
+  "zone": "14_furniture_equipment",
+  "tris": 3908,
+  "size": [
+   16245.806,
+   21729.379,
+   15450.028
+  ],
+  "kb": 90,
+  "legacy": false,
+  "url": "./assets/models/r2/old_computer_chair.glb",
+  "r3": true
+ },
+ "vintage_gramophone": {
+  "id": "vintage_gramophone",
+  "src": "14_furniture_equipment/sf_vintage_gramophone_a7508a",
+  "zone": "14_furniture_equipment",
+  "tris": 4545,
+  "size": [
+   2811734.59,
+   2681707.883,
+   3021935.936
+  ],
+  "kb": 185,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_gramophone.glb",
+  "r3": true
+ },
+ "wooden_stool_02": {
+  "id": "wooden_stool_02",
+  "src": "14_furniture_equipment/wooden_stool_02",
+  "zone": "14_furniture_equipment",
+  "tris": 11146,
+  "size": [
+   8689.059,
+   5961.712,
+   6000.958
+  ],
+  "kb": 184,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_stool_02.glb",
+  "r3": true
+ },
+ "brass_vase_02": {
+  "id": "brass_vase_02",
+  "src": "15_soft_decor/brass_vase_02",
+  "zone": "15_soft_decor",
+  "tris": 6890,
+  "size": [
+   6889.779,
+   17321.983,
+   6889.779
+  ],
+  "kb": 113,
+  "legacy": false,
+  "url": "./assets/models/r2/brass_vase_02.glb",
+  "r3": true
+ },
+ "concrete_cat_statue": {
+  "id": "concrete_cat_statue",
+  "src": "15_soft_decor/concrete_cat_statue",
+  "zone": "15_soft_decor",
+  "tris": 11950,
+  "size": [
+   5012.099,
+   9273.374,
+   8192.278
+  ],
+  "kb": 705,
+  "legacy": false,
+  "url": "./assets/models/r2/concrete_cat_statue.glb",
+  "r3": true
+ },
+ "flag_pole_274fda": {
+  "id": "flag_pole_274fda",
+  "src": "15_soft_decor/sf_flag_pole_274fda",
+  "zone": "15_soft_decor",
+  "tris": 21440,
+  "size": [
+   1272246.864,
+   1177843.416,
+   1435325.397
+  ],
+  "kb": 6367,
+  "legacy": false,
+  "url": "./assets/models/r2/flag_pole_274fda.glb",
+  "r3": true
+ },
+ "free_pothos_potted_plant_money_plant": {
+  "id": "free_pothos_potted_plant_money_plant",
+  "src": "15_soft_decor/sf_free_pothos_potted_plant_money_plant_e9832f",
+  "zone": "15_soft_decor",
+  "tris": 15744,
+  "size": [
+   27084.119,
+   22637.153,
+   31919.769
+  ],
+  "kb": 218,
+  "legacy": false,
+  "url": "./assets/models/r2/free_pothos_potted_plant_money_plant.glb",
+  "r3": true
+ },
+ "indoor_planter": {
+  "id": "indoor_planter",
+  "src": "15_soft_decor/sf_indoor_planter_3ed621",
+  "zone": "15_soft_decor",
+  "tris": 7836,
+  "size": [
+   12129.531,
+   8336.527,
+   12732.497
+  ],
+  "kb": 314,
+  "legacy": false,
+  "url": "./assets/models/r2/indoor_planter.glb",
+  "r3": true
+ },
+ "rug": {
+  "id": "rug",
+  "src": "15_soft_decor/sf_rug_4d58e0",
+  "zone": "15_soft_decor",
+  "tris": 10752,
+  "size": [
+   37361.526,
+   2125.366,
+   60846.015
+  ],
+  "kb": 232,
+  "legacy": false,
+  "url": "./assets/models/r2/rug.glb",
+  "r3": true
+ },
+ "barrel_01": {
+  "id": "barrel_01",
+  "src": "16_industrial_storage/Barrel_01",
+  "zone": "16_industrial_storage",
+  "tris": 2682,
+  "size": [
+   18450.08,
+   28834.96,
+   18450.08
+  ],
+  "kb": 124,
+  "legacy": false,
+  "url": "./assets/models/r2/barrel_01.glb",
+  "r3": true
+ },
+ "crowbar_01": {
+  "id": "crowbar_01",
+  "src": "16_industrial_storage/crowbar_01",
+  "zone": "16_industrial_storage",
+  "tris": 2300,
+  "size": [
+   1323.987,
+   18197.605,
+   4180.778
+  ],
+  "kb": 75,
+  "legacy": false,
+  "url": "./assets/models/r2/crowbar_01.glb",
+  "r3": true
+ },
+ "drill_press_01": {
+  "id": "drill_press_01",
+  "src": "16_industrial_storage/drill_press_01",
+  "zone": "16_industrial_storage",
+  "tris": 30000,
+  "size": [
+   11607.455,
+   29527.325,
+   19617.599
+  ],
+  "kb": 528,
+  "legacy": false,
+  "url": "./assets/models/r2/drill_press_01.glb",
+  "r3": true
+ },
+ "metal_jerrycan": {
+  "id": "metal_jerrycan",
+  "src": "16_industrial_storage/metal_jerrycan",
+  "zone": "16_industrial_storage",
+  "tris": 20022,
+  "size": [
+   11478.679,
+   14914.227,
+   5628.053
+  ],
+  "kb": 233,
+  "legacy": false,
+  "url": "./assets/models/r2/metal_jerrycan.glb",
+  "r3": true
+ },
+ "double_metal_shelving_unit": {
+  "id": "double_metal_shelving_unit",
+  "src": "16_industrial_storage/sf_double_metal_shelving_unit_e5b03c",
+  "zone": "16_industrial_storage",
+  "tris": 168163,
+  "size": [
+   5111652,
+   2453075.76,
+   992160
+  ],
+  "kb": 2728,
+  "legacy": false,
+  "url": "./assets/models/r2/double_metal_shelving_unit.glb",
+  "r3": true
+ },
+ "iron_chain": {
+  "id": "iron_chain",
+  "src": "16_industrial_storage/sf_iron_chain_6d079f",
+  "zone": "16_industrial_storage",
+  "tris": 29980,
+  "size": [
+   8519404.003,
+   15080639.84,
+   8519404.003
+  ],
+  "kb": 525,
+  "legacy": false,
+  "url": "./assets/models/r2/iron_chain.glb",
+  "r3": true
+ },
+ "old_industrial_boiler": {
+  "id": "old_industrial_boiler",
+  "src": "16_industrial_storage/sf_old_industrial_boiler_02423c",
+  "zone": "16_industrial_storage",
+  "tris": 71277,
+  "size": [
+   325904.241,
+   138420.036,
+   308677.576
+  ],
+  "kb": 1216,
+  "legacy": false,
+  "url": "./assets/models/r2/old_industrial_boiler.glb",
+  "r3": true
+ },
+ "steel_portal_rust_metal_door": {
+  "id": "steel_portal_rust_metal_door",
+  "src": "16_industrial_storage/sf_steel_portal_rust_metal_door_49c85a",
+  "zone": "16_industrial_storage",
+  "tris": 1148,
+  "size": [
+   38868.044,
+   66798.973,
+   10820.919
+  ],
+  "kb": 71,
+  "legacy": false,
+  "url": "./assets/models/r2/steel_portal_rust_metal_door.glb",
+  "r3": true
+ },
+ "worn_steel_door": {
+  "id": "worn_steel_door",
+  "src": "16_industrial_storage/sf_worn_steel_door_ced958",
+  "zone": "16_industrial_storage",
+  "tris": 322,
+  "size": [
+   56262,
+   65534,
+   5640.003
+  ],
+  "kb": 83,
+  "legacy": false,
+  "url": "./assets/models/r2/worn_steel_door.glb",
+  "r3": true
+ },
+ "spray_paint_bottles": {
+  "id": "spray_paint_bottles",
+  "src": "16_industrial_storage/spray_paint_bottles",
+  "zone": "16_industrial_storage",
+  "tris": 5040,
+  "size": [
+   2151.364,
+   7491.839,
+   2151.271
+  ],
+  "kb": 107,
+  "legacy": false,
+  "url": "./assets/models/r2/spray_paint_bottles.glb",
+  "r3": true
+ },
+ "wooden_crate_01": {
+  "id": "wooden_crate_01",
+  "src": "16_industrial_storage/wooden_crate_01",
+  "zone": "16_industrial_storage",
+  "tris": 6576,
+  "size": [
+   27041.718,
+   11455.613,
+   13399.956
+  ],
+  "kb": 135,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_crate_01.glb",
+  "r3": true
+ },
+ "wooden_ladder": {
+  "id": "wooden_ladder",
+  "src": "16_industrial_storage/wooden_ladder",
+  "zone": "16_industrial_storage",
+  "tris": 8492,
+  "size": [
+   31426.764,
+   43741.431,
+   16383.513
+  ],
+  "kb": 160,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_ladder.glb",
+  "r3": true
+ },
+ "dead_tree_trunk": {
+  "id": "dead_tree_trunk",
+  "src": "17_exterior_street/dead_tree_trunk",
+  "zone": "17_exterior_street",
+  "tris": 30000,
+  "size": [
+   99972.609,
+   9519.167,
+   9092.025
+  ],
+  "kb": 621,
+  "legacy": false,
+  "url": "./assets/models/r2/dead_tree_trunk.glb",
+  "r3": true
+ },
+ "modular_electricity_poles": {
+  "id": "modular_electricity_poles",
+  "src": "17_exterior_street/modular_electricity_poles",
+  "zone": "17_exterior_street",
+  "tris": 39528,
+  "size": [
+   404094.767,
+   229357.417,
+   63601.199
+  ],
+  "kb": 1406,
+  "legacy": false,
+  "url": "./assets/models/r2/modular_electricity_poles.glb",
+  "r3": true
+ },
+ "bicycle": {
+  "id": "bicycle",
+  "src": "17_exterior_street/sf_bicycle_25aa85",
+  "zone": "17_exterior_street",
+  "tris": 20864,
+  "size": [
+   5276302.225,
+   3765728.288,
+   2805376.063
+  ],
+  "kb": 758,
+  "legacy": false,
+  "url": "./assets/models/r2/bicycle.glb",
+  "r3": true
+ },
+ "gate_fence_iron_gold_ornate_ornament": {
+  "id": "gate_fence_iron_gold_ornate_ornament",
+  "src": "17_exterior_street/sf_gate_fence_iron_gold_ornate_ornament_d9896c",
+  "zone": "17_exterior_street",
+  "tris": 29999,
+  "size": [
+   137256.546,
+   42797.636,
+   821.018
+  ],
+  "kb": 124,
+  "legacy": false,
+  "url": "./assets/models/r2/gate_fence_iron_gold_ornate_ornament.glb",
+  "r3": true
+ },
+ "ornamental_urn_planter": {
+  "id": "ornamental_urn_planter",
+  "src": "17_exterior_street/sf_ornamental_urn_planter_bd3077",
+  "zone": "17_exterior_street",
+  "tris": 30007,
+  "size": [
+   38968.8,
+   45901.945,
+   38842.017
+  ],
+  "kb": 357,
+  "legacy": false,
+  "url": "./assets/models/r2/ornamental_urn_planter.glb",
+  "r3": true
+ },
+ "boombox": {
+  "id": "boombox",
+  "src": "11_office_clutter/boombox",
+  "zone": "11_office_clutter",
+  "tris": 10168,
+  "size": [
+   23716.087,
+   15403.478,
+   6109.424
+  ],
+  "kb": 240,
+  "legacy": false,
+  "url": "./assets/models/r2/boombox.glb",
+  "r3": true
+ },
+ "cigarette_pack": {
+  "id": "cigarette_pack",
+  "src": "11_office_clutter/cigarette_pack",
+  "zone": "11_office_clutter",
+  "tris": 11956,
+  "size": [
+   1821.962,
+   3365.669,
+   966.036
+  ],
+  "kb": 119,
+  "legacy": false,
+  "url": "./assets/models/r2/cigarette_pack.glb",
+  "r3": true
+ },
+ "mousetrap": {
+  "id": "mousetrap",
+  "src": "11_office_clutter/mousetrap",
+  "zone": "11_office_clutter",
+  "tris": 5136,
+  "size": [
+   1801.757,
+   587.796,
+   3291.234
+  ],
+  "kb": 133,
+  "legacy": false,
+  "url": "./assets/models/r2/mousetrap.glb",
+  "r3": true
+ },
+ "plastic_broom": {
+  "id": "plastic_broom",
+  "src": "11_office_clutter/plastic_broom",
+  "zone": "11_office_clutter",
+  "tris": 18736,
+  "size": [
+   13643.383,
+   39239.247,
+   18562.809
+  ],
+  "kb": 192,
+  "legacy": false,
+  "url": "./assets/models/r2/plastic_broom.glb",
+  "r3": true
+ },
+ "cardboard_transport_shipping_box": {
+  "id": "cardboard_transport_shipping_box",
+  "src": "11_office_clutter/sf_cardboard_transport_shipping_box_7ec06f",
+  "zone": "11_office_clutter",
+  "tris": 29998,
+  "size": [
+   9540.309,
+   4664.918,
+   4020.895
+  ],
+  "kb": 426,
+  "legacy": false,
+  "url": "./assets/models/r2/cardboard_transport_shipping_box.glb",
+  "r3": true
+ },
+ "cc0_newspaper_stack_ready_to_unity_hdrp": {
+  "id": "cc0_newspaper_stack_ready_to_unity_hdrp",
+  "src": "11_office_clutter/sf_cc0_newspaper_stack_ready_to_unity_hdrp_c4311a",
+  "zone": "11_office_clutter",
+  "tris": 2132,
+  "size": [
+   7417642.41,
+   2398950.752,
+   6360933.939
+  ],
+  "kb": 182,
+  "legacy": false,
+  "url": "./assets/models/r2/cc0_newspaper_stack_ready_to_unity_hdrp.glb",
+  "r3": true
+ },
+ "desk_flag_pack_free_low_poly": {
+  "id": "desk_flag_pack_free_low_poly",
+  "src": "11_office_clutter/sf_desk_flag_pack_free_low_poly_dff46c",
+  "zone": "11_office_clutter",
+  "tris": 9971,
+  "size": [
+   98172862.163,
+   85455995.972,
+   105492336.503
+  ],
+  "kb": 148,
+  "legacy": false,
+  "url": "./assets/models/r2/desk_flag_pack_free_low_poly.glb",
+  "r3": true
+ },
+ "diplomat_ballpoint_pen_and_fountain_pen": {
+  "id": "diplomat_ballpoint_pen_and_fountain_pen",
+  "src": "11_office_clutter/sf_diplomat_ballpoint_pen_and_fountain_pen_392270",
+  "zone": "11_office_clutter",
+  "tris": 76286,
+  "size": [
+   266797.259,
+   27880.684,
+   27880.694
+  ],
+  "kb": 486,
+  "legacy": false,
+  "url": "./assets/models/r2/diplomat_ballpoint_pen_and_fountain_pen.glb",
+  "r3": true
+ },
+ "ink_bottle": {
+  "id": "ink_bottle",
+  "src": "11_office_clutter/sf_ink_bottle_107029",
+  "zone": "11_office_clutter",
+  "tris": 6928,
+  "size": [
+   28061.167,
+   23828.465,
+   47956.962
+  ],
+  "kb": 55,
+  "legacy": false,
+  "url": "./assets/models/r2/ink_bottle.glb",
+  "r3": true
+ },
+ "ink_bottle_with_feather_and_cork": {
+  "id": "ink_bottle_with_feather_and_cork",
+  "src": "11_office_clutter/sf_ink_bottle_with_feather_and_cork_42642f",
+  "zone": "11_office_clutter",
+  "tris": 786,
+  "size": [
+   9837373.778,
+   9463897.867,
+   5443024.999
+  ],
+  "kb": 32,
+  "legacy": false,
+  "url": "./assets/models/r2/ink_bottle_with_feather_and_cork.glb",
+  "r3": true
+ },
+ "office_file_cabinet_prateleira_de_escrit": {
+  "id": "office_file_cabinet_prateleira_de_escrit",
+  "src": "11_office_clutter/sf_office_file_cabinet_prateleira_de_escrit_e2c8a5",
+  "zone": "11_office_clutter",
+  "tris": 31812,
+  "size": [
+   3380414.958,
+   14862312.142,
+   15090743.453
+  ],
+  "kb": 946,
+  "legacy": false,
+  "url": "./assets/models/r2/office_file_cabinet_prateleira_de_escrit.glb",
+  "r3": true
+ },
+ "vintage_metal_ashtray": {
+  "id": "vintage_metal_ashtray",
+  "src": "11_office_clutter/sf_vintage_metal_ashtray_e3a5fd",
+  "zone": "11_office_clutter",
+  "tris": 7986,
+  "size": [
+   4153.047,
+   1668.553,
+   4787.1
+  ],
+  "kb": 137,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_metal_ashtray.glb",
+  "r3": true
+ },
+ "vintage_lighter": {
+  "id": "vintage_lighter",
+  "src": "11_office_clutter/vintage_lighter",
+  "zone": "11_office_clutter",
+  "tris": 3366,
+  "size": [
+   2609.189,
+   2130.781,
+   458.66
+  ],
+  "kb": 106,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_lighter.glb",
+  "r3": true
+ },
+ "chandelier_7058ee": {
+  "id": "chandelier_7058ee",
+  "src": "12_lighting/sf_chandelier_7058ee",
+  "zone": "12_lighting",
+  "tris": 5056,
+  "size": [
+   646487.474,
+   1277188.897,
+   646487.474
+  ],
+  "kb": 101,
+  "legacy": false,
+  "url": "./assets/models/r2/chandelier_7058ee.glb",
+  "r3": true
+ },
+ "industrial_bulkhead_wall_lamp_lowpoly": {
+  "id": "industrial_bulkhead_wall_lamp_lowpoly",
+  "src": "12_lighting/sf_industrial_bulkhead_wall_lamp_lowpoly_4c5043",
+  "zone": "12_lighting",
+  "tris": 232,
+  "size": [
+   6904120.39,
+   11317024.777,
+   3835432.405
+  ],
+  "kb": 43,
+  "legacy": false,
+  "url": "./assets/models/r2/industrial_bulkhead_wall_lamp_lowpoly.glb",
+  "r3": true
+ },
+ "wall_candle": {
+  "id": "wall_candle",
+  "src": "12_lighting/sf_wall_candle_593098",
+  "zone": "12_lighting",
+  "tris": 2985,
+  "size": [
+   78079.751,
+   85983.505,
+   59131.208
+  ],
+  "kb": 38,
+  "legacy": false,
+  "url": "./assets/models/r2/wall_candle.glb",
+  "r3": true
+ },
+ "cctv_camera": {
+  "id": "cctv_camera",
+  "src": "13_signage_services/sf_cctv_camera_4d33a8",
+  "zone": "13_signage_services",
+  "tris": 3992,
+  "size": [
+   8668.764,
+   9472.721,
+   17787.546
+  ],
+  "kb": 96,
+  "legacy": false,
+  "url": "./assets/models/r2/cctv_camera.glb",
+  "r3": true
+ },
+ "electrical_panel_b": {
+  "id": "electrical_panel_b",
+  "src": "13_signage_services/sf_electrical_panel_b_6a5fed",
+  "zone": "13_signage_services",
+  "tris": 486,
+  "size": [
+   130534.383,
+   51218.632,
+   27854.145
+  ],
+  "kb": 61,
+  "legacy": false,
+  "url": "./assets/models/r2/electrical_panel_b.glb",
+  "r3": true
+ },
+ "electrical_panel": {
+  "id": "electrical_panel",
+  "src": "13_signage_services/sf_electrical_panel_ca5852",
+  "zone": "13_signage_services",
+  "tris": 4208,
+  "size": [
+   621252.686,
+   146065.575,
+   22939.678
+  ],
+  "kb": 89,
+  "legacy": false,
+  "url": "./assets/models/r2/electrical_panel.glb",
+  "r3": true
+ },
+ "electrical_switchboard": {
+  "id": "electrical_switchboard",
+  "src": "13_signage_services/sf_electrical_switchboard_211586",
+  "zone": "13_signage_services",
+  "tris": 1850,
+  "size": [
+   12478.502,
+   24947.108,
+   7433.951
+  ],
+  "kb": 94,
+  "legacy": false,
+  "url": "./assets/models/r2/electrical_switchboard.glb",
+  "r3": true
+ },
+ "fire_exit_sign": {
+  "id": "fire_exit_sign",
+  "src": "13_signage_services/sf_fire_exit_sign_31fff5",
+  "zone": "13_signage_services",
+  "tris": 180,
+  "size": [
+   12932.931,
+   5879.769,
+   150.831
+  ],
+  "kb": 27,
+  "legacy": false,
+  "url": "./assets/models/r2/fire_exit_sign.glb",
+  "r3": true
+ },
+ "retro_radiator": {
+  "id": "retro_radiator",
+  "src": "13_signage_services/sf_retro_radiator_2d85cd",
+  "zone": "13_signage_services",
+  "tris": 29997,
+  "size": [
+   19005.653,
+   24847.714,
+   8445.36
+  ],
+  "kb": 346,
+  "legacy": false,
+  "url": "./assets/models/r2/retro_radiator.glb",
+  "r3": true
+ },
+ "wall_clock_old": {
+  "id": "wall_clock_old",
+  "src": "13_signage_services/sf_wall_clock_old_078594",
+  "zone": "13_signage_services",
+  "tris": 1937,
+  "size": [
+   29937.569,
+   54097.565,
+   24046.354
+  ],
+  "kb": 564,
+  "legacy": false,
+  "url": "./assets/models/r2/wall_clock_old.glb",
+  "r3": true
+ },
+ "barbershopchair_01": {
+  "id": "barbershopchair_01",
+  "src": "14_furniture_equipment/BarberShopChair_01",
+  "zone": "14_furniture_equipment",
+  "tris": 4280,
+  "size": [
+   24791.938,
+   48790.235,
+   43513.201
+  ],
+  "kb": 207,
+  "legacy": false,
+  "url": "./assets/models/r2/barbershopchair_01.glb",
+  "r3": true
+ },
+ "rockingchair_01": {
+  "id": "rockingchair_01",
+  "src": "14_furniture_equipment/Rockingchair_01",
+  "zone": "14_furniture_equipment",
+  "tris": 11866,
+  "size": [
+   23203.721,
+   32600.821,
+   27311.781
+  ],
+  "kb": 166,
+  "legacy": false,
+  "url": "./assets/models/r2/rockingchair_01.glb",
+  "r3": true
+ },
+ "woodentable_01": {
+  "id": "woodentable_01",
+  "src": "14_furniture_equipment/WoodenTable_01",
+  "zone": "14_furniture_equipment",
+  "tris": 952,
+  "size": [
+   58969.064,
+   17983.882,
+   21532.787
+  ],
+  "kb": 87,
+  "legacy": false,
+  "url": "./assets/models/r2/woodentable_01.glb",
+  "r3": true
+ },
+ "woodentable_03": {
+  "id": "woodentable_03",
+  "src": "14_furniture_equipment/WoodenTable_03",
+  "zone": "14_furniture_equipment",
+  "tris": 2298,
+  "size": [
+   43476.992,
+   27197.832,
+   18847.947
+  ],
+  "kb": 104,
+  "legacy": false,
+  "url": "./assets/models/r2/woodentable_03.glb",
+  "r3": true
+ },
+ "folding_wooden_stool": {
+  "id": "folding_wooden_stool",
+  "src": "14_furniture_equipment/folding_wooden_stool",
+  "zone": "14_furniture_equipment",
+  "tris": 6324,
+  "size": [
+   17296.054,
+   14481.855,
+   17926.295
+  ],
+  "kb": 138,
+  "legacy": false,
+  "url": "./assets/models/r2/folding_wooden_stool.glb",
+  "r3": true
+ },
+ "gallinera_table": {
+  "id": "gallinera_table",
+  "src": "14_furniture_equipment/gallinera_table",
+  "zone": "14_furniture_equipment",
+  "tris": 5528,
+  "size": [
+   27199.314,
+   15982.409,
+   16981.829
+  ],
+  "kb": 111,
+  "legacy": false,
+  "url": "./assets/models/r2/gallinera_table.glb",
+  "r3": true
+ },
+ "industrial_coffee_table": {
+  "id": "industrial_coffee_table",
+  "src": "14_furniture_equipment/industrial_coffee_table",
+  "zone": "14_furniture_equipment",
+  "tris": 30000,
+  "size": [
+   25501.392,
+   20918.977,
+   24835.203
+  ],
+  "kb": 300,
+  "legacy": false,
+  "url": "./assets/models/r2/industrial_coffee_table.glb",
+  "r3": true
+ },
+ "1930s_style_typewriter_w_o_branding": {
+  "id": "1930s_style_typewriter_w_o_branding",
+  "src": "14_furniture_equipment/sf_1930s_style_typewriter_w_o_branding_1d6009",
+  "zone": "14_furniture_equipment",
+  "tris": 22471,
+  "size": [
+   12391.641,
+   5538.364,
+   11533.942
+  ],
+  "kb": 305,
+  "legacy": false,
+  "url": "./assets/models/r2/1930s_style_typewriter_w_o_branding.glb",
+  "r3": true
+ },
+ "bench": {
+  "id": "bench",
+  "src": "14_furniture_equipment/sf_bench_43dfa2",
+  "zone": "14_furniture_equipment",
+  "tris": 5010,
+  "size": [
+   2945049.002,
+   3845228.015,
+   6269110.676
+  ],
+  "kb": 149,
+  "legacy": false,
+  "url": "./assets/models/r2/bench.glb",
+  "r3": true
+ },
+ "siemens_and_halske_1910": {
+  "id": "siemens_and_halske_1910",
+  "src": "14_furniture_equipment/sf_siemens_and_halske_1910_8b7f97",
+  "zone": "14_furniture_equipment",
+  "tris": 3192,
+  "size": [
+   157096.928,
+   104488.371,
+   84390.397
+  ],
+  "kb": 151,
+  "legacy": false,
+  "url": "./assets/models/r2/siemens_and_halske_1910.glb",
+  "r3": true
+ },
+ "underwood_4_bank_typewriter_portable": {
+  "id": "underwood_4_bank_typewriter_portable",
+  "src": "14_furniture_equipment/sf_underwood_4_bank_typewriter_portable_b872e2",
+  "zone": "14_furniture_equipment",
+  "tris": 31582,
+  "size": [
+   1146780.061,
+   1227862.857,
+   1179612.065
+  ],
+  "kb": 548,
+  "legacy": false,
+  "url": "./assets/models/r2/underwood_4_bank_typewriter_portable.glb",
+  "r3": true
+ },
+ "vintage_radio": {
+  "id": "vintage_radio",
+  "src": "14_furniture_equipment/sf_vintage_radio_d7d924",
+  "zone": "14_furniture_equipment",
+  "tris": 29998,
+  "size": [
+   11105764.069,
+   6715586.262,
+   7312532.091
+  ],
+  "kb": 454,
+  "legacy": false,
+  "url": "./assets/models/r2/vintage_radio.glb",
+  "r3": true
+ },
+ "bronze_whale_statue": {
+  "id": "bronze_whale_statue",
+  "src": "15_soft_decor/bronze_whale_statue",
+  "zone": "15_soft_decor",
+  "tris": 3816,
+  "size": [
+   30537.68,
+   35155.62,
+   44754.816
+  ],
+  "kb": 344,
+  "legacy": false,
+  "url": "./assets/models/r2/bronze_whale_statue.glb",
+  "r3": true
+ },
+ "dartboard": {
+  "id": "dartboard",
+  "src": "15_soft_decor/dartboard",
+  "zone": "15_soft_decor",
+  "tris": 6800,
+  "size": [
+   14767.963,
+   14767.963,
+   1303.413
+  ],
+  "kb": 194,
+  "legacy": false,
+  "url": "./assets/models/r2/dartboard.glb",
+  "r3": true
+ },
+ "claude_monet_woman_with_a_parasol": {
+  "id": "claude_monet_woman_with_a_parasol",
+  "src": "15_soft_decor/sf_claude_monet_woman_with_a_parasol_ccb21b",
+  "zone": "15_soft_decor",
+  "tris": 38195,
+  "size": [
+   34213.745,
+   40396.537,
+   2910.819
+  ],
+  "kb": 1089,
+  "legacy": false,
+  "url": "./assets/models/r2/claude_monet_woman_with_a_parasol.glb",
+  "r3": true
+ },
+ "flag": {
+  "id": "flag",
+  "src": "15_soft_decor/sf_flag_e22584",
+  "zone": "15_soft_decor",
+  "tris": 27000,
+  "size": [
+   418837.289,
+   868599.805,
+   884314.423
+  ],
+  "kb": 6981,
+  "legacy": false,
+  "url": "./assets/models/r2/flag.glb",
+  "r3": true
+ },
+ "barrel_02": {
+  "id": "barrel_02",
+  "src": "16_industrial_storage/Barrel_02",
+  "zone": "16_industrial_storage",
+  "tris": 2688,
+  "size": [
+   15996.64,
+   28834.96,
+   15880.48
+  ],
+  "kb": 77,
+  "legacy": false,
+  "url": "./assets/models/r2/barrel_02.glb",
+  "r3": true
+ },
+ "cement_bag": {
+  "id": "cement_bag",
+  "src": "16_industrial_storage/cement_bag",
+  "zone": "16_industrial_storage",
+  "tris": 844,
+  "size": [
+   15154.391,
+   5893.996,
+   22923.273
+  ],
+  "kb": 48,
+  "legacy": false,
+  "url": "./assets/models/r2/cement_bag.glb",
+  "r3": true
+ },
+ "measuring_tape_01": {
+  "id": "measuring_tape_01",
+  "src": "16_industrial_storage/measuring_tape_01",
+  "zone": "16_industrial_storage",
+  "tris": 2868,
+  "size": [
+   1328.92,
+   2405.236,
+   5551.34
+  ],
+  "kb": 83,
+  "legacy": false,
+  "url": "./assets/models/r2/measuring_tape_01.glb",
+  "r3": true
+ },
+ "metal_jerrycan_green": {
+  "id": "metal_jerrycan_green",
+  "src": "16_industrial_storage/metal_jerrycan_green",
+  "zone": "16_industrial_storage",
+  "tris": 9636,
+  "size": [
+   24754.955,
+   24963.067,
+   5599.486
+  ],
+  "kb": 188,
+  "legacy": false,
+  "url": "./assets/models/r2/metal_jerrycan_green.glb",
+  "r3": true
+ },
+ "plastic_crate_03": {
+  "id": "plastic_crate_03",
+  "src": "16_industrial_storage/plastic_crate_03",
+  "zone": "16_industrial_storage",
+  "tris": 21740,
+  "size": [
+   15764.241,
+   8714.666,
+   8681.951
+  ],
+  "kb": 355,
+  "legacy": false,
+  "url": "./assets/models/r2/plastic_crate_03.glb",
+  "r3": true
+ },
+ "bank_vault_armored_door_low_poly": {
+  "id": "bank_vault_armored_door_low_poly",
+  "src": "16_industrial_storage/sf_bank_vault_armored_door_low_poly_627c68",
+  "zone": "16_industrial_storage",
+  "tris": 48566,
+  "size": [
+   175803.172,
+   102432.114,
+   160330.019
+  ],
+  "kb": 563,
+  "legacy": false,
+  "url": "./assets/models/r2/bank_vault_armored_door_low_poly.glb",
+  "r3": true
+ },
+ "chain_barrier": {
+  "id": "chain_barrier",
+  "src": "16_industrial_storage/sf_chain_barrier_a18364",
+  "zone": "16_industrial_storage",
+  "tris": 3300,
+  "size": [
+   1552863.569,
+   4212138.364,
+   8180495.32
+  ],
+  "kb": 141,
+  "legacy": false,
+  "url": "./assets/models/r2/chain_barrier.glb",
+  "r3": true
+ },
+ "heavy_metal_door": {
+  "id": "heavy_metal_door",
+  "src": "16_industrial_storage/sf_heavy_metal_door_f11284",
+  "zone": "16_industrial_storage",
+  "tris": 5220,
+  "size": [
+   25500.799,
+   170388.409,
+   96335.224
+  ],
+  "kb": 83,
+  "legacy": false,
+  "url": "./assets/models/r2/heavy_metal_door.glb",
+  "r3": true
+ },
+ "modular_shelving_unit_metal": {
+  "id": "modular_shelving_unit_metal",
+  "src": "16_industrial_storage/sf_modular_shelving_unit_metal_6a1f71",
+  "zone": "16_industrial_storage",
+  "tris": 6576,
+  "size": [
+   31040.083,
+   59555.594,
+   15807.224
+  ],
+  "kb": 92,
+  "legacy": false,
+  "url": "./assets/models/r2/modular_shelving_unit_metal.glb",
+  "r3": true
+ },
+ "oil_drums": {
+  "id": "oil_drums",
+  "src": "16_industrial_storage/sf_oil_drums_f98003",
+  "zone": "16_industrial_storage",
+  "tris": 7324,
+  "size": [
+   40583.457,
+   35333.066,
+   34678.716
+  ],
+  "kb": 395,
+  "legacy": false,
+  "url": "./assets/models/r2/oil_drums.glb",
+  "r3": true
+ },
+ "rusty_metal_shelving": {
+  "id": "rusty_metal_shelving",
+  "src": "16_industrial_storage/sf_rusty_metal_shelving_f1f8aa",
+  "zone": "16_industrial_storage",
+  "tris": 15600,
+  "size": [
+   2359224,
+   2359224,
+   786312
+  ],
+  "kb": 223,
+  "legacy": false,
+  "url": "./assets/models/r2/rusty_metal_shelving.glb",
+  "r3": true
+ },
+ "simple_warehouse_pallet_hand_truck": {
+  "id": "simple_warehouse_pallet_hand_truck",
+  "src": "16_industrial_storage/sf_simple_warehouse_pallet_hand_truck_fea97b",
+  "zone": "16_industrial_storage",
+  "tris": 84878,
+  "size": [
+   5593662.17,
+   9020972.943,
+   14467402.976
+  ],
+  "kb": 423,
+  "legacy": false,
+  "url": "./assets/models/r2/simple_warehouse_pallet_hand_truck.glb",
+  "r3": true
+ },
+ "sledgehammer_01": {
+  "id": "sledgehammer_01",
+  "src": "16_industrial_storage/sledgehammer_01",
+  "zone": "16_industrial_storage",
+  "tris": 2596,
+  "size": [
+   6830.18,
+   32951.192,
+   2964.571
+  ],
+  "kb": 85,
+  "legacy": false,
+  "url": "./assets/models/r2/sledgehammer_01.glb",
+  "r3": true
+ },
+ "wooden_crate_02": {
+  "id": "wooden_crate_02",
+  "src": "16_industrial_storage/wooden_crate_02",
+  "zone": "16_industrial_storage",
+  "tris": 5176,
+  "size": [
+   17337.433,
+   15200.724,
+   38216.998
+  ],
+  "kb": 129,
+  "legacy": false,
+  "url": "./assets/models/r2/wooden_crate_02.glb",
+  "r3": true
+ },
+ "modular_chainlink_fence": {
+  "id": "modular_chainlink_fence",
+  "src": "17_exterior_street/modular_chainlink_fence",
+  "zone": "17_exterior_street",
+  "tris": 29999,
+  "size": [
+   265904.268,
+   82683.755,
+   70413.872
+  ],
+  "kb": 923,
+  "legacy": false,
+  "url": "./assets/models/r2/modular_chainlink_fence.glb",
+  "r3": true
+ },
+ "modular_metal_gutter": {
+  "id": "modular_metal_gutter",
+  "src": "17_exterior_street/modular_metal_gutter",
+  "zone": "17_exterior_street",
+  "tris": 16490,
+  "size": [
+   74331.378,
+   60375.671,
+   49629.868
+  ],
+  "kb": 194,
+  "legacy": false,
+  "url": "./assets/models/r2/modular_metal_gutter.glb",
+  "r3": true
+ },
+ "manhole_a65739": {
+  "id": "manhole_a65739",
+  "src": "17_exterior_street/sf_manhole_a65739",
+  "zone": "17_exterior_street",
+  "tris": 1456,
+  "size": [
+   65534,
+   4888.003,
+   65534
+  ],
+  "kb": 99,
+  "legacy": false,
+  "url": "./assets/models/r2/manhole_a65739.glb",
+  "r3": true
+ },
+ "simple_90_s_kiosk": {
+  "id": "simple_90_s_kiosk",
+  "src": "17_exterior_street/sf_simple_90_s_kiosk_a04e69",
+  "zone": "17_exterior_street",
+  "tris": 1668,
+  "size": [
+   183296.052,
+   140327.541,
+   195847.711
+  ],
+  "kb": 237,
+  "legacy": false,
+  "url": "./assets/models/r2/simple_90_s_kiosk.glb",
+  "r3": true
+ },
+ "tree_3dst13": {
+  "id": "tree_3dst13",
+  "src": "17_exterior_street/sf_tree_3dst13_bf5fb4",
+  "zone": "17_exterior_street",
+  "tris": 164599,
+  "size": [
+   567288.166,
+   878216.542,
+   566644.921
+  ],
+  "kb": 4411,
+  "legacy": false,
+  "url": "./assets/models/r2/tree_3dst13.glb",
+  "r3": true
+ },
+ "tree_planter_01": {
+  "id": "tree_planter_01",
+  "src": "17_exterior_street/sf_tree_planter_01_bf6e3a",
+  "zone": "17_exterior_street",
+  "tris": 29999,
+  "size": [
+   74325.514,
+   53760.896,
+   75806.148
+  ],
+  "kb": 214,
+  "legacy": false,
+  "url": "./assets/models/r2/tree_planter_01.glb",
+  "r3": true
+ },
+ "vw_van": {
+  "id": "vw_van",
+  "src": "17_exterior_street/sf_vw_van_718f8f",
+  "zone": "17_exterior_street",
+  "tris": 79925,
+  "size": [
+   417043.419,
+   312568.927,
+   922288.093
+  ],
+  "kb": 548,
+  "legacy": false,
+  "url": "./assets/models/r2/vw_van.glb",
+  "r3": true
+ },
+ "street_rat": {
+  "id": "street_rat",
+  "src": "17_exterior_street/street_rat",
+  "zone": "17_exterior_street",
+  "tris": 29997,
+  "size": [
+   1047.305,
+   1109.609,
+   4860.771
+  ],
+  "kb": 556,
+  "legacy": false,
+  "url": "./assets/models/r2/street_rat.glb",
+  "r3": true
+ },
+ "fire_extinguisher_5676b1": {
+  "id": "fire_extinguisher_5676b1",
+  "src": "13_signage_services/sf_fire_extinguisher_5676b1",
+  "zone": "13_signage_services",
+  "tris": 2792,
+  "size": [
+   35420,
+   65534.001,
+   18050.003
+  ],
+  "kb": 72,
+  "legacy": false,
+  "url": "./assets/models/r2/fire_extinguisher_5676b1.glb",
+  "r3": true
+ },
+ "antique_globe_026976": {
+  "id": "antique_globe_026976",
+  "src": "15_soft_decor/sf_antique_globe_026976",
+  "zone": "15_soft_decor",
+  "tris": 11164,
+  "size": [
+   4358000,
+   3971600.745,
+   6553400.309
+  ],
+  "kb": 175,
+  "legacy": false,
+  "url": "./assets/models/r2/antique_globe_026976.glb",
+  "r3": true
+ },
+ "curtains_e5b01c": {
+  "id": "curtains_e5b01c",
+  "src": "15_soft_decor/sf_curtains_e5b01c",
+  "zone": "15_soft_decor",
+  "tris": 4505,
+  "size": [
+   56739824.635,
+   51748193.052,
+   10271946.659
+  ],
+  "kb": 172,
+  "legacy": false,
+  "url": "./assets/models/r2/curtains_e5b01c.glb",
+  "r3": true
+ },
+ "banker_lamp_a71cef": {
+  "id": "banker_lamp_a71cef",
+  "src": "12_lighting/sf_banker_lamp_a71cef",
+  "zone": "12_lighting",
+  "tris": 30006,
+  "size": [
+   21966.134,
+   8601.555,
+   21966.134
+  ],
+  "kb": 190,
+  "legacy": false,
+  "url": "./assets/models/r2/banker_lamp_a71cef.glb",
+  "r3": true
+ },
+ "industrial_lamp_e51628": {
+  "id": "industrial_lamp_e51628",
+  "src": "12_lighting/sf_industrial_lamp_e51628",
+  "zone": "12_lighting",
+  "tris": 4900,
+  "size": [
+   530162.32,
+   731322.25,
+   522752.457
+  ],
+  "kb": 82,
+  "legacy": false,
+  "url": "./assets/models/r2/industrial_lamp_e51628.glb",
+  "r3": true
  }
 }

@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { Batch } from '../engine/batch.js';
 import { placeModel } from '../engine/assets.js';
+import { R3 } from './r3plan.js';
 import { mats } from './mats.js';
 import { Frame, archRingGeo, archShape, lancetWindow, emblem, goldText } from './gothic.js';
 import { CanvasScreen, dust, lightShaft } from '../engine/fx.js';
@@ -44,7 +45,7 @@ export function buildUpper(scene, world, ctx) {
     }
     const li = board('doc_liaison_intro', 0.9, 1.2, signMaterial('国际联络处', ['本处负责与体系外各势力的', '联络、评估与情报交换', '', '会客请先登记'], 512, 680)); li.position.set(0.17, y + 1.7, -94); li.rotation.y = Math.PI / 2; zone.add(li); ctx.anchors.doc_liaison_intro = li;
     // 会客区：沙发 + 电话 + 来电便签；保险柜 + 证物盒；渡鸦标本 + 信箱
-    for (const [x, z, r] of [[8, -100, 0], [12, -100, 0], [10, -103.5, Math.PI]]) add(placeModel('armchair', { height: 1.0, pos: [x, y, z], rotY: r }));
+    if (!R3.floor2_liaison) for (const [x, z, r] of [[8, -100, 0], [12, -100, 0], [10, -103.5, Math.PI]]) add(placeModel('armchair', { height: 1.0, pos: [x, y, z], rotY: r }));
     b.box('wood', 2.4, 0.5, 1.0, [10, y + 0.25, -101.8], { uv: 0.6, collide: true });
     add(placeModel('telegraph', { height: 0.22, pos: [9.4, y + 0.5, -101.8], rotY: 0.4 }));
     const call = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.08), new THREE.MeshStandardMaterial({ color: 0xf2df5a, roughness: 0.8, side: THREE.DoubleSide })); call.rotation.x = -Math.PI / 2; call.position.set(10.4, y + 0.505, -101.7); zone.add(call); ctx.anchors.doc_liaison_greytower_call = { obj: call, range: 2.4 };
@@ -78,7 +79,7 @@ export function buildUpper(scene, world, ctx) {
     wallX(b, 'panelWall', -9.6, Z0 - 2, Z1, y, H, 0.3, [{ z0: -96, z1: -99, h: 3 }], true); wallX(b, 'whitePad', 9.6, Z0 - 2, Z1, y, H, 0.3, [{ z0: -96, z1: -99, h: 3 }], true);
     winRow(b, -X + 0.01, Z0, Z1, y, 2.4, Math.PI / 2); winRow(b, X - 0.01, Z0, Z1, y, 2.4, -Math.PI / 2);
     // 办公区：工位岛 + 会议室白板 + 法务处门牌 + 公告屏
-    for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) { const x = -24 + k * 7, z = -98 - r * 6; b.box('wood', 5, 0.06, 2.2, [x, y + 0.76, z], { uv: 0.6 }); world.box(x, y + 0.4, z, 5, 0.8, 2.2); b.box('paintedGreen', 5, 0.4, 0.04, [x, y + 0.98, z], { uv: 1 }); for (const dx of [-1.6, 0, 1.6]) for (const dz of [-0.55, 0.55]) { add(placeModel('monitor', { height: 0.45, pos: [x + dx, y + 0.79, z + dz * 0.6], rotY: dz > 0 ? 0 : Math.PI })); add(placeModel('office_chair', { height: 1, pos: [x + dx, y, z + dz * 2.2], rotY: dz > 0 ? 0 : Math.PI })); } if ((r + k) % 2) add(placeModel('stationery', { height: 0.12, pos: [x + 0.8, y + 0.79, z] })); }
+    if (!R3.floor3_office) for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) { const x = -24 + k * 7, z = -98 - r * 6; b.box('wood', 5, 0.06, 2.2, [x, y + 0.76, z], { uv: 0.6 }); world.box(x, y + 0.4, z, 5, 0.8, 2.2); b.box('paintedGreen', 5, 0.4, 0.04, [x, y + 0.98, z], { uv: 1 }); for (const dx of [-1.6, 0, 1.6]) for (const dz of [-0.55, 0.55]) { add(placeModel('monitor', { height: 0.45, pos: [x + dx, y + 0.79, z + dz * 0.6], rotY: dz > 0 ? 0 : Math.PI })); add(placeModel('office_chair', { height: 1, pos: [x + dx, y, z + dz * 2.2], rotY: dz > 0 ? 0 : Math.PI })); } if ((r + k) % 2) add(placeModel('stationery', { height: 0.12, pos: [x + 0.8, y + 0.79, z] })); }
     const wbd = board('doc_office_whiteboard', 2.6, 1.3, signMaterial('政策研究室', ['议题：叙事污染指数口径调整', '· 「良」是否改为「可读」', '· 3‰ 觉醒率是否对外', '· 不要讨论第七排'], 640, 320)); wbd.position.set(-X + 0.25, y + 1.9, -112); wbd.rotation.y = Math.PI / 2; zone.add(wbd); ctx.anchors.doc_office_whiteboard = wbd;
     const lp = board('doc_office_legal_plate', 0.6, 0.22, brassPlaqueMaterial('法务处', ['文本合规 · 篇幅审查'])); lp.position.set(-9.78, y + 2.1, -100.5); lp.rotation.y = -Math.PI / 2; zone.add(lp); ctx.anchors.doc_office_legal_plate = lp;
     const ns = board('doc_office_notice', 1.4, 0.8, signMaterial('三层公告', ['本周五 15:07 全员消防演练', '请勿在演练中回头'], 560, 320), 0.5); ns.position.set(-4, y + 2.4, Z0 - 0.25); ns.rotation.y = Math.PI; zone.add(ns); ctx.anchors.doc_office_notice = ns;

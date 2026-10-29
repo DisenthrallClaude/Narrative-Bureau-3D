@@ -82,7 +82,7 @@ export class Props {
       const size = box.getSize(V3()), c = box.getCenter(V3());
       const center = new THREE.Matrix4().makeTranslation(-c.x, -box.min.y, -c.z);
       const meshes = []; src.traverse((o) => { if (o.isMesh) meshes.push(o); });
-      const inst = list.map((it) => { const s = it.h ? it.h / size.y : it.w ? it.w / size.x : it.d ? it.d / size.z : (it.s ?? 1); return new THREE.Matrix4().compose(V3(...it.pos), new THREE.Quaternion().setFromEuler(new THREE.Euler(it.rx ?? 0, it.yaw ?? 0, it.rz ?? 0, 'YXZ')), V3(s, s, s)).multiply(center); });
+      const inst = list.map((it) => { const s = it.h ? it.h / size.y : it.w ? it.w / size.x : it.d ? it.d / size.z : (it.s ?? 1); const sv = it.fit ? V3(it.fit[0] / size.x, it.fit[1] / size.y, it.fit[2] / size.z) : V3(s, s, s); return new THREE.Matrix4().compose(V3(...it.pos), new THREE.Quaternion().setFromEuler(new THREE.Euler(it.rx ?? 0, it.yaw ?? 0, it.rz ?? 0, 'YXZ')), sv).multiply(center); });
       for (const m of meshes) {
         const im = new THREE.InstancedMesh(m.geometry, m.material, list.length);
         inst.forEach((mt, i) => im.setMatrixAt(i, new THREE.Matrix4().multiplyMatrices(mt, m.matrixWorld)));

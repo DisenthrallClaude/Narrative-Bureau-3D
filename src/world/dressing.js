@@ -41,6 +41,8 @@ function worldMapMat() { return canvasMat(1024, 560, (c, w, h) => { c.fillStyle 
 function crossMat() { return canvasMat(256, 256, (c, w, h) => { c.fillStyle = '#e8e6e0'; c.fillRect(0, 0, w, h); c.fillStyle = '#b01e22'; c.fillRect(96, 36, 64, 184); c.fillRect(36, 96, 184, 64); }); }
 function quiltMat() { const m = canvasMat(256, 256, (c, w, h) => { c.fillStyle = '#d6d4cc'; c.fillRect(0, 0, w, h); c.strokeStyle = '#a8a69e'; c.lineWidth = 3; c.beginPath(); c.moveTo(0, h / 2); c.lineTo(w / 2, 0); c.lineTo(w, h / 2); c.lineTo(w / 2, h); c.closePath(); c.stroke(); c.fillStyle = '#8a8882'; for (const [x, y] of [[w / 2, 0], [0, h / 2], [w, h / 2], [w / 2, h]]) { c.beginPath(); c.arc(x, y, 5, 0, 7); c.fill(); } }); m.map.wrapS = m.map.wrapT = THREE.RepeatWrapping; m.roughness = 0.95; m.bumpMap = m.map; m.bumpScale = 3; return m; }
 
+import { R3 } from './r3plan.js';
+import { buildR3 } from './r3build.js';
 export async function buildDressing(scene, world, ctx) {
   const M = mats(); const Mx = vaultMats(M); const D = dressMats(M);
   D.dz_quilt = D.dz_quilt ?? quiltMat();
@@ -71,11 +73,11 @@ export async function buildDressing(scene, world, ctx) {
     const map = new THREE.Mesh(new THREE.PlaneGeometry(5.0, 2.7), worldMapMat()); map.position.set(0.2, y + 3.1, -114.5); map.rotation.y = Math.PI / 2; zone.add(map); b.box('gold', 0.05, 2.86, 5.16, [0.18, y + 3.1, -114.5], { uv: 1 });
     for (const [k, c] of [0x1a2c66, 0x7a1016, 0x203a2a].entries()) { const x = 22.5 + k * 1.1; b.add('brass', new THREE.CylinderGeometry(0.025, 0.025, 2.6, 8), { pos: [x, y + 1.3, -93.6] }, { uv: 1 }); b.add('brass', new THREE.SphereGeometry(0.05, 8, 6), { pos: [x, y + 2.63, -93.6] }, { uv: 1 }); const fl = new THREE.Mesh(new THREE.PlaneGeometry(0.75, 1.1), new THREE.MeshStandardMaterial({ color: c, roughness: 0.8, side: THREE.DoubleSide })); fl.position.set(x + 0.4, y + 2.0, -93.6); fl.rotation.set(0, 0.25, 0.05); zone.add(fl); }
     b.add('stoneDark', new THREE.CylinderGeometry(0.5, 0.6, 0.12, 16), { pos: [23.6, y + 0.06, -93.6] }, { uv: 0.5 });
-    deskSet(P, b, world, 18, y, -108.5, 0, { lamp: 'green', red: true }); deskSet(P, b, world, 22.5, y, -108.5, 0, { lamp: 'green', pc: false });
-    cabinetRow(P, world, 6.5, y, -117.35, 0, 4, 0.62, 'file_cabinet', 1.35);
-    rug(b, 10, -101.8, 6.4, 5.2, y, 'dz_rugNavy'); rug(b, 20.2, -108.5, 7.4, 4.0, y, 'dz_rugRed');
+    if (!R3.floor2_liaison) { deskSet(P, b, world, 18, y, -108.5, 0, { lamp: 'green', red: true }); deskSet(P, b, world, 22.5, y, -108.5, 0, { lamp: 'green', pc: false }); }
+    if (!R3.floor2_liaison) cabinetRow(P, world, 6.5, y, -117.35, 0, 4, 0.62, 'file_cabinet', 1.35);
+    rug(b, 10, -101.8, 6.4, 5.2, y, 'dz_rugNavy'); if (!R3.floor2_liaison) rug(b, 20.2, -108.5, 7.4, 4.0, y, 'dz_rugRed');
     const lt = new THREE.Group(); const env = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.006, 0.16), M.kraft); lt.add(env); const seal = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.008, 12), M.waxRed); seal.position.y = 0.006; lt.add(seal); lt.position.set(10.7, y + 0.505, -102.0); lt.rotation.y = 0.3; zone.add(lt);
-    for (const [x, z] of [[26.2, -94.2], [1.4, -116.6], [26.2, -116.6], [8, -93.6]]) plantPot(b, x, y, z, 1.1);
+    if (!R3.floor2_liaison) for (const [x, z] of [[26.2, -94.2], [1.4, -116.6], [26.2, -116.6], [8, -93.6]]) plantPot(b, x, y, z, 1.1);
     P.add('chandelier', [14, y + H - 1.7, -100], { h: 1.3 }); P.add('chandelier', [14, y + H - 1.7, -110], { h: 1.3 });
     point(zone, 0xffd2a0, 6, [14, y + H - 1.8, -100], 9); point(zone, 0xffd2a0, 6, [14, y + H - 1.8, -110], 9);
     // —— 宣传处：海报墙（窗间）、摄像机与补光灯、打样桌（被否海报+印章）、吊灯 ——
@@ -114,14 +116,14 @@ export async function buildDressing(scene, world, ctx) {
     coffered(b, -28, -9.6, -92, -120, y + H, { cell: 3.0, lightEvery: 2, beam: 'dz_beam' });
     tGrid(b, -9.45, 9.45, -92.2, -119.8, y + H); tGrid(b, 9.75, 28, -92.2, -119.8, y + H, { warm: false, lx: 4.8 });
     // 办公区：桌面杂物（工位岛已有显示器/椅），文件柜墙、打印机、饮水机、挂钟、吊牌
-    for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) { const x = -24 + k * 7, z = -98 - r * 6, t = y + 0.79; for (const dx of [-1.6, 0, 1.6]) for (const dz of [-0.55, 0.55]) { const sx = x + dx + 0.5, sz = z + dz * 1.2; if ((r + k + dx) % 2) paperStack(b, sx, t, sz, dz * 2, 4); else folderStack(b, sx, t, sz, dz, 3); P.add('keyboard', [x + dx, t, z + dz * 1.15], { w: 0.42, yaw: dz > 0 ? 0 : Math.PI }); } telephone(b, x - 2.1, t, z + 0.6, 0.3); greenLamp(b, x + 2.1, t, z - 0.6, Math.PI); bin(b, x + 2.8, y, z + 1.4); }
-    cabinetRow(P, world, -19, y, -119.4, 0, 14, 0.62, 'file_cabinet', 1.35);
-    b.box('paintedSteel', 1.0, 1.1, 0.7, [-11, y + 0.55, -116], { uv: 1, collide: true }); b.box('dz_bakelite', 0.9, 0.12, 0.6, [-11, y + 1.16, -116], { uv: false }); paperStack(b, -11, y + 1.22, -116, 0, 5);
-    b.add('dz_glassDark', new THREE.CylinderGeometry(0.16, 0.16, 0.45, 16), { pos: [-11, y + 1.45, -112.5] }, { uv: false }); b.box('paintedSteel', 0.4, 1.1, 0.4, [-11, y + 0.55, -112.5], { uv: 1, collide: true });
-    P.add('wall_clock', [-18, y + 3.6, -119.6], { w: 0.55 }); P.add('fire_alarm', [-26.5, y + 1.5, -119.7], { h: 0.15 }); P.add('extinguisher', [-26.5, y, -119.3], { h: 0.6 });
+    if (!R3.floor3_office) { for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) { const x = -24 + k * 7, z = -98 - r * 6, t = y + 0.79; for (const dx of [-1.6, 0, 1.6]) for (const dz of [-0.55, 0.55]) { const sx = x + dx + 0.5, sz = z + dz * 1.2; if ((r + k + dx) % 2) paperStack(b, sx, t, sz, dz * 2, 4); else folderStack(b, sx, t, sz, dz, 3); P.add('keyboard', [x + dx, t, z + dz * 1.15], { w: 0.42, yaw: dz > 0 ? 0 : Math.PI }); } telephone(b, x - 2.1, t, z + 0.6, 0.3); greenLamp(b, x + 2.1, t, z - 0.6, Math.PI); bin(b, x + 2.8, y, z + 1.4); } }
+    if (!R3.floor3_office) { cabinetRow(P, world, -19, y, -119.4, 0, 14, 0.62, 'file_cabinet', 1.35); }
+    if (!R3.floor3_office) { b.box('paintedSteel', 1.0, 1.1, 0.7, [-11, y + 0.55, -116], { uv: 1, collide: true }); b.box('dz_bakelite', 0.9, 0.12, 0.6, [-11, y + 1.16, -116], { uv: false }); paperStack(b, -11, y + 1.22, -116, 0, 5); }
+    if (!R3.floor3_office) { b.add('dz_glassDark', new THREE.CylinderGeometry(0.16, 0.16, 0.45, 16), { pos: [-11, y + 1.45, -112.5] }, { uv: false }); b.box('paintedSteel', 0.4, 1.1, 0.4, [-11, y + 0.55, -112.5], { uv: 1, collide: true }); }
+    if (!R3.floor3_office) { P.add('wall_clock', [-18, y + 3.6, -119.6], { w: 0.55 }); P.add('fire_alarm', [-26.5, y + 1.5, -119.7], { h: 0.15 }); P.add('extinguisher', [-26.5, y, -119.3], { h: 0.6 }); }
     hangingSign(zone, M, '政策研究室', -24, y + 3.8, -110.5, Math.PI / 2, 1.8); hangingSign(zone, M, '法务处　·　B 级许可', -13, y + 3.9, -100.5, Math.PI / 2, 2.0);
-    for (const [x, z] of [[-26.6, -93.6], [-11, -93.6], [-26.6, -118.6], [-14, -118.6]]) plantPot(b, x, y, z, 1.0);
-    rug(b, -20.5, -104, 15, 17, y, 'dz_rugGreen');
+    if (!R3.floor3_office) { for (const [x, z] of [[-26.6, -93.6], [-11, -93.6], [-26.6, -118.6], [-14, -118.6]]) plantPot(b, x, y, z, 1.0); }
+    if (!R3.floor3_office) { rug(b, -20.5, -104, 15, 17, y, 'dz_rugGreen'); }
     // 医务室：病床 ×2（隔帘）、输液架、净化舱、玻璃药柜、洗手台
     for (const z of [-102, -106]) { const x = -6.4; b.box('steel', 0.95, 0.5, 2.0, [x, y + 0.3, z], { uv: 1, collide: true }); b.box('whitePad', 0.9, 0.16, 1.95, [x, y + 0.63, z], { uv: 1 }); b.box('whitePad', 0.6, 0.1, 0.4, [x, y + 0.75, z - 0.75], { uv: 1 }); b.box('steel', 0.95, 0.5, 0.04, [x, y + 0.85, z - 1.0], { uv: 1 }); b.add('steel', new THREE.CylinderGeometry(0.012, 0.012, 1.8, 6), { pos: [x + 0.7, y + 0.9, z - 0.7] }, { uv: 1 }); b.box('dz_glassDark', 0.14, 0.22, 0.05, [x + 0.7, y + 1.7, z - 0.7], { uv: false }); const cur = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 2.2, 12, 1), new THREE.MeshStandardMaterial({ color: 0x9cb4a8, roughness: 0.9, side: THREE.DoubleSide })); const pp = cur.geometry.attributes.position; for (let i = 0; i < pp.count; i++) pp.setZ(i, Math.sin(pp.getX(i) * 8) * 0.05); cur.geometry.computeVertexNormals(); cur.position.set(x + 0.7, y + 1.4, z + 1.2); zone.add(cur); b.box('steel', 0.03, 0.03, 2.6, [x + 1.2, y + 2.55, z], { uv: 1 }); }
     { const px = 4.6, pz = -116.5; b.add('steel', new THREE.CylinderGeometry(0.9, 0.95, 0.25, 32), { pos: [px, y + 0.125, pz] }, { uv: 1, collide: true }); b.add('steel', new THREE.CylinderGeometry(0.9, 0.9, 0.18, 32), { pos: [px, y + 2.6, pz] }, { uv: 1 }); const gl = new THREE.Mesh(new THREE.CylinderGeometry(0.82, 0.82, 2.3, 32, 1, true), M.glassClear); gl.position.set(px, y + 1.4, pz); zone.add(gl); const liquid = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 2.1, 24, 1, true), new THREE.MeshBasicMaterial({ color: 0xffc35a, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); liquid.position.set(px, y + 1.35, pz); zone.add(liquid); ctx.rooms.pod = liquid; point(zone, 0xffc35a, 3, [px, y + 1.4, pz], 5); const pl = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.2), tagMaterial('净化舱　01')); pl.position.set(px, y + 2.85, pz + 0.95); zone.add(pl); }
@@ -348,6 +350,7 @@ export async function buildDressing(scene, world, ctx) {
     finish(zone, b, P);
   }
 
+  jobs.push(buildR3(ctx, world, MAT));
   await Promise.all(jobs);
 }
 
