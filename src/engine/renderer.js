@@ -43,7 +43,9 @@ export class Renderer {
     this.resize();
   }
   setQuality(q) {
-    this.q = QUALITY[q] ?? QUALITY.high;
+    this.q = { ...(QUALITY[q] ?? QUALITY.high) };
+    const qo = new URLSearchParams(location.search).get('qo'); // 调试：?qo=reflect=0,shadowsLocal=0 覆盖画质档开关
+    if (qo) for (const kv of qo.split(',')) { const [k, v] = kv.split('='); this.q[k] = v === 'true' ? true : v === 'false' ? false : isNaN(+v) ? v : +v; }
     this.qName = q;
     const pr = Math.min(this.q.pixelRatio, devicePixelRatio || 1) * (window.__SHOT__ ? 1 : 1);
     this.gl.setPixelRatio(window.__SHOT__ ? 1 : pr);

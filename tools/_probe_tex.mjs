@@ -1,0 +1,18 @@
+import { chromium } from 'playwright-core';
+import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path';
+const ROOT = path.resolve('dist');
+const MIME={'.js':'text/javascript','.html':'text/html','.css':'text/css','.json':'application/json','.webp':'image/webp','.glb':'model/gltf-binary'};
+const srv = http.createServer((req, res) => { let p = decodeURIComponent(req.url.split('?')[0]); if (p.endsWith('/')) p += 'index.html'; const f = path.join(ROOT, p); if (!fs.existsSync(f)) { res.writeHead(404); return res.end(); } res.writeHead(200,{'Content-Type':MIME[path.extname(f)]||'application/octet-stream'}); fs.createReadStream(f).pipe(res); }).listen(0);
+const b = await chromium.launch({ executablePath: '/workspace/work/tools/pw-browsers/chromium_headless_shell-1148/chrome-linux/headless_shell', args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--no-sandbox'] });
+const p = await b.newPage();
+await p.goto(`http://localhost:${srv.address().port}/?test=1&q=ultra`);
+await p.waitForFunction(() => window.__NB__, null, { timeout: 300000, polling: 1000 });
+const r = await p.evaluate(() => { const G = window.G; window.__NB__.setZone('security_hall'); const vis=(o)=>{for(let a=o;a;a=a.parent) if(!a.visible) return false; return true;}; const gl = document.createElement('canvas').getContext('webgl2');
+  const out = { maxTex: gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS), maxCombined: gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS) };
+  const sc = G.scene || G.ctx.scene; let spotS = 0, ptS = 0, dirS = 0, spot = 0, qs = 0;
+  sc.traverse((o) => { if (o.isSpotLight) { spot++; if (o.castShadow && vis(o)) spotS++; if (o.userData.qualityShadow) qs++; } if (o.isPointLight && o.castShadow) ptS++; if (o.isDirectionalLight && o.castShadow) dirS++; });
+  Object.assign(out, { spot, spotS, qs, ptS, dirS });
+  const mats = {}; G.ctx.zones.security_hall.traverse((o) => { if (o.isMesh && /^H_/.test(o.name)) { const m = o.material; mats[o.name] = ['map','normalMap','roughnessMap','metalnessMap','aoMap','lightMap','emissiveMap','envMap','bumpMap'].filter(k => m[k]).join('+') + ' ' + m.type; } });
+  out.mats = mats; return out; });
+console.log(JSON.stringify(r, null, 1));
+await b.close(); srv.close();

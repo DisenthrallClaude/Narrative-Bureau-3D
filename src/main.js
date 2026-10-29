@@ -64,10 +64,16 @@ const HALL_PROBE = !params.has('legacy') && !params.has('legacyhall'); // R2：�
 let envSky = null, envHall = null, skyTex = null;
 const reflector = new PlanarReflector(R.gl, { y: FLOOR });
 
+// R2：hero 大厅可见时（广场/正门/大厅/档案馆/食堂）关掉局部聚光实时投影——大厅阴影已烘进光照贴图；
+// 同屏 16 盏投影聚光会让 hero 材质在 SwiftShader 下整体不出图（无 shader 报错，?qo=shadowsLocal=false 即正常，2026-10-29 实测）
+function spotShadows() {
+  const on = R.q.shadowsLocal && !(HALL_PROBE && G.zone && VIS[G.zone]?.security_hall);
+  scene.traverse((o) => { if (o.isSpotLight && o.userData.qualityShadow) o.castShadow = on; });
+}
 function applyQuality(q) {
   R.setQuality(q); localStorage.setItem('nb_quality', q);
   setShadowSize(R.q.shadow);
-  scene.traverse((o) => { if (o.isSpotLight && o.userData.qualityShadow) o.castShadow = R.q.shadowsLocal; });
+  spotShadows();
   for (const s of ctx.shafts ?? []) s.visible = R.q.shafts;
   UI.ui.markQ?.(q);
 }
@@ -254,6 +260,7 @@ function setZone(z, force = false) {
   { const deep = /^(abyss|seventh)/.test(z); scene.background = deep ? new THREE.Color(L.fog[0]) : skyTex; }
   targetExp = z === 'plaza' ? TOD.plazaExp : L.exp;
   reflector.enabled = z === 'gate' || z === 'security_hall';
+  if (R.q) spotShadows();
   if (prev && AREA_NAMES[z]) UI.showArea(...AREA_NAMES[z]);
   audio.setZone(z);
   for (const f of G.onZone) f(z, prev);

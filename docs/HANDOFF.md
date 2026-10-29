@@ -21,6 +21,8 @@
 - [19:45] 新增 tools/blender/pbr.py（按材质名接 Poly Haven/ambientCG 实拍贴图 + 色差/雨痕/AO 污垢层 + 按角度平滑修黑面）、apply_pbr.py、render_views.py（Cycles 样板渲染）、tools/denoise.py
 - [19:45] three：hero.js hallMats()（与 pbr.py 同贴图同色调）、placeHero lmInPlace；interiors.js buildHall 在 HERO_HALL 下建筑/固定陈设改走 bA 丢弃批次 + heroHall()；reflect.js patch 串联；main.js 大厅探针 hall_probe.hdr、精修地面平面反射；shots.js 加 hall_aisle
 - [20:07] 拱廊墙 t 1.2→0.9（墙面在束柱细柱间露出成黑条）；Cycles 实测 ~7 万采样/秒 → 4096/64spp 要 2 小时，改 2048/24spp（探针 768×384/24spp）重烘中；tools/bake_hall.sh 一键烘焙+转 WebP+探针+meshopt；tools/shot_r2.sh A|B 截图会话；tools/r2_compare.py 拼图
+- [20:44 接手 blender-lead-3] save.sh → e5b47c8 推送 + Drive 快照（1AxRm2Q4…，468 MB）。旧 r2/hall.png「只有地面」不是代码版本问题：低画质完整显示，**ultra/high 才不出**。
+- [21:25] 根因定位：shadowsLocal（16 盏投影聚光灯）开启时 hero 大厅材质在 SwiftShader 下整体不出图（无 shader 报错），?qo=shadowsLocal=false 即完整显示。修复第1版（只关 security_hall 组内聚光）无效——大厅自身投影聚光在 HERO 下已去掉，16 盏来自同屏相邻分区；第2版 main.js spotShadows()：凡 hero 大厅可见的分区（VIS[z].security_hall）全局关局部聚光投影，setZone/applyQuality 都调用。探针确认大厅可见时投影聚光 0 盏。renderer.js 新增调试参数 ?qo=key=val,...（覆盖画质档开关）。
 - 下一步：hall 光照贴图烘焙（apply_pbr + bake_lm，4096/64spp）→ lm 转 WebP、probe → public/assets/hdri/hall_probe.hdr、GLB meshopt → 构建 → A 截图会话 → B 截图会话 → Cycles 样板 → 拼图 → 提交
 
 
