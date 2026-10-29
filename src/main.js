@@ -20,6 +20,7 @@ import { buildVault, updateVault, setupElevator } from './world/vault.js';
 import { buildRooms, updateRooms } from './world/rooms.js';
 import { buildUpper, updateUpper } from './world/upper.js';
 import { buildDressing, updateDressing } from './world/dressing.js';
+import { buildR3 } from './world/r3build.js';
 import { installSkyFog } from './engine/skyfog.js';
 import { mats } from './world/mats.js';
 import { setupStory } from './story.js';
@@ -96,7 +97,7 @@ async function boot() {
   scene.background = sky; scene.backgroundIntensity = SKY_I;
   scene.environment = envSky;
   LOG('hdr ok'); UI.loadProgress(0.1, '建造主楼……');
-  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx); await buildDressing(scene, world, ctx); await buildM5(scene, world, ctx); await buildSurface(scene, world, ctx); await buildDepths(scene, world, ctx);
+  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx); await buildDressing(scene, world, ctx); await buildM5(scene, world, ctx); await buildSurface(scene, world, ctx); await buildDepths(scene, world, ctx); await buildR3(ctx, world, ctx._r3mat, true);
   LOG('world built'); scene.add(world.build()); inter.blocker = world.collider; LOG('bvh ok');
   // 反射地面
   const M = mats();
@@ -256,6 +257,8 @@ function setZone(z, force = false) {
   sun.intensity = L.sun * TOD.sunMul; sun.castShadow = L.sun > 0;
   // M7 性能：室外有阳光时，室内组（安检大厅/档案馆/东翼…）只是透过门洞可见，不再投进阳光阴影图（原广场多渲染 ~0.9M 阴影三角面）；室内区恢复（高画质局部阴影要用）
   { const sunOn = L.sun > 0; for (const [k, g] of Object.entries(ctx.zones)) { if (k === 'surface' || k === 'gate') continue; if (!g.userData.casters) { g.userData.casters = []; g.traverse((o) => { if (o.isMesh && o.castShadow) g.userData.casters.push(o); }); } for (const o of g.userData.casters) o.castShadow = !sunOn; } } hemi.intensity = L.env === 'sky' && L.sun > 0 ? L.hemi * TOD.hemiMul : L.hemi;
+  // 批次4 性能：站在正门门廊里，外立面/广场只透过门洞可见，门廊自身墙顶已投影 → 外部组不进阳光阴影图（zonestat：gate 阴影三角面 6.08M）
+  { const off = z === 'gate' && !/[?&]extShadow=1/.test(location.search); scene.getObjectByName('exterior').traverse((o) => { if (!o.isMesh) return; if (o.userData.cs0 === undefined) o.userData.cs0 = o.castShadow; o.castShadow = o.userData.cs0 && !off; if (/^F_(trim|slate|lead)$/.test(o.name)) o.visible = !off || /[?&]facadeAll=1/.test(location.search); }); } // 门廊内看不到外立面线脚/屋面（F_trim 1.58M 面）→ 隐藏
   scene.fog = new THREE.FogExp2(L.fog[0], L.fog[1]);
   { const deep = /^(abyss|seventh)/.test(z); scene.background = deep ? new THREE.Color(L.fog[0]) : skyTex; }
   targetExp = z === 'plaza' ? TOD.plazaExp : L.exp;

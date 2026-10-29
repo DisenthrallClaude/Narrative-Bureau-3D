@@ -248,7 +248,7 @@ export function vaultMats(M) {
 export function room(b, world, M, x0, x1, z0, z1, y, h, floor, wall, o = {}) {
   b.box(floor, x1 - x0, 0.2, z0 - z1, [(x0 + x1) / 2, y - 0.1, (z0 + z1) / 2], { uv: 0.3, collide: true });
   b.box(o.ceil ?? wall, x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, y + h + 0.15, (z0 + z1) / 2], { uv: 0.25 });
-  wallX(b, wall, x0 - 0.2, z0, z1, y, h, 0.4, [], true);
+  wallX(b, wall, x0 - 0.2, z0, z1, y, h, 0.4, o.westHoles ?? [], true);
   wallX(b, wall, x1 + 0.2, z0, z1, y, h, 0.4, [], true);
   if (!o.noFront) wallZ(b, wall, z0, x0, x1, y, h, 0.4, o.frontHole ? [o.frontHole] : o.doorX ? [{ x0: o.doorX[0], x1: o.doorX[1], h: 3.2 }] : [], true);
   if (!o.noBack) wallZ(b, wall, z1, x0, x1, y, h, 0.4, o.backHoles ?? (o.backHole ? [{ x0: o.backHole[0], x1: o.backHole[1], h: o.backHole[2] }] : []), true);

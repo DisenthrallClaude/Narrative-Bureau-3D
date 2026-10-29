@@ -153,7 +153,7 @@ export function buildRooms(scene, world, ctx) {
     elevatorHall(b, zone, world, ctx, M, Mx, 'B2', y);
     const Z0 = -92, Z1 = -136, H = 4.2, cz = (Z0 + Z1) / 2;
     // 中央走廊 x ±2.2
-    room(b, world, M, -2.2, 2.2, Z0, Z1, y, H, 'b2Floor', 'quilt', { noFront: true });
+    room(b, world, M, -2.2, 2.2, Z0, Z1, y, H, 'b2Floor', 'quilt', { noFront: true, westHoles: R3.b2 ? [{ z0: -99.5, z1: -102.5, h: 2.4 }, { z0: -115.4, z1: -116.6, h: 2.3 }] : [{ z0: -99.5, z1: -102.5, h: 2.4 }] }); // 批次4：走廊西墙（x −2.6…−2.2）也开门洞，原来只在叠加墙上开了洞
     // 西侧：审讯室 + 观察间（单向玻璃），用走廊西墙上的门洞进入
     b.box('b2Floor', 10, 0.2, 12, [-7.4, y - 0.1, -101], { uv: 0.3, collide: true });
     b.box('concreteWall', 10, 0.3, 12, [-7.4, y + H + 0.15, -101], { uv: 0.3 });

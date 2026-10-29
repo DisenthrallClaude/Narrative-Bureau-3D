@@ -10,7 +10,7 @@ import { FLOOR } from './exterior.js';
 import { point, rectLight, spot, brassPlaqueMaterial } from './interiors.js';
 import { lightShaft } from '../engine/fx.js';
 
-const ZONE_OF = { floor3_office: ['floor3', () => UPPER['3F']], floor2_liaison: ['floor2', () => UPPER['2F']], floor2_pub: ['floor2', () => UPPER['2F']], director: ['director', () => UPPER['12F']], gate: ['gate', () => FLOOR], archive: ['archive', () => FLOOR], command_center: ['east_wing', () => FLOOR + 7], canteen: ['canteen', () => FLOOR], b1: ['armory', () => -10], b2: ['interrogation', () => -18], archive_b1: ['archive_b1', () => FLOOR - 6], b4: ['vault_b4', () => -34], b5: ['vault_b5', () => -42], b6: ['training', () => -52], b7: ['abyss', () => -300] };
+const ZONE_OF = { floor3_office: ['floor3', () => UPPER['3F']], floor2_liaison: ['floor2', () => UPPER['2F']], floor2_pub: ['floor2', () => UPPER['2F']], director: ['director', () => UPPER['12F']], gate: ['gate', () => FLOOR], archive: ['archive', () => FLOOR], command_center: ['east_wing', () => FLOOR + 7], canteen: ['canteen', () => FLOOR], b1: ['armory', () => -10], b2: ['interrogation', () => -18], archive_b1: ['archive_b1', () => FLOOR - 6], b4: ['vault_b4', () => -34], b5: ['vault_b5', () => -42], b6: ['training', () => -52], b7: ['abyss', () => -300], medical: ['floor3', () => UPPER['3F']] };
 // 做旧：冷轧钢/喷漆钢件压暗、偏橄榄灰、提高粗糙度（「过白过新」）
 const AGE = { office_desk: [0.62, 0.64, 0.58, 0.62], file_cabinet: [0.7, 0.7, 0.64, 0.6], 'r2/mfp_office_printer': [0.8, 0.78, 0.72, 0.55], 'r2/old_radiator': [0.75, 0.72, 0.66, 0.6], 'r2/hand_truck': [0.7, 0.68, 0.62, 0.7], 'r2/steel_frame_shelves_02': [0.7, 0.7, 0.66, 0.7], 'r2/fire_extinguisher': [0.85, 0.8, 0.78, 0.5], 'r2/electrical_panel_c': [0.75, 0.75, 0.7, 0.6], monitor: [0.8, 0.78, 0.72, 0.6] };
 const _aged = new Map();
@@ -25,10 +25,11 @@ const _tex = new Map();
 const tex = (p) => { if (!_tex.has(p)) _tex.set(p, loadTex('content/' + p, { srgb: true })); return _tex.get(p); };
 const FRAME = { gold: 'gold', wood: 'dz_wain2', black: 'blackMetal', cork: 'dz_wain2' };
 
-export async function buildR3(ctx, world, MAT) {
-  const jobs = [];
+const LATE = new Set(['b7']); // 墨渊等深层区在 buildDepths 之后才建 zone → main.js 末尾再调一次 buildR3(..., true)
+export async function buildR3(ctx, world, MAT, late = false) {
+  const jobs = []; ctx._r3mat = MAT;
   for (const [id, on] of Object.entries(R3)) {
-    if (!on || !ZONE_OF[id]) continue;
+    if (!on || !ZONE_OF[id] || LATE.has(id) !== late) continue;
     const [zn, yf] = ZONE_OF[id]; const zone = ctx.zones[zn]; if (!zone) continue;
     const plan = PLANS[id](yf()); const P = new Props(), b = new Batch();
     for (const it of plan.items) {

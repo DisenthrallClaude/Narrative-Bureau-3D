@@ -70,7 +70,7 @@ export function dressMats(M) {
     dz_cork: new THREE.MeshStandardMaterial({ color: 0x8a6440, roughness: 1 }),
     // —— R3 批次3：地面分区材质（走廊石材 / 办公地毯 / 茶水间地砖 / 库房地胶）+ 磨损贴花 ——
     r3_corr: W(pbr('Terrazzo005', { rn: true, color: 0xc9c1b2, roughness: 0.42, env: 0.4 }), { macro: 0.16, dust: 0.08, rough: 0.25 }),
-    r3_check: W(new THREE.MeshStandardMaterial({ map: checker('#aaa190', '#71695c', '#857e70', 8), roughness: 0.4, envMapIntensity: 0.5 }), { macro: 0.14, dust: 0.06 }),
+    r3_check: W(pbr('Terrazzo005', { rn: true, color: 0x9c968a, roughness: 0.5, env: 0.45 }), { macro: 0.16, grime: 0.12, dust: 0.06 }), // 批次4：走廊棋盘 → 暖灰水磨石
     r3_stoneBorder: W(pbr('Marble016', { rn: true, color: 0x3a3632, roughness: 0.4, env: 0.5 }), { macro: 0.1 }),
     r3_carpet: W(pbr('Carpet012', { color: 0x4a5866, roughness: 1 }), { macro: 0.22, dust: 0.1 }),
     r3_carpetGreen: W(pbr('Carpet012', { color: 0x46564a, roughness: 1 }), { macro: 0.22, dust: 0.1 }),

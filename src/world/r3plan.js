@@ -4,7 +4,7 @@
 // 每个条目：{ m: 模型路径(相对 assets/models), x, y, z, yaw, h|w|d: 目标尺寸, tag: 功能分组, on: 'floor'|'desk'|'wall'|'ceil', col: [w,h,d] 碰撞盒 }
 // 每个区的「平面规划说明」同时写进 docs/HANDOFF.md「R3 每区布局说明」。
 
-export const R3 = { floor3_office: true, floor2_liaison: true, floor2_pub: true, director: true, gate: true, archive: true, command_center: true, canteen: true, b1: true, b2: true, archive_b1: true, b4: true, b5: true, b6: true, b7: true };
+export const R3 = { floor3_office: true, floor2_liaison: true, floor2_pub: true, director: true, gate: true, archive: true, command_center: true, canteen: true, b1: true, b2: true, archive_b1: true, b4: true, b5: true, b6: true, b7: true, medical: true };
 
 const rot = (yaw, lx, lz) => [lx * Math.cos(yaw) + lz * Math.sin(yaw), -lx * Math.sin(yaw) + lz * Math.cos(yaw)];
 const at = (o, yaw, lx, lz) => { const [dx, dz] = rot(yaw, lx, lz); return [o[0] + dx, o[1] + dz]; };
@@ -273,8 +273,8 @@ export function planFloor3Office(y) {
   for (const [x, z, yaw] of [[-25.3, -96.5 - 0.07, ROT.N], [-19.0, -108.6 + 0.07, 0], [-12.6, -101.4 + 0.07, 0], [X1 - 0.02, -108.2, ROT.W], [-27.83, -112, ROT.E]]) sconce(out, x, y + 2.2, z, yaw);
   out.push({ win: true, x: X0 + 0.3, y: y + 2.0, z: -105, look: [X0 + 6, y + 0.8, -105], w: 0.6, h: 22, c: 0xc0d0ff, i: 1.6, size: [0.1, 0.1, 22], tag: '窗光', on: 'light' });
   // —— 批次3：地面分区（走廊水磨石 + 石材收边 / 开敞区与处室地毯 / 茶水间地砖 / 档案区地胶 / 打字室拼花）+ 磨损 ——
-  floorZ(out, 'r3_check', X0, -15.4, -98.6, -96.5, y, { uv: 0.21, border: 0.14 });
-  floorZ(out, 'r3_check', -15.4, X1, -101.4, -96.5, y, { uv: 0.21, border: 0.14 });
+  floorZ(out, 'r3_check', X0, -15.4, -98.6, -96.5, y, { uv: 1.5, border: 0.14 });
+  floorZ(out, 'r3_check', -15.4, X1, -101.4, -96.5, y, { uv: 1.5, border: 0.14 });
   floorZ(out, 'r3_carpet', X0, -15.4, -108.6, -98.6, y, { border: 0.1, bmat: 'dz_wain2' });
   floorZ(out, 'r3_parquet', X0, -21.0, -96.5, Z1, y, { uv: 0.4 });
   floorZ(out, 'r3_tile', -21.0, -16.0, -96.5, Z1, y, { uv: 0.42 });
@@ -370,8 +370,8 @@ export function planFloor2Liaison(y) {
   for (const dx of [-0.6, 0.6]) out.push({ m: 'r2/dining_chair_02', x: 4.8 + dx, y, z: -113.75, yaw: Math.PI + dx * 0.2, h: 0.98, tag: '地图桌', on: 'floor' });
   for (const x of [17.3, 19.9]) out.push({ m: 'r2/church_pew_bench', x, y, z: -113.7, yaw: ROT.N, w: 1.5, tag: '观览长椅', on: 'floor' });
   // —— 批次3：地面分区 + 磨损 + 吊灯 + 窗光 ——
-  floorZ(out, 'r3_check', 0.32, 27.85, -97.5, -92.2, y, { uv: 0.21, border: 0.16 });
-  floorZ(out, 'r3_check', 14.6, 20.6, -111.2, -97.5, y, { uv: 0.21, border: 0.16 });
+  floorZ(out, 'r3_check', 0.32, 27.85, -97.5, -92.2, y, { uv: 1.5, border: 0.16 });
+  floorZ(out, 'r3_check', 14.6, 20.6, -111.2, -97.5, y, { uv: 1.5, border: 0.16 });
   floorZ(out, 'r3_corr', 0.32, 27.85, -117.55, -111.2, y, { border: 0.16 });
   floorZ(out, 'r3_corr', 20.6, 27.85, -111.2, -107.5, y, {});
   floorZ(out, 'r3_carpet', 0.32, 14.6, -111.2, -97.5, y, { border: 0.1, bmat: 'dz_wain2' });
@@ -472,8 +472,8 @@ export function planFloor2Pub(y) {
   out.push({ m: 'r2/portable_searchlight', x: -2.9, y, z: -108.8, yaw: 0.6, h: 0.4, tag: '器材间', on: 'floor' });
   out.push({ m: 'r2/metal_tool_chest', x: -3.6, y, z: -109.0, yaw: 0, h: 0.75, tag: '器材间', on: 'floor' });
   // —— 批次3：地面分区 + 磨损 + 吊灯 + 窗光 ——
-  floorZ(out, 'r3_check', X0, X1, -99.6, -97.0, y, { uv: 0.21, border: 0.14 });
-  floorZ(out, 'r3_check', -8.0, X1, -97.0, Z1, y, { uv: 0.21, border: 0.14 });
+  floorZ(out, 'r3_check', X0, X1, -99.6, -97.0, y, { uv: 1.5, border: 0.14 });
+  floorZ(out, 'r3_check', -8.0, X1, -97.0, Z1, y, { uv: 1.5, border: 0.14 });
   floorZ(out, 'r3_carpet', X0, -8.0, -97.0, Z1, y, { border: 0.1, bmat: 'dz_wain2' });
   floorZ(out, 'r3_corr', -21.0, -8.0, -104.0, -99.6, y, { border: 0.16 });
   floorZ(out, 'r3_carpetRed', -21.0, -8.0, Z0, -104.0, y, {});
@@ -523,7 +523,7 @@ export function planDirector(y) {
   for (const x of [-9.0, 9.0]) sconce(out, x, y + 2.6, Z1 - 0.62, Math.PI);
   light(out, 0, y + 2.2, -104.2, 0xffd8a8, 2.5, 6); light(out, -9.6, y + 2.0, -100, 0xff9a50, 2, 6);
   // —— 批次3：入口石材走廊（电梯厅 → 大班台）+ 大班台下波斯纹地毯 + 磨损 + 北窗光柱 ——
-  floorZ(out, 'r3_check', -3.0, 1.2, -102.6, -92.9, y, { uv: 0.21, border: 0.12 });
+  floorZ(out, 'r3_check', -3.0, 1.2, -102.6, -92.9, y, { uv: 1.5, border: 0.12 });
   rug(out, 'dz_rugRed', 0, y + 0.01, -105.2, 5.2, 4.0);
   wear(out, -2.4, 0.6, -102.4, -93.2, y);
   for (const x of [-4.6, 0, 4.6]) winShaft(out, x, y + 3.2, Z0 + 0.15, 0, 1, { i: 1.1, spot: x === 0, len: 8 });
@@ -611,7 +611,7 @@ export function planArchive(y) {
   for (const [x, z] of [[-21.3, -44.6], [-26.6, -62.4]]) out.push({ m: 'r2/mousetrap', x, y, z, yaw: 0.7, w: 0.16, tag: '开架区', on: 'floor' });
   for (const z of [-40.65, -42.75, -44.85, -58.45, -60.55, -62.65]) globe(out, -24.05, z, y, TOP - y, 3.1, { r: 0.18 });
   // ② 东门入口：石材门厅 + 还档分拣台 + 灭火器（档案馆禁水，不设消火栓）
-  floorZ(out, 'r3_check', -27.4, -20.15, -56.4, -46.6, y, { uv: 0.21, border: 0.14 });
+  floorZ(out, 'r3_check', -27.4, -20.15, -56.4, -46.6, y, { uv: 1.5, border: 0.14 });
   out.push({ m: 'r2/woodentable_01', x: -23.2, y, z: -47.6, yaw: Math.PI, fit: [2.2, 0.82, 0.8], tag: '还档分拣台', on: 'floor', col: [2.2, 0.82, 0.8] });
   for (const [dx, m, sz] of [[-0.7, 'r2/wooden_flat_filing_tray', { w: 0.34 }], [0.0, 'r2/several_folders', { h: 0.3 }], [0.7, 'r2/desk_bell', { w: 0.1 }]]) out.push({ m, x: -23.2 + dx, y: y + 0.82, z: -47.65, yaw: Math.PI, ...sz, tag: '还档分拣台', on: 'desk' });
   out.push({ sign: '还档处', sub: '请勿直接放回架上', x: -23.2, y: y + 1.25, z: -47.2 - 0.01, yaw: 0, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
@@ -637,6 +637,8 @@ export function planArchive(y) {
   for (const [x, z, yaw] of [[-55.6, -32.6, Math.PI * 0.75], [-20.4, -69.4, -Math.PI * 0.25]]) out.push({ m: 'r2/cctv_camera', x, y: y + 5.4, z, yaw, h: 0.3, tag: 'K3', on: 'wall' });
   for (const z of [-46.8, -55.4]) winShaft(out, X0 + 0.2, y + 8.6, z, 1, 0, { i: 1.2, len: 12, spot: true });
   light(out, -24.0, y + 2.6, -42.7, 0xffdcb0, 3.2, 8); light(out, -24.0, y + 2.6, -60.6, 0xffdcb0, 3.2, 8); light(out, -51.5, y + 2.6, -40.2, 0xffe2c0, 2.6, 7); light(out, -54.4, y + 2.4, -59.7, 0xffe2c0, 2.2, 6); light(out, -23.8, y + 2.8, -51.5, 0xffe6c8, 2.6, 7);
+  // 批次4：档案馆偏暗 → 阅览区/书架通道上方 6 盏暖色补光（模拟大吊灯与台灯群的整体照度）
+  for (const [x, z] of [[-46, -45], [-38, -45], [-30, -45], [-46, -58], [-38, -58], [-30, -58]]) light(out, x, y + 4.6, z, 0xffdcb0, 3.0, 13);
   return { room, items: out };
 }
 
@@ -814,17 +816,50 @@ export function planB2(y) {
   // ② 发电机（西南）+ 油桶 + 灭火器
   out.push({ m: 'r2/diesel_generator', x: -9.6, y, z: -121.6, yaw: 0, h: 1.4, tag: '发电机', on: 'floor', col: [1.9, 1.4, 0.95] });
   out.push({ m: 'r2/oil_drums', x: -11.7, y, z: -123.4, yaw: 0.3, h: 0.95, tag: '发电机', on: 'floor', col: [1.1, 0.95, 0.95] });
-  out.push({ m: 'r2/fire_extinguisher', x: -12.3, y, z: -119.0, yaw: ROT.E, h: 0.58, tag: 'K3', on: 'floor' });
+  out.push({ m: 'r2/fire_extinguisher', x: -12.3, y, z: -115.4, yaw: ROT.E, h: 0.58, tag: 'K3', on: 'floor' });
   // ③ 阀门站（东南）：竖管 + 阀门手轮 + 压力表；顶部主管线沿 z
   for (const [x, r, mat] of [[-4.2, 0.1, 'dz_pipe'], [-5.0, 0.08, 'dz_pipeRed'], [-5.7, 0.08, 'dz_pipe']]) { out.push({ box: mat, x, y: y + H / 2, z: Z0 + 0.25, w: r * 2, h: H, d: r * 2, tag: '阀门站', on: 'partv' }); out.push({ m: 'r2/valve_wheel_3d_scan', x, y: y + 1.35, z: Z0 + 0.25 + r + 0.06, yaw: 0, h: 0.34, tag: '阀门站', on: 'wall' }); out.push({ m: 'r2/pressure_gauge', x, y: y + 1.75, z: Z0 + 0.25 + r + 0.04, yaw: 0, h: 0.16, tag: '阀门站', on: 'wall' }); }
   for (const [c, mat, r] of [[-3.0, 'dz_pipe', 0.12], [-3.4, 'dz_pipeRed', 0.09], [-11.9, 'dz_pipe', 0.1]]) pipe(out, mat, 'z', Z0 + 0.2, Z1 - 0.2, c, y + H - 0.35, r);
   pipe(out, 'dz_pipe', 'x', X0 + 0.2, X1 - 0.2, Z0 + 0.6, y + H - 0.55, 0.1);
-  out.push({ m: 'r2/power_box_01', x: -2.75, y: y + 1.2, z: -119.0, yaw: ROT.W, h: 0.6, tag: '阀门站', on: 'wall' });
+  out.push({ m: 'r2/power_box_01', x: -3.0, y: y + 1.2, z: -119.0, yaw: ROT.W, h: 0.6, tag: '阀门站', on: 'wall' });
   // ④ 照明 + 设备带：吸顶灯槽、监控、工具箱
   for (const z of [-112.6, -117.2, -121.8]) troffer(out, -7.5, z, y, H, Math.PI / 2, 1.2, { cold: true });
   light(out, -7.5, y + 3.2, -114.0, 0xdfe8ff, 2.4, 7); light(out, -7.5, y + 3.2, -121.0, 0xdfe8ff, 2.2, 7);
-  out.push({ m: 'r2/metal_toolbox', x: -7.0, y, z: -123.8, yaw: 0.4, w: 0.5, tag: '工具', on: 'floor' });
-  out.push({ m: 'r2/cctv_camera', x: -2.7, y: y + 3.6, z: -110.4, yaw: -Math.PI * 0.75, h: 0.3, tag: 'K3', on: 'wall' });
+  out.push({ m: 'r2/metal_toolbox', x: -8.2, y, z: -123.9, yaw: 0.4, w: 0.5, tag: '工具', on: 'floor' });
+  out.push({ m: 'r2/cctv_camera', x: -3.0, y: y + 3.6, z: -110.4, yaw: -Math.PI * 0.75, h: 0.3, tag: 'K3', on: 'wall' });
+  // ⑤ 批次4 补：东墙内衬混凝土（原走廊西墙是软包面，机电间里不对）+ 门框；北墙壁挂配电箱 ×2 + 桥架；工作台 + 台钳 + 工具车；西墙备件钢架；暖气锅炉（接阀门站）；便携发电机；笼灯
+  for (const [a0, a1] of [[Z0, -116.6], [-115.4, Z1]]) out.push({ box: 'concreteWall', x: X1 - 0.24, y: y + H / 2, z: (a0 + a1) / 2, w: 0.04, h: H, d: a1 - a0, uv: 0.5, tag: '东墙内衬', on: 'partv' });
+  out.push({ box: 'dz_paintLow', x: X1 - 0.27, y: y + 0.6, z: (Z0 - 116.6) / 2, w: 0.02, h: 1.2, d: -116.6 - Z0, tag: '墙裙', on: 'partv' }); out.push({ box: 'dz_paintLow', x: X1 - 0.27, y: y + 0.6, z: (-115.4 + Z1) / 2, w: 0.02, h: 1.2, d: Z1 + 115.4, tag: '墙裙', on: 'partv' });
+  for (const dz of [-0.66, 0.66]) out.push({ box: 'r3_steelOld', x: X1 - 0.29, y: y + 1.1, z: -116.0 + dz, w: 0.1, h: 2.2, d: 0.08, tag: '门框', on: 'partv' });
+  out.push({ box: 'r3_steelOld', x: X1 - 0.29, y: y + 2.24, z: -116.0, w: 0.1, h: 0.08, d: 1.4, tag: '门框', on: 'partv' });
+  out.push({ sign: '机电间 B2-M', sub: '闲人免进 · 进出登记', x: X1 + 0.22, y: y + 1.6, z: -116.95, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
+  for (const x of [-6.6, -5.4]) out.push({ m: 'r2/electrical_panel_c', x, y: y + 1.0, z: Z1 - 0.08, yaw: Math.PI, h: 0.75, tag: '配电', on: 'wall' });
+  out.push({ box: 'r3_steelGrey', x: (X0 + X1) / 2, y: y + 3.15, z: Z1 - 0.3, w: X1 - X0 - 0.4, h: 0.06, d: 0.45, tag: '电缆桥架', on: 'partv' });
+  for (let k = 0; k < 4; k++) out.push({ box: 'dz_cable', x: (X0 + X1) / 2, y: y + 3.21, z: Z1 - 0.46 + k * 0.09, w: X1 - X0 - 0.5, h: 0.05, d: 0.05, tag: '电缆', on: 'partv' });
+  for (const x of [-11.6, -10.55, -9.5, -8.45]) out.push({ box: 'dz_cable', x, y: y + 2.65, z: Z1 - 0.3, w: 0.06, h: 1.0, d: 0.06, tag: '电缆', on: 'partv' });
+  // 工作台（东北）：木台面钢腿 + 台钳 + 工具车 + 工具挂板
+  out.push({ fixed: true, m: '固定:工作台', x: -3.85, y, z: -111.0, yaw: 0, size: [2.0, 0.9, 0.75], col: [2.0, 0.9, 0.75], tag: '工具', on: 'floor' });
+  out.push({ box: 'dz_wain', x: -3.85, y: y + 0.88, z: -111.0, w: 2.0, h: 0.05, d: 0.75, tag: '工具', on: 'partv' });
+  for (const [dx, dz] of [[-0.95, -0.33], [0.95, -0.33], [-0.95, 0.33], [0.95, 0.33]]) out.push({ box: 'r3_steelOld', x: -3.85 + dx, y: y + 0.43, z: -111.0 + dz, w: 0.05, h: 0.86, d: 0.05, tag: '工具', on: 'partv' });
+  out.push({ box: 'r3_steelOld', x: -3.85, y: y + 0.18, z: -111.0, w: 1.9, h: 0.03, d: 0.66, tag: '工具', on: 'partv' });
+  out.push({ m: 'r2/bench_vice_01', x: -3.25, y: y + 0.905, z: -111.2, yaw: Math.PI, h: 0.2, tag: '工具', on: 'shelf' });
+  out.push({ m: 'r2/metal_toolbox', x: -4.35, y: y + 0.905, z: -110.85, yaw: 0.2, w: 0.45, tag: '工具', on: 'shelf' });
+  out.push({ box: 'dz_cork', x: -3.85, y: y + 1.75, z: Z1 - 0.03, w: 1.8, h: 0.9, d: 0.03, tag: '工具挂板', on: 'partv' });
+  for (let k = 0; k < 7; k++) out.push({ box: 'r3_steelOld', x: -4.35 + k * 0.25, y: y + 1.7 + (k % 2) * 0.12, z: Z1 - 0.06, w: 0.04, h: 0.32 + (k % 3) * 0.06, d: 0.02, tag: '工具挂板', on: 'partv' });
+  out.push({ m: 'r2/tool_cart', x: -4.2, y, z: -112.6, yaw: 0.15, w: 0.8, tag: '工具', on: 'floor', col: [0.8, 0.6, 0.48] });
+  // 西墙备件钢架 ×2（电表盘南侧）
+  for (const z of [-117.0, -119.2]) { out.push({ m: 'r2/rusty_metal_shelving', x: X0 + 0.35, y, z, yaw: ROT.E, h: 2.0, tag: '备件架', on: 'floor', col: [0.66, 2.0, 2.0] });
+    for (const [dy, dz, m, sz] of [[0.42, -0.5, 'r2/cardboard_transport_shipping_box', { w: 0.45 }], [0.42, 0.45, 'r2/metal_toolbox', { w: 0.42 }], [1.02, 0.0, 'r2/plastic_crate_01', { h: 0.26 }], [1.6, -0.4, 'r2/multi_cleaner_5_litre', { h: 0.3 }], [1.6, 0.5, 'r2/cardboard_transport_shipping_box', { w: 0.4 }]]) out.push({ m, x: X0 + 0.35, y: y + dy, z: z + dz, yaw: ROT.E + 0.1, ...sz, tag: '备件架', on: 'shelf' }); }
+  // 第二列配电柜（面朝北、背靠发电机区，双列布置留 1.9 m 检修通道）
+  for (let k = 0; k < 3; k++) out.push({ m: 'r2/electrical_switchboard', x: -9.0 + k * 1.05, y, z: -117.9, yaw: 0, h: 2.1, tag: '配电', on: 'floor', col: [1.05, 2.1, 0.63] });
+  for (const x of [-9.0, -7.95, -6.9]) out.push({ box: 'dz_cable', x, y: y + 2.75, z: -117.9, w: 0.06, h: 1.3, d: 0.06, tag: '电缆', on: 'partv' });
+  out.push({ box: 'r3_steelGrey', x: -7.95, y: y + 3.42, z: -117.9, w: 3.4, h: 0.06, d: 0.4, tag: '电缆桥架', on: 'partv' });
+  // 暖气锅炉（阀门站西侧，接竖管）+ 便携发电机 + 墙上压力表
+  out.push({ m: 'r2/vintage_boiler', x: -7.0, y, z: -123.6, yaw: 0, h: 1.9, tag: '锅炉', on: 'floor', col: [0.95, 1.9, 0.65] });
+  pipe(out, 'dz_pipe', 'x', -6.4, -4.2, Z0 + 0.35, y + 1.55, 0.06);
+  out.push({ m: 'r2/portable_generator', x: -11.6, y, z: -120.6, yaw: ROT.E, w: 0.75, tag: '发电机', on: 'floor', col: [0.75, 0.55, 0.55] });
+  for (const z of [-113.0, -119.6]) out.push({ m: 'r2/industrial_pipe_lamp', x: X1 - 0.4, y: y + 2.6, z, yaw: ROT.W, h: 0.32, tag: '壁灯', on: 'wall' });
+  light(out, -4.0, y + 2.4, -111.6, 0xffe0b0, 2.0, 5); light(out, -10.6, y + 2.6, -118.2, 0xdfe8ff, 1.8, 6);
   wear(out, -8.4, -2.6, -116.7, -115.3, y);
   return { room, items: out };
 }
@@ -894,6 +929,10 @@ export function planB5(y) {
   out.push({ m: 'r2/classic_siren_with_2_speakers', x: 0, y: y + 5.0, z: Z1 - 0.2, yaw: Math.PI, h: 0.5, tag: 'K3', on: 'wall' });
   out.push({ m: 'r2/fire_extinguisher', x: X0 + 0.35, y, z: -99.4, yaw: ROT.E, h: 0.58, tag: 'K3', on: 'floor' });
   light(out, 4.2, y + 2.6, -96.2, 0xe8f2ff, 2.4, 6);
+  // 批次4：前室偏暗 → 吸顶灯槽 ×4（冷白）+ 登记台/面具墙补光 + 金库门顶红色警示灯
+  for (const [x, z] of [[-3.0, -94.2], [3.6, -94.2], [-3.0, -98.2], [3.6, -98.2]]) troffer(out, x, z, y, 4.2, 0, 1.4, { cold: true });
+  light(out, -3.0, y + 3.0, -95.0, 0xe8f2ff, 2.6, 7); light(out, -4.6, y + 2.6, -97.8, 0xe8f2ff, 1.8, 5); light(out, 0, y + 4.4, -99.2, 0xff4030, 1.4, 6);
+  for (const x of [-2.6, 2.6]) out.push({ m: 'r2/rusty_twin_spot_emergency_light', x, y: y + 3.4, z: Z0 + 0.32, yaw: 0, h: 0.3, tag: 'K3', on: 'wall' });
   return { room, items: out };
 }
 // B6 训练场 → 西墙「维护管廊检修段」（沿墙高位电缆桥架 + 风管 + 管线、地堡灯、维护门门框、检修工具、锈灭火器）
@@ -942,11 +981,85 @@ export function planB7(y) {
   out.push({ m: 'r2/steel_portal_rust_metal_door', x: -5.2, y, z: -55.0, yaw: 0.08, h: 2.6, tag: '旧门', on: 'floor' });
   out.push({ m: 'r2/iron_chain', x: -5.2, y: y + 1.3, z: -54.8, yaw: 0, h: 0.6, tag: '旧门', on: 'shelf' });
   out.push({ m: 'r2/classic_siren_with_2_speakers', x: 3.4, y: y + 4.6, z: Z1 - 0.1, yaw: Math.PI, h: 0.5, tag: 'K3', on: 'wall' });
-  light(out, -9.6, y + 2.2, -57.0, 0xffb070, 2.2, 7); light(out, 10.0, y + 2.4, -58.6, 0xff8a50, 1.8, 7);
+  light(out, -9.6, y + 2.2, -57.0, 0xffb070, 4.0, 9); light(out, 10.0, y + 2.4, -58.6, 0xff8a50, 3.6, 9);
+  // 批次4：截图里两侧全黑 → 墨渊用烛火（PLACEMENT §14）：值守处木提灯 ×2 + 中世纪烛台 ×2（中轴两侧）+ 锈双头应急灯（人造层最后的电灯）+ 中轴暖光
+  for (const [x, z] of [[-9.0, -56.0], [-11.6, -56.6]]) out.push({ m: 'r2/wooden_lantern_01', x, y: y + (x < -10 ? 0.4 : 0.35), z, yaw: 0.3, h: 0.36, tag: '值守补给', on: 'shelf' });
+  for (const sx of [-1, 1]) { out.push({ m: 'r2/medieval_candelabra_free_download', x: sx * 3.8, y, z: -57.2, yaw: 0, h: 1.6, tag: '烛台', on: 'floor', col: [0.5, 1.6, 0.5] }); light(out, sx * 3.8, y + 1.9, -57.2, 0xffb060, 2.6, 7); }
+  for (const x of [-7.0, 7.0]) out.push({ m: 'r2/rusty_twin_spot_emergency_light', x, y: y + 3.2, z: Z1 - 0.32, yaw: Math.PI, h: 0.3, tag: 'K3', on: 'wall' });
+  light(out, 0, y + 3.5, -60.0, 0xffd090, 3.0, 12); light(out, 12.4, y + 2.0, -60.6, 0xff9a60, 2.2, 6);
+  return { room, items: out };
+}
+
+
+// ================= 批次4 · 3F 中 · 医务室（floor3 区，x −9.3…9.3，z −119.6…−92.4，层高 5.4） =================
+// 逻辑：候诊 → 分诊 → 诊室 → 观察病房 / 处置；锚点（理智值检测椅+监测屏、理智值分级表、视力表、药柜+药品清单、病历板墙、净化舱、玻璃药柜、洗手台、地毯）一律不动
+export function planMedical(y) {
+  const out = []; const H = 5.4, X0 = -9.3, X1 = 9.3, Z0 = -119.6, Z1 = -92.4;
+  const room = { name: '3F 中 · 医务室（批次4）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H,
+    doors: [{ wall: 'S', a: -2.3, b: 2.3, label: '入口（电梯厅）' }, { wall: 'W', a: -99.1, b: -95.9, label: '→ 办公区' }, { wall: 'E', a: -99.1, b: -95.9, label: '→ 实验室' }], windows: [],
+    keep: [{ label: '理智值检测椅（锚点）', x: 0.3, z: -110.1, w: 1.9, d: 2.0 }, { label: '药柜（锚点）', x: -8.6, z: -114, w: 0.6, d: 1.0 }, { label: '净化舱（锚点）', x: 4.6, z: -116.5, w: 2.0, d: 2.0 }, { label: '玻璃药柜（锚点）', x: 8.5, z: -112, w: 0.5, d: 1.7 }, { label: '洗手台（锚点）', x: 2.5, z: -119.3, w: 1.0, d: 0.6 }, { label: '病历板墙（锚点）', x: -6.4, z: -94.1, w: 6.0, d: 0.3 }],
+    rooms: [['候诊', 5.4, -93.6], ['分诊台', 5.0, -102.4], ['诊室', 6.0, -109.6], ['观察病房', -6.2, -105.6], ['理智值检测', 0, -106.0], ['处置 · 净化', 0, -116.0]],
+    aisles: [{ label: '东西主通道', x0: X0, x1: X1, z0: -99.3, z1: -95.7 }, { label: '入口通道', x0: -2.2, x1: 2.2, z0: -95.7, z1: Z1 }, { label: '检测区通道', x0: -2.6, x1: -0.9, z0: -116.0, z1: -99.6 }] };
+  const F = (lab, x, z, w, d, h = 1) => out.push({ fixed: true, m: '固定:' + lab, x, y, z, yaw: 0, size: [w, h, d], col: [w, h, d], tag: '原锚点', on: 'floor' });
+  F('理智值检测椅', 0.3, -110.1, 1.9, 2.0); F('药柜', -8.6, -114, 0.6, 1.0, 1.8); F('净化舱', 4.6, -116.5, 2.0, 2.0, 2.7); F('玻璃药柜', 8.5, -112, 0.5, 1.7, 2.0); F('洗手台', 2.5, -119.3, 1.0, 0.6, 0.9);
+  // —— 地面：医务区整体铺浅色水磨石（原 3F 地毯在医务区不合适），通道磨损 ——
+  floorZ(out, 'r3_corr', X0, X1, Z0, -92.3, y, { uv: 1.6 });
+  // —— 隔断：观察病房（玻璃，西）、诊室（玻璃，东）——
+  partition(out, 'z', -3.2, -99.6, -111.4, y, { glass: true, doors: [{ at: -101.0, w: 1.2, s: 1, sign: '观察病房', sub: '探视请登记 · 保持安静' }] });
+  partition(out, 'x', -99.6, X0, -3.2, y, { glass: true });
+  partition(out, 'x', -111.4, X0, -3.2, y, { up: 'dz_damaskGreen' });
+  partition(out, 'x', -104.8, 2.6, X1, y, { glass: true, doors: [{ at: 3.6, s: -1, sign: '诊室', sub: '叫号就诊' }] });
+  partition(out, 'z', 2.6, -104.8, -110.8, y, { glass: true });
+  partition(out, 'x', -110.8, 2.6, X1, y, { up: 'dz_damaskGreen' });
+  // —— ① 候诊（南墙下，面朝北）：绿色软椅 ×5、圆茶几、盆栽、告示板、挂钟 ——
+  for (let k = 0; k < 5; k++) out.push({ m: 'r2/greenchair_01', x: 3.3 + k * 1.05, y, z: -93.0, yaw: ROT.N + (hash(k, 3) - 0.5) * 0.12, h: 1.0, tag: '候诊', on: 'floor', col: [0.62, 1.0, 0.6] });
+  out.push({ m: 'r2/coffee_table_round_01', x: 5.4, y, z: -94.4, yaw: 0, h: 0.5, tag: '候诊', on: 'floor', col: [0.7, 0.5, 0.7] });
+  out.push({ m: 'r2/cc0_newspaper_stack_ready_to_unity_hdrp', x: 5.3, y: y + 0.5, z: -94.4, yaw: 0.4, w: 0.3, tag: '候诊', on: 'shelf' });
+  out.push({ m: 'r2/potted_plant_04', x: 8.75, y, z: -93.0, yaw: 0, h: 1.3, tag: '候诊', on: 'floor' });
+  out.push({ m: 'r2/notice_board_foam', x: X1 - 0.15, y: y + 1.6, z: -101.8, yaw: ROT.W, w: 1.0, tag: '候诊', on: 'wall' });
+  out.push({ m: 'r2/old_wall_clock', x: 5.4, y: y + 2.55, z: Z1 - 0.06, yaw: ROT.N, h: 0.45, tag: 'K3', on: 'wall' });
+  // —— ② 分诊台（护士坐北面朝南，面对通道）+ 患者椅 + 身后药品柜 ——
+  workstation(out, 5.0, -101.1, y, Math.PI, 2, { tag: '分诊台', chair: 'r2/old_computer_chair', typewriter: false });
+  out.push({ m: 'r2/greenchair_01', x: 5.0, y, z: -100.0, yaw: ROT.N, h: 1.0, tag: '分诊台', on: 'floor', col: [0.6, 1.0, 0.58] });
+  for (const x of [6.9, 7.95]) out.push({ m: 'r2/painted_wooden_cabinet', x, y, z: -104.35, yaw: 0, h: 0.95, tag: '分诊台', on: 'floor', col: [0.98, 0.95, 0.5] });
+  out.push({ m: 'r2/medical_box', x: 6.9, y: y + 0.96, z: -104.35, yaw: 0.1, w: 0.4, tag: '分诊台', on: 'shelf' });
+  out.push({ m: 'r2/plastic_thermos', x: 7.9, y: y + 0.96, z: -104.35, yaw: 0, h: 0.3, tag: '分诊台', on: 'shelf' });
+  // —— ③ 诊室：医生写字台（坐东面西）+ 患者椅、检查床 + 屏风 + 床旁推车、视力表（锚点）在患者正前方 ——
+  workstation(out, 7.6, -107.6, y, ROT.E, 4, { tag: '诊室', chair: 'r2/old_computer_chair', typewriter: false });
+  out.push({ m: 'r2/greenchair_01', x: 6.45, y, z: -107.9, yaw: ROT.E, h: 1.0, tag: '诊室', on: 'floor', col: [0.6, 1.0, 0.6] });
+  out.push({ m: 'r2/simple_hospital_bed', x: 3.65, y, z: -108.2, yaw: 0, d: 2.05, tag: '诊室', on: 'floor', col: [0.95, 0.8, 2.1] });
+  out.push({ m: 'r2/mid_century_mahogany_folding_screen', x: 4.75, y, z: -106.2, yaw: 0, h: 1.75, tag: '诊室', on: 'floor' });
+  out.push({ m: 'r2/adjustable_bedside_table', x: 4.7, y, z: -109.9, yaw: ROT.W, h: 1.0, tag: '诊室', on: 'floor' });
+  out.push({ m: 'r2/medical_tape', x: 4.7, y: y + 1.0, z: -109.9, yaw: 0.3, w: 0.08, tag: '诊室', on: 'shelf' });
+  // —— ④ 观察病房：3 张旧铁病床（床头靠西墙）+ 床头柜 + 床尾小桌、屏风隔开、轮椅、拐杖 ——
+  for (const [k, z] of [-101.5, -104.8, -108.1].entries()) {
+    out.push({ m: 'r2/old_hospital_bed_pbr_gr', x: X0 + 1.1, y, z, yaw: ROT.W, fit: [1.2, 1.0, 2.05], size: [1.2, 1.0, 2.05], tag: '病房', on: 'floor', col: [2.0, 0.9, 0.95] });
+    out.push({ m: 'r2/painted_wooden_nightstand', x: X0 + 0.3, y, z: z - 0.85, yaw: ROT.E, h: 0.62, tag: '病房', on: 'floor', col: [0.45, 0.62, 0.45] });
+    if (k !== 1) out.push({ m: 'r2/coffee_mug', x: X0 + 0.3, y: y + 0.62, z: z - 0.8, yaw: 1, h: 0.095, tag: '病房', on: 'shelf' });
+    if (k === 0) out.push({ m: 'r2/food_apple_01', x: X0 + 0.32, y: y + 0.62, z: z - 0.95, yaw: 0, h: 0.08, tag: '病房', on: 'shelf' });
+  }
+  out.push({ m: 'r2/mid_century_mahogany_folding_screen', x: -7.6, y, z: -106.45, yaw: 0.05, h: 1.75, tag: '病房', on: 'floor' });
+  out.push({ m: 'r2/adjustable_bedside_table', x: -6.65, y, z: -101.5, yaw: 0, h: 1.0, tag: '病房', on: 'floor' });
+  out.push({ m: 'r2/wheelchair_01', x: -4.3, y, z: -110.3, yaw: ROT.E + 0.3, h: 0.95, tag: '病房', on: 'floor', col: [0.65, 0.95, 0.9] });
+  out.push({ m: 'r2/vintage_crutches_01', x: X0 + 0.15, y, z: -110.7, yaw: ROT.E, rx: -0.12, h: 1.3, tag: '病房', on: 'shelf' });
+  // —— ⑤ 处置 · 净化（北）：员工更衣柜、超声仪（里间，较现代）、器械推车、药品柜 ——
+  for (const x of [-7.5, -6.3]) out.push({ m: 'r2/locker_equipment', x, y, z: Z0 + 0.35, yaw: 0, h: 1.9, tag: '处置', on: 'floor', col: [1.1, 1.9, 0.55] });
+  out.push({ m: 'r2/samsung_sonoace_ultrasound_machine', x: 7.6, y, z: -118.7, yaw: ROT.N + 0.3, h: 1.45, tag: '处置', on: 'floor', col: [0.6, 1.45, 0.9] });
+  out.push({ m: 'storage_cart', x: -4.6, y, z: -116.4, yaw: 0.1, w: 1.0, tag: '处置', on: 'floor', col: [1.0, 1.0, 0.7] });
+  out.push({ m: 'r2/medical_box', x: -4.8, y: y + 0.92, z: -116.4, yaw: 0.2, w: 0.4, tag: '处置', on: 'shelf' });
+  out.push({ m: 'r2/medical_tape', x: -4.3, y: y + 0.92, z: -116.3, yaw: 0.4, w: 0.08, tag: '处置', on: 'shelf' });
+  out.push({ m: 'r2/painted_wooden_cabinet', x: -2.4, y, z: Z0 + 0.3, yaw: 0, h: 0.95, tag: '处置', on: 'floor', col: [0.98, 0.95, 0.5] });
+  // —— K3 / 照明：入口灭火器、出口标识、烟感、监控、灯槽（冷白）+ 补光 ——
+  out.push({ m: 'r2/fire_extinguisher', x: -2.75, y, z: -92.75, yaw: 0, h: 0.58, tag: 'K3', on: 'floor' });
+  out.push({ m: 'r2/cctv_camera', x: X1 - 0.35, y: y + 3.8, z: Z1 - 0.35, yaw: -Math.PI * 0.75, h: 0.3, tag: 'K3', on: 'wall' });
+  smoke(out, y, H, [[-6, -103], [-6, -109], [6, -102], [6, -108], [0, -114], [0, -97]]);
+  for (const [x, z] of [[-6.2, -101.6], [-6.2, -104.9], [-6.2, -108.2], [6.0, -106.6], [6.0, -109.4], [5.4, -94.0], [-5.0, -116.4], [6.0, -116.4]]) troffer(out, x, z, y, H, Math.PI / 2, 1.2, { cold: true });
+  for (const [x, z, i] of [[-6.2, -105, 2.4], [6.0, -108, 2.2], [5.4, -94.6, 2.0], [5.0, -102, 2.0], [-4.5, -116.5, 1.8]]) light(out, x, y + 3.2, z, 0xeef4ff, i, 7);
+  wear(out, -2.0, 2.0, -99.0, -93.0, y); wear(out, -9.0, 9.0, -98.0, -97.0, y);
   return { room, items: out };
 }
 
 // 批次3：Blender 接触表（work/r3/orient4/sheet_*.jpg）核对出「正面不是 +Z」的模型 → 额外 yaw 修正（正面 +X → −π/2）
-export const YAWFIX = { 'r2/bookshelf': -Math.PI / 2, 'r2/dusty_bookshelfs': -Math.PI / 2, 'r2/electric_meters_and_panels_1': -Math.PI / 2, 'r2/ergonomic_mesh_office_chair': -Math.PI / 2, 'r2/hallway_bench': -Math.PI / 2, 'r2/heavy_metal_door': -Math.PI / 2, 'r2/microfiche_reader': -Math.PI / 2, 'r2/retro_computer': -Math.PI / 2, 'r2/wooden_display_shelves_01': -Math.PI / 2 };
+export const YAWFIX = { 'r2/bookshelf': -Math.PI / 2, 'r2/dusty_bookshelfs': -Math.PI / 2, 'r2/electric_meters_and_panels_1': -Math.PI / 2, 'r2/ergonomic_mesh_office_chair': -Math.PI / 2, 'r2/hallway_bench': -Math.PI / 2, 'r2/heavy_metal_door': -Math.PI / 2, 'r2/microfiche_reader': -Math.PI / 2, 'r2/retro_computer': -Math.PI / 2, 'r2/wooden_display_shelves_01': -Math.PI / 2, 'r2/apartment_radiator': -Math.PI / 2, 'r2/rusty_twin_spot_emergency_light': -Math.PI / 2, 'r2/rockingchair_01': Math.PI }; // 批次4：work/r3/orient5/sheet_*.jpg
 const fixYaw = (p) => { for (const it of p.items) if (it.m && YAWFIX[it.m] !== undefined && !it.fixed) { it.yaw = (it.yaw ?? 0) + YAWFIX[it.m]; it.yawFixed = YAWFIX[it.m]; } return p; };
-export const PLANS = { floor3_office: (Y) => fixYaw(planFloor3Office(Y)), floor2_liaison: (Y) => fixYaw(planFloor2Liaison(Y)), floor2_pub: (Y) => fixYaw(planFloor2Pub(Y)), director: (Y) => fixYaw(planDirector(Y)), gate: (Y) => fixYaw(planGate(Y)), archive: (Y) => fixYaw(planArchive(Y)), command_center: (Y) => fixYaw(planCommand(Y)), canteen: (Y) => fixYaw(planCanteen(Y)), b1: (Y) => fixYaw(planB1(Y)), b2: (Y) => fixYaw(planB2(Y)), archive_b1: (Y) => fixYaw(planArchiveB1(Y)), b4: (Y) => fixYaw(planB4(Y)), b5: (Y) => fixYaw(planB5(Y)), b6: (Y) => fixYaw(planB6(Y)), b7: (Y) => fixYaw(planB7(Y)) };
+export const PLANS = { floor3_office: (Y) => fixYaw(planFloor3Office(Y)), floor2_liaison: (Y) => fixYaw(planFloor2Liaison(Y)), floor2_pub: (Y) => fixYaw(planFloor2Pub(Y)), director: (Y) => fixYaw(planDirector(Y)), gate: (Y) => fixYaw(planGate(Y)), archive: (Y) => fixYaw(planArchive(Y)), command_center: (Y) => fixYaw(planCommand(Y)), canteen: (Y) => fixYaw(planCanteen(Y)), b1: (Y) => fixYaw(planB1(Y)), b2: (Y) => fixYaw(planB2(Y)), archive_b1: (Y) => fixYaw(planArchiveB1(Y)), b4: (Y) => fixYaw(planB4(Y)), b5: (Y) => fixYaw(planB5(Y)), b6: (Y) => fixYaw(planB6(Y)), b7: (Y) => fixYaw(planB7(Y)), medical: (Y) => fixYaw(planMedical(Y)) };
