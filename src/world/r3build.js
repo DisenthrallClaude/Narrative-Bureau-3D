@@ -6,9 +6,11 @@ import { loadTex } from '../engine/assets.js';
 import { Props } from './dress.js';
 import { PLANS, R3 } from './r3plan.js';
 import { UPPER } from './upper.js';
-import { point, rectLight, brassPlaqueMaterial } from './interiors.js';
+import { FLOOR } from './exterior.js';
+import { point, rectLight, spot, brassPlaqueMaterial } from './interiors.js';
+import { lightShaft } from '../engine/fx.js';
 
-const ZONE_OF = { floor3_office: ['floor3', () => UPPER['3F']], floor2_liaison: ['floor2', () => UPPER['2F']], floor2_pub: ['floor2', () => UPPER['2F']], director: ['director', () => UPPER['12F']] };
+const ZONE_OF = { floor3_office: ['floor3', () => UPPER['3F']], floor2_liaison: ['floor2', () => UPPER['2F']], floor2_pub: ['floor2', () => UPPER['2F']], director: ['director', () => UPPER['12F']], gate: ['gate', () => FLOOR], archive: ['archive', () => FLOOR], command_center: ['east_wing', () => FLOOR + 7], canteen: ['canteen', () => FLOOR], b1: ['armory', () => -10], b2: ['interrogation', () => -18], archive_b1: ['archive_b1', () => FLOOR - 6], b4: ['vault_b4', () => -34], b5: ['vault_b5', () => -42], b6: ['training', () => -52], b7: ['abyss', () => -300] };
 // 做旧：冷轧钢/喷漆钢件压暗、偏橄榄灰、提高粗糙度（「过白过新」）
 const AGE = { office_desk: [0.62, 0.64, 0.58, 0.62], file_cabinet: [0.7, 0.7, 0.64, 0.6], 'r2/mfp_office_printer': [0.8, 0.78, 0.72, 0.55], 'r2/old_radiator': [0.75, 0.72, 0.66, 0.6], 'r2/hand_truck': [0.7, 0.68, 0.62, 0.7], 'r2/steel_frame_shelves_02': [0.7, 0.7, 0.66, 0.7], 'r2/fire_extinguisher': [0.85, 0.8, 0.78, 0.5], 'r2/electrical_panel_c': [0.75, 0.75, 0.7, 0.6], monitor: [0.8, 0.78, 0.72, 0.6] };
 const _aged = new Map();
@@ -33,7 +35,28 @@ export async function buildR3(ctx, world, MAT) {
       const yaw = it.yaw ?? 0;
       if (it.fixed) { if (it.col) world.box(it.x, it.y + it.col[1] / 2, it.z, it.col[0], it.col[1], it.col[2], yaw); continue; }
       if (it.part) { world.box(it.x, it.y + it.size[1] / 2, it.z, it.size[0], it.size[1], it.size[2], 0); continue; }
-      if (it.box) { b.box(it.box, it.w, it.h, it.d, [it.x, it.y, it.z], { uv: it.box === 'glassClear' ? false : 1, rot: [0, yaw, 0] }); continue; }
+      if (it.box) { b.box(it.box, it.w, it.h, it.d, [it.x, it.y, it.z], { uv: it.box === 'glassClear' || it.box === 'r3_glassCase' ? false : (it.uv ?? 1), rot: [0, yaw, 0] }); continue; }
+      if (it.wear) { // 磨损贴花：沿长边四方连续
+        const w = it.x1 - it.x0, d = it.z1 - it.z0, alongX = w > d, L = alongX ? w : d, W = alongX ? d : w;
+        const g = new THREE.PlaneGeometry(W, L); g.rotateX(-Math.PI / 2); if (alongX) g.rotateY(Math.PI / 2);
+        const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setY(i, uv.getY(i) * L / 3); b.add('r3_wear', g, { pos: [it.x, it.y, it.z] }, { uv: false }); continue; }
+      if (it.globe) { // 乳白玻璃球吊灯：铜吊杆 + 灯头 + 发光球
+        const rod = it.top - it.y - it.r; b.box('dz_brassDim', 0.02, rod, 0.02, [it.x, it.y + it.r + rod / 2, it.z], { uv: 1 });
+        b.add('dz_brassDim', new THREE.CylinderGeometry(0.06, 0.09, 0.08, 12), { pos: [it.x, it.y + it.r + 0.02, it.z] }, { uv: 1 });
+        b.add('dz_brassDim', new THREE.CylinderGeometry(0.12, 0.12, 0.03, 16), { pos: [it.x, it.top - 0.015, it.z] }, { uv: 1 });
+        b.add(it.cold ? 'dz_glowCold' : 'r3_globe', new THREE.SphereGeometry(it.r, 18, 12), { pos: [it.x, it.y, it.z] }, { uv: false }); continue; }
+      if (it.pipe) { const L = Math.abs(it.a1 - it.a0), g = new THREE.CylinderGeometry(it.r, it.r, L, 12); if (it.axis === 'x') g.rotateZ(Math.PI / 2); else g.rotateX(Math.PI / 2); b.add(it.mat, g, { pos: [it.x, it.y, it.z] }, { uv: 1 });
+        for (let a = Math.min(it.a0, it.a1) + 0.4; a < Math.max(it.a0, it.a1); a += 3) { const r2 = new THREE.CylinderGeometry(it.r * 1.25, it.r * 1.25, 0.05, 12); if (it.axis === 'x') r2.rotateZ(Math.PI / 2); else r2.rotateX(Math.PI / 2); b.add(it.mat, r2, { pos: [it.axis === 'x' ? a : it.x, it.y, it.axis === 'x' ? it.z : a] }, { uv: 1 }); }
+        continue; }
+      if (it.stair) { const n = Math.max(2, Math.round((it.yTop - it.yBot) / 0.3)), L = it.zTop - it.zBot, rise = (it.yTop - it.yBot) / n, run = L / n;
+        for (let i = 0; i < n; i++) { const h = rise * (i + 1); b.box(it.mat, it.w, h, Math.abs(run) + 0.01, [it.x, it.yBot + h / 2, it.zBot + run * (i + 0.5)], { uv: 0.6 }); }
+        world.ramp([it.x, it.yBot - 0.02, it.zBot], [it.x, it.yTop, it.zTop], it.w - 0.1); continue; }
+      if (it.troffer) { b.box('dz_brassDim', it.len + 0.06, 0.04, 0.34, [it.x, it.y + 0.02, it.z], { uv: 1, rot: [0, yaw, 0] }); b.box(it.cold ? 'dz_glowCold' : 'r3_globe', it.len, 0.03, 0.26, [it.x, it.y - 0.005, it.z], { uv: false, rot: [0, yaw, 0] }); continue; }
+      if (it.shaft) { // 窗光柱：从窗口中心斜向室内地面
+        const to = [it.x + it.nx * it.len * 0.75, it.y - 2.6, it.z + it.nz * it.len * 0.75];
+        const sh = lightShaft({ from: [it.x, it.y + 0.6, it.z], to, r0: it.w * 0.45, r1: it.w * 0.9, color: 0xdfe6ff, intensity: 0.16 * it.i, shape: 'cone' }); zone.add(sh);
+        if (it.spot) spot(zone, 0xe4ecff, 38 * it.i, [it.x - it.nx * 0.3, it.y + 0.8, it.z - it.nz * 0.3], to, 0.42, false, 14);
+        continue; }
       if (it.light) { if (it.win) rectLight(zone, it.c, it.i * 1.5, it.w, it.h, [it.x, it.y, it.z], it.look); else point(zone, it.c, it.i * 3, [it.x, it.y, it.z], it.d * 1.15); continue; }
       if (it.sign) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.12), brassPlaqueMaterial(it.sign, it.sub ? [it.sub] : [])); m.position.set(it.x, it.y, it.z); m.rotation.y = yaw; zone.add(m); continue; }
       if (it.sconce) { // 铜壁灯：底座 + 弯臂 + 灯罩（自发光）

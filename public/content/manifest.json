@@ -3048,8 +3048,8 @@
    "area": "liaison",
    "location": "势力评估墙第 5 框：无妄城",
    "type": "faction_art",
-   "path": "textures/emblems/势力档案-无妄城.jpg",
-   "source": "用户 Drive 项目图片",
+   "path": "textures/emblems/势力档案-第二草稿.jpg",
+   "source": "用户 Drive 项目图片（源文件名与内容对调，R3 批次3 已改 path：此 id 现指向画有无妄城的文件）",
    "status": "ready"
   },
   {
@@ -3066,7 +3066,7 @@
    "area": "liaison",
    "location": "势力评估墙第 7 框：第二草稿",
    "type": "faction_art",
-   "path": "textures/emblems/势力档案-第二草稿.jpg",
+   "path": "textures/emblems/势力档案-无妄城.jpg",
    "source": "用户 Drive 项目图片",
    "status": "ready"
   },

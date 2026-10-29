@@ -1,5 +1,6 @@
 // M3（第一批）：后楼 1F 职工食堂与中庭（安检大厅北墙铁门 → 连廊）、B1 外勤缉拿处与整备库、B2 审讯室与临时羁押、B6 驯化副本训练场
 import * as THREE from 'three';
+import { R3 } from './r3plan.js';
 import { Batch } from '../engine/batch.js';
 import { placeModel } from '../engine/assets.js';
 import { mats } from './mats.js';
@@ -70,6 +71,7 @@ export function buildRooms(scene, world, ctx) {
     for (let k = 0; k < 4; k++) { const cook = person(M, { coat: 0xe8e8e2, cap: true }); cook.position.set(-7.5 + k * 5, Y, Z1 + 0.6); zone.add(cook); }
     // 长桌 × 3 列 × 5 排
     for (let r = 0; r < 5; r++) for (const x of [-9, 0, 9]) {
+      if (R3.canteen && r === 0 && x === 0) continue; // R3 批次3：中列首桌与入口喷泉重叠 → 撤掉，留喷泉环行
       const z = Z0 - 5 - r * 4.2;
       b.box('wood', 5.6, 0.08, 1.2, [x, Y + 0.76, z], { uv: 0.6 }); world.box(x, Y + 0.4, z, 5.6, 0.8, 1.2);
       for (const ex of [-2.5, 2.5]) b.box('blackMetal', 0.08, 0.72, 1.0, [x + ex, Y + 0.36, z], { uv: 1 });
@@ -84,7 +86,7 @@ export function buildRooms(scene, world, ctx) {
     bd.position.set(X - 0.02, Y + 2.2, Z0 - 3.2); bd.rotation.y = -Math.PI / 2; zone.add(bd); ctx.anchors.doc_canteen_board = bd;
     b.box('wood', 0.08, 2.3, 3.5, [X - 0.02, Y + 2.2, Z0 - 3.2], { uv: 0.6 });
     // 绿植、吊灯
-    for (const [x, z] of [[-15, -113], [15, -113], [-15, -136], [15, -136], [-4.5, -125], [4.5, -125]]) add(placeModel('potted_plant', { height: 2.0, pos: [x, Y, z] }));
+    for (const [x, z] of (R3.canteen ? [[-15, -113], [15, -113], [-15, -136], [15, -136]] : [[-15, -113], [15, -113], [-15, -136], [15, -136], [-4.5, -125], [4.5, -125]])) add(placeModel('potted_plant', { height: 2.0, pos: [x, Y, z] }));
     for (let r = 0; r < 3; r++) for (const x of [-9, 0, 9]) add(placeModel('chandelier', { height: 1.6, pos: [x, Y + 9.2, Z0 - 7 - r * 8] }));
     for (let r = 0; r < 3; r++) for (const x of [-9, 0, 9]) { const top = Y + H + ctx.canteenRoof(x), bot = Y + 10.75; b.add('iron', new THREE.CylinderGeometry(0.02, 0.02, top - bot, 6), { pos: [x, (top + bot) / 2, Z0 - 7 - r * 8] }, { uv: 1 }); b.add('gold', new THREE.CylinderGeometry(0.12, 0.08, 0.15, 10), { pos: [x, bot, Z0 - 7 - r * 8] }, { uv: 1 }); } // M5：吊杆，吊灯不再悬空
     for (const x of [-9, 0, 9]) point(zone, 0xffd8a8, 18, [x, Y + 8, cz], 20);
@@ -170,7 +172,7 @@ export function buildRooms(scene, world, ctx) {
     const tr = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.01, 0.3), new THREE.MeshStandardMaterial({ map: lineTexture('审讯笔录'), roughness: 0.8 })); tr.position.set(-5.2, y + 0.8, -101); tr.rotation.y = 0.2; zone.add(tr); ctx.anchors.doc_int_transcript = tr;
     add(placeModel('desk_lamp', { height: 0.5, pos: [-4.4, y + 0.79, -101.2], rotY: -2 }));
     point(zone, 0xffc890, 4, [-4.6, y + 1.5, -101], 5);
-    wallX(b, 'quilt', -2.4, Z0, Z1, y, H, 0.3, [{ z0: -99.5, z1: -102.5, h: 2.4 }], true);
+    wallX(b, 'quilt', -2.4, Z0, Z1, y, H, 0.3, R3.b2 ? [{ z0: -99.5, z1: -102.5, h: 2.4 }, { z0: -115.4, z1: -116.6, h: 2.3 }] : [{ z0: -99.5, z1: -102.5, h: 2.4 }], true); // R3 批次3：机电间门洞
     // 东侧：白色软包牢房 ×6（门 + 观察窗 + 编号）
     wallX(b, 'quilt', 2.4, Z0, Z1, y, H, 0.3, [], true);
     for (let k = 0; k < 6; k++) {

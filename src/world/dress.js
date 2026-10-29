@@ -25,6 +25,10 @@ export function dressMats(M) {
   }, 512, 512);
   const tile = (bg, grout, n) => tex((c, w, h) => { c.fillStyle = grout; c.fillRect(0, 0, w, h); const s = w / n; for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const v = (Math.sin(i * 12.9 + j * 78.2) * 43758.5) % 1; c.fillStyle = bg; c.globalAlpha = 0.92 + Math.abs(v) * 0.08; c.fillRect(i * s + 2, j * s + 2, s - 4, s - 4); } c.globalAlpha = 1; });
   const parquet = () => tex((c, w, h) => { const s = w / 8; for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) { const v = Math.abs(Math.sin(i * 3.1 + j * 7.7) * 1000) % 1; c.fillStyle = `rgb(${70 + v * 30 | 0},${46 + v * 20 | 0},${30 + v * 12 | 0})`; c.fillRect(i * s, j * s, s, s); c.strokeStyle = 'rgba(0,0,0,0.5)'; c.lineWidth = 2; if ((i + j) % 2) { for (let k = 1; k < 4; k++) { c.beginPath(); c.moveTo(i * s + (k * s) / 4, j * s); c.lineTo(i * s + (k * s) / 4, j * s + s); c.stroke(); } } else { for (let k = 1; k < 4; k++) { c.beginPath(); c.moveTo(i * s, j * s + (k * s) / 4); c.lineTo(i * s + s, j * s + (k * s) / 4); c.stroke(); } } c.strokeRect(i * s, j * s, s, s); } });
+  const checker = (a, b, grout, n) => tex((c, w, h) => { c.fillStyle = grout; c.fillRect(0, 0, w, h); const s = w / n; for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const v = Math.abs(Math.sin(i * 12.9 + j * 78.2) * 43758.5) % 1; c.fillStyle = (i + j) % 2 ? b : a; c.globalAlpha = 0.9 + v * 0.1; c.fillRect(i * s + 1.5, j * s + 1.5, s - 3, s - 3); } c.globalAlpha = 1; });
+  // 磨损贴花：通道中线的走磨发亮 + 鞋印脏污（alpha），沿 v 方向四方连续
+  const wearTex = () => tex((c, w, h) => { c.clearRect(0, 0, w, h); for (let k = 0; k < 900; k++) { const x = w / 2 + (Math.random() + Math.random() + Math.random() - 1.5) * w * 0.42, y = Math.random() * h, r = 2 + Math.random() * 10; const d = Math.random() < 0.6; c.fillStyle = d ? `rgba(30,24,18,${0.05 + Math.random() * 0.08})` : `rgba(255,250,235,${0.03 + Math.random() * 0.05})`; c.beginPath(); c.ellipse(x, y, r * 0.6, r, Math.random(), 0, 7); c.fill(); } const g = c.createLinearGradient(0, 0, w, 0); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(0.5, 'rgba(25,20,15,0.10)'); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.fillRect(0, 0, w, h); }, 256, 512);
+  const hazardTex = () => tex((c, w, h) => { c.fillStyle = '#c8a020'; c.fillRect(0, 0, w, h); c.fillStyle = '#141414'; for (let k = -w; k < w * 2; k += 64) { c.beginPath(); c.moveTo(k, 0); c.lineTo(k + 32, 0); c.lineTo(k + 32 - h, h); c.lineTo(k - h, h); c.fill(); } }, 256, 64);
   const rugTex = (inner, border, gold) => tex((c, w, h) => { c.fillStyle = border; c.fillRect(0, 0, w, h); c.strokeStyle = gold; c.lineWidth = 6; c.strokeRect(18, 18, w - 36, h - 36); c.lineWidth = 2; c.strokeRect(34, 34, w - 68, h - 68); c.fillStyle = inner; c.fillRect(48, 48, w - 96, h - 96); c.strokeStyle = gold; c.globalAlpha = 0.5; c.lineWidth = 2; for (let k = 0; k < 6; k++) { c.beginPath(); c.ellipse(w / 2, h / 2, 40 + k * 26, 24 + k * 16, 0, 0, 7); c.stroke(); } c.globalAlpha = 0.25; for (let x = 70; x < w - 70; x += 28) for (let y = 70; y < h - 70; y += 28) { c.beginPath(); c.arc(x, y, 3, 0, 7); c.stroke(); } c.globalAlpha = 1; }, 512, 768);
   const W = (m, o) => weather(m, o);
   DM = {
@@ -64,8 +68,30 @@ export function dressMats(M) {
     dz_soil: new THREE.MeshStandardMaterial({ color: 0x1c140e, roughness: 1 }),
     dz_brassDim: W(new THREE.MeshStandardMaterial({ color: 0x7a5e34, metalness: 0.85, roughness: 0.55, envMapIntensity: 0.5 }), { macro: 0.15, tarnish: 0.4 }),
     dz_cork: new THREE.MeshStandardMaterial({ color: 0x8a6440, roughness: 1 }),
+    // —— R3 批次3：地面分区材质（走廊石材 / 办公地毯 / 茶水间地砖 / 库房地胶）+ 磨损贴花 ——
+    r3_corr: W(pbr('Terrazzo005', { rn: true, color: 0xc9c1b2, roughness: 0.42, env: 0.4 }), { macro: 0.16, dust: 0.08, rough: 0.25 }),
+    r3_check: W(new THREE.MeshStandardMaterial({ map: checker('#aaa190', '#71695c', '#857e70', 8), roughness: 0.4, envMapIntensity: 0.5 }), { macro: 0.14, dust: 0.06 }),
+    r3_stoneBorder: W(pbr('Marble016', { rn: true, color: 0x3a3632, roughness: 0.4, env: 0.5 }), { macro: 0.1 }),
+    r3_carpet: W(pbr('Carpet012', { color: 0x4a5866, roughness: 1 }), { macro: 0.22, dust: 0.1 }),
+    r3_carpetGreen: W(pbr('Carpet012', { color: 0x46564a, roughness: 1 }), { macro: 0.22, dust: 0.1 }),
+    r3_carpetRed: W(pbr('Carpet012', { color: 0x6a2a2a, roughness: 1 }), { macro: 0.2, dust: 0.1 }),
+    r3_carpetBrown: W(pbr('Carpet012', { color: 0x6a5440, roughness: 1 }), { macro: 0.22, dust: 0.1 }),
+    r3_tile: W(new THREE.MeshStandardMaterial({ map: tile('#9a9484', '#6a6456', 8), roughness: 0.45, envMapIntensity: 0.4 }), { macro: 0.14, dust: 0.1 }),
+    r3_lino: W(pbr('Concrete036', { color: 0x6e7a70, roughness: 0.55, env: 0.35 }), { macro: 0.25, dust: 0.15, rough: 0.3 }),
+    r3_epoxy: W(pbr('Concrete036', { color: 0x7a7c78, roughness: 0.5, env: 0.3 }), { macro: 0.3, dust: 0.2, rough: 0.3 }),
+    r3_parquet: W(new THREE.MeshStandardMaterial({ map: parquet(), roughness: 0.4, envMapIntensity: 0.5, color: 0xd8c0a0 }), { macro: 0.15, dust: 0.1 }),
+    r3_wear: new THREE.MeshStandardMaterial({ map: wearTex(), transparent: true, depthWrite: false, roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -2, color: 0xffffff }),
+    r3_steelOld: W(new THREE.MeshStandardMaterial({ color: 0x5c5e58, roughness: 0.6, metalness: 0.7, envMapIntensity: 0.5 }), { macro: 0.25, tarnish: 0.5, grime: 0.3, ground: 0 }),
+    r3_steelGrey: W(new THREE.MeshStandardMaterial({ color: 0x77786f, roughness: 0.55, metalness: 0.55, envMapIntensity: 0.5 }), { macro: 0.2, tarnish: 0.3 }),
+    r3_glassCase: new THREE.MeshPhysicalMaterial({ color: 0xdfe8e4, roughness: 0.05, metalness: 0, transmission: 0, transparent: true, opacity: 0.18, envMapIntensity: 0.8, depthWrite: false }),
+    r3_globe: new THREE.MeshStandardMaterial({ color: 0xfff4e0, emissive: 0xffe2b8, emissiveIntensity: 2.4, roughness: 0.4 }),
+    r3_screen: new THREE.MeshStandardMaterial({ color: 0x0a1a12, emissive: 0x4ad08a, emissiveIntensity: 0.9, roughness: 0.3 }),
+    r3_screenAmber: new THREE.MeshStandardMaterial({ color: 0x1a1006, emissive: 0xffa040, emissiveIntensity: 0.8, roughness: 0.3 }),
+    r3_mapPaper: new THREE.MeshStandardMaterial({ color: 0xcfc3a0, roughness: 0.85 }),
+    r3_hazard: new THREE.MeshStandardMaterial({ map: hazardTex(), roughness: 0.7 }),
+    r3_paintYellow: W(new THREE.MeshStandardMaterial({ color: 0xc8a020, roughness: 0.7 }), { macro: 0.3, dust: 0.2 }),
   };
-  for (const m of [DM.dz_glow, DM.dz_glowCold, DM.dz_shade, DM.dz_glassDark]) m.userData.noShadow = true;
+  for (const m of [DM.dz_glow, DM.dz_glowCold, DM.dz_shade, DM.dz_glassDark, DM.r3_globe, DM.r3_wear, DM.r3_glassCase, DM.r3_screen, DM.r3_screenAmber]) m.userData.noShadow = true;
   return DM;
 }
 

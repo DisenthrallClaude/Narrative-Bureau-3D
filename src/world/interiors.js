@@ -629,12 +629,12 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   b.add('wood', new THREE.CylinderGeometry(0.03, 0.035, 0.09, 12), { pos: [kx + 0.3, Y + 1.155, kz - 0.4] }, { uv: 1 });
   b.add('waxRed', new THREE.CylinderGeometry(0.035, 0.035, 0.02, 12), { pos: [kx + 0.3, Y + 1.12, kz - 0.4] }, { uv: 1 });
   // 档案推车（牛皮纸档案袋堆）
-  const cart = new THREE.Group(); cart.position.set(kx + 2.2, Y, kz - 4.6);
+  const cart = new THREE.Group(); cart.position.set(kx + 1.9, Y, kz - 4.6); // R3 批次3：原 +2.2 压到阅览桌端
   for (const yy of [0.3, 0.8]) { const sh = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.04, 0.6), M.blackMetal); sh.position.y = yy; cart.add(sh); }
   for (const ex of [-1, 1]) for (const ez of [-1, 1]) { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.9), M.steel); p.position.set(ex * 0.58, 0.45, ez * 0.28); cart.add(p); const wh = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.03, 12), M.rubber); wh.rotation.x = Math.PI / 2; wh.position.set(ex * 0.55, 0.05, ez * 0.26); cart.add(wh); }
   const env = envelopeMesh(M); 
   for (let k = 0; k < 14; k++) { const e = env.clone(); e.position.set(-0.35 + (k % 3) * 0.35, (k < 7 ? 0.33 : 0.83) + Math.floor((k % 7) / 3) * 0.02, -0.05 + Math.random() * 0.1); e.rotation.y = (Math.random() - 0.5) * 0.3; cart.add(e); }
-  cart.traverse((o) => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } }); zone.add(cart); world.box(kx + 2.2, Y + 0.45, kz - 4.6, 1.3, 0.9, 0.7);
+  cart.traverse((o) => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } }); zone.add(cart); world.box(kx + 1.9, Y + 0.45, kz - 4.6, 1.3, 0.9, 0.7);
   // 柜台后档案柜（GLB）
   for (let k = 0; k < 4; k++) add(placeModel('file_cabinet', { height: 1.45, pos: [X0 + 1.0, Y, kz - 3 + k * 2], rotY: Math.PI / 2 }));
   add(placeModel('filing_cabinets', { maxDim: 6.5, pos: [X0 + 4.6, Y, Z1 + 6.5], rotY: 0 }).then((o) => { world.boundsOf(o, 0.85); return o; }));
