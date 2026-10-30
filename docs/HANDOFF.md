@@ -91,6 +91,11 @@
 - [08:20] 拉回宿舍（aa/dd）、审讯室（bb）、医务俯视截图；b3/b4/b5 有效截图（剔除 3 张空场景 gate_r3）复制到 screenshots/r3/。gate_r3/_b 加 zone。commit 0791ee9。
 - [08:30] r3_cmp_all.sh 生成 18 区对比图 work/r3/cmp_<区>.jpg。
 
+- [08:45] 大厅复拍（cc，high）：hall / hall_gates / hall_vault / hall_aisle → screenshots/r3/*_lm8.png，对比 work/r3/cmp_hall_lm.jpg。与 R2 旧图几乎一致（只有 >4 的高光区——吊灯/窗口/闸机灯带附近——不再截平），没有新的光照质量提升；128spp 版若完成，用 work/r4bake/reenc.py 同法（范围 8）重编码替换即可。
+- [08:45] 机库补拍 hangar_r3 / hangar_b / hangar_top（bb）→ screenshots/r3/，对比 work/r3/cmp_hangar.jpg。机库仍是灰盒级：飞行器是胶囊体、墙面无细节，布局有分区但材质粗。
+- **未解决：gate_r3 机位作为会话第一张时渲染成「空世界」（只有地面和天空）**，加了 zone:'gate' 仍复现（bb 08:40）；作为第二张及以后正常（b4/cc2）。推测是首张时 hero 外立面/门廊资源尚未加载完。临时办法：rshot 时先拍 gate_top 再拍 gate_r3；根治需 shot.mjs 首张等 heroHallJob/外立面 GLB 完成。F_trim 隐藏未发现造成缺块。
+- 批次5 诚实评估：本批没有新增区域的布局工作，主要是收尾（光照编码、截图入库、对比图、文档、备份）。已做 18 区里：法务处/联络处/宣传处/局长室/正门/档案馆/指挥中心/食堂/医务 有分间和成排布局，读得出机构逻辑；**宿舍大堂/活动室（22/24 件）、审讯室、B4–B7 仍空旷偏暗**；机库灰盒；全局照明偏暗、地面单一。整备库、训练场、地铁口、纪念廊 未开始。
+
 
 ---
 # HANDOFF · R2 美术重建（blender-lead-2，接手 2026-10-29 19:08 CST）
