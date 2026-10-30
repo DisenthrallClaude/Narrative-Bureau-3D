@@ -270,8 +270,13 @@ export function room(b, world, M, x0, x1, z0, z1, y, h, floor, wall, o = {}) {
 /** 电梯厅：南墙两扇书页浮雕金门（x=±6），楼层铭牌，安全须知 */
 export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
   const Z0 = EZ, Z1 = -92, X = 9, H = 5.2;
-  b.box('darkTile', 2 * X, 0.2, Z0 - Z1, [0, y - 0.1, (Z0 + Z1) / 2], { uv: 0.3, collide: true });
-  b.box('vaultWall', 2 * X, 0.3, Z0 - Z1, [0, y + H + 0.15, (Z0 + Z1) / 2], { uv: 0.25 });
+  // 批次20 中央竖井：洞口 x −1.8…1.8，z −89.2…−86.4（B3/B4 地面开洞、B4/B5 顶板开洞；地面碰撞仍整块，栏杆另有碰撞）
+  const SPN = R3['spine_' + name.toLowerCase()] === true, hx = 1.8, hz0 = -89.2, hz1 = -86.4;
+  const slab = (m, yy, th, hole, o) => { if (!hole) { b.box(m, 2 * X, th, Z0 - Z1, [0, yy, (Z0 + Z1) / 2], o); return; }
+    b.box(m, 2 * X, th, Z0 - hz1, [0, yy, (Z0 + hz1) / 2], o); b.box(m, 2 * X, th, hz0 - Z1, [0, yy, (hz0 + Z1) / 2], o);
+    for (const s of [-1, 1]) b.box(m, X - hx, th, hz1 - hz0, [s * (X + hx) / 2, yy, (hz0 + hz1) / 2], o); };
+  slab('darkTile', y - 0.1, 0.2, SPN && name !== 'B5', { uv: 0.3 }); world.box(0, y - 0.1, (Z0 + Z1) / 2, 2 * X, 0.2, Z0 - Z1);
+  slab('vaultWall', y + H + 0.15, 0.3, SPN && name !== 'B3', { uv: 0.25 });
   wallX(b, 'vaultWall', -X - 0.2, Z0, Z1, y, H, 0.4, [], true); wallX(b, 'vaultWall', X + 0.2, Z0, Z1, y, H, 0.4, [], true);
   wallZ(b, 'vaultWall', Z0, -X, X, y, H, 0.4, [], true);
   if (name !== 'B3') wallZ(b, 'vaultWall', Z1, -X, X, y, H, 0.4, [{ x0: -2.2, x1: 2.2, h: 3.2 }], true);
@@ -305,7 +310,7 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
   if (name === 'B3') ctx.anchors.doc_spine_floorplate_b3 = plate;
   if (name === 'B4') { const sf = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.6), signMaterial('电梯安全须知', ['若电梯显示不存在的楼层', '请勿出梯', '', '若轿厢内多出一名乘客', '请不要数人数'], 420, 600)); sf.position.set(-3.0, y + 1.6, Z0 - 0.22); sf.rotation.y = Math.PI; zone.add(sf); ctx.anchors.doc_spine_safety = sf; }
   const nm = goldText(name, 1.0, 0.7, M.goldBright, { res: 160 }); nm.position.set(0, y + (UP ? 3.7 : 4.1), Z0 - 0.22 - dz); nm.rotation.y = Math.PI; zone.add(nm);
-  if (!UP) for (const x of [-6, 0, 6]) { b.box('blackMetal', 1.6, 0.06, 0.4, [x, y + H - 0.03, -88], { uv: 1 }); const l = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.03, 0.26), Mx.lampAmber); l.position.set(x, y + H - 0.07, -88); zone.add(l); }
+  if (!UP) for (const x of (SPN ? [-6, 6] : [-6, 0, 6])) { b.box('blackMetal', 1.6, 0.06, 0.4, [x, y + H - 0.03, -88], { uv: 1 }); const l = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.03, 0.26), Mx.lampAmber); l.position.set(x, y + H - 0.07, -88); zone.add(l); }
   point(zone, UP ? 0xfff0dc : 0xffd0a0, 8, [0, y + 4, -88], 12);
   rectLight(zone, 0xffe8c8, 1.2, 16, 6, [0, y + H - 0.2, -88], [0, y, -88]);
 }

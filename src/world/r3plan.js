@@ -2747,3 +2747,76 @@ export function planVaultB3(y) {
   return { room, items: out };
 }
 PLANS.vault_b3 = (Y) => fixYaw(planVaultB3(Y)); R3.vault_b3 = true;
+
+// ======== 批次20：中央竖井（书脊井）spine_b3 / b4 / b5 ========
+// 平面（每层电梯厅 x −9…9，z −92…−84，H 5.2；电梯金门在南墙 z −84 的 x ±6；北侧 z −92 通 B3 收容库气闸 / B4、B5 中门 x ±2.2）：
+//   竖井洞口 x −1.8…1.8，z −89.2…−86.4（居中偏南，北侧留 2.8 m 横道通库门，东西两侧各 7 m 通电梯门）；
+//   B3、B4 洞口一圈铸铁栏杆（立柱 + 花饰竖杆 + 扶手 + 踢脚）+ 黄漆地面警戒边；B5 是井底：货运电梯轿厢停靠，栏杆南侧留闸口 + 折叠钢闸门；
+//   井内：四角钢立柱 + 每 2 m 横撑 + 南北两面导轨 + 4 根钢索（B3 顶曳引轮 → B5 轿厢顶）+ 东侧通长检修梯（带护笼）+ 西侧管线束；
+//   层间楼板段（B3 地面以下 / B4 地面以下）四面混凝土井壁，井壁内侧刷下一层层号；每层厅内西墙层号大字、东墙管线束、井架四角防爆灯。
+const SP = { x0: -1.8, x1: 1.8, z0: -89.2, z1: -86.4, zc: -87.8 };
+function planSpine(y, lv) {
+  const out = []; const H = 5.2, top = y + H, ceil = lv === 'B3' ? top : top + 0.3; // B3 顶即曳引机房楼板；B4/B5 顶板开洞，井架穿过
+  const below = { B3: -34 + 5.5, B4: -42 + 5.5, B5: y }[lv]; // 本层地面下面井壁 / 井架延伸到下一层顶板上沿（B5 为井底）
+  const room = { name: '书脊井 · ' + lv + ' 电梯厅 + 中央竖井（批次20）', x0: -9, x1: 9, z0: -92, z1: -84, y, H,
+    doors: [{ wall: 'S', a: -7.2, b: -4.8, label: '电梯' }, { wall: 'S', a: 4.8, b: 7.2, label: '电梯' }, { wall: 'N', a: -2.3, b: 2.3, label: lv === 'B3' ? '收容库气闸' : '库门' }], windows: [],
+    rooms: [['① 竖井洞口', 0, SP.zc], ['② 层号', -8.6, -88], ['③ 管线束', 8.5, -90.6], ['④ 检修梯', 1.55, SP.zc]],
+    aisles: [{ label: '北横道（通库门）', x0: -8.5, x1: 8.5, z0: -91.8, z1: -89.8 }, { label: '西侧通道', x0: -8.0, x1: -2.6, z0: -91.8, z1: -84.6 }, { label: '东侧通道', x0: 2.6, x1: 7.6, z0: -91.8, z1: -84.6 }] };
+  const B = (box, x, yy, z, w, h, d, tag, uv = 1) => out.push({ box, x, y: yy, z, w, h, d, uv, tag, on: 'partv' });
+  const C = (x, yy, z, w, h, d, tag) => out.push({ part: true, x, y: yy, z, size: [w, h, d], tag: tag + '·碰撞', on: 'partv' });
+  const y0 = lv === 'B5' ? y : below, y1 = ceil, hh = y1 - y0, ym = (y0 + y1) / 2;
+  // 井架：四角立柱 + 横撑 + 南北导轨
+  for (const x of [SP.x0 + 0.15, SP.x1 - 0.15]) for (const z of [SP.z0 + 0.15, SP.z1 - 0.15]) B('r3_steelOld', x, ym, z, 0.16, hh, 0.16, '① 井架立柱');
+  for (let yy = Math.ceil((y0 - y) / 2) * 2 + y; yy < y1 - 0.2; yy += 2) { if (yy <= y0 + 0.1) continue;
+    for (const z of [SP.z0 + 0.15, SP.z1 - 0.15]) B('r3_steelOld', 0, yy, z, 3.2, 0.1, 0.1, '① 井架横撑');
+    for (const x of [SP.x0 + 0.15, SP.x1 - 0.15]) B('r3_steelOld', x, yy, SP.zc, 0.1, 0.1, 2.5, '① 井架横撑'); }
+  for (const z of [SP.z0 + 0.3, SP.z1 - 0.3]) { B('r3_steelGrey', 0, ym, z, 0.12, hh, 0.06, '① 导轨'); B('r3_steelGrey', 0, ym, z + (z < SP.zc ? -0.05 : 0.05), 0.04, hh, 0.06, '① 导轨'); }
+  // 钢索：B3 顶曳引轮 → B5 轿厢顶（y −42 + 2.7）
+  const carTop = -42 + 2.75, cy0 = Math.max(y0, carTop), cy1 = lv === 'B3' ? top - 0.7 : y1;
+  if (cy1 > cy0) for (const dx of [-0.15, -0.05, 0.05, 0.15]) B('dz_pipe', dx, (cy0 + cy1) / 2, SP.zc, 0.025, cy1 - cy0, 0.025, '① 钢索');
+  if (lv === 'B3') { // 曳引轮（顶板下）+ 钢梁
+    B('r3_steelOld', 0, top - 0.25, SP.zc, 3.4, 0.3, 0.3, '① 曳引机钢梁');
+    for (const [w, h] of [[0.9, 0.3], [0.7, 0.62], [0.36, 0.86]]) B('r3_rackGreen', 0, top - 0.85, SP.zc, w, h, 0.22, '① 曳引轮');
+    B('dz_pipe', 0, top - 0.85, SP.zc, 0.1, 0.1, 0.5, '① 曳引轮轴'); }
+  // 检修梯（井内东侧，靠东面横撑）：两根梯梁 + 0.3 m 踏棍 + 每 1.2 m 一道护笼
+  { const xl = SP.x1 - 0.32; for (const dz of [-0.22, 0.22]) B('r3_rackGreen', xl, ym, SP.zc + dz, 0.05, hh, 0.05, '④ 检修梯梁');
+    for (let yy = y0 + 0.3; yy < y1 - 0.1; yy += 0.3) B('r3_rackGreen', xl, yy, SP.zc, 0.03, 0.03, 0.44, '④ 踏棍');
+    for (let yy = y0 + 1.2; yy < y1 - 0.2; yy += 1.2) { B('r3_rackGreen', xl - 0.36, yy, SP.zc, 0.03, 0.04, 0.7, '④ 护笼'); for (const dz of [-0.35, 0.35]) B('r3_rackGreen', xl - 0.18, yy, SP.zc + dz, 0.36, 0.04, 0.03, '④ 护笼'); } }
+  // 井内西侧管线束（4 根，竖向通长）
+  [['r3_rackGreen', 0.16], ['r3_steelGrey', 0.12], ['r3_crateOlive', 0.1], ['dz_pipe', 0.08]].forEach(([m, w], i) => { B(m, SP.x0 + 0.38, ym, SP.zc - 0.7 + i * 0.32, w, hh, w, '③ 井内管线'); });
+  // 层间井壁（本层地面以下到下一层顶板上沿）+ 井壁内侧下一层层号
+  if (lv !== 'B5') { const yb = (y - 0.2 + below) / 2, hb = y - 0.2 - below;
+    B('r3_bunkerConc', 0, yb, SP.z0 - 0.12, 3.84, hb, 0.24, '层间井壁', 0.5); B('r3_bunkerConc', 0, yb, SP.z1 + 0.12, 3.84, hb, 0.24, '层间井壁', 0.5);
+    for (const x of [SP.x0 - 0.12, SP.x1 + 0.12]) B('r3_bunkerConc', x, yb, SP.zc, 0.24, hb, 3.04, '层间井壁', 0.5);
+    out.push({ wtext: lv === 'B3' ? 'B4' : 'B5', x: 0, y: yb, z: SP.z0 + 0.06, yaw: ROT.S, w: 1.0, h: 0.62, size: [1.0, 0.62, 0.05], tag: '② 井壁层号', on: 'sign' }); }
+  // 栏杆（铸铁）：B3/B4 一圈；B5 南侧闸口
+  { const rx = SP.x1 + 0.14, rz0 = SP.z0 - 0.14, rz1 = SP.z1 + 0.14, gate = lv === 'B5';
+    const seg = (ax, az, bx, bz) => { const L = Math.hypot(bx - ax, bz - az), alongX = Math.abs(bx - ax) > 0.01, mx = (ax + bx) / 2, mz = (az + bz) / 2;
+      for (const [hy, th] of [[1.05, 0.07], [0.55, 0.035]]) B('iron', mx, y + hy, mz, alongX ? L : th, th, alongX ? th : L, '⑤ 栏杆扶手');
+      B('iron', mx, y + 0.08, mz, alongX ? L : 0.03, 0.15, alongX ? 0.03 : L, '⑤ 栏杆踢脚');
+      const n = Math.round(L / 0.13); for (let k = 1; k < n; k++) { const t = k / n; B('iron', ax + (bx - ax) * t, y + 0.6, az + (bz - az) * t, 0.022, 0.9, 0.022, '⑤ 栏杆竖杆'); }
+      const np = Math.max(1, Math.round(L / 1.3)); for (let k = 0; k <= np; k++) { const t = k / np; B('iron', ax + (bx - ax) * t, y + 0.56, az + (bz - az) * t, 0.08, 1.12, 0.08, '⑤ 栏杆立柱'); B('iron', ax + (bx - ax) * t, y + 1.14, az + (bz - az) * t, 0.11, 0.06, 0.11, '⑤ 立柱帽'); }
+      C(mx, y, mz, alongX ? L : 0.1, 1.1, alongX ? 0.1 : L, '⑤ 栏杆'); };
+    seg(-rx, rz0, rx, rz0); seg(-rx, rz0, -rx, rz1); seg(rx, rz0, rx, rz1);
+    if (gate) { seg(-rx, rz1, -0.95, rz1); seg(0.95, rz1, rx, rz1); for (let k = 0; k < 9; k++) B('r3_steelOld', 0.95 - 0.06 - k * 0.04, y + 1.0, rz1 + 0.06, 0.02, 2.0, 0.02, '⑤ 折叠闸门（收拢）'); B('r3_steelOld', 0.75, y + 2.02, rz1 + 0.06, 0.45, 0.05, 0.05, '⑤ 闸门滑轨');
+      // 井底轿厢：钢底盘 + 四角立柱 + 顶框 + 三面钢网 + 顶灯
+      B('r3_steelOld', 0, y + 0.08, SP.zc, 2.8, 0.16, 2.1, '⑥ 轿厢底盘'); for (const x of [-1.35, 1.35]) for (const z of [SP.zc - 1.0, SP.zc + 1.0]) B('r3_steelOld', x, y + 1.4, z, 0.08, 2.6, 0.08, '⑥ 轿厢立柱');
+      B('r3_steelOld', 0, y + 2.72, SP.zc, 2.8, 0.1, 2.1, '⑥ 轿厢顶框'); B('r3_rackGreen', 0, y + 1.4, SP.zc - 1.0, 2.62, 2.4, 0.02, '⑥ 轿厢后网');
+      for (const x of [-1.35, 1.35]) B('r3_rackGreen', x, y + 1.4, SP.zc, 0.02, 2.4, 1.92, '⑥ 轿厢侧网'); B('dz_glowCold', 0, y + 2.62, SP.zc, 0.8, 0.04, 0.16, '⑥ 轿厢顶灯');
+      out.push({ sign: '货 运 电 梯', sub: '限载 2000 kg · 证物转运专用', x: 0.9 + 0.25, y: y + 1.6, z: rz1 + 0.1, yaw: ROT.S, size: [0.34, 0.12, 0.01], tag: '⑥ 铭牌', on: 'sign' }); }
+    else seg(-rx, rz1, rx, rz1);
+    // 黄漆警戒边（地面，栏杆外 0.35 m 一圈）
+    B('r3_paintYellow', 0, y + 0.006, rz0 - 0.35, 2 * rx + 0.8, 0.012, 0.12, '⑤ 警戒边'); B('r3_paintYellow', 0, y + 0.006, rz1 + 0.35, 2 * rx + 0.8, 0.012, 0.12, '⑤ 警戒边');
+    for (const s of [-1, 1]) B('r3_paintYellow', s * (rx + 0.35), y + 0.006, SP.zc, 0.12, 0.012, rz1 - rz0 + 0.8, '⑤ 警戒边'); }
+  // 井架四角防爆灯（本层 y+2.7，朝外）+ 井内冷光
+  for (const x of [SP.x0 + 0.15, SP.x1 - 0.15]) for (const z of [SP.z0 + 0.15, SP.z1 - 0.15]) { const sx = Math.sign(x), sz = z < SP.zc ? -1 : 1;
+    B('r3_steelGrey', x + sx * 0.12, y + 2.9, z + sz * 0.12, 0.14, 0.24, 0.14, '⑦ 防爆灯座'); B('dz_glowCold', x + sx * 0.16, y + 2.78, z + sz * 0.16, 0.12, 0.18, 0.12, '⑦ 防爆灯罩'); }
+  light(out, 0, y + 3.0, SP.zc, 0xe4ecff, 1.6, 7); light(out, 0, y + 0.6 - (lv === 'B5' ? 0 : 1.4), SP.zc, 0xd8e2f0, 0.9, 5);
+  // 厅内：西墙层号大字 + 东墙管线束（竖向 4 根 + 管卡）+ 层号铜牌
+  out.push({ wtext: lv, x: -8.75, y: y + 2.6, z: -88, yaw: ROT.E, w: 1.8, h: 1.1, size: [1.8, 1.1, 0.05], tag: '② 层号大字', on: 'sign' });
+  out.push({ sign: lv + ' · 书脊井', sub: { B3: '证物收容库 开架区 · 1–3 级', B4: '单独收容柜 · 4–6 级', B5: '深库 · 双人双锁' }[lv], x: -8.85, y: y + 1.55, z: -88, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '② 层号铜牌', on: 'sign' });
+  [['r3_rackGreen', 0.18], ['r3_steelGrey', 0.12], ['r3_crateOlive', 0.1], ['dz_pipe', 0.08]].forEach(([m, w], i) => { const z = -91.5 + i * 0.3; B(m, 8.72 - w / 2, y + H / 2, z, w, H, w, '③ 管线束'); });
+  for (const yy of [0.8, 2.6, 4.4]) B('blackMetal', 8.62, y + yy, -91.05, 0.06, 0.08, 1.15, '③ 管卡');
+  return { room, items: out };
+}
+for (const lv of ['B3', 'B4', 'B5']) { const id = 'spine_' + lv.toLowerCase(); PLANS[id] = (Y) => fixYaw(planSpine(Y, lv)); R3[id] = true; }

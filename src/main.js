@@ -246,7 +246,7 @@ const VIS = {
   canteen: { security_hall: 1, east_cloister: 1 }, armory: {}, interrogation: {}, training: {}, floor2: {}, floor3: {}, library: {}, director: {},
   archive: { exterior: 0, gate: 0, security_hall: 1, archive: 1, archive_b1: 1 },
   archive_b1: { exterior: 0, archive: 1, archive_b1: 1 },
-  spine_b3: {}, spine_b4: {}, spine_b5: {}, vault_b3: {}, vault_b4: {}, vault_b5: {},
+  spine_b3: { vault_b4: 1, vault_b5: 1 }, spine_b4: { vault_b3: 1, vault_b5: 1 }, spine_b5: { vault_b3: 1, vault_b4: 1 }, vault_b3: {}, vault_b4: {}, vault_b5: {}, // 批次20：中央竖井上下贯通 → 电梯厅里能看到其他两层的井架 / 栏杆
   citizen_service: EW, exam_center: EW, command_center: { east_wing: 1 }, zone_control: { east_wing: 1 }, east_stair: EW,
 };
 const ZONE_LOOK = {
