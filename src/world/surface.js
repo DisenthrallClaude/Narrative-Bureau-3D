@@ -110,7 +110,7 @@ export async function buildSurface(scene, world, ctx) {
     b.box('wood', 5, 1.1, 0.5, [57.5, 0.55, 12.3], { uv: 0.6 }); b.box('blackMarble', 5.2, 0.05, 0.6, [57.5, 1.12, 12.3], { uv: 0.5 });
     const asg = plane(zone, docMat('doc_dorm_assign', signMaterial('新入职人员宿舍分配表', ['3 号楼 101　——', '3 号楼 102　——', '3 号楼 207　（新人）', '分配日期：2023 年', '　　　　　宿管科'], 560, 720)), 1.0, 1.3, 61.4, 2.2, 12.14, 0); anchor('doc_dorm_assign', asg);
     hangingSign(zone, M, '宿管室　·　小卖部', 57.5, 3.4, 12.5, 0, 2.4);
-    const keeper = person(M, { coat: 0x4a3a30, glasses: true }); keeper.position.set(57.0, 0, 10.4); zone.add(keeper);
+    const keeper = person(M, { coat: 0x4a3a30, clue: 'chair', name: '宿管' }); keeper.position.set(57.0, 0, 10.4); zone.add(keeper);
     for (let s = 0; s < 3; s++) { b.box('steel', 0.4, 0.02, 4.8, [53.6, 0.5 + s * 0.6, 6.5], { uv: 1 }); for (let k = 0; k < 12; k++) b.box(['kraft', 'paintR', 'navy', 'm5_olive'][k % 4], 0.22, 0.24, 0.16, [53.6, 0.63 + s * 0.6, 4.4 + k * 0.38], { uv: false }); }
     // 洗衣房
     for (let k = 0; k < 4; k++) { const x = 54.4 + k * 1.6; b.box('whitePad', 0.75, 0.9, 0.7, [x, 0.45, 38.2], { uv: 1, collide: true }); b.add('dz_glassDark', new THREE.CylinderGeometry(0.22, 0.22, 0.04, 20), { pos: [x, 0.5, 37.84], rot: [Math.PI / 2, 0, 0] }, { uv: false }); }

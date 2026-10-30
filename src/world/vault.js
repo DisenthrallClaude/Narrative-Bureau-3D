@@ -143,7 +143,7 @@ export function buildVault(scene, world, ctx) {
     add(placeModel('chem_set', { height: 0.35, pos: [0.7, y + 0.945, zd], rotY: -0.3 }));
     add(placeModel('safe_small', { height: 0.9, pos: [2.8, y, Z1 + 1.0], rotY: 0 }));
     add(placeModel('desk_lamp', { height: 0.5, pos: [1.3, y + 0.945, zd - 0.2], rotY: -0.6 }));
-    const qc = person(M, { coat: 0x2a2620, glasses: true }); qc.position.set(0, y, zd - 1.0); qc.rotation.y = Math.PI; zone.add(qc); ctx.vault.qichou = qc;
+    const qc = person(M, { coat: 0x2a2620, clue: 'chair', name: '齐仇' }); qc.position.set(0, y, zd - 1.0); qc.rotation.y = Math.PI; zone.add(qc); ctx.vault.qichou = qc;
     // 裁纸刀（齐仇的能力【裁纸】）
     const blade = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.005, 0.32), M.steel); blade.position.set(0.15, y + 0.95, zd + 0.1); blade.rotation.y = 0.5; zone.add(blade);
     ctx.anchors.int_vault_qichou = { box: [0, y + 1.0, zd - 1.0, 1.2, 2.0, 1.2] };

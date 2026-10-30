@@ -179,7 +179,7 @@ export function buildUpper(scene, world, ctx) {
     add(placeModel('safe_small', { height: 1.3, pos: [X - 0.6, y, -97], rotY: -Math.PI / 2 }));
     const si = paper('doc_dir_secret_index', '机要文件目录'); si.position.set(10, y + 1.0, -100.5); zone.add(si); ctx.anchors.doc_dir_secret_index = si; b.box('steel', 1.4, 1.0, 0.8, [10, y + 0.5, -100.5], { uv: 1, collide: true });
     // 齐凌云（落地窗前）
-    const ql = person(M, { coat: 0x15161c }); ql.position.set(-3, y, -110); ql.rotation.y = 0; zone.add(ql); ctx.anchors.int_dir_qilingyun = { box: [-3, y + 1, -110, 1.2, 2, 1.2] };
+    const ql = person(M, { coat: 0x15161c, clue: 'chair', name: '齐凌云' }); ql.position.set(-3, y, -110); ql.rotation.y = 0; zone.add(ql); ctx.anchors.int_dir_qilingyun = { box: [-3, y + 1, -110, 1.2, 2, 1.2] };
     // 书柜墙（南墙两侧）+ 地毯 + 灯
     // 南墙书柜与地毯：见 dressing.js（细书脊书柜 + 图案地毯）
     add(placeModel('chandelier', { height: 1.6, pos: [0, y + 4.8, -102] }));

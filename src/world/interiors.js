@@ -198,7 +198,7 @@ function buildGate(zone, world, ctx, M, add) {
   const qm = new THREE.Mesh(new THREE.PlaneGeometry(4, 1), q.mat); qm.position.set(X1 - 0.32, Y + 7.8, dz0 - 0.4); qm.rotation.y = -Math.PI / 2; zone.add(qm);
   ctx.queueScreen = qm;
   // 人事处干事（台后）
-  const clerk = person(M, { coat: 0x1c2233, glasses: true }); clerk.position.set(dx + 0.9, Y, z3); clerk.rotation.y = -Math.PI / 2; zone.add(clerk);
+  const clerk = person(M, { coat: 0x1c2233, clue: 'chair' }); clerk.position.set(dx + 0.9, Y, z3); clerk.rotation.y = -Math.PI / 2; zone.add(clerk);
   ctx.clerk = clerk;
   // 立式导视牌（服务台左侧）
   const dirTex = content.tex('tex_gate_directory');
@@ -434,7 +434,8 @@ function buildHall(zone, world, ctx, M, add) {
   if (!HH) archPortal(b, new Frame([-X + 0.1, Y, -51.5], Math.PI / 2), 8, 8 - 8 * 0.866 * 0.5, 0.3);
   const way = goldText('← 西翼　人事档案馆', 3.6, 0.42, M.goldBright, { res: 128 }); way.position.set(-X + 0.4, Y + 9.6, -51.5); way.rotation.y = Math.PI / 2; zone.add(way);
   // 殷泽
-  const yz = person(M, { coat: 0x0b0d14, cap: true }); yz.position.set(lanes[6] + 1.6, Y, GZ - 6.2); yz.rotation.y = Math.PI * 0.85; zone.add(yz); ctx.yinze = yz;
+  const yz = person(M, { coat: 0x0b0d14 }); yz.position.set(lanes[6] + 1.6, Y, GZ - 6.2); yz.rotation.y = Math.PI * 0.85; zone.add(yz); ctx.yinze = yz; // 殷泽：不显形（剧情走位逻辑保留），原位放他的衣帽架 + 名牌，台词走安检广播
+  { const yc = person(M, { coat: 0x0b0d14, cap: true, clue: 'coat', name: '殷泽' }); yc.position.set(lanes[6] + 2.4, Y, GZ - 6.8); yc.rotation.y = Math.PI; zone.add(yc); }
   // —— 光：玫瑰窗光柱、侧窗斜射光柱、尘埃 ——
   ctx.shafts = ctx.shafts ?? [];
   const rs = lightShaft({ from: [0, Y + 19, Z0 - 0.2], to: [0, Y + 0.5, -54], r0: 4.2, r1: 6.5, color: 0xffd9a0, intensity: 0.12 }); zone.add(rs); ctx.shafts.push(rs);
@@ -639,9 +640,9 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   for (let k = 0; k < 4; k++) add(placeModel('file_cabinet', { height: 1.45, pos: [X0 + 1.0, Y, kz - 3 + k * 2], rotY: Math.PI / 2 }));
   add(placeModel('filing_cabinets', { maxDim: 6.5, pos: [X0 + 4.6, Y, Z1 + 6.5], rotY: 0 }).then((o) => { world.boundsOf(o, 0.85); return o; }));
   // 叶寻与影子
-  const yx = person(M, { coat: 0x2a2620, glasses: true }); yx.position.set(kx - 1.1, Y, kz); yx.rotation.y = Math.PI / 2; zone.add(yx); ctx.yexun = yx;
+  const yx = person(M, { coat: 0x2a2620, clue: 'chair', name: '叶寻' }); yx.position.set(kx - 1.1, Y, kz); yx.rotation.y = Math.PI / 2; zone.add(yx); ctx.yexun = yx;
   const shadowMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.82, depthWrite: false });
-  const sh = person(M, { coat: 0x000000, material: shadowMat }); sh.position.copy(yx.position); sh.position.x -= 0.5; sh.visible = false; zone.add(sh); ctx.yexunShadow = sh;
+  const sh = person(M, { coat: 0x000000, material: shadowMat, clue: 'shadow' }); sh.position.copy(yx.position); sh.position.x -= 0.5; sh.visible = false; zone.add(sh); ctx.yexunShadow = sh;
   // 档案馆入口规章铜牌（东门右侧）
   const art = content.tex('tex_archive_rules');
   const arm = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 1.2), art ? new THREE.MeshStandardMaterial({ map: art, metalness: 0.5, roughness: 0.4 }) : brassPlaqueMaterial('阅览规章', ['一、调阅须登记', '二、禁止涂改档案', '三、档号即身份', '四、勿在馆内念出已归档者之名']));
@@ -814,23 +815,45 @@ export function envelopeMesh(M, withString = true) {
   }
   return g;
 }
-export function person(M, { coat = 0x1a1d26, glasses = false, cap = false, material = null } = {}) {
-  const g = new THREE.Group();
-  const mc = material ?? new THREE.MeshStandardMaterial({ color: coat, roughness: 0.75 });
-  const skin = material ?? new THREE.MeshStandardMaterial({ color: 0xb48c74, roughness: 0.65 });
-  const pant = material ?? new THREE.MeshStandardMaterial({ color: 0x14161c, roughness: 0.8 });
-  const shirt = material ?? new THREE.MeshStandardMaterial({ color: 0xe8e6e0, roughness: 0.7 });
-  const add = (geo, m, x, y, z, rx = 0, rz = 0) => { const me = new THREE.Mesh(geo, m); me.position.set(x, y, z); me.rotation.set(rx, 0, rz); me.castShadow = true; g.add(me); return me; };
-  for (const sx of [-1, 1]) { add(new THREE.CapsuleGeometry(0.075, 0.78, 4, 10), pant, sx * 0.1, 0.47, 0); add(new THREE.BoxGeometry(0.11, 0.06, 0.26), pant, sx * 0.1, 0.03, 0.05); }
-  add(new THREE.CapsuleGeometry(0.19, 0.5, 4, 14), mc, 0, 1.22, 0);
-  add(new THREE.BoxGeometry(0.1, 0.22, 0.02), shirt, 0, 1.4, 0.18);
-  add(new THREE.BoxGeometry(0.03, 0.18, 0.025), material ?? new THREE.MeshStandardMaterial({ color: 0x7a1a20 }), 0, 1.38, 0.195);
-  for (const sx of [-1, 1]) add(new THREE.CapsuleGeometry(0.06, 0.58, 4, 10), mc, sx * 0.25, 1.18, 0, 0, sx * 0.06);
-  add(new THREE.CylinderGeometry(0.06, 0.07, 0.1, 10), skin, 0, 1.62, 0);
-  const head = add(new THREE.SphereGeometry(0.115, 16, 12), skin, 0, 1.76, 0.01); head.scale.set(0.95, 1.12, 1);
-  add(new THREE.SphereGeometry(0.12, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.55), material ?? new THREE.MeshStandardMaterial({ color: 0x15120f, roughness: 0.9 }), 0, 1.79, -0.005);
-  if (glasses) for (const sx of [-1, 1]) { const gl = add(new THREE.TorusGeometry(0.03, 0.005, 4, 16), material ?? M.gold, sx * 0.045, 1.77, 0.11); gl.rotation.set(0, 0, 0); }
-  if (cap) { add(new THREE.CylinderGeometry(0.125, 0.13, 0.07, 16), mc, 0, 1.9, 0); add(new THREE.BoxGeometry(0.2, 0.012, 0.1), mc, 0, 1.87, 0.12); add(new THREE.BoxGeometry(0.05, 0.03, 0.01), material ?? M.gold, 0, 1.91, 0.13); }
+// 批次12（用户 2026-10-30 22:16 要求「游戏里不要放人物模型」）：person() 不再生成人形，只返回一个占位 Group（位置/朝向/剧情逻辑照旧可用）。
+// clue 给出「人不在、但有人在此」的非人物线索：'chair' 空椅 + 椅背搭着外套（+ 名牌）、'coat' 衣帽架挂外套/帽（+ 名牌）、'hanger' 挂着的制服（无头无手）、'shadow' 地面一摊墨影。
+// 不给 clue = 什么都不画（路人、人群）。
+function namePlateMat(name) {
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 72; const c = cv.getContext('2d');
+  c.fillStyle = '#6b4f22'; c.fillRect(0, 0, 256, 72); c.strokeStyle = '#d8b56a'; c.lineWidth = 4; c.strokeRect(4, 4, 248, 64);
+  c.fillStyle = '#f3e2b0'; c.font = '600 40px "NB Serif","Noto Serif SC",serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, 128, 38);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.45, metalness: 0.4 });
+}
+export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue = null, name = null } = {}) {
+  const g = new THREE.Group(); g.userData.presence = clue ?? 'none';
+  if (!clue) return g;
+  const add = (geo, m, x, y, z, rx = 0, ry = 0, rz = 0) => { const me = new THREE.Mesh(geo, m); me.position.set(x, y, z); me.rotation.set(rx, ry, rz); me.castShadow = true; me.receiveShadow = true; g.add(me); return me; };
+  const cloth = new THREE.MeshStandardMaterial({ color: coat, roughness: 0.85 });
+  const wood = M.wood ?? new THREE.MeshStandardMaterial({ color: 0x4a3020, roughness: 0.6 });
+  const brass = M.brass ?? M.gold;
+  if (clue === 'shadow') { const d = add(new THREE.CircleGeometry(0.45, 28), material ?? new THREE.MeshBasicMaterial({ color: 0, transparent: true, opacity: 0.8, depthWrite: false }), 0, 0.012, 0, -Math.PI / 2); d.scale.set(1, 1.6, 1); d.castShadow = false; return g; }
+  if (clue === 'chair') { // 空椅（面朝 +Z），椅背搭外套
+    add(new THREE.BoxGeometry(0.46, 0.05, 0.44), wood, 0, 0.46, 0);
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) add(new THREE.BoxGeometry(0.04, 0.46, 0.04), wood, sx * 0.2, 0.23, sz * 0.19);
+    for (const sx of [-1, 1]) add(new THREE.BoxGeometry(0.04, 0.5, 0.04), wood, sx * 0.2, 0.73, -0.2);
+    add(new THREE.BoxGeometry(0.44, 0.16, 0.03), wood, 0, 0.9, -0.2);
+    add(new THREE.BoxGeometry(0.5, 0.06, 0.12), cloth, 0, 0.97, -0.21); // 搭在椅背上的外套（肩部）
+    add(new THREE.BoxGeometry(0.46, 0.5, 0.025), cloth, 0, 0.7, -0.24, 0.06); // 外套后片垂下
+    add(new THREE.BoxGeometry(0.44, 0.34, 0.025), cloth, 0, 0.8, -0.165, -0.12); // 前襟垂在椅面后
+    if (cap) add(new THREE.CylinderGeometry(0.11, 0.12, 0.06, 16), cloth, 0.08, 0.51, 0.06);
+    if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 0.53, 0.12, -0.5); np.castShadow = false; }
+    return g; }
+  if (clue === 'coat' || clue === 'hanger') { // 衣帽架 / 制服挂架
+    if (clue === 'coat') { add(new THREE.CylinderGeometry(0.02, 0.025, 1.75, 10), wood, 0, 0.875, 0); add(new THREE.CylinderGeometry(0.2, 0.22, 0.03, 20), wood, 0, 0.015, 0);
+      for (let k = 0; k < 4; k++) add(new THREE.CylinderGeometry(0.008, 0.008, 0.16, 6), brass, Math.sin(k * 1.57) * 0.07, 1.68, Math.cos(k * 1.57) * 0.07, 0.9 * Math.cos(k * 1.57), 0, -0.9 * Math.sin(k * 1.57)); }
+    const top = clue === 'coat' ? 1.62 : 1.5;
+    add(new THREE.BoxGeometry(0.44, 0.012, 0.012), brass, 0, top + 0.02, 0.06); // 衣架横杆
+    add(new THREE.BoxGeometry(0.46, 0.7, 0.12), material ?? cloth, 0, top - 0.37, 0.07); // 外套身
+    for (const sx of [-1, 1]) add(new THREE.BoxGeometry(0.09, 0.6, 0.1), material ?? cloth, sx * 0.25, top - 0.36, 0.07, 0, 0, sx * 0.05); // 袖子垂下
+    add(new THREE.BoxGeometry(0.16, 0.22, 0.005), new THREE.MeshStandardMaterial({ color: 0xe8e6e0, roughness: 0.7 }), 0, top - 0.12, 0.135); // 领口衬衣
+    if (cap && clue === 'coat') add(new THREE.CylinderGeometry(0.12, 0.13, 0.07, 16), cloth, 0.05, 1.79, 0);
+    if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 1.15, 0.03); np.castShadow = false; }
+    return g; }
   return g;
 }
 export function grandClock(M, pos, yaw) {

@@ -39,6 +39,8 @@ export function updateInventory() {
 
 // —— 对话 ——
 let dlgResolve = null, dlgAdvance = null;
+// 批次12（用户要求不放人物模型）：场景里不再有人形，NPC 台词改为经由终端 / 广播 / 对讲 / 纸条传达——说话人后标注渠道
+const CHANNEL = { 殷泽: '安检广播', 叶寻: '窗口对讲', 齐凌云: '局长室内线', 齐仇: '收容库终端', 周闻: '指挥台对讲', 周也: '装备库留言', 干事: '窗口对讲', 职员甲: '窗口对讲', 职员乙: '窗口对讲', 卫队员: '对讲机', 大妈: '留在台上的纸条', 老人: '来信', 宿管: '宿管窗口纸条' };
 export function dialog(lines, { auto = false } = {}) {
   return new Promise((resolve) => {
     ui.state = 'dialog'; $('dlg').classList.remove('hidden');
@@ -69,7 +71,7 @@ export function dialog(lines, { auto = false } = {}) {
         return;
       }
       const mm = line.match(/^([^：（]{1,8}(?:（[^）]*）)?)：(.*)$/);
-      if (mm && !line.startsWith('（')) { $('dlgwho').textContent = mm[1].replace(/（[A-Z]）/, ''); $('dlgline').textContent = mm[2]; $('dlgline').className = 'line'; }
+      if (mm && !line.startsWith('（')) { const who = mm[1].replace(/（[A-Z]）/, ''); $('dlgwho').textContent = CHANNEL[who] ? `${who} · ${CHANNEL[who]}` : who; $('dlgline').textContent = mm[2]; $('dlgline').className = 'line'; }
       else { $('dlgwho').textContent = ''; $('dlgline').textContent = line; $('dlgline').className = 'line narr'; }
       i++;
       if (window.__NB_AUTO__) { setTimeout(adv, 0); return; }

@@ -79,7 +79,7 @@ export function buildRooms(scene, world, ctx) {
       if ((r + x) % 2 === 0) { b.box('steel', 0.45, 0.02, 0.32, [x - 1.2, Y + 0.81, z + 0.2], { uv: 1 }); b.add('whiteMarble', new THREE.CylinderGeometry(0.07, 0.06, 0.05, 16), { pos: [x - 1.2, Y + 0.845, z + 0.2] }, { uv: 1 }); }
     }
     // 靠窗长桌：两名职员（八卦）
-    const gossipers = []; for (const [dx, dz, c] of [[-0.6, -0.85, 0x2a3040], [0.6, 0.85, 0x40302a]]) { const p = person(M, { coat: c, glasses: dx > 0 }); p.position.set(-9 + dx, Y - 0.45, Z0 - 5 + dz); p.rotation.y = dz > 0 ? Math.PI : 0; zone.add(p); gossipers.push(p); }
+    const gossipers = []; for (const [dx, dz, c] of [[-0.6, -0.85, 0x2a3040], [0.6, 0.85, 0x40302a]]) { const p = person(M, { coat: c, clue: 'chair' }); p.position.set(-9 + dx, Y, Z0 - 5 + dz); p.rotation.y = dz > 0 ? Math.PI : 0; zone.add(p); gossipers.push(p); }
     ctx.anchors.int_canteen_gossip = { box: [-9, Y + 1.0, Z0 - 5, 3, 2, 3] };
     // 入口公告栏
     const bd = docMesh('doc_canteen_board', 3.2, 2.0, signMaterial('员工公告栏', ['· 本周加试阅卷人员 可在 B 窗口加餐', '· 请勿与倒影共餐', '· 失物招领：一枚无字书签', '· 食堂 21:00 后不供应任何「回忆」'], 640, 400));
@@ -121,7 +121,7 @@ export function buildRooms(scene, world, ctx) {
       const x = -10 + k * 2.5;
       b.box('blackMetal', 2.2, 3.4, 0.5, [x, y + 1.7, Z1 + 0.3], { uv: 1 });
       b.box('steel', 2.0, 0.04, 0.4, [x, y + 0.6, Z1 + 0.5], { uv: 1 });
-      const suit = person(M, { coat: 0x1a1d22, material: k % 3 === 0 ? null : undefined }); suit.position.set(x, y + 0.6, Z1 + 0.55); suit.scale.setScalar(0.92); zone.add(suit);
+      const suit = person(M, { coat: 0x1a1d22, clue: 'hanger' }); suit.position.set(x, y + 0.9, Z1 + 0.55); zone.add(suit);
       add(placeModel('gas_mask', { height: 0.28, pos: [x - 0.6, y + 2.6, Z1 + 0.6] }));
       if (k % 2 === 0) add(placeModel('military_crate', { height: 0.5, pos: [x + 0.5, y, Z1 + 1.2], rotY: 0.2 * k }));
     }
@@ -129,7 +129,7 @@ export function buildRooms(scene, world, ctx) {
     eq.position.set(0.8, y + 1.2, Z1 + 1.05); zone.add(eq); ctx.anchors.doc_arm_equipment = eq;
     b.box('wood', 1.6, 0.9, 0.7, [0.8, y + 0.45, Z1 + 1.4], { uv: 0.6, collide: true });
     // 周也
-    const zy = person(M, { coat: 0x101216 }); zy.position.set(3.2, y, Z1 + 2.6); zy.rotation.y = Math.PI * 0.85; zone.add(zy);
+    const zy = person(M, { coat: 0x101216, clue: 'coat', name: '周也' }); zy.position.set(3.2, y, Z1 + 2.6); zy.rotation.y = Math.PI * 0.85; zone.add(zy);
     ctx.anchors.int_arm_zhouye = { box: [3.2, y + 1.0, Z1 + 2.6, 1.2, 2, 1.2] };
     // 黑色装甲车（东侧车库）
     const car = armoredCar(M); car.position.set(10, y, -104); car.rotation.y = Math.PI / 2; zone.add(car); world.box(10, y + 1.2, -104, 2.6, 2.4, 6);
