@@ -308,7 +308,7 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
   b.add('gold', new THREE.BoxGeometry(17.4, 0.14, 0.6), front.at(0, textBandY + 1.85, 0.2), { uv: 1 });
   b.add('gold', new THREE.BoxGeometry(17.4, 0.14, 0.6), front.at(0, textBandY - 1.85, 0.2), { uv: 1 });
   const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + textBandY, -5 + 0.5); g.add(txt);
-  const big = emblem(3.8, M.goldBright, M.navy); big.position.set(0, Y + 37.8, -5 + 0.5); g.add(big); ctx.facadeEmblem = big;
+  const big = emblem(3.8, M.goldBright, M.navy); big.position.set(0, Y + 37.8, -5 + 0.5); g.add(big); ctx.facadeEmblem = big; big.traverse((o) => { o.userData.noCull = true; }); // 批次9：玫瑰窗中心局徽半径 1.05 m 被 DistCull（r<1.5 → 60 m）剔掉，plaza 主机位看不到金色窗花中心
   b.add('stoneDark', new THREE.CylinderGeometry(4.75, 4.75, 0.3, 48), { pos: [0, Y + 37.8, -5 + 0.2], rot: [Math.PI / 2, 0, 0] }, { uv: 0.5 });
   lancetWindow(b, front, -10.0, 31.5, 0.42, 2.2, 8.5);
   lancetWindow(b, front, 10.0, 31.5, 0.42, 2.2, 8.5);
@@ -429,8 +429,8 @@ async function heroFacade(g, M, world, ctx, add) {
   // 文字带「叙事管理局」（黑色抛光石板上的鎏金字）
   const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + 31.2, -4.99); g.add(txt);
   // 玫瑰窗中心局徽、鼓室局徽
-  const big = emblem(1.05, M.goldBright, M.navy); big.position.set(0, Y + 37.6, -5.35); g.add(big); ctx.facadeEmblem = big;
-  { const em = emblem(1.7, M.goldBright, M.navy); em.position.set(0, Y + DH + 2.4, -5.25); g.add(em); }
+  const big = emblem(1.05, M.goldBright, M.navy); big.position.set(0, Y + 37.6, -5.35); g.add(big); ctx.facadeEmblem = big; big.traverse((o) => { o.userData.noCull = true; }); // 批次9：玫瑰窗中心局徽半径 1.05 m 被 DistCull（r<1.5 → 60 m）剔掉，plaza 主机位看不到金色窗花中心
+  { const em = emblem(1.7, M.goldBright, M.navy); em.position.set(0, Y + DH + 2.4, -5.25); g.add(em); em.traverse((o) => { o.userData.noCull = true; }); }
   // 雕像：门洞五重退缩券的门柱托座（每侧 5 尊）、列王廊 11 龛、门廊墩柱壁龛、两侧盲龛
   for (let k = 1; k <= 5; k++) { const wi = DW + k, yk = -k * 0.55; for (const sx of [-1, 1]) add(placeModel('gothic_statue', { height: 2.55, pos: [sx * (wi / 2 - 0.22), Y + 2.36, -5 - (yk - 0.17)], rotY: sx * -0.35 })); }
   for (let i = 0; i < 11; i++) add(placeModel('gothic_statue', { height: 3.0, pos: [-14 + 1.27 + i * 2.546, Y + 18.71, -5.3] }));

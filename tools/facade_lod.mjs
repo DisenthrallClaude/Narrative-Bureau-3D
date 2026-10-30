@@ -1,5 +1,6 @@
 // R3 批次8：主楼外立面远景 LOD（Permissive 跨 UV 缝塌边；保留原顶点属性子集）
 // node tools/facade_lod.mjs in.glb out.glb
+// 【已弃用，批次9】prune() 删 TEXCOORD_0 → 远景变黑；改用 tools/facade_lod2.mjs（PERM=1）+ facade_lod_fixn.mjs
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { prune, weld, meshopt as meshoptFn, dedup } from '@gltf-transform/functions';

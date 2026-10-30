@@ -3,7 +3,7 @@
 // 新顶点法线 = 簇内面法线面积加权平均；其余属性照抄原顶点。合格角点不动。
 // 另：顶点 AO（COLOR_0）塌边后只剩凹角暗顶点 → 大面插值偏暗；给出 hi.glb 时按网格把 lo 的面积加权 AO 均值拉回 hi 的均值（增益 ≤ 2）。
 // node tools/facade_lod_fixn.mjs in_lo.glb out_lo.glb [hi.glb]
-import { NodeIO } from '@gltf-transform/core';
+import { NodeIO, PropertyType } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { prune, dedup, meshopt as meshoptFn } from '@gltf-transform/functions';
 import { MeshoptDecoder, MeshoptEncoder } from 'meshoptimizer';
@@ -47,6 +47,7 @@ for (const mesh of doc.getRoot().listMeshes()) for (const prim of mesh.listPrimi
 }
 if (hiAO) for (const mesh of doc.getRoot().listMeshes()) { const nm = mesh.getName(); const h = hiAO[nm], l = loAO[nm]; if (typeof h !== 'number' || typeof l !== 'number' || l < 0.01 || h <= l) continue; const g = Math.min(2, h / l); for (const prim of mesh.listPrimitives()) { const C = prim.getAttribute('COLOR_0'); if (!C) continue; const e = new Array(C.getElementSize()).fill(0); for (let i = 0; i < C.getCount(); i++) { C.getElement(i, e); for (let k = 0; k < 3; k++) e[k] = Math.min(1, e[k] * g); C.setElement(i, e); } } console.log('AO gain', nm, g.toFixed(2)); }
 console.log('fixed corners', fixed, 'added vertices', added);
-await doc.transform(prune(), dedup());
+// 批次9：prune 默认删掉材质未引用贴图的 TEXCOORD_0（GLB 材质无贴图）→ 必须 keepAttributes；dedup 不合并同参材质（marbleDark≠marble）
+await doc.transform(prune({ keepAttributes: true, keepLeaves: true }), dedup({ propertyTypes: [PropertyType.ACCESSOR, PropertyType.TEXTURE] }));
 await doc.transform(meshoptFn({ encoder: MeshoptEncoder, level: 'medium' }));
 await io.write(process.argv[3], doc);
