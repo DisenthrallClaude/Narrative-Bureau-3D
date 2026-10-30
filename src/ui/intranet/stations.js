@@ -27,7 +27,7 @@ export const STATIONS = [
   { id: 'jiyao', kind: 'model', zone: 'director', floor: '12F', page: 'director', sub: 'classified', label: '局长室 · 机要室　密电终端', term: '12F-JY-00',
     near: [11.8, 0.76, -102.85], yaw: -Math.PI / 2 },
   { id: 'command', kind: 'console', zone: 'command_center', floor: '2F', page: 'command', label: '监测指挥中心 · 席位 A-04', term: 'EW2-ZH-A04',
-    screen: { x: 36.8, y: 1.12, z: -40.05 - 0.006, yaw: Math.PI, w: 0.84, h: 0.46 } },
+    screen: { x: 36.8, y: 1.12, z: -41 + 0.925 - 0.004, yaw: Math.PI, w: 0.84, h: 0.46 } },
   { id: 'interrogation', kind: 'model', plan: 'interrogation', zone: 'interrogation', floor: 'B2', page: 'interrogation', label: 'B2 · 观察间监看台', term: 'B2-SX-01',
     near: [-5.6, 0.885, -95.65], yaw: Math.PI },
   { id: 'vault', kind: 'model', plan: 'b5_deep', zone: 'vault_b5', floor: 'B5', page: 'vault', label: 'B5 · 深库值守台', term: 'B5-ZS-01',

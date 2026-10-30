@@ -18,5 +18,6 @@ if (P.get('screens')) {
   ov.open(P.get('st') ?? 'legal', P.get('tab') ?? undefined);
   const v = P.get('view'); if (v) { const tab = P.get('tab'); if (tab === 'mail') { ov.state.mail = v; ov.go('mail'); } else ov.go(tab, tab === 'people' ? { person: v } : tab === 'home' ? { doc: v, no: P.get('no') ?? '' } : tab === 'dept' ? { san: 1 } : null); }
   if (P.get('q')) { ov.state.q = P.get('q'); ov.go('people'); }
+  if (P.get('pset')) { ov.state.pset = P.get('pset'); ov.go('people'); }
   setTimeout(() => { window.__PREVIEW_READY__ = true; }, 1200);
 }
