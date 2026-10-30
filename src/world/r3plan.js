@@ -2082,6 +2082,7 @@ function planLobby(y, F) {
   out.push({ plaque: true, title: '楼 层 导 览', lines: LOBBY_DIR, x: -5.6, y: y + 1.7, z: ZN + 0.03, yaw: 0, w: 0.75, h: 1.0, size: [0.8, 1.05, 0.04], tag: '导览', on: 'pic' });
   light(out, -5.6, y + 2.9, ZN + 0.9, 0xffe6c8, 0.7, 3.5);
   out.push({ m: 'r2/exit_sign', x: 0, y: y + 3.45, z: ZN + 0.05, yaw: 0, w: 0.36, tag: '导视', on: 'wall' });
+  if (F === '4F') { pic(out, 'textures/emblems/N24.jpg', 5.6, y + 2.3, ZN + 0.04, 0, 2.4, 1.35, 'gold', { tag: '入口壁画' }); out.push({ sign: '典籍藏书阁', sub: '宇宙图书馆 · 想象图', x: 5.6, y: y + 1.35, z: ZN + 0.04, yaw: 0, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' }); light(out, 5.6, y + 3.6, ZN + 1.2, 0xffe6c8, 0.9, 5); } // IMAGE-PLAN N24：藏书阁入口主视觉壁画
   // ④ 顶棚
   smoke(out, y, H, [[-4.5, -88], [4.5, -88]]);
   out.push({ m: 'r2/security_camera_02', x: 8.6, y: y + H - 0.25, z: ZN + 0.3, yaw: -2.4, h: 0.22, tag: 'K3', on: 'ceil' });
@@ -2130,5 +2131,59 @@ export function planEastStair(y) {
   return { room, items: out };
 }
 PLANS.east_stair = (Y) => fixYaw(planEastStair(Y)); R3.east_stair = true;
+// ================= R3 批次12 · 4F 典籍藏书阁 library 底层阅览厅（圆形，中心 (0, −106)，书架环内缘 r 12.7；y 22.8） =================
+// 原状：中央讲经台 + 「本册」巨书、3 处阅读龛（剧情锚点）、规则牌；6 张盒体阅读桌（r 7.2）与地球仪/星图台/限阅柜散放，方形拼花 + 方形红毯压在圆厅里，5 架倚架书梯。
+// 平面（角度 a：0 = 南/入口，±90° = 东/西，180° = 北；位置 x = r·sin a，z = −106 + r·cos a）：
+//  ① 地面同心圆：讲经台外黑石圈 r 2.8–3.3 → 环形回廊（r 3.3–5.8，铜圈收边 + 8 道罗盘铜线）→ 阅览环拼花（r 5.8–10.6）→ 书架前石材步道（r 10.6–12.7）
+//  ② 入口（南）：中轴通道 3.2 m 直通讲经台；入口东侧借阅台（馆员面朝通道）+ 还书周转箱；西侧限阅陈列柜（对称）；入口两侧阅览须知落地铭牌 / 《宇宙图书馆假说》展板（N20）
+//  ③ 阅览环：东、西、东北、西北 4 张长阅读桌沿圆周切向摆放（r 7.4），每桌 4 椅（内外两侧各 2）、2 盏绿罩台灯、摊开的书 / 文件堆
+//  ④ 北区（典藏展示）：北阅读龛两侧地球仪 / 星图台（r 7.0，a ±160°）
+//  ⑤ 书架环：原 5 架倚架书梯保留；补 2 架移动登高梯（a ±112°）停在书架前；每张阅读桌一盏暖色补光
+function ringF(out, mat, r0, r1, cx, cz, y, uv = 0.5) { out.push({ ring: true, mat, r0, r1, x: cx, y, z: cz, uv, size: [0.1, 0.01, 0.1], tag: '地面', on: 'partv' }); }
+export function planLibrary(y) {
+  const out = []; const cx = 0, cz = -106, RI = 12.7;
+  const P = (a, r) => [cx + Math.sin(a) * r, cz + Math.cos(a) * r], D = Math.PI / 180;
+  const room = { name: '4F · 典籍藏书阁底层阅览厅（批次12，圆厅 r 12.7）', x0: -RI, x1: RI, z0: cz - RI, z1: cz + RI, y, H: 46, doors: [{ wall: 'S', a: -3, b: 3, label: '入口（电梯厅）' }], windows: [],
+    rooms: [['② 借阅台', 5.6, -96.6], ['② 限阅陈列', -5.6, -96.6], ['③ 阅览', 9.2, -106], ['③ 阅览', -9.2, -106], ['④ 典藏', 0, -114.2]],
+    aisles: [{ label: '入口中轴', x0: -1.6, x1: 1.6, z0: -102.6, z1: -93.4 }, { label: '回廊东', x0: 3.4, x1: 5.6, z0: -107.0, z1: -105.0 }, { label: '回廊西', x0: -5.6, x1: -3.4, z0: -107.0, z1: -105.0 }, { label: '回廊北', x0: -1.0, x1: 1.0, z0: -111.6, z1: -109.4 }] };
+  // —— 固定锚点 ——
+  F7(out, '讲经台', cx, cz, 4.4, 4.4, y, 0, 0.6);
+  for (const a of [-0.9, 0.9, Math.PI]) { const [x, z] = P(a, 9.6); F7(out, '阅读龛', x, z, 1.4, 0.8, y, a, 1.0); }
+  for (let k = 0; k < 5; k++) { const a = 0.5 + k * 1.15, [x, z] = P(a, RI - 0.45); F7(out, '倚架书梯', x, z, 0.5, 0.6, y, a, 4.2); }
+  // —— ① 地面 ——
+  ringF(out, 'r3_stoneBorder', 2.8, 3.3, cx, cz, y + 0.012); ringF(out, 'dz_brassDim', 3.3, 3.36, cx, cz, y + 0.013, 1); ringF(out, 'r3_corr', 3.36, 5.8, cx, cz, y + 0.011); ringF(out, 'dz_brassDim', 5.8, 5.86, cx, cz, y + 0.013, 1);
+  ringF(out, 'r3_parquet', 5.86, 10.6, cx, cz, y + 0.011, 0.42); ringF(out, 'dz_brassDim', 10.6, 10.66, cx, cz, y + 0.013, 1); ringF(out, 'r3_stoneBorder', 10.66, RI + 0.2, cx, cz, y + 0.011);
+  for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4, [x, z] = P(a, 4.58); out.push({ box: 'dz_brassDim', x, y: y + 0.0135, z, w: 0.04, h: 0.003, d: 2.4, yaw: a, tag: '地面', on: 'partv' }); }
+  wear(out, -1.0, 1.0, -102.6, -93.6, y + 0.014);
+  // —— ② 入口：借阅台（东）/ 限阅陈列柜（西）/ 两侧落地铭牌与展板 ——
+  { const x = 4.4, z = -97.4; out.push({ m: 'r2/antique_desk', x, y, z, yaw: ROT.E, fit: [1.6, 0.78, 0.66], tag: '借阅台', on: 'floor', col: [1.6, 0.78, 0.66] });
+    out.push({ m: 'r2/dining_chair_02', x: x + 0.72, y, z, yaw: ROT.W, h: 0.98, tag: '借阅台', on: 'floor' });
+    for (const [dz, m, sz] of [[-0.6, 'r2/bankers_lamp', { h: 0.4 }], [0.55, 'r2/desk_bell', { w: 0.1 }], [0.05, 'r4/book_open_a01', { fit: [0.207, 0.037, 0.32] }], [-0.15, 'r2/old_victorian_rubber_stamp', { h: 0.09 }]]) out.push({ m, x: x + (m.includes('book') ? -0.08 : 0.08), y: y + 0.78, z: z + dz, yaw: ROT.W, ...sz, tag: '借阅台', on: 'desk' });
+    for (const k of [0, 1]) out.push({ m: 'r4/box_cardboard_open_a01', x: x + 0.9, y: y + k * 0.305, z: z + 1.25, yaw: ROT.W + k * 0.08, fit: [0.636, 0.302, 0.512], tag: '还书周转', on: k ? 'desk' : 'floor', ...(k ? {} : { col: [0.52, 0.302, 0.64] }) });
+    out.push({ sign: '借阅 · 归还', sub: '限阅书目须持副局长签批', x: x - 0.34, y: y + 0.55, z, yaw: ROT.W, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+    light(out, x, y + 2.6, z, 0xffe2b8, 1.0, 5); }
+  out.push({ fixed: true, m: '固定:限阅陈列柜', x: -4.4, y, z: -97.4, yaw: 0, size: [1.6, 1.8, 0.8], col: [1.6, 1.8, 0.8], tag: '限阅陈列', on: 'floor' });
+  light(out, -4.4, y + 2.6, -97.4, 0xffe6c8, 0.9, 5);
+  pic(out, 'textures/b07/B07_藏书阁阅览须知.png', 2.3, y + 1.3, -94.6, Math.PI * 0.92, 0.6, 0.8, 'gold', { tag: '阅览须知', stand: true, fy: y });
+  out.push({ fixed: true, m: '固定:展板', x: 2.3, y, z: -94.6, yaw: 0, size: [0.7, 1.75, 0.4], tag: '阅览须知', on: 'floor' });
+  pic(out, 'textures/emblems/N20.jpg', -2.5, y + 1.35, -94.6, Math.PI * 1.08, 0.96, 0.64, 'gold', { tag: '假说展板', stand: true, fy: y });
+  out.push({ fixed: true, m: '固定:展板', x: -2.5, y, z: -94.6, yaw: 0, size: [1.05, 1.8, 0.4], tag: '假说展板', on: 'floor' });
+  out.push({ sign: '宇宙图书馆假说', sub: '见西阅读龛摊开的原稿', x: -2.5, y: y + 0.88, z: -94.6 - 0.03, yaw: Math.PI * 1.08, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+  // —— ③ 阅览环：4 张长桌切向（r 7.4），每桌 4 椅 + 2 灯 + 书 ——
+  for (const a of [90 * D, -90 * D, 135 * D, -135 * D]) { const c = P(a, 7.4);
+    out.push({ m: 'r2/woodentable_01', x: c[0], y, z: c[1], yaw: a, fit: [2.4, 0.78, 1.1], tag: '阅读桌', on: 'floor', col: [2.4, 0.78, 1.1] });
+    for (const lx of [-0.6, 0.6]) for (const [lz, cy] of [[0.78, a + Math.PI], [-0.78, a]]) { const [x, z] = at(c, a, lx, lz); out.push({ m: 'r2/dining_chair_02', x, y, z, yaw: cy, h: 0.98, tag: '阅读桌', on: 'floor' }); }
+    for (const lx of [-0.85, 0.85]) { const [x, z] = at(c, a, lx, 0); out.push({ m: 'r2/bankers_lamp', x, y: y + 0.78, z, yaw: a, h: 0.4, tag: '阅读桌', on: 'desk' }); }
+    { const [x, z] = at(c, a, -0.35, 0.22); out.push({ m: 'r4/book_open_a01', x, y: y + 0.78, z, yaw: a + Math.PI + 0.1, fit: [0.207, 0.037, 0.32], tag: '阅读桌', on: 'desk' }); }
+    { const [x, z] = at(c, a, 0.4, -0.2); out.push({ m: 'r4/paper_stack_a04', x, y: y + 0.78, z, yaw: a - 0.2, fit: [0.24, 0.083, 0.34], tag: '阅读桌', on: 'desk' }); }
+    light(out, c[0], y + 2.4, c[1], 0xffe2b8, 0.9, 5.5); }
+  // —— ④ 北区：地球仪 / 星图台（dressing.js 在 R3 下按这里的位置摆放）——
+  for (const [a, lab, w, d] of [[160 * D, '地球仪', 0.9, 0.9], [-160 * D, '星图台', 1.4, 1.0]]) { const [x, z] = P(a, 7.0); out.push({ fixed: true, m: '固定:' + lab, x, y, z, yaw: 0, size: [w, 1.4, d], col: [w, 1.4, d], tag: lab, on: 'floor' }); }
+  // —— ⑤ 移动登高梯（停在书架前，面朝圆心）——
+  for (const a of [112 * D, -112 * D]) { const [x, z] = P(a, RI - 0.55); out.push({ m: 'r4/ladder_step_rolling_a01', x, y, z, yaw: a + Math.PI, fit: [0.758, 1.523, 0.655], tag: '登高梯', on: 'floor' }); }
+  return { room, items: out };
+}
+export const LIB_R3 = { globe: [Math.sin(160 * Math.PI / 180) * 7.0, -106 + Math.cos(160 * Math.PI / 180) * 7.0], star: [Math.sin(-160 * Math.PI / 180) * 7.0, -106 + Math.cos(-160 * Math.PI / 180) * 7.0], vitrine: [-4.4, -97.4] };
+PLANS.library = (Y) => fixYaw(planLibrary(Y)); R3.library = true;
 // 对照用：?r3off=east_cloister,xxx 关掉指定区的 R3 规划（截图「改前」用，旧陈设随之恢复）
 if (typeof location !== 'undefined') { const m = /[?&]r3off=([\w,]+)/.exec(location.search); if (m) for (const id of m[1].split(',')) R3[id] = false; }
