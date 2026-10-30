@@ -64,3 +64,7 @@
 【字体】Noto Serif SC / Noto Sans SC（SIL Open Font License 1.1）
 【引擎】three.js（MIT）、three-mesh-bvh（MIT）、postprocessing（Zlib）、N8AO（CC0）
 【剧情与美术设定】叙事管理局项目组；部分贴图由 GPT image 生成
+【R4 模型（批次12 使用，CC BY 4.0）】
+"cast_iron_radiator_bart" — termagroup (sketchfab.com/3d-models/b489f06859f440a7a6506c58e5b2e149), CC BY 4.0
+"soviet_mailbox_bank" — TomasKiniulis (sketchfab.com/3d-models/ccbdc1432d4b4433a02e42490a473a9e), CC BY 4.0
+"fireExtinguisher_abc_a03"、"furniture_trashBin_lid_a01"、"book_open_a01"、"box_cardboard_open_a01"、"paper_stack_a04"、"paper_stack_a05"、"ladder_step_rolling_a01" — NVIDIA SimReady (huggingface.co/datasets/nvidia/simready-assets), CC BY 4.0; web GLB via huggingface.co/datasets/codepawl/simready-glb
