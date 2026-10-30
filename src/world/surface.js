@@ -384,7 +384,10 @@ export async function buildSurface(scene, world, ctx) {
     for (let z = ZS - 1.5; z > ZN + 1; z -= 3) { const f = new Frame([(XW + XE) / 2, Y, z], 0); bc.add('dz_pil', archRingGeo(XE - XW, H - 2.4, XE - XW - 0.5, H - 2.4, 0.3), f.at(0, 0.01, 0), { uv: 0.5 }); bc.add('gold', archRingGeo(XE - XW - 0.48, H - 2.4, XE - XW - 0.56, H - 2.4, 0.32), f.at(0, 0.01, 0), { uv: 1 }); }
     for (let z = ZS - 3; z > -110; z -= 6) { const f = new Frame([XE - 0.02, Y + 1.6, z], -Math.PI / 2); bc.add('glassIn', new THREE.ShapeGeometry(archShape(1.2, 1.6)), f.at(0, 0, 0.02), { uv: false }); bc.add('gold', archRingGeo(1.5, 1.6, 1.2, 1.6, 0.12), f.at(0, 0, 0.04), { uv: 1 }); }
     for (let z = ZS - 6; z > ZN; z -= 6) { bc.add('brass', new THREE.BoxGeometry(0.06, 0.4, 0.16), { pos: [XW + 0.02, Y + 2.8, z] }, { uv: 1 }); bc.add('dz_shade', new THREE.CylinderGeometry(0.1, 0.16, 0.3, 12, 1, true), { pos: [XW + 0.25, Y + 3.05, z] }, { uv: false }); point(zc, 0xffd8a8, 3.5, [XW + 0.6, Y + 3, z], 7); }
-    WXd(bc, XW, ZS, -110.8, 1, Y, H); WXd(bc, XE, ZS, ZN, -1, Y, H);
+    // 批次12：R3 下上墙面换 Poly Haven 方石（large_sandstone_blocks，与主楼同石种；UV 偏移让石材线脚带落在墙裙顶 y+1.36 与 y+4.36 两道腰线处），东西段两面墙也补同款墙面
+    const ecO = R3.east_cloister ? { over: { up: 'dz_ashlarEC' }, upOff: [0, 2.84] } : {};
+    WXd(bc, XW, ZS, -110.8, 1, Y, H, ecO); WXd(bc, XE, ZS, ZN, -1, Y, H, ecO);
+    if (R3.east_cloister) { wallDress(bc, wallSeg((18.4 + XE - 0.2) / 2, ZN, XE - 0.2 - 18.4, [0, 1], Y), XE - 0.2 - 18.4, H, { style: 'stone', pil: false, ...ecO }); wallDress(bc, wallSeg((18.4 + XW) / 2, -111.0, XW - 18.4, [0, -1], Y), XW - 18.4, H, { style: 'stone', pil: false, ...ecO }); }
     // 陈设：长椅、展柜（局史老照片）、绿植、导视
     if (!R3.east_cloister) { // 批次11：东廊 R3 规划（r3plan.js planEastCloister）接管长凳/展柜/绿植
     for (const z of [-86, -98]) { bc.box('wood', 0.5, 0.45, 2.2, [XE - 0.6, Y + 0.23, z], { uv: 0.6, collide: true }); bc.box('wood', 0.08, 0.5, 2.2, [XE - 0.35, Y + 0.7, z], { uv: 0.6 }); }
@@ -399,4 +402,4 @@ export async function buildSurface(scene, world, ctx) {
   await Promise.all(jobs);
 }
 // 走廊墙面护墙板（沿 x=at）
-function WXd(b, at, za, zb, n, y, h) { const z0 = Math.max(za, zb), z1 = Math.min(za, zb), L = z0 - z1; wallDress(b, wallSeg(at, (z0 + z1) / 2, L, [n, 0], y), L, h, { style: 'stone', pil: false }); }
+function WXd(b, at, za, zb, n, y, h, o = {}) { const z0 = Math.max(za, zb), z1 = Math.min(za, zb), L = z0 - z1; wallDress(b, wallSeg(at, (z0 + z1) / 2, L, [n, 0], y), L, h, { style: 'stone', pil: false, ...o }); }

@@ -49,7 +49,7 @@ export class Batch {
       for (let i = 0; i < uv.count; i++) uv.setXY(i, (p.getX(i) - bb.min.x) / Math.max(1e-4, bb.max.x - bb.min.x), (p.getY(i) - bb.min.y) / Math.max(1e-4, bb.max.y - bb.min.y));
     }
     g.applyMatrix4(mtx);
-    if (o.uv !== false) boxUV(g, o.uv ?? 0.25);
+    if (o.uv !== false) boxUV(g, o.uv ?? 0.25, o.uvOff ?? [0, 0]); // 批次12：uvOff 世界盒式 UV 偏移（对齐石材贴图的线脚带）
     if (!this.parts.has(key)) this.parts.set(key, []);
     this.parts.get(key).push(g);
     if (o.collide) this.colliders.push(g);

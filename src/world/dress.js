@@ -93,6 +93,12 @@ export function dressMats(M) {
     r3_mapPaper: new THREE.MeshStandardMaterial({ color: 0xcfc3a0, roughness: 0.85 }),
     r3_hazard: new THREE.MeshStandardMaterial({ map: hazardTex(), roughness: 0.7 }),
     // 批次12：市民服务大厅哑光黑大理石（原 blackMarble 清漆镜面反光过强）、屏风磨砂玻璃
+    // 批次12：东廊——红地毯原用 Carpet012 彩色贴图（本身偏蓝黑，均值 52/59/72）× 暗红 → 乘出来近黑；改用去色归一的 Carpet012g 再染正红
+    r3_carpetCrimson: W(pbr('Carpet012g', { color: 0xa22622, roughness: 1, env: 0.35 }), { macro: 0.18, dust: 0.08 }),
+    r3_feltGreen: pbr('Carpet012g', { color: 0x2c4a34, roughness: 1, env: 0.2, repeat: [3, 3] }),
+    // 东廊上墙面：Poly Haven large_sandstone_blocks（与主楼外立面同石种，3 m 一张图；整块方石 + 线脚带），暖灰石灰岩色
+    dz_ashlarEC: W((() => { const R = { repeat: [1 / 3, 1 / 3] }, P = 'assets/tex/ph/large_sandstone_blocks'; // 自带 repeat 的克隆贴图（M.stone 会改共享原图的 repeat）
+      const m = new THREE.MeshStandardMaterial({ map: loadTex(P + '_col.webp', { srgb: true, ...R }), normalMap: loadTex(P + '_nrm.webp', R), roughnessMap: loadTex(P + '_arm.webp', R), color: 0xbcb0a0, roughness: 1, envMapIntensity: 0.4 }); m.normalScale.set(1.2, 1.2); m.name = 'ph:ashlarEC'; return m; })(), { macro: 0.14, grime: 0.3, streak: 0.12 }),
     r3_marbleHoned: W(pbr('Marble016', { rn: true, color: 0x8a8a92, roughness: 0.46, env: 0.42 }), { macro: 0.12, dust: 0.05 }),
     r3_frosted: new THREE.MeshPhysicalMaterial({ color: 0xe6ece8, roughness: 0.55, metalness: 0, transparent: true, opacity: 0.55, envMapIntensity: 0.5, depthWrite: false }),
     r3_paintYellow: W(new THREE.MeshStandardMaterial({ color: 0xc8a020, roughness: 0.7 }), { macro: 0.3, dust: 0.2 }),
@@ -158,7 +164,7 @@ export function wallDress(b, f, len, h, o = {}) {
   const skip = (o.skip ?? []).map(([a, c]) => [Math.min(a, c), Math.max(a, c)]).sort((p, q) => p[0] - q[0]);
   const runs = []; let cur = 0; for (const [a, c] of skip) { if (a > cur + 0.05) runs.push([cur, a]); cur = Math.max(cur, c); } if (len > cur + 0.05) runs.push([cur, len]);
   const lowH = S.lowH, crownH = 0.32, top = o.top ?? h;
-  const B = (key, w, hh, d, x, y, z, rot) => { if (key) b.add(key, new THREE.BoxGeometry(w, hh, d), f.at(x, y, z, rot), { uv: key.startsWith('dz_damask') ? 1.6 : key.startsWith('dz_tile') ? 1.0 : 0.6 }); };
+  const B = (key, w, hh, d, x, y, z, rot) => { if (key) b.add(key, new THREE.BoxGeometry(w, hh, d), f.at(x, y, z, rot), { uv: key.startsWith('dz_damask') ? 1.6 : key.startsWith('dz_tile') ? 1.0 : key.startsWith('dz_ashlar') ? 1 : 0.6, uvOff: key === S.up ? o.upOff : undefined }); };
   for (const [a, c] of runs) {
     const L = c - a, mid = (a + c) / 2;
     B(S.base, L, 0.2, 0.06, mid, 0.1, 0.03);

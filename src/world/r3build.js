@@ -66,6 +66,7 @@ export async function buildR3(ctx, world, MAT, late = false) {
         if (it.spot) spot(zone, 0xe4ecff, 38 * it.i, [it.x - it.nx * 0.3, it.y + 0.8, it.z - it.nz * 0.3], to, 0.42, false, 14);
         continue; }
       if (it.light) { if (it.win) rectLight(zone, it.c, it.i * 1.5, it.w, it.h, [it.x, it.y, it.z], it.look); else point(zone, it.c, it.i * 3, [it.x, it.y, it.z], it.d * 1.15); continue; }
+      if (it.disc) { b.add(it.mat, new THREE.CylinderGeometry(it.r, it.r, it.h, 24), { pos: [it.x, it.y + it.h / 2, it.z] }, { uv: 1 }); continue; } // 批次12：徽章等扁圆件
       if (it.hang) { // 批次12：吊牌（黑铁底板 + 双面金字 + 两根铜吊杆到顶棚）
         const n = [Math.sin(yaw), Math.cos(yaw)], u = [n[1], -n[0]];
         b.box('blackMetal', it.w, it.h, 0.04, [it.x, it.y, it.z], { uv: 1, rot: [0, yaw, 0] });
