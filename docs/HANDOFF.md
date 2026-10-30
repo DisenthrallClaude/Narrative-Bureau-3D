@@ -207,7 +207,7 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 - r3plan zone_control 175 件 **0 错误 0 警告**（screenshots/r3/plan_zone_control.png，work/r3/b16_plan_zone_control.json）。
 - 截图 run 41093419079（zone_r3 / zone_r3_b / zone_top）截止汇报时未出，**未验收**。
 ### 存档
-- Drive 快照 1AxRm2Q4BurQh9HDT9l1fZEO4y1T9hdC2 已覆盖（00:03 UTC 前后；本次为**未压缩 tar**，文件名仍叫 .tar.gz，用 `tar xf` 解；save.sh 的 gzip 在 120 s 前台上限内跑不完，改为 tar + gws 上传两步）。
+- Drive 快照 1AxRm2Q4BurQh9HDT9l1fZEO4y1T9hdC2 已覆盖（01:03 CST，内容截至 bd252b6，不含收尾 c3c947c；本次为**未压缩 tar**，文件名仍叫 .tar.gz，用 `tar xf` 解；save.sh 的 gzip 在 120 s 前台上限内跑不完，改为 tar + gws 上传两步）。
 ### 下批先做
 1. 取图：run 41092112548（exam_r3 / exam_r3_b / hall_wanted / cs_top）、41093419079（zone_*）；`rm -rf /tmp/afz; bash tools/gh_shots_fetch.sh <run> <目录>`。
 2. 重拍 exam_top（试卷 0.869 是否露出、高窗亮度）、id_zhouwen（空椅终于加入场景）。
