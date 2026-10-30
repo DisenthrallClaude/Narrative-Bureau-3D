@@ -137,6 +137,10 @@ function winShaft(out, x, y, z, nx, nz, o = {}) { out.push({ shaft: true, x, y, 
 function vitrine(out, x, z, y, L, yaw, tag = '展示柜', o = {}) {
   const gh = o.glassH ?? 0.22; // 批次12：o.glassH 加高玻璃罩（放实物）、o.felt 绒布衬底代替散纸；检查用 size 高 = 柜台面（台面上的展品按「桌面件」查悬空）
   out.push({ fixed: true, m: '固定:' + tag, x, y, z, yaw, size: [L, o.felt ? 0.871 : 1.05, 0.62], col: [L, 0.85 + gh, 0.62], tag, on: 'floor' });
+  if (o.model) { // 批次31：档案馆陈列柜方块 → Blender 精建 r2/vitrine_6080（胡桃木框芯板 + 铜踢脚 / 铜标签框 + 铜框玻璃罩，柜面 0.845；tools/blender/hall_props.py vitrine）
+    out.push({ m: 'r2/vitrine_6080', x, y, z, yaw, w: L + 0.05, tag, on: 'partv' }); out.push({ box: 'r3_mapPaper', x, y: y + 0.851, z, w: L - 0.1, h: 0.004, d: 0.5, yaw, tag, on: 'partv' });
+  const n = Math.floor(L / 0.55); for (let i = 0; i < n; i++) { const [px, pz] = at([x, z], yaw, -L / 2 + 0.3 + i * 0.55, (i % 2 ? 0.04 : -0.05)); out.push({ box: i % 3 ? 'dz_paper' : 'dz_paper2', x: px, y: y + 0.856, z: pz, w: 0.3, h: 0.006, d: 0.38, yaw: yaw + (hash(px, pz) - 0.5) * 0.3, tag, on: 'partv' }); }
+    return; }
   out.push({ box: 'dz_wain', x, y: y + 0.41, z, w: L, h: 0.82, d: 0.6, yaw, tag, on: 'partv' });
   out.push({ box: 'dz_wain2', x, y: y + 0.83, z, w: L + 0.04, h: 0.03, d: 0.64, yaw, tag, on: 'partv' });
   out.push({ box: 'r3_mapPaper', x, y: y + 0.851, z, w: L - 0.1, h: 0.004, d: 0.5, yaw, tag, on: 'partv' });
@@ -742,7 +746,7 @@ export function planArchive(y) {
   out.push({ m: 'r2/exit_sign', x: -20.1, y: y + 5.5, z: -51.5, yaw: ROT.W, w: 0.36, tag: 'K3', on: 'wall' });
   globe(out, -23.8, -51.5, y, TOP - y, 3.4, { r: 0.22 });
   // ③ 西南（近南墙）：历届叙事事件陈列柜 ×2 + 卡片目录柜（西墙一排）+ 地球仪
-  vitrine(out, -51.4, -38.2, y, 4.0, 0, '叙事事件陈列'); vitrine(out, -51.4, -42.2, y, 4.0, 0, '叙事事件陈列');
+  vitrine(out, -51.4, -38.2, y, 4.0, 0, '叙事事件陈列', { model: true }); vitrine(out, -51.4, -42.2, y, 4.0, 0, '叙事事件陈列', { model: true });
   for (let k = 0; k < 8; k++) out.push({ m: 'drawer_cabinet', x: -55.45, y, z: -36.2 - k * 0.9, yaw: ROT.E, h: 1.4, tag: '卡片目录', on: 'floor', col: [0.85, 1.4, 0.36] });
   out.push({ sign: '卡片目录', sub: '按姓氏笔画 · 按入局年份', x: -55.24, y: y + 1.7, z: -39.3, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
   out.push({ m: 'r2/antique_globe', x: -48.4, y, z: -45.2, yaw: 0.6, h: 1.0, tag: '陈列', on: 'floor' });

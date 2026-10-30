@@ -186,6 +186,39 @@ def bench():
     for yy in (0.5, 0.82): box(f'backRail{yy}', 'iron', L - 0.1, 0.03, 0.025, y=yy, z=-0.33 - (yy - 0.45) * math.tan(tilt), bev=0.006)
     finish('wait_bench_6080', [((2.4, 1.3, 2.8), (0, 0.45, 0)), ((-1.6, 1.5, -2.2), (0, 0.45, 0))])
 
-for nm, fn in [('sec_counter', counter), ('scan_gate', gate), ('wait_bench', bench)]:
+# ---------------- 档案馆 叙事事件陈列柜（批次31）----------------
+#   vitrine  4.0 × 0.62，柜面 0.845（展品纸/地图仍由 r3plan 放在 0.851），玻璃罩 0.22 高；前后两面都是公众面（独立陈列）
+def vitrine():
+    L, D = 4.0, 0.6
+    box('plinth', 'walnut', L - 0.06, 0.08, D - 0.06, y=0.04)
+    box('carcass', 'walnut', L, 0.72, D, y=0.08 + 0.36)
+    for sz in (-1, 1):
+        zf = sz * (D / 2 + 0.006)
+        box(f'toe{sz}', 'brass', L - 0.04, 0.025, 0.012, y=0.095, z=sz * (D / 2 - 0.02), bev=0.002)
+        n = 5; bw = L / n
+        for i in range(n + 1):  # 立梃
+            box(f'stile{sz}{i}', 'walnut', 0.06, 0.66, 0.012, x=-L / 2 + i * bw + (0.03 if i == 0 else -0.03 if i == n else 0), y=0.47, z=zf)
+        for yy in (0.15, 0.79):  # 上下冒头（退 6 mm，避免与立梃共面）
+            box(f'rail{sz}{yy}', 'walnut', L - 0.02, 0.05, 0.012, y=yy, z=zf - sz * 0.006)
+        for i in range(n):  # 凸起芯板 + 铜标签框
+            cx = -L / 2 + (i + 0.5) * bw
+            box(f'panel{sz}{i}', 'walnutD', bw - 0.13, 0.52, 0.016, x=cx, y=0.47, z=zf + sz * 0.004, bev=0.012)
+            box(f'label{sz}{i}', 'brass', 0.16, 0.05, 0.008, x=cx, y=0.66, z=zf + sz * 0.016, bev=0.002)
+            box(f'labelIn{sz}{i}', 'enamel', 0.14, 0.035, 0.004, x=cx, y=0.66, z=zf + sz * 0.020, bev=0.001)
+    box('top', 'walnut', L + 0.04, 0.03, D + 0.04, y=0.83, bev=0.008)
+    for sz in (-1, 1): box(f'topEdge{sz}', 'brass', L + 0.05, 0.012, 0.01, y=0.836, z=sz * (D / 2 + 0.024), bev=0.002)
+    # 玻璃罩：铜框（四角立柱 + 上下框）+ 玻璃
+    gh = 0.22; gy = 0.845
+    box('glass', 'glass', L - 0.03, gh - 0.01, D - 0.03, y=gy + gh / 2, bev=0)
+    for kx in (-1, 1):
+        for kz in (-1, 1): box(f'post{kx}{kz}', 'brass', 0.02, gh, 0.02, x=kx * (L / 2 - 0.01), y=gy + gh / 2, z=kz * (D / 2 - 0.01), bev=0.003)
+    for kz in (-1, 1):
+        for yy in (gy + 0.008, gy + gh - 0.006): box(f'fr{kz}{yy}', 'brass', L, 0.014, 0.018, y=yy, z=kz * (D / 2 - 0.01), bev=0.002)
+    for kx in (-1, 1):
+        for yy in (gy + 0.008, gy + gh - 0.006): box(f'fe{kx}{yy}', 'brass', 0.018, 0.014, D, x=kx * (L / 2 - 0.01), y=yy, bev=0.002)
+    box('lock', 'brass', 0.05, 0.03, 0.01, y=0.77, z=D / 2 + 0.02, bev=0.003)
+    finish('vitrine_6080', [((2.6, 1.6, 2.6), (0, 0.6, 0)), ((0.4, 1.2, 1.4), (0.4, 0.6, 0))])
+
+for nm, fn in [('sec_counter', counter), ('scan_gate', gate), ('wait_bench', bench), ('vitrine', vitrine)]:
     if ONLY and ONLY != nm: continue
     reset(); M = mats(); fn()
