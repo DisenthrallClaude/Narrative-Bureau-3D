@@ -44,7 +44,8 @@ export async function buildR3(ctx, world, MAT, late = false) {
       if (it.fixed) { if (it.col) world.box(it.x, it.y + it.col[1] / 2, it.z, it.col[0], it.col[1], it.col[2], yaw); continue; }
       if (it.part) { world.box(it.x, it.y + it.size[1] / 2, it.z, it.size[0], it.size[1], it.size[2], 0); continue; }
       if (it.anchor) { ctx.anchors = ctx.anchors ?? {}; ctx.anchors[it.anchor] = { box: [it.x, it.y, it.z, Math.max(it.w ?? 0.3, 0.35), Math.max(it.h ?? 0.2, 0.25), Math.max(it.d ?? 0.3, 0.35)] }; } // 批次22：plan 件可登记剧情锚点（binder 接成 manifest 文档热点）
-      if (it.box) { b.box(it.box, it.w, it.h, it.d, [it.x, it.y, it.z], { uv: it.box === 'glassClear' || it.box === 'r3_glassCase' ? false : (it.uv ?? 1), rot: [0, yaw, 0] }); continue; }
+      if (it.box) { b.box(it.box, it.w, it.h, it.d, [it.x, it.y, it.z], { uv: it.box === 'glassClear' || it.box === 'r3_glassCase' ? false : (it.uv ?? 1), uvOff: it.uvOff, rot: [0, yaw, 0] }); continue; }
+      if (it.cyl) { b.add(it.mat, new THREE.CylinderGeometry(it.r, it.r, it.h, 18), { pos: [it.x, it.y, it.z] }, { uv: 1 }); continue; } // 批次23：圆柱件（灭火器 / 垃圾桶），y 为中心
       if (it.wear) { // 磨损贴花：沿长边四方连续
         const w = it.x1 - it.x0, d = it.z1 - it.z0, alongX = w > d, L = alongX ? w : d, W = alongX ? d : w;
         const g = new THREE.PlaneGeometry(W, L); g.rotateX(-Math.PI / 2); if (alongX) g.rotateY(Math.PI / 2);

@@ -2837,11 +2837,12 @@ const SP = { x0: -1.8, x1: 1.8, z0: -89.2, z1: -86.4, zc: -87.8 };
 function basementHall(out, y, lv, spine) {
   const H = 5.2, B = (box, x, yy, z, w, h, d, tag, uv = 1) => out.push({ box, x, y: yy, z, w, h, d, uv, tag, on: 'partv' });
   // 铆钉钢板墙裙：西 / 东墙通长，北墙门两侧
-  const wain = (alongZ, c, a0, a1) => { const L = a1 - a0, m = (a0 + a1) / 2;
-    if (alongZ) B('r3_steelOld', c, y + 0.65, m, 0.05, 1.3, L, 'B 墙裙'); else B('r3_steelOld', m, y + 0.65, c, L, 1.3, 0.05, 'B 墙裙');
-    const off = c < 0 ? 0.03 : -0.03;
-    for (let t = a0 + 0.25; t < a1 - 0.1; t += 0.5) for (const hy of [0.12, 1.2]) { if (alongZ) B('dz_pipe', c + off, y + hy, t, 0.03, 0.035, 0.035, 'B 铆钉'); else B('dz_pipe', t, y + hy, c + off, 0.035, 0.035, 0.03, 'B 铆钉'); }
-    for (let t = a0 + 1.2; t < a1 - 0.3; t += 1.2) { if (alongZ) B('blackMetal', c + off, y + 0.65, t, 0.02, 1.3, 0.025, 'B 钢板接缝'); else B('blackMetal', t, y + 0.65, c + off, 0.025, 1.3, 0.02, 'B 钢板接缝'); }
+  // 批次23：墙裙换 r3_steelRivet（贴图自带 1.3 m 一块的板缝凹槽 / 凸台 / 铆钉法线 / 锈流 / 底锈；uv 1/1.3，竖向对齐楼面）+ 底部钢踢脚 + 顶压条
+  const RU = 1 / 1.3, RO = [0, -y * RU + 0.0001];
+  const wain = (alongZ, c, a0, a1) => { const L = a1 - a0, m = (a0 + a1) / 2, off = c < 0 ? 0.03 : -0.03;
+    if (alongZ) out.push({ box: 'r3_steelRivet', x: c, y: y + 0.65, z: m, w: 0.05, h: 1.3, d: L, uv: RU, uvOff: RO, tag: 'B 墙裙', on: 'partv' });
+    else out.push({ box: 'r3_steelRivet', x: m, y: y + 0.65, z: c, w: L, h: 1.3, d: 0.05, uv: RU, uvOff: RO, tag: 'B 墙裙', on: 'partv' });
+    if (alongZ) B('r3_steelOld', c + off * 1.6, y + 0.06, m, 0.05, 0.12, L, 'B 钢踢脚'); else B('r3_steelOld', m, y + 0.06, c + off * 1.6, L, 0.12, 0.05, 'B 钢踢脚');
     if (alongZ) B('r3_steelGrey', c + off * 1.3, y + 1.32, m, 0.06, 0.05, L, 'B 墙裙压条'); else B('r3_steelGrey', m, y + 1.32, c + off * 1.3, L, 0.05, 0.06, 'B 墙裙压条'); };
   wain(true, -8.97, -91.8, -84.25); wain(true, 8.97, -91.8, -84.25);
   wain(false, lv === 'B3' ? -91.97 : -91.77, -8.9, -2.75); wain(false, lv === 'B3' ? -91.97 : -91.77, 2.75, 8.9);
@@ -2871,6 +2872,17 @@ function basementHall(out, y, lv, spine) {
     for (let k = 0; k < 6; k++) B('r3_steelOld', xs - s * k * 0.03, y + 1.5, -84.42, 0.018, 3.0, 0.02, 'B 折叠闸门（收拢）');
     for (const hy of [0.3, 1.5, 2.7]) B('r3_steelOld', xs - s * 0.075, y + hy, -84.44, 0.17, 0.03, 0.025, 'B 闸门拉杆'); }
   B('r3_steelGrey', 6, y + 3.05, -84.42, 2.5, 0.08, 0.08, 'B 闸门滑轨'); B('r3_hazard', 6, y + 3.2, -84.3, 2.6, 0.18, 0.04, 'B 货梯门楣警示', 0.8);
+  // 批次23 提亮：两道顶棚梁下各挂一根冷白灯管（钢灯槽 + 灯管 + 补光，避开竖井洞口）
+  for (const x of [-4.5, 4.5]) { B('r3_steelGrey', x, y + H - 0.54, -88, 0.3, 0.08, 3.0, 'B 梁下灯槽'); B('dz_glowCold', x, y + H - 0.595, -88, 0.16, 0.03, 2.8, 'B 梁下灯管'); light(out, x, y + H - 0.9, -88, 0xf0eadc, 1.5, 8); }
+  // 批次23：长凳对面（西墙 z −86.4…−88.0）成组陈设——疏散示意图框 + 壁挂灭火器（托架 + 红瓶 + 喷管 + 牌）+ 铁皮垃圾桶（带盖 + 拉手）
+  out.push({ plaque: true, title: '疏 散 示 意 图', lines: ['您在此处　' + lv + ' 电梯厅', '↑ 北门 → 本层主区', '← 西 → 东楼梯（B 层不通）', '火警时禁乘电梯', '', '安全保卫科'], x: -8.92, y: y + 1.55, z: -87.1, yaw: ROT.E, w: 0.7, h: 0.5, size: [0.74, 0.54, 0.04], tag: 'B 疏散图', on: 'pic' });
+  B('r3_steelGrey', -8.93, y + 0.95, -86.55, 0.04, 0.3, 0.12, 'B 灭火器托架');
+  out.push({ cyl: true, mat: 'dz_pipeRed', x: -8.8, y: y + 0.84, z: -86.55, r: 0.085, h: 0.5, size: [0.17, 0.5, 0.17], tag: 'B 灭火器', on: 'partv' });
+  B('blackMetal', -8.8, y + 1.12, -86.55, 0.06, 0.06, 0.06, 'B 灭火器阀头'); B('blackMetal', -8.74, y + 0.88, -86.47, 0.02, 0.36, 0.02, 'B 灭火器喷管');
+  out.push({ sign: '灭 火 器', sub: 'MFZ/ABC4', x: -8.93, y: y + 1.32, z: -86.55, yaw: ROT.E, size: [0.26, 0.1, 0.01], tag: 'B 灭火器牌', on: 'sign' });
+  out.push({ cyl: true, mat: 'r3_steelGrey', x: -8.66, y: y + 0.33, z: -87.6, r: 0.2, h: 0.66, size: [0.4, 0.66, 0.4], tag: 'B 垃圾桶', on: 'floor' });
+  out.push({ cyl: true, mat: 'r3_steelOld', x: -8.66, y: y + 0.68, z: -87.6, r: 0.215, h: 0.04, size: [0.43, 0.04, 0.43], tag: 'B 垃圾桶盖', on: 'partv' });
+  B('blackMetal', -8.66, y + 0.72, -87.6, 0.16, 0.03, 0.03, 'B 垃圾桶拉手');
   // 北门槛黄黑警示带
   B('r3_hazard', 0, y + 0.007, -91.55, 4.4, 0.014, 0.3, 'B 门槛警示带', 0.8);
 }

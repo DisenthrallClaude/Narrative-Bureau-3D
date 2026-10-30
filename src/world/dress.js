@@ -119,6 +119,7 @@ export function dressMats(M) {
     r3_kraftBox: W(new THREE.MeshStandardMaterial({ color: 0x8a7a62, roughness: 0.92 }), { macro: 0.2, grime: 0.3 }), // 批次20 看图：kraftDark 在冷光下渲成橙红 → 压低饱和的牛皮纸档案箱
     r3_stencil: new THREE.MeshStandardMaterial({ color: 0xe8e4d4, roughness: 0.8 }), // 批次20 B3：箱面白色喷码条
     r3_paintYellow: new THREE.MeshStandardMaterial({ color: 0xd8a818, roughness: 0.7 }), // 批次20 B3：地面黄色编号漆
+    r3_steelRivet: W((() => { const t = rivetPlateTex(); return new THREE.MeshStandardMaterial({ map: t.col, normalMap: t.nrm, roughnessMap: t.rgh, color: 0xffffff, roughness: 1, metalness: 0.55, envMapIntensity: 0.45 }); })(), { macro: 0.15, grime: 0.25, ground: 0.8 }), // 批次23：B 层墙裙——钢板凹凸 / 铆钉法线 + 接缝锈流 + 底部轻锈（1.2 m 一块，uv 1）
     r3_paintYellow: W(new THREE.MeshStandardMaterial({ color: 0xc8a020, roughness: 0.7 }), { macro: 0.3, dust: 0.2 }),
   };
   for (const m of [DM.dz_glow, DM.dz_glowCold, DM.dz_shade, DM.dz_glassDark, DM.r3_globe, DM.r3_globeDim, DM.r3_clerestory, DM.r3_wear, DM.r3_glassCase, DM.r3_screen, DM.r3_screenAmber, DM.r3_frosted]) m.userData.noShadow = true;
@@ -393,4 +394,38 @@ export function spineShelf(b, f, w, h, d, o = {}) {
   b.add(wood, new THREE.BoxGeometry(w + 0.1, 0.1, d + 0.06), f.at(0, h - 0.05, 0.03), { uv: 0.6 });
   for (let k = 0; k <= n; k++) { const y = 0.1 + k * sh; b.add(wood, new THREE.BoxGeometry(w - 0.1, 0.035, d), f.at(0, y, 0), { uv: 0.6 }); if (k < n) b.add('spine', spineGeo(w - 0.14, sh - 0.05, (o.seed ?? 0) + k * 3.1), f.at(0, y + 0.02 + (sh - 0.05) / 2, d / 2 - 0.08), { uv: false }); }
   if (o.trim !== false) b.add('gold', new THREE.BoxGeometry(w + 0.11, 0.018, 0.01), f.at(0, h - 0.08, d / 2 + 0.065), { uv: 1 });
+}
+
+// 批次23：铆钉钢板贴图（1 张 = 1.2 m × 1.3 m 一块板）：高度图 → 法线；颜色带接缝锈流 / 铆钉锈斑 / 底部锈带；种子固定（不随机）
+function rivetPlateTex() {
+  const N = 512, cv = document.createElement('canvas'); cv.width = cv.height = N; const c = cv.getContext('2d');
+  let sd = 9173; const rnd = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
+  const hc = document.createElement('canvas'); hc.width = hc.height = N; const h = hc.getContext('2d');
+  h.fillStyle = '#808080'; h.fillRect(0, 0, N, N);
+  const g = h.createLinearGradient(0, 0, 0, N); h.fillStyle = '#9a9a9a'; h.fillRect(14, 14, N - 28, N - 28); // 板面略凸
+  h.fillStyle = '#8c8c8c'; h.fillRect(60, 70, N - 120, N - 140); // 中部加强凸台
+  h.fillStyle = '#3a3a3a'; h.fillRect(0, 0, N, 8); h.fillRect(0, N - 8, N, 8); h.fillRect(0, 0, 8, N); h.fillRect(N - 8, 0, 8, N); // 接缝凹槽
+  for (const yy of [30, N - 30]) for (let x = 30; x < N; x += 45.5) { const rg = h.createRadialGradient(x, yy, 0, x, yy, 11); rg.addColorStop(0, '#ffffff'); rg.addColorStop(0.7, '#c8c8c8'); rg.addColorStop(1, 'rgba(154,154,154,0)'); h.fillStyle = rg; h.beginPath(); h.arc(x, yy, 11, 0, 7); h.fill(); }
+  for (const xx of [30, N - 30]) for (let y = 75; y < N - 50; y += 45.5) { const rg = h.createRadialGradient(xx, y, 0, xx, y, 11); rg.addColorStop(0, '#ffffff'); rg.addColorStop(0.7, '#c8c8c8'); rg.addColorStop(1, 'rgba(154,154,154,0)'); h.fillStyle = rg; h.beginPath(); h.arc(xx, y, 11, 0, 7); h.fill(); }
+  const hd = h.getImageData(0, 0, N, N).data, nd = c.createImageData(N, N); const H = (x, y) => hd[(((y + N) % N) * N + ((x + N) % N)) * 4] / 255;
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const dx = (H(x + 1, y) - H(x - 1, y)) * 3.5, dy = (H(x, y + 1) - H(x, y - 1)) * 3.5; const l = Math.hypot(dx, dy, 1), i = (y * N + x) * 4;
+    nd.data[i] = (-dx / l * 0.5 + 0.5) * 255; nd.data[i + 1] = (dy / l * 0.5 + 0.5) * 255; nd.data[i + 2] = (1 / l * 0.5 + 0.5) * 255; nd.data[i + 3] = 255; }
+  c.putImageData(nd, 0, 0); const nrm = new THREE.CanvasTexture(cv);
+  // 颜色：灰绿涂装钢 + 斑驳 + 锈
+  const cc = document.createElement('canvas'); cc.width = cc.height = N; const k = cc.getContext('2d');
+  k.fillStyle = '#6b6e66'; k.fillRect(0, 0, N, N);
+  for (let i = 0; i < 900; i++) { const v = 90 + rnd() * 30 | 0; k.fillStyle = `rgba(${v},${v + 3},${v - 4},0.10)`; k.fillRect(rnd() * N, rnd() * N, 4 + rnd() * 30, 2 + rnd() * 18); }
+  k.fillStyle = 'rgba(40,40,36,0.85)'; k.fillRect(0, 0, N, 8); k.fillRect(0, N - 8, N, 8); k.fillRect(0, 0, 8, N); k.fillRect(N - 8, 0, 8, N);
+  const rust = (x, y, r, a) => { const rg = k.createRadialGradient(x, y, 0, x, y, r); rg.addColorStop(0, `rgba(110,56,26,${a})`); rg.addColorStop(1, 'rgba(110,56,26,0)'); k.fillStyle = rg; k.beginPath(); k.arc(x, y, r, 0, 7); k.fill(); };
+  for (const yy of [30, N - 30]) for (let x = 30; x < N; x += 45.5) { rust(x, yy, 14, 0.55); if (rnd() < 0.35) { const L = 40 + rnd() * 140, gr = k.createLinearGradient(0, yy, 0, yy + L); gr.addColorStop(0, 'rgba(105,52,24,0.45)'); gr.addColorStop(1, 'rgba(105,52,24,0)'); k.fillStyle = gr; k.fillRect(x - 2.5, yy, 5, L); } }
+  for (const xx of [6, N - 6]) for (let y = 0; y < N; y += 8) rust(xx, y + rnd() * 6, 9, 0.18); // 接缝锈流
+  const bg = k.createLinearGradient(0, N - 120, 0, N); bg.addColorStop(0, 'rgba(96,50,24,0)'); bg.addColorStop(1, 'rgba(96,50,24,0.6)'); k.fillStyle = bg; k.fillRect(0, N - 120, N, 120); // 底部锈带
+  for (let i = 0; i < 26; i++) rust(rnd() * N, N - rnd() * 90, 6 + rnd() * 16, 0.35);
+  const col = new THREE.CanvasTexture(cc); col.colorSpace = THREE.SRGBColorSpace;
+  // 粗糙度：锈处更粗
+  const rc = document.createElement('canvas'); rc.width = rc.height = N; const r = rc.getContext('2d'); r.drawImage(cc, 0, 0); const id = r.getImageData(0, 0, N, N);
+  for (let i = 0; i < id.data.length; i += 4) { const red = id.data[i] - id.data[i + 2]; const v = Math.min(255, 140 + red * 3.2); id.data[i] = id.data[i + 1] = id.data[i + 2] = v; } r.putImageData(id, 0, 0);
+  const rgh = new THREE.CanvasTexture(rc);
+  for (const t of [col, nrm, rgh]) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; }
+  return { col, nrm, rgh };
 }
