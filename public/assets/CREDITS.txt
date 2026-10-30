@@ -68,3 +68,9 @@
 "cast_iron_radiator_bart" — termagroup (sketchfab.com/3d-models/b489f06859f440a7a6506c58e5b2e149), CC BY 4.0
 "soviet_mailbox_bank" — TomasKiniulis (sketchfab.com/3d-models/ccbdc1432d4b4433a02e42490a473a9e), CC BY 4.0
 "fireExtinguisher_abc_a03"、"furniture_trashBin_lid_a01"、"book_open_a01"、"box_cardboard_open_a01"、"paper_stack_a04"、"paper_stack_a05"、"ladder_step_rolling_a01" — NVIDIA SimReady (huggingface.co/datasets/nvidia/simready-assets), CC BY 4.0; web GLB via huggingface.co/datasets/codepawl/simready-glb
+
+【R4 模型（批次18–20 使用：B3 证物收容库、3F 理化实验室，CC BY 4.0）】
+"specimen_octopus_jar" — Philip Osborne (sketchfab.com/3d-models/96e12eb5891a46fca80207b73263bc6c), CC BY 4.0
+"lab_beakers_set" — cesar.seidel (sketchfab.com/3d-models/b63ae471653f41e4b327cdcc796fc20c), CC BY 4.0
+"lab_round_bottom_flasks" — cesar.seidel (sketchfab.com/3d-models/7433a11498464de78f7751578bbbe211), CC BY 4.0
+"case_a01"、"case_c02"、"case_d01"、"wire_securityRoom_b01"、"misc_bottle_corked_a01"、"container_jar_glass_silver_a01"、"safety_eyewashStation_combo_shower_a01" — NVIDIA SimReady (huggingface.co/datasets/nvidia/simready-assets), CC BY 4.0; web GLB via huggingface.co/datasets/codepawl/simready-glb
