@@ -93,6 +93,9 @@ export const SHOTS = {
   exam_top: { pos: [35, 8.8 + 6.0, -61.8], look: [35, 8.8, -70.5], fov: 78, zone: 'exam_center' },
   zone_r3: { pos: [47.0, 15.8 + 1.75, -52.4], look: [30, 15.8 + 2.0, -60.4], fov: 70, zone: 'zone_control' }, // 批次16 区域管控室：东侧 → 监控台两排 + 地图墙
   zone_r3_b: { pos: [22.8, 15.8 + 2.1, -33.6], look: [42, 15.8 + 0.9, -52], fov: 70, zone: 'zone_control' }, // 西南角 → 沙盘 / 监控台 / 电话台
+  lab_r3: { pos: [10.6, 15.8 + 1.7, -97.2], look: [20, 15.8 + 1.2, -116], fov: 72, zone: 'floor3' }, // 批次17 3F 理化实验室：进门 → 两组实验台 / 通风橱 / 测量仪
+  lab_r3_b: { pos: [26.6, 15.8 + 1.8, -115.6], look: [11, 15.8 + 1.0, -103], fov: 70, zone: 'floor3' }, // 东北角（洗眼站旁）→ 实验台成排 / 黑板 / 仪器柜
+  lab_top: { pos: [18.9, 15.8 + 30, -105.99], look: [18.9, 15.8, -106], fov: 55, clipY: 15.8 + 3.3, zone: 'floor3' },
   zone_top: { pos: [35, 15.8 + 40, -46.49], look: [35, 15.8, -46.5], fov: 50, clipY: 15.8 + 5.2, zone: 'zone_control' },
   ec_corner: { pos: [26.6, 1.8 + 1.6, -112.0], look: [19.0, 1.8 + 1.4, -114.2], fov: 70, zone: 'east_cloister' }, // 东西段公告栏 → 食堂口
   ec_top: { pos: [23.2, 1.8 + 46, -95.79], look: [23.2, 1.8, -95.8], fov: 50, clipY: 1.8 + 4.4, zone: 'east_cloister' },

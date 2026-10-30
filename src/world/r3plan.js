@@ -2453,3 +2453,102 @@ export function planZoneControl(y) {
   return { room, items: out };
 }
 PLANS.zone_control = (Y) => fixYaw(planZoneControl(Y)); R3.zone_control = true;
+
+// ================= R3 批次17 · 3F 理化实验室 lab3（3F 东区：x 9.75…28，z −119.8…−92.2，层高 5.4；1960–80 年代机关研究所实验室） =================
+// 平面（北 = −Z）：西墙门洞 z −99.1…−95.9 从医务室进 → 南侧入口通道（东西向）；
+//  ① 西半区四排岛式实验台（3.0 × 1.5，环氧黑台面 + 灰绿喷漆柜身 + 中脊双层木试剂架），每排南北各两只实验凳；② 北墙五樘通风橱（下柜 + 白瓷砖内衬 + 玻璃拉门 + 排风管上顶棚）；
+//  ③ 北墙东段：两台样本冷柜 + 试剂钢架 + 水槽台 + 东北角洗眼/紧急淋浴站；④ 东墙窗间墙两组玻璃门仪器柜 + 南墙一排六只仪器柜；⑤ 西墙黑板（化学式 + 安全规程）+ 实验守则告示；
+//  原剧情锚点保留：篇幅测量仪（18, −110）、拓印台（24, −100）、命名会议桌（15, −99）、阶位刻度墙（东墙 z −113…−107）、鉴定流程板（西墙 z −94.5）。全部成排、定点，无随机散布。
+export function planLab3(y) {
+  const out = []; const H = 5.4, X0 = 9.75, X1 = 28.0, Z0 = -119.8, Z1 = -92.2;
+  const room = { name: '3F 东 · 理化实验室（批次17）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H,
+    doors: [{ wall: 'W', a: -99.1, b: -95.9, label: '← 医务室' }], windows: [],
+    rooms: [['① 实验台', 12.75, -108.5], ['② 通风橱', 14.6, -119.0], ['③ 冷柜·水槽·洗眼', 24.3, -119.0], ['④ 仪器柜', 22, -92.8], ['⑤ 黑板', 10.1, -108], ['测量仪（原）', 18, -110], ['拓印台（原）', 24, -100], ['会议桌（原）', 15, -99]],
+    aisles: [{ label: '入口通道', x0: 9.8, x1: 26.9, z0: -97.4, z1: -95.6 }, { label: '西通道', x0: 9.8, x1: 11.1, z0: -116.2, z1: -101.2 }, { label: '中通道', x0: 14.5, x1: 16.6, z0: -116.2, z1: -101.2 },
+      { label: '通风橱前通道', x0: 9.8, x1: 27.0, z0: -118.3, z1: -116.3 }, { label: '东侧通道', x0: 25.4, x1: 27.0, z0: -116.2, z1: -97.6 }] };
+  const F = (lab, x, z, w, d, h = 1) => out.push({ fixed: true, m: '固定:' + lab, x, y, z, yaw: 0, size: [w, h, d], tag: '原锚点', on: 'floor' });
+  F('篇幅测量仪', 18, -110, 2.2, 2.2, 2); F('拓印台', 24, -100, 2.4, 1.2, 0.9); F('命名会议桌+椅', 15, -99, 3.6, 2.6, 0.9);
+  floorZ(out, 'r3_corr', X0 + 0.05, X1 - 0.05, Z0 + 0.05, Z1 - 0.05, y, { uv: 1.6 });
+  wear(out, 9.9, 26.8, -97.2, -95.8, y); wear(out, 14.6, 16.5, -116, -101.4, y); wear(out, 10, 26.8, -118.1, -116.5, y);
+  // ① 岛式实验台 × 4 排
+  const BX0 = 12.75; let n = 0; // 西组 x 12.75 + 东组 x 22.0（测量仪两侧各四排，中通道/东侧通道保持净空）
+  for (const [BX, z] of [12.75, 22.0].flatMap((bx) => [-104.0, -107.0, -110.0, -113.0].map((z) => [bx, z]))) {
+    out.push({ fixed: true, m: '固定:实验台', x: BX, y, z, yaw: 0, size: [3.0, 0.9, 1.5], col: [3.0, 0.9, 1.5], tag: '① 实验台', on: 'floor' });
+    out.push({ box: 'paintedGreen', x: BX, y: y + 0.43, z, w: 2.96, h: 0.78, d: 1.36, uv: 1, tag: '① 实验台', on: 'partv' });
+    out.push({ box: 'blackMetal', x: BX, y: y + 0.04, z, w: 2.9, h: 0.08, d: 1.3, tag: '① 踢脚', on: 'partv' });
+    for (const s of [-1, 1]) for (let k = 0; k < 4; k++) out.push({ box: 'dz_brassDim', x: BX - 1.11 + k * 0.74, y: y + 0.62, z: z + s * 0.685, w: 0.1, h: 0.02, d: 0.02, tag: '① 柜门拉手', on: 'partv' });
+    out.push({ box: 'onyx', x: BX, y: y + 0.88, z, w: 3.04, h: 0.04, d: 1.54, uv: 0.5, tag: '① 环氧台面', on: 'partv' });
+    // 中脊试剂架：两立柱 + 两层木隔板 + 试剂瓶（棕瓶 / 白瓶交替，定点）
+    for (const dx of [-1.38, 1.38]) out.push({ box: 'steel', x: BX + dx, y: y + 1.25, z, w: 0.04, h: 0.7, d: 0.04, tag: '① 试剂架', on: 'partv' });
+    for (const hy of [1.18, 1.56]) { out.push({ box: 'wood', x: BX, y: y + hy, z, w: 2.8, h: 0.025, d: 0.26, uv: 0.6, tag: '① 试剂架', on: 'partv' });
+      for (let k = 0; k < 9; k++) { const dz = (k % 2 ? 0.06 : -0.06); out.push({ box: (k + n) % 3 === 0 ? 'glassClear' : 'dz_glassDark', x: BX - 1.2 + k * 0.3, y: y + hy + 0.0125 + 0.08, z: z + dz, w: 0.08, h: 0.16, d: 0.08, tag: '① 试剂瓶', on: 'partv' });
+        out.push({ box: 'blackMetal', x: BX - 1.2 + k * 0.3, y: y + hy + 0.0125 + 0.175, z: z + dz, w: 0.05, h: 0.03, d: 0.05, tag: '① 瓶盖', on: 'partv' }); } }
+    // 台面：两侧各一个水嘴/气嘴（铜）+ 一份实验记录纸；偶数排放显微镜、奇数排放玻璃器皿组
+    for (const s of [-1, 1]) { out.push({ box: 'dz_brassDim', x: BX + 1.25, y: y + 0.95, z: z + s * 0.25, w: 0.03, h: 0.1, d: 0.03, tag: '① 气嘴', on: 'partv' });
+      out.push({ box: 'dz_paper', x: BX - 0.6, y: y + 0.902, z: z + s * 0.5, w: 0.21, h: 0.004, d: 0.297, yaw: 0.05 * s, tag: '① 记录纸', on: 'desk' }); }
+    out.push(n % 2 ? { m: 'chem_set', x: BX + 0.4, y: y + 0.9, z: z + 0.42, yaw: 0, w: 0.6, tag: '① 器皿', on: 'desk' } : { m: 'microscope', x: BX + 0.5, y: y + 0.9, z: z + 0.45, yaw: Math.PI, h: 0.4, tag: '① 显微镜', on: 'desk' });
+    for (const dx of [-0.75, 0.75]) out.push({ m: 'r2/laboratory_stool', x: BX + dx, y, z: z + 1.05, yaw: 0, h: 0.6, tag: '① 实验凳', on: 'floor' });
+    out.push({ troffer: true, x: BX, y: y + H - 0.25, z, len: 3.0, size: [3.0, 0.1, 0.34], tag: '日光灯', on: 'light' });
+    n++;
+  }
+  // ② 北墙通风橱 × 5
+  for (let i = 0; i < 5; i++) { const x = 11.0 + i * 1.75, z = -119.33, W = 1.65;
+    out.push({ fixed: true, m: '固定:通风橱', x, y, z, yaw: 0, size: [W, 2.9, 0.9], col: [W, 2.9, 0.9], tag: '② 通风橱', on: 'floor' });
+    out.push({ box: 'paintedGreen', x, y: y + 0.42, z, w: W, h: 0.84, d: 0.88, uv: 1, tag: '② 下柜', on: 'partv' });
+    out.push({ box: 'onyx', x, y: y + 0.86, z: z + 0.01, w: W + 0.02, h: 0.04, d: 0.9, uv: 0.5, tag: '② 台面', on: 'partv' });
+    for (const s of [-1, 1]) out.push({ box: 'paintedGreen', x: x + s * (W / 2 - 0.04), y: y + 1.62, z, w: 0.08, h: 1.48, d: 0.88, uv: 1, tag: '② 侧板', on: 'partv' });
+    out.push({ box: 'r3_tile', x, y: y + 1.62, z: z - 0.43, w: W - 0.16, h: 1.48, d: 0.02, uv: 0.5, tag: '② 白瓷砖内衬', on: 'partv' });
+    out.push({ box: 'paintedGreen', x, y: y + 2.62, z, w: W, h: 0.52, d: 0.88, uv: 1, tag: '② 顶箱', on: 'partv' });
+    out.push({ box: 'glassClear', x, y: y + 1.98, z: z + 0.4, w: W - 0.18, h: 0.72, d: 0.015, tag: '② 玻璃拉门', on: 'partv' });
+    for (const hy of [1.6, 2.36]) out.push({ box: 'steel', x, y: y + hy, z: z + 0.41, w: W - 0.16, h: 0.04, d: 0.04, tag: '② 拉门框', on: 'partv' });
+    out.push({ box: 'blackMetal', x, y: y + 2.88 + (H - 2.88) / 2, z: z - 0.1, w: 0.34, h: H - 2.88, d: 0.34, tag: '② 排风管', on: 'partv' });
+    out.push({ box: 'dz_glassDark', x: x - 0.35, y: y + 0.98, z: z - 0.15, w: 0.1, h: 0.2, d: 0.1, tag: '② 烧瓶', on: 'partv' });
+    out.push({ box: 'glassClear', x: x + 0.2, y: y + 0.96, z: z - 0.1, w: 0.12, h: 0.16, d: 0.12, tag: '② 烧杯', on: 'partv' });
+    light(out, x, y + 2.25, z - 0.1, 0xf6f2e8, 0.35, 1.6); }
+  out.push({ wtext: '严 谨 求 实　安 全 第 一', x: 14.5, y: y + 4.25, z: -119.78, yaw: 0, w: 5.6, h: 0.5, size: [5.86, 0.72, 0.05], tag: '② 标语', on: 'sign' });
+  // ③ 冷柜 × 2 + 试剂钢架 + 水槽台 + 洗眼站
+  for (const x of [20.25, 21.3]) { out.push({ fixed: true, m: '固定:样本冷柜', x, y, z: -119.38, yaw: 0, size: [0.95, 1.85, 0.8], col: [0.95, 1.85, 0.8], tag: '③ 冷柜', on: 'floor' });
+    out.push({ box: 'whiteMarble', x, y: y + 0.925, z: -119.38, w: 0.93, h: 1.85, d: 0.78, uv: 0.3, tag: '③ 冷柜', on: 'partv' });
+    out.push({ box: 'steel', x: x + 0.36, y: y + 1.1, z: -118.97, w: 0.04, h: 0.5, d: 0.04, tag: '③ 冷柜把手', on: 'partv' });
+    out.push({ notice: '样本冷藏', lines: ['温度 4 ℃', '双人登记'], red: true, x, y: y + 1.5, z: -118.985, yaw: 0, w: 0.3, h: 0.2, size: [0.3, 0.2, 0.01], tag: '③ 标签', on: 'sign' }); }
+  out.push({ m: 'r2/steel_frame_shelves_02', x: 23.0, y, z: -119.4, yaw: 0, h: 2.0, tag: '③ 试剂架', on: 'floor' });
+  for (let s = 0; s < 3; s++) for (let k = 0; k < 6; k++) out.push({ box: k % 2 ? 'dz_glassDark' : 'glassClear', x: 22.45 + k * 0.22, y: y + 0.5 + s * 0.6, z: -119.4, w: 0.1, h: 0.2, d: 0.1, tag: '③ 试剂瓶', on: 'partv' });
+  out.push({ fixed: true, m: '固定:水槽台', x: 25.25, y, z: -119.45, yaw: 0, size: [1.5, 0.9, 0.65], col: [1.5, 0.9, 0.65], tag: '③ 水槽台', on: 'floor' });
+  out.push({ box: 'paintedGreen', x: 25.25, y: y + 0.42, z: -119.45, w: 1.48, h: 0.84, d: 0.62, uv: 1, tag: '③ 水槽台', on: 'partv' });
+  out.push({ box: 'onyx', x: 25.25, y: y + 0.87, z: -119.44, w: 1.52, h: 0.04, d: 0.66, uv: 0.5, tag: '③ 水槽台面', on: 'partv' });
+  out.push({ box: 'whiteMarble', x: 25.05, y: y + 0.86, z: -119.42, w: 0.6, h: 0.05, d: 0.42, uv: 0.3, tag: '③ 白瓷水盆', on: 'partv' });
+  out.push({ box: 'steel', x: 25.05, y: y + 1.1, z: -119.68, w: 0.04, h: 0.42, d: 0.04, tag: '③ 鹅颈龙头', on: 'partv' });
+  out.push({ box: 'steel', x: 25.05, y: y + 1.31, z: -119.55, w: 0.04, h: 0.04, d: 0.26, tag: '③ 鹅颈龙头', on: 'partv' });
+  // 洗眼 / 紧急淋浴站（黄色立管 + 顶部淋浴盘 + 洗眼盆 + 绿色标牌）
+  { const x = 27.3, z = -119.1;
+    out.push({ fixed: true, m: '固定:洗眼站', x, y, z, yaw: 0, size: [0.6, 2.3, 0.6], col: [0.3, 2.3, 0.3], tag: '③ 洗眼站', on: 'floor' });
+    out.push({ box: 'r3_paintYellow', x, y: y + 1.15, z, w: 0.06, h: 2.3, d: 0.06, tag: '③ 洗眼站', on: 'partv' });
+    out.push({ box: 'r3_paintYellow', x, y: y + 0.02, z, w: 0.3, h: 0.04, d: 0.3, tag: '③ 洗眼站', on: 'partv' });
+    out.push({ box: 'r3_paintYellow', x: x - 0.12, y: y + 2.25, z, w: 0.26, h: 0.04, d: 0.04, tag: '③ 洗眼站', on: 'partv' });
+    out.push({ box: 'steel', x: x - 0.26, y: y + 2.18, z, w: 0.26, h: 0.05, d: 0.26, tag: '③ 淋浴盘', on: 'partv' });
+    out.push({ box: 'r3_paintYellow', x: x - 0.14, y: y + 1.0, z, w: 0.22, h: 0.04, d: 0.04, tag: '③ 洗眼支管', on: 'partv' });
+    out.push({ box: 'steel', x: x - 0.28, y: y + 1.03, z, w: 0.24, h: 0.06, d: 0.24, tag: '③ 洗眼盆', on: 'partv' });
+    out.push({ notice: '紧急洗眼 · 淋浴', lines: ['拉下手柄', '冲洗十五分钟'], x: x + 0.66, y: y + 1.75, z: -119.785, yaw: 0, w: 0.42, h: 0.3, size: [0.42, 0.3, 0.01], tag: '③ 标牌', on: 'sign' }); }
+  light(out, 23.8, y + 3.2, -117.6, 0xf4f0e4, 1.4, 7);
+  // ④ 仪器柜：东墙窗间墙两组（每组两只）+ 南墙一排六只（灰绿柜身 + 玻璃门 + 内部仪器剪影）
+  const cab = (x, z, yaw, tag) => { const [nx, nz] = [Math.sin(yaw), Math.cos(yaw)];
+    out.push({ fixed: true, m: '固定:仪器柜', x, y, z, yaw, size: [0.95, 2.0, 0.5], col: [0.95, 2.0, 0.5], tag, on: 'floor' });
+    out.push({ box: 'paintedGreen', x, y: y + 1.0, z, w: 0.95, h: 2.0, d: 0.48, uv: 1, yaw, tag, on: 'partv' });
+    out.push({ box: 'glassClear', x: x + nx * 0.245, y: y + 1.32, z: z + nz * 0.245, w: 0.82, h: 1.2, d: 0.012, yaw, tag, on: 'partv' });
+    for (const hy of [0.95, 1.35, 1.75]) out.push({ box: 'wood', x: x + nx * 0.02, y: y + hy, z: z + nz * 0.02, w: 0.86, h: 0.02, d: 0.4, uv: 0.6, yaw, tag, on: 'partv' });
+    for (const [hy, k] of [[0.96, 0], [1.36, 1], [1.76, 2]]) out.push({ box: k === 1 ? 'dz_brassDim' : 'dz_glassDark', x: x + nx * 0.02, y: y + hy + 0.1, z: z + nz * 0.02, w: 0.3, h: 0.18, d: 0.2, yaw, tag, on: 'partv' });
+    out.push({ box: 'dz_brassDim', x: x + nx * 0.25, y: y + 1.05, z: z + nz * 0.25, w: 0.02, h: 0.12, d: 0.02, yaw, tag, on: 'partv' }); };
+  for (const z of [-96.95, -98.05, -101.95, -103.05]) cab(27.72, z, ROT.W, '④ 仪器柜');
+  for (let i = 0; i < 6; i++) cab(18.9 + i * 1.0, -92.47, ROT.N, '④ 仪器柜');
+  out.push({ sign: '精 密 仪 器', sub: '取用须登记 · 用毕归位', x: 21.4, y: y + 2.2, z: -92.71, yaw: ROT.N, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+  // ⑤ 西墙黑板 + 实验守则告示
+  out.push({ chalk: true, x: 9.8, y: y + 1.75, z: -108.5, yaw: ROT.E, w: 4.0, h: 1.3, size: [4.2, 1.5, 0.06], tag: '⑤ 黑板', on: 'sign' });
+  out.push({ box: 'wood', x: 9.84, y: y + 1.04, z: -108.5, w: 0.1, h: 0.04, d: 4.0, uv: 0.6, tag: '⑤ 粉笔槽', on: 'partv' });
+  out.push({ notice: '实验室守则', lines: ['一、进入实验室须穿工作服', '二、严禁在室内饮食吸烟', '三、易燃试剂入柜双人双锁', '四、废液分类回收', '五、离室断水断电关气'], red: true, x: 9.77, y: y + 1.6, z: -102.6, yaw: ROT.E, w: 0.6, h: 0.82, size: [0.6, 0.82, 0.01], tag: '⑤ 守则', on: 'sign' });
+  out.push({ m: 'r2/fire_extinguisher', x: 10.05, y, z: -100.6, yaw: ROT.E, h: 0.6, tag: '消防', on: 'floor' });
+  hang(out, '理 化 分 析 组', BX0, y + 3.9, -101.6, 0, 2.0, 0.42, y + H);
+  for (const bx of [BX0, 22.0]) for (const z of [-104.5, -110.5]) light(out, bx, y + 3.4, z, 0xf4f0e4, 1.8, 9);
+  light(out, 23.5, y + 3.4, -101, 0xf4f0e4, 1.4, 8);
+  return { room, items: out };
+}
+PLANS.lab3 = (Y) => fixYaw(planLab3(Y)); R3.lab3 = true;
