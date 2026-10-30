@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { TOD } from '../engine/tod.js';
 import { Batch } from '../engine/batch.js';
-import { placeModel, loadModel } from '../engine/assets.js';
+import { placeModel, loadModel, pbr } from '../engine/assets.js';
 import { mats } from './mats.js';
 import { Frame, archRingGeo, archSolidGeo, archShape, archApex, lancetWindow, pinnacle, spire, tower, gableRoof, bayWall, flyingButtress, emblem, goldText } from './gothic.js';
 import { waterMaterial, waterfallMaterial, bannerMaterial, CanvasScreen, time } from '../engine/fx.js';
@@ -167,7 +167,9 @@ function groundEmblem(M, pos, r) {
   const t = new THREE.CanvasTexture(cv);
   const m = M.gold.clone(); m.alphaMap = t; m.alphaTest = 0.5; m.map = null; m.color.set(0xd8b070); m.roughness = 0.5; m.roughnessMap = null;
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(r * 2, r * 2), m); mesh.rotation.x = -Math.PI / 2; mesh.position.set(...pos); mesh.receiveShadow = true;
-  const disc = new THREE.Mesh(new THREE.CircleGeometry(r * 0.78, 64), M.stoneDark); disc.rotation.x = -Math.PI / 2; disc.position.set(pos[0], pos[1] - 0.01, pos[2]); disc.receiveShadow = true;
+  // 批次13（用户 23:05）：地徽底盘原用 M.stoneDark（抛光黑大理石 env 1.0）在广场把蓝天整片映成蓝色圆盘，很违和 → 暗铜褐哑光花岗岩，低环境反射
+  const discMat = pbr('Marble016', { rn: true, color: 0x3b332b, roughness: 0.78, env: 0.18, repeat: [5, 5] });
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(r * 0.78, 64), discMat); disc.rotation.x = -Math.PI / 2; disc.position.set(pos[0], pos[1] - 0.01, pos[2]); disc.receiveShadow = true;
   const grp = new THREE.Group(); grp.add(disc, mesh); return grp;
 }
 
