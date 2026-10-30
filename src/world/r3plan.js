@@ -2673,8 +2673,8 @@ export function planVaultB3(y) {
   const cases = [['r4/case_a01', 0.62], ['r4/case_c02', 0.78], ['r4/case_d01', 0.48]];
   // 批次20：证物箱改 军绿 / 冷灰涂装钢箱 + 牛皮纸档案箱（程序化，定点轮换；R4 黑铝箱在暖光下像藤箱 → 只留格内少量）
   const crate = (kind, x, by, z, w, h, d, tag, yawX = false) => { const [W2, D2] = yawX ? [d, w] : [w, d];
-    if (kind === 2) { out.push({ box: 'kraftDark', x, y: by + h / 2, z, w: W2, h, d: D2, uv: 0.5, tag, on: 'partv' });
-      out.push({ box: 'kraftDark', x, y: by + h - 0.02, z, w: W2 + 0.03, h: 0.06, d: D2 + 0.03, uv: 0.5, tag: tag + '·盒盖', on: 'partv' });
+    if (kind === 2) { out.push({ box: 'r3_kraftBox', x, y: by + h / 2, z, w: W2, h, d: D2, uv: 0.5, tag, on: 'partv' });
+      out.push({ box: 'r3_kraftBox', x, y: by + h - 0.02, z, w: W2 + 0.03, h: 0.06, d: D2 + 0.03, uv: 0.5, tag: tag + '·盒盖', on: 'partv' });
       out.push(yawX ? { box: 'r3_stencil', x: x + Math.sign(x || 1) * -(W2 / 2 + 0.003), y: by + h * 0.5, z, w: 0.004, h: 0.1, d: D2 * 0.5, tag: tag + '·标签', on: 'partv' } : { box: 'r3_stencil', x, y: by + h * 0.5, z: z + D2 / 2 + 0.003, w: W2 * 0.5, h: 0.1, d: 0.004, tag: tag + '·标签', on: 'partv' }); return; }
     const m = kind === 0 ? 'r3_crateOlive' : 'r3_crateGrey';
     out.push({ box: m, x, y: by + h / 2, z, w: W2, h, d: D2, uv: 0.6, tag, on: 'partv' });
