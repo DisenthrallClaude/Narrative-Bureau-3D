@@ -274,7 +274,7 @@ export function planFloor3Office(y) {
   out.push({ m: 'r2/multi_cleaner_5_litre', x: -27.5, y, z: -98.35, yaw: 0.2, h: 0.32, tag: 'K4', on: 'floor' });
   // 壁灯（隔断与墙面，暖光层次）
   for (const [x, z, yaw] of [[-25.3, -96.5 - 0.07, ROT.N], [-19.0, -108.6 + 0.07, 0], [-12.6, -101.4 + 0.07, 0], [X1 - 0.02, -108.2, ROT.W], [-27.83, -112, ROT.E]]) sconce(out, x, y + 2.2, z, yaw);
-  out.push({ win: true, x: X0 + 0.3, y: y + 2.0, z: -105, look: [X0 + 6, y + 0.8, -105], w: 0.6, h: 22, c: 0xc0d0ff, i: 1.6, size: [0.1, 0.1, 22], tag: '窗光', on: 'light' });
+  out.push({ light: true, win: true, x: X0 + 0.3, y: y + 2.0, z: -105, look: [X0 + 6, y + 0.8, -105], w: 0.6, h: 22, c: 0xc0d0ff, i: 1.6, size: [0.1, 0.1, 22], tag: '窗光', on: 'light' });
   // —— 批次3：地面分区（走廊水磨石 + 石材收边 / 开敞区与处室地毯 / 茶水间地砖 / 档案区地胶 / 打字室拼花）+ 磨损 ——
   floorZ(out, 'r3_check', X0, -15.4, -98.6, -96.5, y, { uv: 1.5, border: 0.14 });
   floorZ(out, 'r3_check', -15.4, X1, -101.4, -96.5, y, { uv: 1.5, border: 0.14 });
@@ -360,7 +360,7 @@ export function planFloor2Liaison(y) {
   out.push({ m: 'r2/coat_rack', x: 9.95, y, z: -93.2, yaw: Math.PI, h: 1.85, tag: '入口', on: 'floor' });
   for (const [x, z] of [[1.0, -116.8], [26.8, -116.7], [13.9, -109.9]]) out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x, y, z, yaw: 0, h: 0.7, tag: '绿植', on: 'floor' });
   for (const [x, z, yaw] of [[20.6 - 0.07, -99.6, ROT.W], [20.6 - 0.07, -104.6, ROT.W]]) sconce(out, x, y + 2.2, z, yaw);
-  out.push({ win: true, x: 27.5, y: y + 2.2, z: -105, look: [21, y + 0.8, -105], w: 0.6, h: 22, c: 0xc0d0ff, i: 1.4, size: [0.1, 0.1, 22], tag: '窗光', on: 'light' });
+  out.push({ light: true, win: true, x: 27.5, y: y + 2.2, z: -105, look: [21, y + 0.8, -105], w: 0.6, h: 22, c: 0xc0d0ff, i: 1.4, size: [0.1, 0.1, 22], tag: '窗光', on: 'light' });
   // —— 批次3：入口登记台（「会客请先登记」）——
   chiefDesk(out, 3.6, -100.0, y, Math.PI, '来访登记', { guests: 1, phone: 'r2/office_phone' });
   out.push({ m: 'r2/desk_bell', x: 3.25, y: y + 0.78, z: -99.75, yaw: 0, w: 0.1, tag: '来访登记', on: 'desk' });
@@ -460,7 +460,7 @@ export function planFloor2Pub(y) {
   for (const z of [-95, -100, -105, -110, -115]) out.push({ m: 'r2/old_radiator', x: -27.62, y: y + 0.12, z, yaw: Math.PI / 2, w: 1.2, tag: 'K3 暖气（窗下）', on: 'wall' });
   for (const [x, z] of [[-27.2, -92.9]]) out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x, y, z, yaw: 0, h: 0.9, tag: '绿植', on: 'floor' });
   for (const [x, z, yaw] of [[-17.5, -104.0 + 0.07, 0], [-11.5, -104.0 + 0.07, 0], [-21.0 - 0.07, -109.5, ROT.W]]) sconce(out, x, y + 2.2, z, yaw);
-  out.push({ win: true, x: X0 + 0.3, y: y + 2.2, z: -105, look: [X0 + 6, y + 0.8, -105], w: 0.6, h: 22, c: 0xc0d0ff, i: 1.4, size: [0.1, 0.1, 22], tag: '窗光', on: 'light' });
+  out.push({ light: true, win: true, x: X0 + 0.3, y: y + 2.2, z: -105, look: [X0 + 6, y + 0.8, -105], w: 0.6, h: 22, c: 0xc0d0ff, i: 1.4, size: [0.1, 0.1, 22], tag: '窗光', on: 'light' });
   // —— 批次3 剪辑室补：审片沙发 + 放映机 + 电视推车 + 片盒钢架 ——
   out.push({ m: 'r2/sofa_02', x: -3.9, y, z: -102.2, yaw: ROT.E, w: 1.9, tag: '剪辑室', on: 'floor', col: [1.9, 0.75, 0.85] });
   out.push({ m: 'r2/eumig_film_projector', x: -4.75, y: y + 0.75, z: -104.75, yaw: 0, h: 0.3, tag: '剪辑室', on: 'desk' });
