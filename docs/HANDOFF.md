@@ -201,6 +201,8 @@
 ### 6 收尾
 - 走查：run 41113391403（walk:walk，781e8a6），截止未出结果——**本批 walk 31/31 未确认**。
 - 对比图：work/r3/b21/cmp21.py → work/r3/cmp21_*.jpg（缺图格子标「缺图」）。
+- Drive 快照 1AxRm2Q4BurQh9HDT9l1fZEO4y1T9hdC2 已覆盖（03:15 CST，内容截至 **bc0149e**，未压缩 tar 891 MB，`tar xf` 解；tar 与 gws 上传分两步）。
+- Pages https://disenthrallclaude.github.io/Narrative-Bureau-3D/ 返回 200：258b5d0 / 781e8a6 部署成功，bc0149e 部署中。
 ### 下批先做
 1. 取图：41112627629（exam_r3_b / hall_wanted / spine_top）、41112642625（cs_top medium）、41113391403（dorm_r3 / dorm_r3_b / dorm3_top / walk）、41110409179 的 spine_r3_b。超 25 分钟取消重派。
 2. spine_r3 机位抬头重设；zone_r3_b 值班台提亮。
