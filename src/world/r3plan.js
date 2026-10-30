@@ -2441,6 +2441,11 @@ export function planZoneControl(y) {
   // ⑤ 值班台（原调度台 6 × 1.2 盒体在 x 35，z −34.6，台面 y+1.0）：南侧两把椅子坐南面朝北
   { const top = y + 1.06, cz = -34.6;
     out.push({ fixed: true, m: '固定:值班台desk（eastwing 原有盒体）', x: 35, y, z: cz, yaw: 0, size: [6, 1.06, 1.2], col: [6, 1.06, 1.2], tag: '⑤ 值班台', on: 'floor' });
+    // 批次19：zone_r3_b 看图值班台是一整块纯黑盒（eastwing b.box('wood') 渲黑）→ 套胡桃木柜身 + 两面凸起芯板 + 深色台面 + 踢脚
+    out.push({ box: 'dz_wain', x: 35, y: y + 0.5, z: cz, w: 6.03, h: 0.98, d: 1.23, uv: 0.5, tag: '⑤ 值班台饰面', on: 'partv' });
+    out.push({ box: 'dz_beam', x: 35, y: y + 1.03, z: cz, w: 6.1, h: 0.06, d: 1.28, uv: 0.5, tag: '⑤ 值班台饰面', on: 'partv' });
+    out.push({ box: 'dz_paintLow', x: 35, y: y + 0.05, z: cz, w: 6.06, h: 0.1, d: 1.26, uv: 0.5, tag: '⑤ 值班台饰面', on: 'partv' });
+    for (const sz of [-1, 1]) for (let k = 0; k < 4; k++) out.push({ box: 'dz_wain2', x: 35 - 2.25 + k * 1.5, y: y + 0.55, z: cz + sz * 0.625, w: 1.3, h: 0.62, d: 0.03, uv: 0.5, tag: '⑤ 值班台芯板', on: 'partv' });
     for (const dx of [-1.4, 1.4]) out.push({ m: 'r2/literary_club_chair_preview', x: 35 + dx, y, z: -33.45, yaw: ROT.N, h: 1.05, tag: '⑤ 值班台', on: 'floor' });
     out.push({ m: 'r2/bankers_lamp', x: 33.0 - 0.5, y: top, z: cz + 0.2, yaw: ROT.N, h: 0.36, tag: '⑤ 值班台', on: 'desk' });
     out.push({ m: 'r2/phone_vef_ta_68', x: 37.4, y: top, z: cz + 0.15, yaw: ROT.N, w: 0.22, tag: '⑤ 值班台', on: 'desk' });
@@ -2586,6 +2591,27 @@ export function planLab3(y) {
   for (const z of [-96.95, -98.05, -101.95, -103.05]) cab(27.72, z, ROT.W, '④ 仪器柜');
   for (let i = 0; i < 6; i++) cab(18.9 + i * 1.0, -92.47, ROT.N, '④ 仪器柜');
   out.push({ sign: '精 密 仪 器', sub: '取用须登记 · 用毕归位', x: 21.4, y: y + 2.2, z: -92.71, yaw: ROT.N, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+  // 批次19：进门近景「样品预检台」（x 12.1，z −101.6，命名会议桌与第一台之间，lab_r3 机位 ~4 m 处）：钢架推车 + 黑环氧台面 + 下层隔板；
+  //   台面自西向东：显微镜 / 试管架（6 支试管，三色试液，定点）/ 摊开的实验记录本 + 钢笔 / 台灯；下层：文件堆 + 烧杯组
+  { const tx = 12.1, tz = -101.6, top = y + 0.9;
+    out.push({ box: 'r3_epoxyBlack', x: tx, y: top - 0.02, z: tz, w: 1.4, h: 0.04, d: 0.62, uv: 0.5, tag: '⑥ 预检台', on: 'floor', col: [1.4, 0.9, 0.62] });
+    for (const dx of [-0.66, 0.66]) for (const dz of [-0.27, 0.27]) out.push({ box: 'steel', x: tx + dx, y: y + 0.44, z: tz + dz, w: 0.04, h: 0.88, d: 0.04, tag: '⑥ 预检台架', on: 'partv' });
+    out.push({ box: 'r3_steelGrey', x: tx, y: y + 0.25, z: tz, w: 1.34, h: 0.025, d: 0.56, tag: '⑥ 预检台下层', on: 'partv' });
+    out.push({ m: 'microscope', x: tx - 0.48, y: top, z: tz, yaw: ROT.N, h: 0.4, tag: '⑥ 显微镜', on: 'desk' });
+    // 试管架：木底座 + 立柱 + 打孔横板 + 6 支试管
+    out.push({ box: 'wood', x: tx - 0.06, y: top + 0.012, z: tz + 0.05, w: 0.34, h: 0.024, d: 0.1, uv: 0.6, tag: '⑥ 试管架', on: 'partv' });
+    for (const dx of [-0.16, 0.16]) out.push({ box: 'wood', x: tx - 0.06 + dx, y: top + 0.08, z: tz + 0.05, w: 0.02, h: 0.12, d: 0.08, tag: '⑥ 试管架', on: 'partv' });
+    out.push({ box: 'wood', x: tx - 0.06, y: top + 0.13, z: tz + 0.05, w: 0.34, h: 0.016, d: 0.08, uv: 0.6, tag: '⑥ 试管架', on: 'partv' });
+    const liq = ['dz_pipeRed', 'r3_paintYellow', 'dz_tileG', 'dz_pipeRed', 'r3_paintYellow', 'dz_tileG'];
+    for (let k = 0; k < 6; k++) { const x = tx - 0.06 - 0.125 + k * 0.05;
+      out.push({ box: 'glassClear', x, y: top + 0.1, z: tz + 0.05, w: 0.018, h: 0.16, d: 0.018, tag: '⑥ 试管', on: 'partv' });
+      out.push({ box: liq[k], x, y: top + 0.05, z: tz + 0.05, w: 0.014, h: 0.06 + (k % 3) * 0.015, d: 0.014, tag: '⑥ 试液', on: 'partv' }); }
+    out.push({ m: 'r4/book_open_a01', x: tx + 0.3, y: top, z: tz + 0.08, yaw: ROT.N + 0.12, w: 0.36, tag: '⑥ 实验记录本', on: 'desk' });
+    out.push({ box: 'dz_bakelite', x: tx + 0.48, y: top + 0.006, z: tz + 0.16, w: 0.13, h: 0.012, d: 0.012, yaw: 0.4, tag: '⑥ 钢笔', on: 'partv' });
+    out.push({ m: 'r2/bankers_lamp', x: tx + 0.55, y: top, z: tz - 0.18, yaw: ROT.N, h: 0.36, tag: '⑥ 台灯', on: 'desk' });
+    out.push({ m: 'r4/paper_stack_a04', x: tx - 0.35, y: y + 0.263, z: tz, yaw: 0, w: 0.3, tag: '⑥ 文件堆', on: 'partv' });
+    out.push({ m: 'r4/lab_beakers_set', x: tx + 0.3, y: y + 0.263, z: tz, yaw: Math.PI / 2, h: 0.15, tag: '⑥ 烧杯组', on: 'partv' });
+    light(out, tx + 0.4, y + 1.5, tz - 0.1, 0xffe4b8, 0.9, 2.6); }
   // ⑤ 西墙黑板 + 实验守则告示
   light(out, 11.2, y + 2.9, -108.5, 0xfff2e0, 1.6, 4.5); // 批次18：黑板专门补光
   out.push({ chalk: true, x: 9.8, y: y + 1.75, z: -108.5, yaw: ROT.E, w: 4.0, h: 1.3, size: [4.2, 1.5, 0.06], tag: '⑤ 黑板', on: 'sign' });

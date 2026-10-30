@@ -77,7 +77,15 @@ export function buildUpper(scene, world, ctx) {
     const X = 28, Z0 = -92, Z1 = -120, H = 5.4, cz = (Z0 + Z1) / 2;
     room(b, world, M, -X, X, Z0, Z1, y, H, 'carpet', 'panelWall', { ceil: 'vault', frontHole: { x0: -9.4, x1: 9.4, h: 5.2 } });
     wallX(b, 'panelWall', -9.6, Z0 - 2, Z1, y, H, 0.3, [{ z0: -96, z1: -99, h: 3 }], true); wallX(b, 'whitePad', 9.6, Z0 - 2, Z1, y, H, 0.3, [{ z0: -96, z1: -99, h: 3 }], true);
-    winRow(b, -X + 0.01, Z0, Z1, y, 2.4, Math.PI / 2); winRow(b, X - 0.01, Z0, Z1, y, 2.4, -Math.PI / 2);
+    winRow(b, -X + 0.01, Z0, Z1, y, 2.4, Math.PI / 2);
+    // 批次19：鉴定实验室东墙（x 28）哥特尖拱窗 + 城景 → 钢框磨砂窗（与 3F 区域管控室同款，研究所风格统一）
+    if (R3.lab3) for (let z = Z0 - 3; z > Z1 + 1; z -= 5) {
+      const gl = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 2.4), new THREE.MeshStandardMaterial({ color: 0x8a918d, emissive: 0xc8d0cc, emissiveIntensity: 0.32, roughness: 0.5 }));
+      gl.position.set(X - 0.04, y + 2.3, z); gl.rotation.y = -Math.PI / 2; zone.add(gl);
+      for (const dz of [-0.82, -0.41, 0, 0.41, 0.82]) b.box('blackMetal', 0.06, 2.48, dz === -0.82 || dz === 0.82 ? 0.08 : 0.035, [X - 0.07, y + 2.3, z + dz], { uv: 1 });
+      for (const dy of [-1.22, -0.6, 0, 0.6, 1.22]) b.box('blackMetal', 0.06, Math.abs(dy) > 1.2 ? 0.08 : 0.035, 1.72, [X - 0.07, y + 2.3 + dy, z], { uv: 1 });
+      b.box('stoneDark', 0.2, 0.06, 1.9, [X - 0.12, y + 1.06, z], { uv: 0.5 });
+    } else winRow(b, X - 0.01, Z0, Z1, y, 2.4, -Math.PI / 2);
     // 办公区：工位岛 + 会议室白板 + 法务处门牌 + 公告屏
     if (!R3.floor3_office) for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) { const x = -24 + k * 7, z = -98 - r * 6; b.box('wood', 5, 0.06, 2.2, [x, y + 0.76, z], { uv: 0.6 }); world.box(x, y + 0.4, z, 5, 0.8, 2.2); b.box('paintedGreen', 5, 0.4, 0.04, [x, y + 0.98, z], { uv: 1 }); for (const dx of [-1.6, 0, 1.6]) for (const dz of [-0.55, 0.55]) { add(placeModel('monitor', { height: 0.45, pos: [x + dx, y + 0.79, z + dz * 0.6], rotY: dz > 0 ? 0 : Math.PI })); add(placeModel('office_chair', { height: 1, pos: [x + dx, y, z + dz * 2.2], rotY: dz > 0 ? 0 : Math.PI })); } if ((r + k) % 2) add(placeModel('stationery', { height: 0.12, pos: [x + 0.8, y + 0.79, z] })); }
     const wbd = board('doc_office_whiteboard', 2.6, 1.3, signMaterial('政策研究室', ['议题：叙事污染指数口径调整', '· 「良」是否改为「可读」', '· 3‰ 觉醒率是否对外', '· 不要讨论第七排'], 640, 320)); wbd.position.set(-X + 0.25, y + 1.9, -112); wbd.rotation.y = Math.PI / 2; zone.add(wbd); ctx.anchors.doc_office_whiteboard = wbd;
