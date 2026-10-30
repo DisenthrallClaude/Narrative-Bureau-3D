@@ -2703,6 +2703,15 @@ export function planVaultB3(y) {
   out.push({ box: 'blackMetal', x: 0, y: y + 2.38, z: -127.7, w: 3.36, h: 0.16, d: 0.12, tag: '⑥ 窗框', on: 'partv' });
   out.push({ sign: '观 察 窗', sub: '转运缓冲间 · 4 级以上候检', x: 0, y: y + 2.65, z: -127.72, yaw: 0, size: [0.34, 0.12, 0.01], tag: '⑥ 铜牌', on: 'sign' });
   light(out, 0, y + 2.2, -126.8, 0xcfe0ff, 1.0, 4);
+  // 批次19 看图（vault_r3）：四面墙 / 天花几乎纯黑、空间像空仓库 → 墙面整面浅灰混凝土护面 + 天花混凝土主梁（5 m 一道，避开灯带）+ 墙面洗墙灯
+  for (const s of [-1, 1]) out.push({ box: 'r3_bunkerConc', x: s * 19.93, y: y + H / 2, z: -110, w: 0.1, h: H, d: 36, uv: 0.35, tag: '墙面护面', on: 'partv' });
+  out.push({ box: 'r3_bunkerConc', x: 0, y: y + H / 2, z: -127.95, w: 40, h: H, d: 0.08, uv: 0.35, tag: '墙面护面', on: 'partv' });
+  for (const s of [-1, 1]) out.push({ box: 'r3_bunkerConc', x: s * 14.7, y: y + H / 2, z: -92.07, w: 10.6, h: H, d: 0.1, uv: 0.35, tag: '墙面护面', on: 'partv' });
+  out.push({ box: 'r3_bunkerConc', x: 0, y: y + 5.7, z: -92.07, w: 18.8, h: 1.0, d: 0.1, uv: 0.35, tag: '墙面护面', on: 'partv' });
+  out.push({ box: 'r3_bunkerConc', x: 0, y: y + H - 0.03, z: -110, w: 39.8, h: 0.05, d: 35.8, uv: 0.3, tag: '天花', on: 'partv' });
+  for (let z = -97.5; z > -127; z -= 5) out.push({ box: 'r3_bunkerConc', x: 0, y: y + H - 0.35, z, w: 39.8, h: 0.6, d: 0.45, uv: 0.4, tag: '天花主梁', on: 'partv' });
+  for (const s of [-1, 1]) for (const z of [-100, -110, -120]) light(out, s * 17.6, y + 4.6, z, 0xd8e2f0, 1.2, 8);
+  light(out, 0, y + 4.6, -125.5, 0xd8e2f0, 1.0, 9);
   return { room, items: out };
 }
 PLANS.vault_b3 = (Y) => fixYaw(planVaultB3(Y)); R3.vault_b3 = true;
