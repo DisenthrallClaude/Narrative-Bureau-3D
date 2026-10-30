@@ -2088,5 +2088,47 @@ function planLobby(y, F) {
   return { room, items: out };
 }
 for (const F of ['2F', '3F', '4F', '12F']) { PLANS['lobby_' + F] = (Y) => fixYaw(planLobby(Y, F)); R3['lobby_' + F] = true; }
+// ================= R3 批次12 · 东侧楼梯 east_stair（x 50…56，z −54…−64，双跑 1F→2F→3F；y 1.8 / 8.8 / 15.8） =================
+// 原状：黑大理石踏步 20 级 × 4 跑、西侧一根悬空铜扶手、两处中间平台、中间隔墙；没有踏步防滑条、靠墙扶手、平台标识与照明。楼梯本体与碰撞不动。
+// 平面（每层同构）：西跑 x 50.2…52.9 由 z −54 向南上到平台 z −62.4…−64；东跑 x 53.1…55.8 由平台向北上到上层 z −54。
+//  ① 每级踏步前缘铜防滑条（80 级），平台前缘同样处理
+//  ② 扶手：西跑外侧原铜扶手补立杆（每 2 级 1 根）；中间隔墙两侧、东外墙一侧加靠墙铜扶手 + 托架（每 1.6 m）
+//  ③ 平台：隔墙南端面挂层间指示铜牌（上行 / 下行去向），东外墙铜壁灯 + 暖光；平台角落灭火器（两处平台错开东西角）
+//  ④ 到达口：2F / 3F 楼梯口西墙（x 50）楼层铜牌；1F 楼梯脚磨损
+//  ⑤ 照明：每跑中段东外墙 / 隔墙各一盏壁灯
+function rod(out, mat, a, b, r = 0.022, tag = '扶手') { out.push({ rod: true, mat, a, b, r, x: (a[0] + b[0]) / 2, y: Math.min(a[1], b[1]), z: (a[2] + b[2]) / 2, size: [0.05, 0.05, 0.05], tag, on: 'partv' }); }
+export function planEastStair(y) {
+  const out = []; const Y = y, LV = [[Y, Y + 7], [Y + 7, Y + 14]], Z0 = -54, ZL = -62.4;
+  const room = { name: '东侧楼梯（批次12，三层叠合俯视）', x0: 50, x1: 56, z0: -64, z1: -53.4, y, H: 21, doors: [{ wall: 'N', a: 50.2, b: 55.8, label: '1F 市民服务 / 2F·3F 楼梯口' }], windows: [{ wall: 'E', a: -62.6, b: -61.0 }],
+    rooms: [['西跑 ↓', 51.55, -58.2], ['东跑 ↑', 54.45, -58.2], ['平台', 53, -63.2]], aisles: [] };
+  F7(out, '西跑踏步', 51.55, -58.2, 2.7, 8.4, y, 0, 0.1); F7(out, '东跑踏步', 54.45, -58.2, 2.7, 8.4, y, 0, 0.1); F7(out, '中间隔墙', 53, -58.2, 0.2, 8.4, y, 0, 3);
+  const fl = (x0, x1, za, ya, zb, yb) => { const n = 20, run = (za - zb) / n, rise = (yb - ya) / n, s = Math.sign(run);
+    for (let i = 0; i < n; i++) { const zn = za - run * i, top = ya + rise * (i + 1) + 0.025; out.push({ box: 'dz_brassDim', x: (x0 + x1) / 2, y: top + 0.004, z: zn - s * 0.03, w: x1 - x0 - 0.12, h: 0.01, d: 0.05, tag: '防滑条', on: 'partv' }); out.push({ box: 'blackMetal', x: (x0 + x1) / 2, y: top + 0.0045, z: zn - s * 0.075, w: x1 - x0 - 0.12, h: 0.009, d: 0.035, tag: '防滑条', on: 'partv' }); }
+    return { run, rise }; };
+  for (const [ya, yb] of LV) { const ym = (ya + yb) / 2;
+    const w = fl(50.2, 52.9, Z0, ya, ZL, ym); fl(53.1, 55.8, ZL, ym, Z0, yb);
+    // 平台前缘
+    out.push({ box: 'dz_brassDim', x: 51.55, y: ym + 0.004, z: ZL - 0.03, w: 2.6, h: 0.01, d: 0.05, tag: '防滑条', on: 'partv' });
+    // ② 扶手：西跑外侧立杆（原扶手 x 50.25，高 0.95）；隔墙两侧 + 东外墙靠墙扶手 + 托架
+    for (let i = 1; i < 20; i += 2) { const zn = Z0 - w.run * (i + 0.5), top = ya + w.rise * (i + 1) + 0.025; out.push({ box: 'brass', x: 50.25, y: top + 0.45, z: zn, w: 0.025, h: 0.9, d: 0.025, tag: '扶手', on: 'partv' }); }
+    for (const [x, za, ra, zb, rb] of [[52.84, Z0, ya, ZL, ym], [53.16, ZL, ym, Z0, yb], [55.84, ZL, ym, Z0, yb]]) {
+      rod(out, 'brass', [x, ra + 0.9 + 0.05, za], [x, rb + 0.9 + 0.05, zb]);
+      for (let t = 0.1; t < 1; t += 0.2) { const zz = za + (zb - za) * t, yy = ra + (rb - ra) * t + 0.92; out.push({ box: 'dz_brassDim', x: x + (x > 53 && x < 54 ? -0.05 : x > 55 ? 0.05 : 0.05), y: yy, z: zz, w: 0.08, h: 0.025, d: 0.025, tag: '扶手', on: 'partv' }); } }
+    // ③ 平台：层间指示铜牌（隔墙南端面）+ 东墙壁灯 + 灭火器
+    const lvN = ya === Y ? ['1F ↔ 2F', ['↑ 2F　监测指挥中心 · 阅卷中心', '↓ 1F　市民服务大厅 · 考务大厅']] : ['2F ↔ 3F', ['↑ 3F　禁区封锁调度厅 · 副本投放调度室', '↓ 2F　监测指挥中心 · 阅卷中心']];
+    out.push({ plaque: true, title: lvN[0], lines: lvN[1], x: 53, y: ym + 1.75, z: ZL - 0.012, yaw: Math.PI, w: 0.18, h: 0.24, size: [0.2, 0.26, 0.02], tag: '层间铜牌', on: 'pic' });
+    out.push({ sconce: true, x: 55.97, y: ym + 2.3, z: -63.2, yaw: ROT.W, size: [0.2, 0.3, 0.2], tag: '壁灯', on: 'sconce' }); light(out, 55.4, ym + 2.5, -63.2, 0xffd8a8, 1.1, 6);
+    out.push({ m: 'r4/fireExtinguisher_abc_a03', x: ya === Y ? 55.62 : 50.38, y: ym, z: -63.75, yaw: ya === Y ? ROT.W : ROT.E, fit: [0.144, 0.545, 0.192], tag: '消防', on: 'floor' });
+    // ⑤ 每跑中段壁灯（东外墙 / 西侧隔墙面）
+    out.push({ sconce: true, x: 55.97, y: (ym + yb) / 2 + 2.2, z: -58.2, yaw: ROT.W, size: [0.2, 0.3, 0.2], tag: '壁灯', on: 'sconce' }); light(out, 55.3, (ym + yb) / 2 + 2.4, -58.2, 0xffd8a8, 1.0, 6);
+    out.push({ sconce: true, x: 52.9, y: (ya + ym) / 2 + 2.2, z: -58.2, yaw: ROT.W, size: [0.2, 0.3, 0.2], tag: '壁灯', on: 'sconce' }); light(out, 52.3, (ya + ym) / 2 + 2.4, -58.2, 0xffd8a8, 1.0, 6);
+  }
+  // ④ 到达口铜牌（2F / 3F 楼梯口西墙 x 50 东面）+ 1F 楼梯脚磨损
+  for (const [fy, t, l] of [[Y + 7, '2F', ['监测指挥中心　→ 西门', '阅卷中心　　　→ 南区', '↑ 3F　↓ 1F']], [Y + 14, '3F', ['禁区封锁调度厅　→ 西门', '副本投放调度室　→ 南区', '↓ 2F · 1F']]]) {
+    out.push({ plaque: true, title: t, lines: l, x: 50.16, y: fy + 1.7, z: -52.6, yaw: ROT.E, w: 0.45, h: 0.6, size: [0.5, 0.65, 0.04], tag: '楼层铜牌', on: 'pic' }); light(out, 50.9, fy + 2.6, -52.6, 0xffe6c8, 0.7, 4); }
+  wear(out, 50.3, 52.8, -53.95, -53.0, y + 0.0105);
+  return { room, items: out };
+}
+PLANS.east_stair = (Y) => fixYaw(planEastStair(Y)); R3.east_stair = true;
 // 对照用：?r3off=east_cloister,xxx 关掉指定区的 R3 规划（截图「改前」用，旧陈设随之恢复）
 if (typeof location !== 'undefined') { const m = /[?&]r3off=([\w,]+)/.exec(location.search); if (m) for (const id of m[1].split(',')) R3[id] = false; }

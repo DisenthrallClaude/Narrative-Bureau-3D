@@ -70,6 +70,8 @@ export const SHOTS = {
   lobby_r3_b: { pos: [7.6, 15.8 + 1.65, -85.0], look: [-6.5, 15.8 + 1.2, -91.4], fov: 74, zone: 'floor3' }, // 东南角回看北口/导览/花钵
   lobby_top: { pos: [0, 15.8 + 30, -87.99], look: [0, 15.8, -88], fov: 40, clipY: 15.8 + 4.6, zone: 'floor3' },
   lobby_4f: { pos: [1.2, 22.8 + 1.65, -91.2], look: [-3.5, 22.8 + 1.6, -84.4], fov: 74, zone: 'library' }, // 4F 藏书阁电梯厅
+  es_land: { pos: [54.4, 5.3 + 1.65, -63.6], look: [54.6, 8.8 + 1.2, -54.5], fov: 72, zone: 'east_stair' }, // 批次12：东楼梯 1F→2F 中间平台看东跑上行
+  es_land_b: { pos: [54.6, 5.3 + 1.65, -55.2], look: [51.8, 3.0, -63.0], fov: 72, zone: 'east_stair' }, // 东跑中段回看平台、层间铜牌、西跑
   cs_top: { pos: [35, 1.8 + 40, -42.49], look: [35, 1.8, -42.5], fov: 50, clipY: 1.8 + 4.8, zone: 'citizen_service' },
   ec_r3: { pos: [26.3, 1.8 + 1.65, -79.6], look: [25.0, 1.8 + 1.2, -100], fov: 70, zone: 'east_cloister' }, // 批次11：东廊（南口看陈列面）
   ec_r3_b: { pos: [25.2, 1.8 + 1.65, -110.2], look: [27.4, 1.8 + 1.0, -88], fov: 70, zone: 'east_cloister' }, // 拐角回看长凳面
