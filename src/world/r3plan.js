@@ -680,7 +680,7 @@ export function planPlaza(y) {
     out.push({ box: 'iron', x: sx * 17, y: y + 0.125, z, w: 1.5, h: 0.02, d: 1.5, tag: '树池', on: 'partv' });
   }
   // 南缘绿篱铁栏（系船柱外侧，台阶上沿内）
-  for (const sx of [-1, 1]) out.push({ m: 'r2/hedge_green_fence', x: sx * 17.8, y, z: 79.7, yaw: 0, w: 6.0, size: [6.0, 1.6, 0.7], tag: '绿篱铁栏', on: 'floor' });
+  for (const sx of [-1, 1]) out.push({ m: 'r2/hedge_green_fence', x: sx * 17.8, y, z: 79.7, yaw: Math.PI / 2, d: 6.0, size: [0.7, 1.6, 6.0], tag: '绿篱铁栏', on: 'floor' }); // 批次25 plaza_top 看图修：模型长轴是 z，原 w:6 按 x 缩放 → 竖成 8 m 长墙
   // 岗亭（南口两侧对称，面向中轴）+ 岗亭前黄线 + 门牌
   for (const sx of [-1, 1]) {
     out.push({ m: 'r2/simple_90_s_kiosk', x: sx * 13.0, y, z: 74.6, yaw: sx > 0 ? ROT.W : ROT.E, h: 2.6, size: [3.4, 2.6, 3.6], col: [3.4, 2.6, 3.6], tag: '岗亭', on: 'floor' });
