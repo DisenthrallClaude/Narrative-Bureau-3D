@@ -27,13 +27,13 @@ for (const id of ids) {
     await page.evaluate(() => new Promise((r) => setTimeout(r, 1500))); // 局内网迟到补贴（4 s 定时）之前的屏幕
     await page.evaluate((n) => window.__setShot(n), 'net_' + id); await ready(page);
     console.log(T(), id, 'screens', JSON.stringify(await page.evaluate(() => window.__INTRANET__?.screens().length)));
-    await page.screenshot({ path: path.join(out, `net_${id}.png`) }); console.log(T(), 'shot', `net_${id}.png`);
-    if (arg('wide', '')) { await page.evaluate((n) => window.__setShot(n), 'net_' + id + '_w'); await ready(page); await page.screenshot({ path: path.join(out, `net_${id}_w.png`) }); console.log(T(), 'shot', `net_${id}_w.png`); }
+    await page.screenshot({ path: path.join(out, `net_${id}.png`), timeout: 600000 }); console.log(T(), 'shot', `net_${id}.png`);
+    if (arg('wide', '')) { await page.evaluate((n) => window.__setShot(n), 'net_' + id + '_w'); await ready(page); await page.screenshot({ path: path.join(out, `net_${id}_w.png`), timeout: 600000 }); console.log(T(), 'shot', `net_${id}_w.png`); }
     for (const u of uis) {
       const [tab, v] = u.split(':');
       await page.evaluate(([id, tab, v]) => { const I = window.__INTRANET__; if (!I.isOpen()) I.open(id, tab); const view = !v ? null : tab === 'people' ? { person: v } : tab === 'home' ? { doc: v, no: '叙管办〔2026〕117 号' } : null; if (tab === 'mail' && v) I.state.mail = v; I.go(tab, view); }, [id, tab, v]);
       await page.evaluate(() => document.fonts.ready); await page.waitForTimeout(1200);
-      const f = `ui_${id}_${tab}${v ? '_' + v : ''}.png`; await page.screenshot({ path: path.join(out, f) }); console.log(T(), 'shot', f);
+      const f = `ui_${id}_${tab}${v ? '_' + v : ''}.png`; await page.screenshot({ path: path.join(out, f), timeout: 600000 }); console.log(T(), 'shot', f);
     }
   } catch (e) { console.log('ERROR', id, String(e.message).slice(0, 200)); }
   await page.close().catch(() => {});

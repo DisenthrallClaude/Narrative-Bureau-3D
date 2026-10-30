@@ -14,7 +14,8 @@ import { screenTexture } from './screen.js';
 const ZY = { floor3: () => UPPER['3F'], floor2: () => UPPER['2F'], director: () => UPPER['12F'], archive: () => FLOOR, command_center: () => FLOOR + 7, interrogation: () => -18, vault_b5: () => -42 };
 const GROUP = { floor3: 'floor3', floor2: 'floor2', director: 'director', archive: 'archive', command_center: 'east_wing', interrogation: 'interrogation', vault_b5: 'vault_b5' };
 // 屏幕子网格（按材质名识别）：旧管线 monitor 的屏幕贴花、Sketchfab CRT 的玻璃
-const SCREEN_MATS = { 'props:monitor': /unique_decal_screen/, ['props:' + CRT]: /monitor_glass/ };
+// 旧管线 monitor 处理后屏幕贴花子网格的材质名被清空（只剩 9 个顶点的薄片），按「名字为空 + 顶点很少」识别
+const SCREEN_MATS = { 'props:monitor': (m, g) => /unique_decal_screen/.test(m) || (m === '' && g.attributes.position.count < 40), ['props:' + CRT]: (m) => /monitor_glass/.test(m) };
 const PORTAL = { id: 'portal', page: 'portal', term: 'NB-4', label: '局内网' };
 const V = (x, y, z) => new THREE.Vector3(x, y, z);
 
@@ -43,7 +44,7 @@ export async function buildIntranet(scene, world, ctx) {
 const done = new WeakMap();
 function screensOf(im) {
   const re = SCREEN_MATS[im.name]; if (!re || !im.isInstancedMesh) return [];
-  const mat = Array.isArray(im.material) ? im.material[0] : im.material; if (!re.test(mat?.name ?? '')) return [];
+  const mat = Array.isArray(im.material) ? im.material[0] : im.material; if (!re(mat?.name ?? '', im.geometry)) return [];
   const g = im.geometry; if (!g.boundingBox) g.computeBoundingBox(); const bb = g.boundingBox; const sz = bb.getSize(V()), ctr = bb.getCenter(V());
   const sib = im.parent.children.filter((o) => o.isInstancedMesh && o.name === im.name && o.count === im.count);
   const out = []; const m = new THREE.Matrix4(), ms = new THREE.Matrix4();
