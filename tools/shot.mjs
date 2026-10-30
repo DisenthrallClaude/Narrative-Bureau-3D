@@ -15,7 +15,7 @@ const EXTRA_ARGS=(process.env.CHROME_ARGS||'').split(' ').filter(Boolean);
 const browser = await chromium.launch({ executablePath: exe, args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl', '--no-sandbox', ...EXTRA_ARGS] });
 const W = +arg('w', 1600), H = +arg('h', 900);
 // R3 批次8 收尾：--fresh 1 每个机位新开页面（关旧页释放内存）；默认对带 clipY 的俯视机位（*_top）也新开——
-// SwiftShader 在同会话里补编译「裁剪面」着色器变体时内存吃紧，链接失败（日志空）→ GL 1282 连锁，后续机位全黑/变暗（gate_r3、wall_post、hangar_top 的根因）
+// 俯视机位之后的下一张也新开（实测 hangar_top 之后的 wall_post 同样链接失败）。SwiftShader 在同会话里补编译大批新着色器变体（裁剪面有/无）时内存吃紧，链接失败（日志空）→ GL 1282 连锁，后续机位全黑/变暗（gate_r3、wall_post、hangar_top 的根因）
 const FRESH = arg('fresh', '') === '1';
 let page;
 const t0 = Date.now(); const logs = [];
@@ -40,7 +40,7 @@ let needFresh = false;
 for (let i = 0, first = 0; i < shots.length; i++) {
   const s = shots[i]; const ts = Date.now();
   try {
-  if (i > 0 && (needFresh || FRESH || /_top$/.test(s))) { await page.close().catch(() => {}); await openPage(); await page.goto(urlOf(s)); first = i; needFresh = false; console.log('  fresh page for', s); }
+  if (i > 0 && (needFresh || FRESH || /_top$/.test(s) || /_top$/.test(shots[i - 1]))) { await page.close().catch(() => {}); await openPage(); await page.goto(urlOf(s)); first = i; needFresh = false; console.log('  fresh page for', s); }
   else if (i > 0) await page.evaluate((n) => window.__setShot(n), s);
   try { await page.waitForFunction(() => window.__READY__ === true, null, { timeout: +arg('timeout', 900000), polling: 1000 }); } catch (e) { console.log('TIMEOUT', s); }
   if (i === first) { // R3 批次6：首张等资源全部加载完（manager 无挂起、贴图/模型回调结束）再整套重拍一次——首张曾在资源未齐时出「空世界」
