@@ -821,7 +821,7 @@ export function planB2(y) {
   for (const [x, r, mat] of [[-4.2, 0.1, 'dz_pipe'], [-5.0, 0.08, 'dz_pipeRed'], [-5.7, 0.08, 'dz_pipe']]) { out.push({ box: mat, x, y: y + H / 2, z: Z0 + 0.25, w: r * 2, h: H, d: r * 2, tag: '阀门站', on: 'partv' }); out.push({ m: 'r2/valve_wheel_3d_scan', x, y: y + 1.35, z: Z0 + 0.25 + r + 0.06, yaw: 0, h: 0.34, tag: '阀门站', on: 'wall' }); out.push({ m: 'r2/pressure_gauge', x, y: y + 1.75, z: Z0 + 0.25 + r + 0.04, yaw: 0, h: 0.16, tag: '阀门站', on: 'wall' }); }
   for (const [c, mat, r] of [[-3.0, 'dz_pipe', 0.12], [-3.4, 'dz_pipeRed', 0.09], [-11.9, 'dz_pipe', 0.1]]) pipe(out, mat, 'z', Z0 + 0.2, Z1 - 0.2, c, y + H - 0.35, r);
   pipe(out, 'dz_pipe', 'x', X0 + 0.2, X1 - 0.2, Z0 + 0.6, y + H - 0.55, 0.1);
-  out.push({ m: 'r2/power_box_01', x: -3.0, y: y + 1.2, z: -119.0, yaw: ROT.W, h: 0.6, tag: '阀门站', on: 'wall' });
+  out.push({ m: 'r2/power_box_01', x: -2.78, y: y + 1.2, z: -119.0, yaw: ROT.W, h: 0.6, tag: '阀门站', on: 'wall' });
   // ④ 照明 + 设备带：吸顶灯槽、监控、工具箱
   for (const z of [-112.6, -117.2, -121.8]) troffer(out, -7.5, z, y, H, Math.PI / 2, 1.2, { cold: true });
   light(out, -7.5, y + 3.2, -114.0, 0xdfe8ff, 2.4, 7); light(out, -7.5, y + 3.2, -121.0, 0xdfe8ff, 2.2, 7);
