@@ -2812,6 +2812,7 @@ function planSpine(y, lv) {
   // 井架四角防爆灯（本层 y+2.7，朝外）+ 井内冷光
   for (const x of [SP.x0 + 0.15, SP.x1 - 0.15]) for (const z of [SP.z0 + 0.15, SP.z1 - 0.15]) { const sx = Math.sign(x), sz = z < SP.zc ? -1 : 1;
     B('r3_steelGrey', x + sx * 0.12, y + 2.9, z + sz * 0.12, 0.14, 0.24, 0.14, '⑦ 防爆灯座'); B('dz_glowCold', x + sx * 0.16, y + 2.78, z + sz * 0.16, 0.12, 0.18, 0.12, '⑦ 防爆灯罩'); }
+  for (const x of [-5.4, 5.4]) light(out, x, y + 3.6, -88.4, 0xffe2b8, 1.4, 8); // 批次20 spine_top 看图：电梯厅地面近乎全黑 → 东西两侧补暖光（未重拍）
   light(out, 0, y + 3.0, SP.zc, 0xe4ecff, 1.6, 7); light(out, 0, y + 0.6 - (lv === 'B5' ? 0 : 1.4), SP.zc, 0xd8e2f0, 0.9, 5);
   // 厅内：西墙层号大字 + 东墙管线束（竖向 4 根 + 管卡）+ 层号铜牌
   out.push({ wtext: lv, x: -8.75, y: y + 2.6, z: -88, yaw: ROT.E, w: 1.8, h: 1.1, size: [1.8, 1.1, 0.05], tag: '② 层号大字', on: 'sign' });
