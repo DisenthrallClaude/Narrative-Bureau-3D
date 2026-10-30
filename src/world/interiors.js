@@ -851,7 +851,7 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
     placeModel('r4/wool_coat', { height: 0.886 }).then((o) => { o.position.set(0, 0.01, -0.28); g.add(coatTint(o)); });
     if (cap) add(new THREE.CylinderGeometry(0.11, 0.12, 0.06, 16), cloth, 0.08, 0.485, 0.06);
     if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 0.49, 0.12, -0.5); np.castShadow = false;
-      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.1, 0.64, -0.168, -0.06); card.castShadow = false; } } // 证件照小卡别在大衣胸前（面朝 +Z）
+      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.1, 0.537, -0.165, -0.12); card.castShadow = false; } } // 证件照小卡立在椅面与中档之间、靠着大衣前襟（面朝 +Z；原 0.64 正好压在中档上、像浮在椅背前）
     return g; }
   if (clue === 'coat' || clue === 'hanger') { // 衣帽架 / 制服挂架
     if (clue === 'coat') { add(new THREE.CylinderGeometry(0.02, 0.025, 1.75, 10), wood, 0, 0.875, 0); add(new THREE.CylinderGeometry(0.2, 0.22, 0.03, 20), wood, 0, 0.015, 0);
