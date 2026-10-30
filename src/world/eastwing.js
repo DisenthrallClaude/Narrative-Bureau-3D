@@ -7,7 +7,7 @@ import { Frame, archRingGeo, archShape, emblem, goldText } from './gothic.js';
 import { CanvasScreen, lightShaft, dust } from '../engine/fx.js';
 import { content } from '../engine/content.js';
 import { FLOOR, T } from './exterior.js';
-import { R3 } from './r3plan.js';
+import { R3, EXAM_R3 } from './r3plan.js';
 import { wallX, wallZ, archPortal, rectLight, spot, point, person, signMaterial, brassPlaqueMaterial, posterMaterial, woodChair, slabWithHole } from './interiors.js';
 
 const Y = FLOOR, F2 = Y + 7, F3 = Y + 14;
@@ -236,7 +236,7 @@ export function buildEastWing(scene, world, ctx) {
 
   // ================= 2F 阅卷中心 =================
   const gz0 = -62, gz1 = ZB, gz = (gz0 + gz1) / 2;
-  for (let r = 0; r < 3; r++) for (let k = 0; k < 4; k++) {
+  if (!R3.exam_center) for (let r = 0; r < 3; r++) for (let k = 0; k < 4; k++) { // 批次14：R3 下由 r3plan planExamCenter 接管（原随机纸堆/显示器阅卷桌关闭）
     const x = X0 + 4 + k * 7, z = gz0 - 3 - r * 3.6;
     b.box('wood', 5.6, 0.06, 1.2, [x, F2 + 0.76, z], { uv: 0.6 }); world.box(x, F2 + 0.4, z, 5.6, 0.8, 1.2);
     for (const ex of [-2.7, 2.7]) b.box('wood', 0.06, 0.74, 1.1, [x + ex, F2 + 0.37, z], { uv: 1 });
@@ -245,9 +245,10 @@ export function buildEastWing(scene, world, ctx) {
   }
   const paper = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.003, 0.3), new THREE.MeshStandardMaterial({ color: 0xf6f2e8, roughness: 0.8 })); paper.position.set(X0 + 4 + 7 * 1, F2 + 0.795, gz0 - 3 - 2 * 3.6 + 0.1); zone.add(paper); ctx.anchors.doc_exam_paper = paper;
   const note = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.08), new THREE.MeshStandardMaterial({ color: 0xf2df5a, roughness: 0.8 })); note.position.set(X0 + 4 + 7 * 1 + 1.4 + 0.25, F2 + 1.3, gz0 - 3 - 2 * 3.6 - 0.39); zone.add(note); ctx.anchors.doc_exam_grader_note = note;
-  for (let k = 0; k < 6; k++) add(placeModel('box_stack', { width: 1.1, pos: [XS - 1.2, F2, gz0 - 2 - k * 2], rotY: -Math.PI / 2 }));
+  if (R3.exam_center) { paper.position.set(EXAM_R3.paper[0], F2 + 1.052, EXAM_R3.paper[1]); paper.rotation.y = 0.15; note.position.set(EXAM_R3.note[0], F2 + 1.051, EXAM_R3.note[1]); note.rotation.x = -Math.PI / 2; }
+  if (!R3.exam_center) for (let k = 0; k < 6; k++) add(placeModel('box_stack', { width: 1.1, pos: [XS - 1.2, F2, gz0 - 2 - k * 2], rotY: -Math.PI / 2 }));
   const gTitle = goldText('阅卷中心', 3, 0.5, M.goldBright, { res: 128 }); gTitle.position.set(35, F2 + 5.8, gz1 + 0.25); zone.add(gTitle);
-  rectLight(zone, 0xf0f4ff, 1.6, 26, 10, [35, F3 - 0.5, gz], [35, F2, gz]);
+  rectLight(zone, R3.exam_center ? 0xfff0dc : 0xf0f4ff, R3.exam_center ? 1.2 : 1.6, 26, 10, [35, F3 - 0.5, gz], [35, F2, gz]);
   b.box('vault', XS - X0, 0.2, gz0 - gz1, [(X0 + XS) / 2, F3 - 0.4, gz], { uv: 0.3 });
 
   // ================= 3F 禁区封锁调度厅 =================

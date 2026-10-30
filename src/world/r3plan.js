@@ -2238,3 +2238,99 @@ export const LIB_R3 = { globe: [Math.sin(160 * Math.PI / 180) * 7.0, -106 + Math
 PLANS.library = (Y) => fixYaw(planLibrary(Y)); R3.library = true;
 // 对照用：?r3off=east_cloister,xxx 关掉指定区的 R3 规划（截图「改前」用，旧陈设随之恢复）
 if (typeof location !== 'undefined') { const m = /[?&]r3off=([\w,]+)/.exec(location.search); if (m) for (const id of m[1].split(',')) R3[id] = false; }
+// ================= R3 批次14 · 阅卷中心 exam_center（东翼 2F 北区：x 20…50，z −61…−76，层高 6.5；1960–80 年代机关阅卷场） =================
+// 平面功能规划（北 = −Z）：
+//  入口：南墙 x 40…43 门洞（来自指挥中心）→ 门内后横通道（z −61.2…−63.8）。
+//  ① 考位：5 排 × 14 张木课桌（中轴 x 35 主通道 2 m 分东西两块，每块 7 张，间距 1.5 m），人坐南侧面朝北（监考台），每桌一份试卷 + 铅笔。
+//  ② 监考台：北墙正中 8 × 2.6 m 黑石台座（0.25 m），两张胡桃木写字台（监考人坐北面朝南）+ 台灯 / 铃 / 电话 / 印章；台前 1.9 m 前横通道。
+//  ③ 北墙：正中大挂钟（台座正上方）、两侧告示板 + 阅卷纪律 / 真题卷样张（铜框）、金字「阅卷中心」（原有）。
+//  ④ 试卷收发台：东南角沿东侧（x 47.6，z −62.4…−66.6），职员坐东面朝西；台面试卷袋、封条、天平秤；旁边推车。
+//  ⑤ 封存柜：西墙两根壁柱之间 12 只铁皮档案柜成排（面朝东，柜门贴红封条）+ 铜牌「试卷封存 · 双人双锁」。
+//  ⑥ 南墙门西侧：倒计时告示（B04）；地面：人字木地板 + 黑石收边，中轴深红长地毯；顶棚：乳白球吊灯 8 盏成两列 + 暖白补光。
+export const EXAM_R3 = { paper: [47.5, -64.75], note: [47.45, -64.4] }; // 剧情锚点：试卷 / 阅卷便签 → 收发台（eastwing.js 在 R3 下移过来）
+export function planExamCenter(y) {
+  const out = []; const H = 6.5;
+  const room = { name: '东翼 2F · 阅卷中心（批次14）', x0: 20.3, x1: 49.9, z0: -76.0, z1: -61.2, y, H,
+    doors: [{ wall: 'S', a: 40, b: 43, label: '指挥中心' }, { wall: 'E', a: -75.9, b: -64.2, label: '楼梯井列（开敞）' }],
+    windows: [],
+    rooms: [['① 考位（5×14）', 35, -67.6], ['② 监考台', 35, -74.6], ['④ 收发台', 48.3, -64.5], ['⑤ 封存柜', 21.4, -69.0], ['③ 钟 / 告示', 35, -75.6]],
+    aisles: [{ label: '后横通道', x0: 21.0, x1: 47.2, z0: -63.75, z1: -61.25 }, { label: '中轴主通道', x0: 34.05, x1: 35.95, z0: -72.8, z1: -61.3 },
+      { label: '前横通道', x0: 21.3, x1: 46.6, z0: -72.85, z1: -70.95 }, { label: '西侧通道', x0: 21.3, x1: 24.2, z0: -75.8, z1: -61.3 },
+      { label: '东侧通道', x0: 45.75, x1: 47.15, z0: -75.8, z1: -61.3 }, { label: '进门净空', x0: 40.1, x1: 42.9, z0: -63.75, z1: -61.25 }] };
+  // —— 地面：人字木地板 + 黑石收边；中轴深红地毯 + 铜压条；后横通道 / 中轴磨损 ——
+  floorZ(out, 'r3_parquet', 20.3, 49.9, -75.95, -61.2, y, { border: 0.3, bmat: 'r3_stoneBorder', uv: 0.5 });
+  rug(out, 'dz_rugRed', 35, y + 0.008, -66.9, 1.5, 11.6);
+  for (const x of [34.22, 35.78]) out.push({ box: 'dz_brassDim', x, y: y + 0.024, z: -66.9, w: 0.03, h: 0.004, d: 11.6, tag: '地面', on: 'partv' });
+  wear(out, 24.5, 46.0, -63.2, -62.0, y); wear(out, 40.6, 42.4, -63.6, -61.4, y);
+  // ① 考位
+  const XS = [], ZR = [-64.6, -66.1, -67.6, -69.1, -70.6];
+  for (let k = 0; k < 7; k++) { XS.push(33.65 - k * 1.5); XS.push(36.35 + k * 1.5); }
+  let n = 0;
+  for (const z of ZR) for (const x of XS) {
+    out.push({ m: 'r2/schooldesk_01', x, y, z, yaw: 0, w: 0.7, tag: '① 考位', on: 'floor', col: [0.7, 0.75, 0.5] });
+    out.push({ m: 'r2/schoolchair_01', x, y, z: z + 0.5, yaw: Math.PI, h: 0.82, tag: '① 考位', on: 'floor' });
+    out.push({ box: 'dz_paper', x: x - 0.04, y: y + 0.757, z: z + 0.02, w: 0.21, h: 0.004, d: 0.297, yaw: 0, tag: '① 考位', on: 'desk' });
+    out.push({ box: 'r3_paintYellow', x: x + 0.2, y: y + 0.759, z: z + 0.04, w: 0.012, h: 0.008, d: 0.17, yaw: 0, tag: '① 考位', on: 'desk' });
+    n++;
+  }
+  // ② 监考台：台座 + 铜包边 + 两步踏步
+  out.push({ box: 'stoneDark', x: 35, y: y + 0.125, z: -74.25, w: 8, h: 0.25, d: 2.6, uv: 0.5, tag: '② 监考台', on: 'partv' });
+  out.push({ box: 'r3_marbleHoned', x: 35, y: y + 0.254, z: -74.25, w: 7.9, h: 0.008, d: 2.5, uv: 0.5, tag: '② 监考台', on: 'partv' });
+  out.push({ box: 'dz_brassDim', x: 35, y: y + 0.22, z: -72.94, w: 8.02, h: 0.04, d: 0.02, tag: '② 监考台', on: 'partv' });
+  for (const dx of [-3.2, 3.2]) {
+    const cx = 35 + dx, cz = -74.0, top = y + 0.25 + 0.78;
+    out.push({ m: 'r2/antique_desk', x: cx, y: y + 0.25, z: cz, yaw: Math.PI, h: 0.78, tag: '② 监考台', on: 'floor', col: [1.53, 0.78, 0.63] });
+    out.push({ m: 'r2/literary_club_chair_preview', x: cx, y: y + 0.25, z: cz - 0.62, yaw: 0, h: 1.05, tag: '② 监考台', on: 'floor' });
+    out.push({ m: 'r2/bankers_lamp', x: cx + 0.55, y: top, z: cz - 0.12, yaw: 0, h: 0.36, tag: '② 监考台', on: 'desk' });
+    out.push({ m: dx < 0 ? 'r2/desk_bell' : 'r2/rotary_telephone', x: cx - 0.5, y: top, z: cz + 0.05, yaw: 0, w: dx < 0 ? 0.1 : 0.24, tag: '② 监考台', on: 'desk' });
+    out.push({ m: 'r2/old_victorian_rubber_stamp', x: cx - 0.1, y: top, z: cz + 0.12, yaw: 0, h: 0.09, tag: '② 监考台', on: 'desk' });
+    out.push({ m: 'r2/several_folders', x: cx + 0.15, y: top, z: cz - 0.15, yaw: 0.3, h: 0.3, tag: '② 监考台', on: 'desk' });
+    out.push({ sign: dx < 0 ? '主 监 考' : '副 监 考', sub: '阅卷期间禁止交谈', x: cx, y: y + 0.25 + 0.6, z: cz + 0.33, yaw: 0, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+  }
+  light(out, 35, y + 3.2, -73.4, 0xfff0dc, 1.6, 8);
+  // ③ 北墙：挂钟 + 告示板 + 样张
+  out.push({ m: 'r2/1950s_wall_clock', x: 35, y: y + 3.7, z: -75.85, yaw: 0, h: 0.9, tag: '③ 钟', on: 'wall' });
+  for (const sx of [-1, 1]) {
+    { const bx = 35 + sx * 6.0, by = y + 1.85; // 告示板：胡桃木框软木板 + 成格钉的通知（3 × 2）
+      out.push({ box: 'dz_wain2', x: bx, y: by, z: -75.975, w: 1.7, h: 1.12, d: 0.04, tag: '③ 告示', on: 'partv' });
+      out.push({ box: 'dz_cork', x: bx, y: by, z: -75.95, w: 1.56, h: 0.98, d: 0.02, tag: '③ 告示', on: 'partv' });
+      for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) out.push({ box: (r + c) % 3 === 1 ? 'dz_paper2' : 'dz_paper', x: bx - 0.5 + c * 0.5, y: by + 0.22 - r * 0.44, z: -75.937, w: 0.3, h: 0.4, d: 0.004, tag: '③ 告示', on: 'partv' }); }
+    pic(out, sx < 0 ? 'textures/b07/B07_高考真题卷.png' : 'textures/b06/B06_考场母本试卷.png', 35 + sx * 9.0, y + 2.2, -75.95, 0, 0.9, 1.27, 'gold', { tag: '③ 样张' });
+    out.push({ sign: sx < 0 ? '阅 卷 纪 律' : '评 分 细 则', sub: sx < 0 ? '一人一卷 · 双评复核 · 不得涂改' : '分差逾五分须三评', x: 35 + sx * 6.0, y: y + 1.0, z: -75.9, yaw: 0, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+    light(out, 35 + sx * 7.5, y + 3.0, -74.8, 0xffe6c8, 0.9, 5);
+  }
+  // ④ 试卷收发台（盒体：胡桃木台身 + 黑石台面 + 铜踢脚；职员坐东侧面朝西）
+  { const cx = 47.6, cz = -64.5, w = 0.7, d = 4.2;
+    out.push({ fixed: true, m: '固定:收发台', x: cx, y, z: cz, yaw: 0, size: [w, 1.05, d], col: [w, 1.05, d], tag: '④ 收发台', on: 'floor' });
+    out.push({ box: 'dz_wain', x: cx, y: y + 0.5, z: cz, w, h: 1.0, d, uv: 0.6, tag: '④ 收发台', on: 'partv' });
+    out.push({ box: 'onyx', x: cx - 0.03, y: y + 1.025, z: cz, w: w + 0.12, h: 0.05, d: d + 0.1, uv: 0.5, tag: '④ 收发台', on: 'partv' });
+    out.push({ box: 'dz_brassDim', x: cx - w / 2 - 0.005, y: y + 0.06, z: cz, w: 0.02, h: 0.12, d, tag: '④ 收发台', on: 'partv' });
+    out.push({ box: 'dz_brassDim', x: cx - w / 2 - 0.005, y: y + 0.97, z: cz, w: 0.02, h: 0.03, d, tag: '④ 收发台', on: 'partv' });
+    out.push({ sign: '试 卷 收 发', sub: '领卷签字 · 交卷清点', x: cx - w / 2 - 0.02, y: y + 0.72, z: cz, yaw: ROT.W, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+    for (const dz of [-1.4, 0, 1.4]) out.push({ m: 'r2/dining_chair_02', x: cx + 0.75, y, z: cz + dz, yaw: ROT.W, h: 0.98, tag: '④ 收发台', on: 'floor' });
+    const top = y + 1.05;
+    for (const [dz, k] of [[-1.7, 0], [-1.25, 1], [-0.6, 2], [0.9, 3], [1.6, 4]]) out.push({ box: 'kraft', x: cx - 0.05, y: top + 0.03 + (k % 2) * 0.02, z: cz + dz, w: 0.32, h: 0.06 + (k % 2) * 0.04, d: 0.24, yaw: 0, tag: '④ 收发台', on: 'desk' });
+    for (const dz of [-1.7, -1.25, 0.9, 1.6]) out.push({ box: 'dz_pipeRed', x: cx - 0.05, y: top + 0.075 + 0.02, z: cz + dz, w: 0.33, h: 0.012, d: 0.04, yaw: 0, tag: '④ 收发台 封条', on: 'desk' });
+    out.push({ m: 'r2/bankers_lamp', x: cx + 0.1, y: top, z: cz + 0.3, yaw: ROT.W, h: 0.36, tag: '④ 收发台', on: 'desk' });
+    out.push({ m: 'r2/document_letter_tray_documents_organizer', x: cx, y: top, z: cz - 0.05 + 0.5, yaw: ROT.W, w: 0.3, tag: '④ 收发台', on: 'desk' });
+    out.push({ fixed: true, m: '固定:剧情试卷/便签', x: cx - 0.1, y: top, z: cz - 0.05 - 0.15, yaw: 0, size: [0.3, 0.02, 0.3], tag: '④ 收发台', on: 'desk' });
+    out.push({ m: 'r2/hand_truck', x: 47.5, y, z: -67.4, yaw: ROT.W, h: 1.1, tag: '④ 收发台', on: 'floor' });
+    light(out, cx, y + 2.8, cz, 0xfff0dc, 1.2, 6);
+    hang(out, '试 卷 收 发', cx - 0.3, y + 3.2, cz, ROT.W, 1.9, 0.42, y + H); }
+  // ⑤ 封存柜（西墙壁柱 z −65.3 / −73.9 之间）
+  for (let i = 0; i < 12; i++) { const z = -66.1 - i * 0.6;
+    out.push({ m: 'file_cabinet', x: 20.72, y, z, yaw: ROT.E, h: 1.32, tag: '⑤ 封存柜', on: 'floor', col: [0.7, 1.32, 0.5] });
+    out.push({ box: 'dz_pipeRed', x: 21.08, y: y + 0.9, z, w: 0.006, h: 0.5, d: 0.05, yaw: 0, tag: '⑤ 封条', on: 'partv' });
+    out.push({ box: 'dz_paper', x: 21.083, y: y + 0.9, z, w: 0.004, h: 0.07, d: 0.06, yaw: 0, tag: '⑤ 封条', on: 'partv' }); }
+  out.push({ sign: '试 卷 封 存', sub: '双人双锁 · 启封须登记', x: 20.5, y: y + 1.75, z: -69.4, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+  light(out, 22.0, y + 2.8, -69.4, 0xffe6c8, 0.9, 6);
+  // ⑥ 南墙门西侧倒计时告示 + 西南角灭火器；门内吊牌
+  pic(out, 'textures/b04/B04_高考倒计时屏.png', 30.0, y + 2.6, -61.2, ROT.N, 1.8, 1.0, 'black', { tag: '⑥ 告示' });
+  out.push({ m: 'r2/fire_extinguisher', x: 20.66, y, z: -61.55, yaw: ROT.E, h: 0.6, tag: '消防', on: 'floor' });
+  hang(out, '阅 卷 区', 41.5, y + 3.3, -63.0, 0, 1.9, 0.42, y + H);
+  // 照明：两列乳白球吊灯（东西两块考位正上方）+ 暖白补光
+  for (const x of [28.4, 41.6]) for (const z of [-65.35, -69.85]) for (const dx of [-2.2, 2.2]) globe(out, x + dx, z, y, H, 3.6, { r: 0.24 });
+  for (const x of [28.4, 41.6]) for (const z of [-65.35, -69.85]) light(out, x, y + 3.4, z, 0xfff0dc, 2.2, 10);
+  return { room, items: out };
+}
+PLANS.exam_center = (Y) => fixYaw(planExamCenter(Y)); R3.exam_center = true;

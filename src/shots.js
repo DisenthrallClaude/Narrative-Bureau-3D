@@ -88,6 +88,9 @@ export const SHOTS = {
   ec_r3_b: { pos: [25.2, 1.8 + 1.65, -110.2], look: [27.4, 1.8 + 1.0, -88], fov: 70, zone: 'east_cloister' }, // 拐角回看长凳面
   ec_vit_a: { pos: [25.75, 1.8 + 1.5, -86.9], look: [24.56, 1.8 + 0.88, -86.1], fov: 50, zone: 'east_cloister' }, // 批次12 收尾：展柜 1 特写（摊开的书/怀表/墨水瓶）
   ec_vit_b: { pos: [25.75, 1.8 + 1.5, -92.9], look: [24.56, 1.8 + 0.88, -92.1], fov: 50, zone: 'east_cloister' }, // 展柜 2 特写（档案盒/印章/旧相机）
+  exam_r3: { pos: [41.5, 8.8 + 1.7, -62.0], look: [35, 8.8 + 1.5, -75.5], fov: 70, zone: 'exam_center' }, // 批次14 阅卷中心：进门 → 考位 / 监考台 / 钟
+  exam_r3_b: { pos: [23.2, 8.8 + 2.2, -75.0], look: [44, 8.8 + 0.6, -63.5], fov: 66, zone: 'exam_center' }, // 西北角 → 考位成排 / 收发台
+  exam_top: { pos: [35, 8.8 + 6.0, -61.8], look: [35, 8.8, -70.5], fov: 78, zone: 'exam_center' },
   ec_corner: { pos: [26.6, 1.8 + 1.6, -112.0], look: [19.0, 1.8 + 1.4, -114.2], fov: 70, zone: 'east_cloister' }, // 东西段公告栏 → 食堂口
   ec_top: { pos: [23.2, 1.8 + 46, -95.79], look: [23.2, 1.8, -95.8], fov: 50, clipY: 1.8 + 4.4, zone: 'east_cloister' },
   cc_top: { pos: [35, 8.8 + 34, -46.49], look: [35, 8.8, -46.5], fov: 50, clipY: 8.8 + 4.6, zone: 'command_center' },
