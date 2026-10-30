@@ -100,7 +100,7 @@ export function dressMats(M) {
     dz_ashlarEC: W((() => { const R = { repeat: [1 / 3, 1 / 3] }, P = 'assets/tex/ph/large_sandstone_blocks'; // 自带 repeat 的克隆贴图（M.stone 会改共享原图的 repeat）
       const m = new THREE.MeshStandardMaterial({ map: loadTex(P + '_col.webp', { srgb: true, ...R }), normalMap: loadTex(P + '_nrm.webp', R), roughnessMap: loadTex(P + '_arm.webp', R), color: 0xbcb0a0, roughness: 1, envMapIntensity: 0.4 }); m.normalScale.set(1.2, 1.2); m.name = 'ph:ashlarEC'; return m; })(), { macro: 0.14, grime: 0.3, streak: 0.12 }),
     r3_marbleHoned: W(pbr('Marble016', { rn: true, color: 0x8a8a92, roughness: 0.46, env: 0.42 }), { macro: 0.12, dust: 0.05 }),
-    r3_frosted: new THREE.MeshPhysicalMaterial({ color: 0xe6ece8, roughness: 0.55, metalness: 0, transparent: true, opacity: 0.55, envMapIntensity: 0.5, depthWrite: false }),
+    r3_frosted: new THREE.MeshPhysicalMaterial({ color: 0xc4ccc8, roughness: 0.4, metalness: 0, transparent: true, opacity: 0.3, envMapIntensity: 0.35, depthWrite: false }), // 批次12 收尾：原 0.55 不透明度 + 近白色在球吊灯下发白，像灯箱板、透不出后面（cs_r3 / cs_r3_b）
     r3_paintYellow: W(new THREE.MeshStandardMaterial({ color: 0xc8a020, roughness: 0.7 }), { macro: 0.3, dust: 0.2 }),
   };
   for (const m of [DM.dz_glow, DM.dz_glowCold, DM.dz_shade, DM.dz_glassDark, DM.r3_globe, DM.r3_wear, DM.r3_glassCase, DM.r3_screen, DM.r3_screenAmber, DM.r3_frosted]) m.userData.noShadow = true;

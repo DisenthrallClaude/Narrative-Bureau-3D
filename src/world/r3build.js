@@ -77,7 +77,7 @@ export async function buildR3(ctx, world, MAT, late = false) {
         b.box('blackMetal', it.w, it.h, 0.04, [it.x, it.y, it.z], { uv: 1, rot: [0, yaw, 0] });
         b.box('dz_brassDim', it.w + 0.04, 0.025, 0.05, [it.x, it.y + it.h / 2, it.z], { uv: 1, rot: [0, yaw, 0] }); b.box('dz_brassDim', it.w + 0.04, 0.025, 0.05, [it.x, it.y - it.h / 2, it.z], { uv: 1, rot: [0, yaw, 0] });
         const rod = (it.top ?? it.y + 2) - (it.y + it.h / 2); for (const s of [-1, 1]) b.box('dz_brassDim', 0.015, rod, 0.015, [it.x + u[0] * s * it.w * 0.38, it.y + it.h / 2 + rod / 2, it.z + u[1] * s * it.w * 0.38], { uv: 1 });
-        const gm = MAT.goldBright ?? MAT.gold; for (const s of [1, -1]) { const t = goldText(it.text, it.w * 0.86, it.h * 0.62, gm, { res: 96 }); t.position.set(it.x + n[0] * s * 0.022, it.y, it.z + n[1] * s * 0.022); t.rotation.y = yaw + (s < 0 ? Math.PI : 0); zone.add(t); }
+        const gm = MAT.goldBright ?? MAT.gold; for (const s of [1, -1]) { const t = goldText(it.text, it.w * 0.86, it.h * 0.62, gm, { res: 192, stroke: 0.03 }); t.position.set(it.x + n[0] * s * 0.022, it.y, it.z + n[1] * s * 0.022); t.rotation.y = yaw + (s < 0 ? Math.PI : 0); zone.add(t); }
         continue; }
       if (it.sign) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.12), brassPlaqueMaterial(it.sign, it.sub ? [it.sub] : [])); m.position.set(it.x, it.y, it.z); m.rotation.y = yaw; zone.add(m); continue; }
       if (it.sconce) { // 铜壁灯：底座 + 弯臂 + 灯罩（自发光）

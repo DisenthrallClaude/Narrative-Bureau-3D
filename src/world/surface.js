@@ -384,8 +384,8 @@ export async function buildSurface(scene, world, ctx) {
     for (let z = ZS - 1.5; z > ZN + 1; z -= 3) { const f = new Frame([(XW + XE) / 2, Y, z], 0); bc.add('dz_pil', archRingGeo(XE - XW, H - 2.4, XE - XW - 0.5, H - 2.4, 0.3), f.at(0, 0.01, 0), { uv: 0.5 }); bc.add('gold', archRingGeo(XE - XW - 0.48, H - 2.4, XE - XW - 0.56, H - 2.4, 0.32), f.at(0, 0.01, 0), { uv: 1 }); }
     for (let z = ZS - 3; z > -110; z -= 6) { const f = new Frame([XE - 0.02, Y + 1.6, z], -Math.PI / 2); bc.add('glassIn', new THREE.ShapeGeometry(archShape(1.2, 1.6)), f.at(0, 0, 0.02), { uv: false }); bc.add('gold', archRingGeo(1.5, 1.6, 1.2, 1.6, 0.12), f.at(0, 0, 0.04), { uv: 1 }); }
     for (let z = ZS - 6; z > ZN; z -= 6) { bc.add('brass', new THREE.BoxGeometry(0.06, 0.4, 0.16), { pos: [XW + 0.02, Y + 2.8, z] }, { uv: 1 }); bc.add('dz_shade', new THREE.CylinderGeometry(0.1, 0.16, 0.3, 12, 1, true), { pos: [XW + 0.25, Y + 3.05, z] }, { uv: false }); point(zc, 0xffd8a8, 3.5, [XW + 0.6, Y + 3, z], 7); }
-    // 批次12：R3 下上墙面换 Poly Haven 方石（large_sandstone_blocks，与主楼同石种；UV 偏移让石材线脚带落在墙裙顶 y+1.36 与 y+4.36 两道腰线处），东西段两面墙也补同款墙面
-    const ecO = R3.east_cloister ? { over: { up: 'dz_ashlarEC' }, upOff: [0, 2.84] } : {};
+    // 批次12：R3 下上墙面换 Poly Haven 方石（large_sandstone_blocks，与主楼同石种）。收尾修：贴图线脚带在 v 0.88–0.97（不在接缝处），原偏移 2.84 把接缝放在墙裙顶，线脚落到墙裙顶上方 3 m−0.36 m、墙裙顶上露出的是贴图底边暗带 → 偏移 2.48：线脚带下沿正压墙裙顶 y+1.36（第二道 y+4.36），东西段两面墙也补同款墙面
+    const ecO = R3.east_cloister ? { over: { up: 'dz_ashlarEC' }, upOff: [0, 2.48] } : {};
     WXd(bc, XW, ZS, -110.8, 1, Y, H, ecO); WXd(bc, XE, ZS, ZN, -1, Y, H, ecO);
     if (R3.east_cloister) { wallDress(bc, wallSeg((18.4 + XE - 0.2) / 2, ZN, XE - 0.2 - 18.4, [0, 1], Y), XE - 0.2 - 18.4, H, { style: 'stone', pil: false, ...ecO }); wallDress(bc, wallSeg((18.4 + XW) / 2, -111.0, XW - 18.4, [0, -1], Y), XW - 18.4, H, { style: 'stone', pil: false, ...ecO }); }
     // 陈设：长椅、展柜（局史老照片）、绿植、导视

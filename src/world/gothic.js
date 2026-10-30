@@ -337,7 +337,10 @@ export function goldText(text, w, h, mat, o = {}) {
   ctx.fillText(text, cv.width / 2, cv.height * 0.54); if (o.stroke !== 0) { ctx.strokeStyle = '#fff'; ctx.lineJoin = 'round'; ctx.lineWidth = scale * (o.stroke ?? 0.022); ctx.strokeText(text, cv.width / 2, cv.height * 0.54); }
   const tex = new THREE.CanvasTexture(cv);
   const m = mat.clone();
-  m.alphaMap = tex; m.transparent = false; m.alphaTest = 0.5; m.bumpMap = tex; m.bumpScale = o.bump ?? 0.6; tex.anisotropy = 8; tex.colorSpace = THREE.NoColorSpace;
+  // 批次12 收尾：原 alphaTest 0.5 + mipmap → 远处 mip 把细笔画 alpha 平均到 0.5 以下，整字变细/消失（cs_r3 远处吊牌「候号区」「填单区」、墙上大标题缺字）。
+  // 改为 alpha 混合（不写深度，按 mip 平均值淡出而不是被裁掉）+ 多边形偏移（字面离底板仅 2 mm，40 m 外 24 位深度精度约 2 mm，会被底板盖住）
+  m.alphaMap = tex; m.transparent = true; m.alphaTest = 0.02; m.depthWrite = false; m.polygonOffset = true; m.polygonOffsetFactor = -2; m.polygonOffsetUnits = -4;
+  m.bumpMap = tex; m.bumpScale = o.bump ?? 0.6; tex.anisotropy = 8; tex.colorSpace = THREE.NoColorSpace;
   m.map = null;
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m);
   return mesh;
