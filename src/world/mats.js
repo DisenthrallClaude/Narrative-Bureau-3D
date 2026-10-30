@@ -1,5 +1,7 @@
 // 材质库：黑金哥特主调（黑色抛光石材 + 抛光金 + 深蓝），室内现代冷峻
 import * as THREE from 'three';
+import { loadTex as _lt } from '../engine/assets.js';
+const phm = (name, o = {}) => { const m = new THREE.MeshStandardMaterial({ map: _lt(`assets/tex/ph/${name}_col.webp`, { srgb: true }), normalMap: _lt(`assets/tex/ph/${name}_nrm.webp`), roughnessMap: _lt(`assets/tex/ph/${name}_arm.webp`), color: o.color ?? 0xffffff, roughness: 1, envMapIntensity: o.env ?? 0.4 }); m.name = 'ph_' + name; return m; };
 import { pbr } from '../engine/assets.js';
 import { stainedGlassTexture } from '../engine/fx.js';
 import { weather } from '../engine/weather.js';
@@ -53,7 +55,7 @@ export function mats() {
   M.wallStone = pbr('Marble016', { rn: true, color: 0x5e5e66, roughness: 0.5, env: 0.6 }); // M4：原花岗岩在暖光下呈锈斑，改黑金纹大理石
   M.vault = pbr('Concrete034', { color: 0x8a8478, roughness: 0.85, env: 0.6 }); M.vault.side = THREE.DoubleSide; M.vault.userData.noShadow = true; // 双面薄壳自投影会出现橙黑色阴影痤疮
   M.panelWall = pbr('Marble006', { rn: true, color: 0x5e5850, roughness: 0.6, env: 0.35 });
-  M.wallPlaster = pbr('Concrete034', { color: 0x3e4a44, roughness: 0.8 });
+  M.wallPlaster = phm('grey_plaster_02', { color: 0x6a7a72, env: 0.35 }); // 批次7：Poly Haven 实拍石膏（原 ambientCG Concrete034）
   M.onyx = pbr('Onyx013', { color: 0x8a8a90, roughness: 0.22, env: 1.2 });
   M.wood = pbr('Wood051', { color: 0x4a3020, roughness: 0.55, env: 0.3 }); // M4：深胡桃
   M.doorWood = pbr('Wood051', { color: 0x6a4e3a, roughness: 0.55, repeat: [1.5, 4] });

@@ -67,7 +67,7 @@ function partition(out, axis, c, a0, a1, y, o = {}) {
     const L = q - p; if (L < 0.02) continue; const m = (p + q) / 2;
     const [x, z] = P(m); out.push({ part: true, x, y, z, yaw: 0, size: axis === 'x' ? [L, PH, PT] : [PT, PH, L], tag, on: 'part' });
     box('dz_base', m, L, y + 0.06, 0.12, PT + 0.02);
-    box('dz_wain', m, L, y + 0.56, 0.88, PT);
+    box('dz_panel', m, L, y + 0.56, 0.88, PT);
     box('dz_wain2', m, L, y + 1.03, 0.06, PT + 0.03);
     if (o.glass) {
       box('glassClear', m, L, y + 1.9, 1.68, 0.02);
@@ -1355,3 +1355,277 @@ const X6 = {
 };
 const withX6 = (id, f) => (Y) => { const p = f(Y); const n0 = p.items.length; if (X6[id]) X6[id](p.items, Y); fixYaw({ items: p.items.slice(n0) }); return p; };
 export const PLANS = { floor3_office: (Y) => fixYaw(planFloor3Office(Y)), floor2_liaison: (Y) => fixYaw(planFloor2Liaison(Y)), floor2_pub: (Y) => fixYaw(planFloor2Pub(Y)), director: (Y) => fixYaw(planDirector(Y)), gate: (Y) => fixYaw(planGate(Y)), archive: (Y) => fixYaw(planArchive(Y)), command_center: withX6('command_center', (Y) => fixYaw(planCommand(Y))), canteen: (Y) => fixYaw(planCanteen(Y)), b1: (Y) => fixYaw(planB1(Y)), b2: (Y) => fixYaw(planB2(Y)), archive_b1: (Y) => fixYaw(planArchiveB1(Y)), b4: withX6('b4', (Y) => fixYaw(planB4(Y))), b5: withX6('b5', (Y) => fixYaw(planB5(Y))), b6: withX6('b6', (Y) => fixYaw(planB6(Y))), b7: withX6('b7', (Y) => fixYaw(planB7(Y))), medical: withX6('medical', (Y) => fixYaw(planMedical(Y))), dorm: (Y) => fixYaw(planDorm(Y)), dorm2: (Y) => fixYaw(planDorm2(Y)), interrogation: (Y) => fixYaw(planInterrogation(Y)), hangar: (Y) => fixYaw(planHangar(Y)) };
+
+// ================= 批次7 · 新做区：训练场 / 地铁口 / 无字碑廊 / 第七局（作战室·杀青室）/ 墨渊（倒悬书城·考场母本） =================
+const F7 = (out, label, x, z, w, d, y, yaw = 0, h = 1) => out.push({ fixed: true, m: '固定:' + label, x, y, z, yaw, size: [w, h, d], col: [w, h, d], tag: label, on: 'floor' });
+// —— B6 训练场主场（x −32…32，z −156…−92，层高 16）——
+export function planTraining(y) {
+  const out = []; const X0 = -32, X1 = 32, Z0 = -156, Z1 = -92, H = 16;
+  const room = { name: 'B6 · 驯化副本训练场（批次7）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H, doors: [{ wall: 'N', a: -9.4, b: 9.4, label: '电梯厅开口' }], windows: [],
+    rooms: [['① 检录台', 0, -95.5], ['② 战术简报区', -22, -109], ['③ 装备领用', 9.5, -110], ['④ 副本门待命位', 0, -126], ['⑤ 射击区控制台', 21.5, -138.5], ['⑥ 医疗撤离点', -28.5, -103.5]],
+    aisles: [{ label: '主通道（电梯厅 → 副本门区）', x0: -2.6, x1: 2.6, z0: -117.4, z1: -92.2 }, { label: '射击线后通道', x0: -18, x1: 18, z0: -140.6, z1: -139.3 }] };
+  // 原有构筑（锚点/程序化件）登记为固定，参与检查
+  F7(out, '控制塔', -22, -100, 8, 5, y, 0, 6); F7(out, '器械架', -12, -96, 1.2, 0.6, y, 0, 2); F7(out, '器械架', 20, -96, 1.2, 0.6, y, 0, 2);
+  F7(out, '格斗软垫区', 22.1, -104, 11, 12, y, 0, 0.1); F7(out, '母带拖车', 13, -98.5, 2.4, 4.6, y, -0.12, 1.4); F7(out, '急救柜', -29, -100, 1.6, 0.8, y, 0, 2.2);
+  F7(out, '装备箱', -30.6, -106.35, 0.7, 1.4, y, 0, 1.1); F7(out, '收纳箱', -30.0, -110.7, 1.4, 0.8, y, 0, 0.6); F7(out, '东墙器械架', 31.5, -116, 0.5, 11, y, 0, 2.2); F7(out, '看台', 28.5, -138, 4.0, 18, y, 0, 2.0);
+  F7(out, '射击台', 0, -141.4, 36.2, 1.4, y, 0, 1.07); F7(out, '体能障碍区', -25.75, -138, 10.5, 30, y, 0, 1.4); F7(out, '局徽地标', 0, -122, 9, 9, y, 0, 0.03);
+  const PORT = []; for (let i = 0; i < 6; i++) { const a = -0.95 + i * 0.38, gx = Math.sin(a) * 30, gz = -102 - Math.cos(a) * 30; PORT.push([gx, gz, a]); F7(out, '副本门', gx, gz, 6.4, 2.0, y, -a, 8); }
+  for (const [x, z] of [[-14, -116], [14, -116]]) F7(out, '路锥', x, z, 0.4, 0.4, y, 0, 0.5);
+  // ① 检录台：主通道两侧各一组接待台（面朝通道）+ 凳 + 登记簿/电话/台灯 + 隔离带分流
+  for (const sx of [-1, 1]) { const x = sx * 6.4, z = -96.6, yaw = sx < 0 ? ROT.W : ROT.E; // 使用侧 = 工作人员一侧（外侧）
+    out.push({ m: 'office_desk', x, y, z, yaw, h: 0.76, tag: '检录台', on: 'floor', col: [0.91, 0.76, 1.93] });
+    out.push({ m: 'r2/old_computer_chair', x: x + sx * 0.95, y, z: z + 0.2, yaw: yaw + Math.PI, h: 0.92, tag: '检录台', on: 'floor' });
+    out.push({ m: 'r2/office_phone', x: x + sx * 0.2, y: y + 0.76, z: z - 0.6, yaw: yaw + Math.PI, w: 0.22, tag: '检录台', on: 'desk' });
+    out.push({ m: 'r2/desk_bell', x: x - sx * 0.25, y: y + 0.76, z: z + 0.5, yaw: 0, w: 0.09, tag: '检录台', on: 'desk' });
+    out.push({ m: 'r2/several_folders', x: x + sx * 0.1, y: y + 0.76, z: z + 0.05, yaw: yaw, h: 0.3, tag: '检录台', on: 'desk' });
+    out.push({ m: 'r2/bankers_lamp', x: x + sx * 0.25, y: y + 0.76, z: z - 0.15, yaw: yaw + Math.PI, h: 0.4, tag: '检录台', on: 'desk' });
+    out.push({ m: 'r2/plastic_crate_01', x: x + sx * 1.0, y, z: z - 0.9, yaw: 0.1, h: 0.3, tag: '检录台', on: 'floor' });
+    pic(out, 'textures/b07/B07_副本投放调度单.png', x - sx * 0.0, y + 1.7, -92.25, Math.PI, 0.6, 0.8, 'black'); light(out, x, y + 3.2, z, 0xfff0d8, 1.6, 7); }
+  stanchions(out, [[-2.9, -98.0], [-2.9, -101.0], [-2.9, -104.0]], y, '分流'); stanchions(out, [[2.9, -98.0], [2.9, -101.0], [2.9, -104.0]], y, '分流');
+  // ② 战术简报区：控制塔成绩榜（南面）前 4 排 × 4 课桌（中间过道 x −22），讲台 + 立式黑板 + 投放调度单
+  { let k = 0; for (const z of [-106.4, -108.2, -110.0, -111.8]) for (const x of [-25.9, -24.5, -19.5, -18.1]) { out.push({ m: 'r2/schooldesk_01', x, y, z, yaw: Math.PI, w: 0.7, tag: '简报区', on: 'floor', col: [0.7, 0.75, 0.5] }); if (k % 5 !== 3) out.push({ m: 'r2/schoolchair_01', x: x + (hash(x, z) - 0.5) * 0.08, y, z: z - 0.5, yaw: (hash(z, x) - 0.5) * 0.12, h: 0.82, tag: '简报区', on: 'floor' }); k++; } }
+  out.push({ m: 'r2/lectern', x: -22, y, z: -104.0, yaw: Math.PI, h: 1.15, tag: '简报区', on: 'floor', col: [0.6, 1.15, 0.5] });
+  out.push({ m: 'r2/standing_chalkboard_01', x: -16.4, y, z: -106.6, yaw: -2.2, h: 1.8, tag: '简报区', on: 'floor' });
+  floorZ(out, 'r3_epoxy', -27.2, -16.6, -113.0, -103.2, y, { border: 0.12, bmat: 'r3_paintYellow' });
+  for (const z of [-106, -111]) light(out, -22, y + 4.0, z, 0xfff2e0, 2.0, 9);
+  // ③ 装备领用：领用柜台（两张金属桌拼接，工作人员在东侧）+ 东侧更衣柜一排 + 钢架（护具/弹药箱）+ 长凳
+  for (const z of [-107.0, -109.0]) out.push({ m: 'office_desk', x: 7.6, y, z, yaw: ROT.E, h: 0.76, tag: '领用柜台', on: 'floor', col: [0.91, 0.76, 1.93] });
+  for (const [z, m, sz] of [[-106.4, 'r2/metal_toolbox', { w: 0.42 }], [-107.4, 'r2/signal_flashlight', { w: 0.25 }], [-108.3, 'r2/binoculars', { w: 0.2 }], [-109.4, 'r2/medical_box', { w: 0.4 }]]) out.push({ m, x: 7.5, y: y + 0.76, z, yaw: ROT.W, ...sz, tag: '领用柜台', on: 'desk' });
+  out.push({ m: 'r2/old_computer_chair', x: 8.5, y, z: -108.0, yaw: ROT.W, h: 0.92, tag: '领用柜台', on: 'floor' });
+  for (let k = 0; k < 5; k++) out.push({ m: 'r2/locker_equipment', x: 12.7, y, z: -103.6 - k * 1.12, yaw: ROT.W, h: 1.9, tag: '更衣柜', on: 'floor', col: [0.5, 1.9, 1.1] });
+  out.push({ m: 'r2/hallway_bench', x: 10.9, y, z: -106.0, yaw: 0, h: 0.45, tag: '更衣柜', on: 'floor', col: [0.4, 0.45, 1.6] });
+  for (const z of [-110.9, -115.3]) { out.push({ m: 'r2/double_metal_shelving_unit', x: 11.6, y, z, yaw: ROT.W, h: 2.0, tag: '护具架', on: 'floor', col: [0.8, 2.0, 2.4] });
+    for (const [dz, dy, m, sz] of [[-1.2, 0.42, 'r2/wooden_military_crate', { w: 0.8 }], [0.9, 0.42, 'r2/plastic_crate_03', { h: 0.3 }], [-0.4, 1.02, 'r2/plastic_crate_01', { h: 0.28 }], [0.5, 1.02, 'r2/metal_toolbox', { w: 0.45 }], [0, 1.6, 'r2/cardboard_transport_shipping_box', { w: 0.5 }]]) out.push({ m, x: 11.6, y: y + dy, z: z + dz, yaw: ROT.W + 0.05, ...sz, tag: '护具架', on: 'shelf' }); }
+  out.push({ m: 'r2/hand_truck', x: 9.4, y, z: -116.6, yaw: 0.4, rx: 0.08, h: 1.2, tag: '护具架', on: 'floor' });
+  floorZ(out, 'r3_epoxy', 6.6, 13.2, -117.8, -102.8, y, { border: 0.12, bmat: 'r3_paintYellow' });
+  for (const z of [-105, -112]) light(out, 10, y + 4.0, z, 0xfff2e0, 2.0, 9);
+  // ④ 副本门待命位：每扇门内侧 3.4 m 一个操作台（讲台式）+ 探照灯；ABY 门前改为封锁路障
+  PORT.forEach(([gx, gz, a], i) => { const dx = -Math.sin(a), dz = Math.cos(a), tx = Math.cos(a), tz = Math.sin(a);
+    if (i === 5) { for (const s of [-1.6, 1.6]) out.push({ m: 'r2/concrete_road_barrier', x: gx + dx * 3.0 + tx * s, y, z: gz + dz * 3.0 + tz * s, yaw: -a, w: 1.8, tag: 'ABY 封锁', on: 'floor', col: [1.8, 0.8, 0.6] }); return; }
+    out.push({ m: 'r2/lectern', x: gx + dx * 3.4 + tx * 2.4, y, z: gz + dz * 3.4 + tz * 2.4, yaw: -a + Math.PI, h: 1.15, tag: '门前操作台', on: 'floor', col: [0.6, 1.15, 0.5] });
+    out.push({ m: 'r2/portable_searchlight', x: gx + dx * 3.6 - tx * 2.6, y, z: gz + dz * 3.6 - tz * 2.6, yaw: -a + Math.PI, h: 1.4, tag: '门前操作台', on: 'floor' }); });
+  wear(out, -2.0, 2.0, -117.5, -93.0, y);
+  // ⑤ 射击区控制台（射击台东端后方）：桌 + 椅 + 电话 + 扩音器 + 望远镜；射击线后弹药箱
+  out.push({ m: 'office_desk', x: 21.6, y, z: -139.2, yaw: 0, h: 0.76, tag: '射击控制台', on: 'floor', col: [1.93, 0.76, 0.91] });
+  out.push({ m: 'r2/old_computer_chair', x: 21.6, y, z: -138.3, yaw: Math.PI, h: 0.92, tag: '射击控制台', on: 'floor' });
+  out.push({ m: 'r2/rotary_telephone', x: 22.3, y: y + 0.76, z: -139.4, yaw: Math.PI, w: 0.22, tag: '射击控制台', on: 'desk' });
+  out.push({ m: 'r2/megaphone_01', x: 21.0, y: y + 0.76, z: -139.3, yaw: 2.6, w: 0.3, tag: '射击控制台', on: 'desk' });
+  out.push({ m: 'r2/vintage_binocular', x: 21.6, y: y + 0.76, z: -139.0, yaw: 0.3, w: 0.18, tag: '射击控制台', on: 'desk' });
+  for (const x of [-15.75, -10.5, 10.5, 15.75]) out.push({ m: 'r2/metal_toolbox', x, y, z: -138.7, yaw: 0.1, w: 0.45, tag: '射击线', on: 'floor' });
+  light(out, 21.6, y + 3.2, -139.0, 0xfff0d8, 1.6, 7);
+  // ⑥ 医疗撤离点（急救柜旁）：担架床 + 轮椅 + 急救箱
+  out.push({ m: 'r2/hospital_stretcher', x: -27.4, y, z: -103.2, yaw: 0, fit: [0.7, 0.9, 2.0], size: [0.7, 0.9, 2.0], tag: '医疗撤离点', on: 'floor', col: [0.7, 0.9, 2.0] });
+  out.push({ m: 'r2/wheelchair_01', x: -29.2, y, z: -102.6, yaw: 0.6, h: 0.95, tag: '医疗撤离点', on: 'floor' });
+  floorZ(out, 'r3_paintYellow', -30.6, -26.6, -105.0, -104.88, y);
+  return { room, items: out };
+}
+// —— 地铁「管理局站」B 口地面广场（x −18…18，z 100…170，地面 y=−3.955）——
+export function planMetro(y) {
+  const out = []; const X0 = -19, X1 = 19, Z0 = 100, Z1 = 171;
+  const room = { name: '地铁管理局站 B 口 · 地面广场（批次7）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H: 8, doors: [], windows: [],
+    rooms: [['① 出站集散', 0, 152], ['② 机构安检亭', -9, 154], ['③ 公交站', 11, 165], ['④ 报刊/自助售卖', -11, 112], ['⑤ 流浪者角', -16, 104]],
+    aisles: [{ label: '出站主通道（北）', x0: -2.8, x1: 2.8, z0: 145.4, z1: 170 }, { label: '南向步道', x0: -2.8, x1: 2.8, z0: 100, z1: 134.4 }] };
+  F7(out, '出站厅', 0, 140, 8.8, 10.8, y, 0, 4.5); F7(out, '便利店', 15, 128, 7, 5, y, 0, 3.6); F7(out, '共享单车', -11.75, 127.6, 5.5, 4.6, y, 0, 1); F7(out, '站名柱', -6.4, 144.6, 0.8, 0.8, y, 0, 5.2);
+  F7(out, '守则立牌', 3.6, 133.6, 0.8, 0.4, y, 0, 1.6); F7(out, '外卖车', 8.7, 146.5, 2.2, 1.8, y, 0.3, 1.2);
+  for (const x of [-18, -15, -12, -9, 9, 12, 15, 18]) F7(out, '隔离墩', x, 118, 0.3, 0.3, y, 0, 0.95);
+  // ① 出站集散：盲道（黄）从出站口北延；出口两侧垃圾桶 + 报刊旋转架 + 导向牌
+  floorZ(out, 'r3_paintYellow', -0.2, 0.2, 145.6, 169.8, y); floorZ(out, 'r3_paintYellow', -0.2, 0.2, 100.2, 134.2, y);
+  out.push({ m: 'r2/garbage_bin', x: -3.6, y, z: 147.2, yaw: 0, h: 1.0, tag: '出站集散', on: 'floor', col: [0.6, 1.0, 0.6] });
+  out.push({ m: 'r2/concrete_trash_bin', x: 3.6, y, z: 147.6, yaw: 0, h: 0.9, tag: '出站集散', on: 'floor', col: [0.6, 0.9, 0.6] });
+  out.push({ m: 'r2/44_pocket_rotating_newspaper_stand', x: 4.6, y, z: 151.0, yaw: 0, h: 1.6, tag: '出站集散', on: 'floor', col: [0.6, 1.6, 0.6] });
+  pic(out, 'textures/b05/B05_地铁站名牌.png', 0, y + 3.7, 145.47, 0, 2.6, 0.96, 'black');
+  // ② 机构安检亭（出站口西北）：岗亭 + 道闸路障 + 双人值守长凳 + 监控杆 + 门禁
+  out.push({ m: 'r2/simple_90_s_kiosk', x: -10.2, y, z: 154.0, yaw: ROT.E, h: 2.6, tag: '安检亭', on: 'floor', col: [3.4, 2.6, 3.6] });
+  for (const z of [151.4, 156.6]) out.push({ m: 'r2/concrete_road_barrier', x: -6.2, y, z, yaw: 0, w: 1.8, tag: '安检亭', on: 'floor', col: [1.8, 0.97, 0.74] });
+  out.push({ m: 'r2/cctv_and_keypad_access_panel', x: -8.4, y: y + 1.2, z: 152.9, yaw: ROT.E, h: 0.3, tag: '安检亭', on: 'shelf' });
+  out.push({ m: 'r2/fire_hydrant', x: -13.0, y, z: 150.4, yaw: 0.3, h: 0.8, tag: '安检亭', on: 'floor' });
+  out.push({ m: 'r2/utility_box_01', x: -13.6, y, z: 158.6, yaw: ROT.E, h: 1.4, tag: '安检亭', on: 'floor', col: [0.6, 1.4, 1.0] });
+  light(out, -10.2, y + 3.0, 154.0, 0xfff0d8, 1.6, 7);
+  // ③ 公交站（东北，面朝南侧广场）+ 公用电话 + 自动售货机
+  out.push({ m: 'r2/korean_public_payphone_01', x: 15.6, y, z: 160.4, yaw: ROT.W, h: 2.0, tag: '公交站', on: 'floor', col: [0.6, 2.0, 0.6] });
+  for (const x of [8.6, 11.4]) out.push({ m: 'r2/park_bench', x, y, z: 165.6, yaw: Math.PI, w: 1.8, tag: '公交站', on: 'floor', col: [1.8, 0.9, 0.6] });
+  out.push({ m: 'r2/concrete_trash_bin', x: 13.2, y, z: 165.8, yaw: 0, h: 0.9, tag: '公交站', on: 'floor', col: [0.45, 0.9, 0.55] });
+  // 北侧花坛一排（广场北缘，分隔车行道）
+  for (const x of [-14, -8, 8, 14]) out.push({ m: 'r2/brick_planters', x, y, z: 169.2, yaw: 0, w: 2.4, tag: '花坛', on: 'floor', col: [2.4, 0.7, 1.0] });
+  // ④ 南侧：锈报亭 + 报纸堆 + 灯箱（规则之泉 / 篇幅补充剂 / 午夜地铁剪报）
+  out.push({ m: 'r2/rusty_kiosk_01', x: -11.0, y, z: 111.6, yaw: ROT.E, h: 2.6, tag: '报亭', on: 'floor', col: [2.0, 2.6, 2.0] });
+  out.push({ m: 'r2/cc0_newspaper_stack_ready_to_unity_hdrp', x: -9.4, y, z: 110.4, yaw: 0.3, w: 0.5, tag: '报亭', on: 'floor' });
+  out.push({ m: 'r2/garbage_bin', x: -9.2, y, z: 113.6, yaw: 0, h: 1.0, tag: '报亭', on: 'floor', col: [0.6, 1.0, 0.6] });
+  for (const [x, z, p, yaw] of [[11.4, 107.0, 'textures/b01/B01_08_海报_规则之泉.png', ROT.W], [11.4, 113.0, 'textures/b05/B05_海报_篇幅补充剂.png', ROT.W]]) {
+    out.push({ box: 'blackMetal', x: x + 0.12, y: y + 1.25, z, w: 0.22, h: 2.5, d: 1.3, tag: '灯箱', on: 'partv' }); F7(out, '灯箱', x + 0.12, z, 0.3, 1.3, y, 0, 2.5);
+    pic(out, p, x - 0.0, y + 1.4, z, yaw, 1.0, 1.5, 'none'); light(out, x - 0.8, y + 1.6, z, 0xfff4e0, 0.9, 4); }
+  pic(out, 'textures/emblems/N16.jpg', -10.0, y + 1.6, 112.6, ROT.E, 0.6, 0.4, 'cork', { cork: [0.8, 0.6] });
+  // ⑥ 行道树池 + 背靠树池的长椅（南向步道两侧成排；北侧东半段）——把空旷铺装分成有尺度的步行带
+  for (const [x, z] of [[-7, 104], [-7, 110], [-7, 116], [-7, 122], [-7, 128], [7, 104], [7, 110], [7, 116], [7, 122], [7, 128], [7, 152], [7, 158]]) { out.push({ m: 'r2/tree_planter_with_grate_free_low_poly', x, y, z, yaw: x + z, h: 4.0, tag: '树池', on: 'tree' }); F7(out, '树池', x, z, 1.4, 1.4, y, 0, 0.5); }
+  for (const sx of [-1, 1]) for (const z of [107, 113, 119, 125]) out.push({ m: 'r2/park_bench', x: sx * 6.6, y, z, yaw: sx < 0 ? ROT.E : ROT.W, w: 1.8, tag: '长椅', on: 'floor', col: [0.57, 0.85, 1.8] });
+  for (const z of [116, 128]) for (const sx of [-1, 1]) light(out, sx * 7, y + 3.4, z, 0xffe0b0, 1.2, 8);
+  // ⑤ 流浪者角（西南角，靠墙暗处）：桶炉 + 旧自行车 + 纸箱 + 街鼠
+  out.push({ m: 'r2/barrel_stove', x: -16.4, y, z: 103.2, yaw: 0, h: 1.0, tag: '流浪者角', on: 'floor', col: [0.62, 1.0, 0.62] });
+  out.push({ m: 'r2/old_bicycle', x: -16.8, y, z: 106.4, yaw: 0.1, h: 1.0, tag: '流浪者角', on: 'floor' });
+  out.push({ m: 'r2/old_paper_cardboard_boxes', x: -14.6, y, z: 101.6, yaw: 0.4, w: 0.9, tag: '流浪者角', on: 'floor', col: [0.9, 0.5, 0.7] });
+  out.push({ m: 'r2/street_rat', x: -15.2, y, z: 104.8, yaw: 2.0, w: 0.25, tag: '流浪者角', on: 'floor' });
+  light(out, -16.4, y + 1.4, 103.2, 0xff9a50, 1.4, 5);
+  // 井盖、配电箱、长椅（面朝出站口）
+  for (const [x, z] of [[6.5, 136.0], [-6.0, 122.0], [10.0, 155.0]]) out.push({ m: 'r2/manhole_a65739', x, y: y + 0.005, z, yaw: x, w: 0.8, tag: '井盖', on: 'decal' });
+  for (const x of [-13.5, 13.5]) out.push({ m: 'r2/park_bench', x, y, z: 138.0, yaw: x < 0 ? ROT.E : ROT.W, w: 1.8, tag: '长椅', on: 'floor', col: [0.7, 0.9, 1.8] });
+  wear(out, -2.4, 2.4, 146.0, 168.0, y); wear(out, -2.4, 2.4, 101.0, 133.0, y);
+  return { room, items: out };
+}
+// —— 无字碑廊（x −76…−50，z 2…44，地面 y≈0.08）：补石天使 / 花瓮 / 烛台 / 长椅 / 低位地灯 ——
+export function planMemorial(y) {
+  const out = []; const X0 = -76, X1 = -50, Z0 = 2, Z1 = 44;
+  const room = { name: '无字碑廊（批次7 补强）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H: 6, doors: [{ wall: 'N', a: -64.6, b: -61.4, label: '入口（主碑）' }], windows: [],
+    rooms: [['碑阵 西', -70, 24], ['碑阵 东', -56, 24], ['十字路口', -63, 23]], aisles: [{ label: '中轴', x0: -64.6, x1: -61.4, z0: 2, z1: 44 }, { label: '横路', x0: -76, x1: -50, z0: 21.8, z1: 24.2 }] };
+  for (let r = 0; r < 7; r++) for (let k = 0; k < 8; k++) { const z = 40 - r * 5 - (r >= 4 ? 2.4 : 0), x = k < 4 ? -73.5 + k * 2.4 : -59.8 + (k - 4) * 2.4; F7(out, '碑', x, z, 1.2, 0.7, y, 0, 1.9); }
+  // 横路两端：石天使（面朝十字路口）+ 花瓮
+  out.push({ m: 'r2/stone_angel', x: -75.2, y, z: 26.2, yaw: ROT.E, h: 2.0, tag: '石天使', on: 'floor', col: [0.9, 2.0, 0.9] });
+  out.push({ m: 'r2/stone_angel', x: -50.8, y, z: 26.2, yaw: ROT.W, h: 2.0, tag: '石天使', on: 'floor', col: [0.9, 2.0, 0.9] });
+  for (const [x, z] of [[-65.4, 42.6], [-60.6, 42.6], [-75.2, 20.0], [-50.8, 20.0]]) out.push({ m: 'r2/ornamental_urn_planter', x, y, z, yaw: 0, h: 0.9, tag: '花瓮', on: 'floor', col: [0.6, 0.9, 0.6] });
+  // 横路两侧：长椅（背靠碑阵，面朝横路）
+  for (const x of [-69.9, -56.2]) out.push({ m: 'r2/park_bench', x, y, z: 20.9, yaw: 0, w: 1.8, tag: '长椅', on: 'floor', col: [1.8, 0.85, 0.57] });
+  // 第一排碑前的铜烛台（悼念痕迹）
+  for (const [x, z] of [[-73.5, 40.9], [-66.3, 40.9], [-57.4, 40.9], [-52.6, 40.9], [-68.7, 18.6 + 0.9]]) out.push({ m: 'r2/brass_candleholders', x, y, z, yaw: x, h: 0.3, tag: '烛台', on: 'floor' });
+  for (const [x, z] of [[-73.5, 40.9], [-57.4, 40.9], [-68.7, 19.5]]) light(out, x, y + 0.6, z, 0xffb060, 0.6, 3);
+  // 横路低位地灯（石柱 + 灯罩）
+  for (const x of [-73, -69, -57, -53]) { out.push({ box: 'stoneDark', x, y: y + 0.3, z: 21.6, w: 0.18, h: 0.6, d: 0.18, tag: '地灯', on: 'partv' }); out.push({ box: 'dz_glow', x, y: y + 0.62, z: 21.6, w: 0.14, h: 0.06, d: 0.14, tag: '地灯', on: 'partv' }); light(out, x, y + 0.8, 21.6, 0xffd8a0, 0.7, 4); }
+  pic(out, 'textures/emblems/N27.jpg', -66.6, y + 1.5, 43.7, Math.PI, 1.2, 0.68, 'black', { stand: true, fy: y });
+  return { room, items: out };
+}
+// —— 第七局 · 作战室（x −9.8…9.8，z −133.8…−112.2，层高 6）——
+export function planS7Ops(y) {
+  const out = []; const X0 = -9.8, X1 = 9.8, Z0 = -133.8, Z1 = -112.2, H = 6;
+  const room = { name: '第七局 · 作战室（批次7）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H, doors: [{ wall: 'N', a: -2.2, b: 2.2, label: '门（← 装订线回廊）' }], windows: [],
+    rooms: [['① 通讯台', 8.4, -116], ['② 军械 · 补给', 8.4, -129.6], ['③ 地图作业台', 2.3, -128.4], ['K 的桌', -6, -126], ['档案柜', -9, -116]],
+    aisles: [{ label: '入口通道', x0: -1.6, x1: 1.6, z0: -116.6, z1: -112.2 }] };
+  F7(out, 'K 的桌椅', -6, -125.7, 2.6, 1.9, y, 0, 0.8); F7(out, '会商长桌+椅', 3.9, -120, 11.0, 5.4, y, 0, 0.8);
+  F7(out, '档案柜列', -9.4, -116.3, 0.7, 5.2, y, 0, 1.4); F7(out, '内鬼墙', 9.6, -123, 0.3, 6, y, 0, 0.1);
+  // ① 通讯台：东墙南段两张桌（人面朝东墙）+ 电台 / 野战电话 / 便携打字机 / 满烟灰缸 + 木椅；门边西门子墙式内线
+  for (const [k, z] of [[0, -113.6], [1, -115.6]]) { out.push({ m: 'r2/woodentable_02', x: 9.25, y, z, yaw: ROT.W, h: 0.78, tag: '通讯台', on: 'floor', col: [0.9, 0.78, 1.8] });
+    out.push({ m: 'r2/woodenchair_01', x: 8.3, y, z: z + 0.1, yaw: ROT.E + (k ? 0.15 : -0.1), h: 0.95, tag: '通讯台', on: 'floor' }); }
+  out.push({ m: 'r2/vintage_radio_transceiver', x: 9.4, y: y + 0.78, z: -113.3, yaw: ROT.W, w: 0.5, tag: '通讯台', on: 'shelf' });
+  out.push({ m: 'r2/ww2_german_field_telephone_equipment', x: 9.3, y: y + 0.78, z: -114.1, yaw: ROT.W, w: 0.3, tag: '通讯台', on: 'shelf' });
+  out.push({ m: 'r2/underwood_4_bank_typewriter_portable', x: 9.2, y: y + 0.78, z: -115.5, yaw: ROT.W, w: 0.4, tag: '通讯台', on: 'shelf' });
+  out.push({ m: 'r2/ptish_exceptionally_full_ashtray', x: 9.5, y: y + 0.78, z: -116.2, yaw: 0, w: 0.15, tag: '通讯台', on: 'shelf' });
+  out.push({ m: 'r2/siemens_and_halske_1910', x: 3.4, y: y + 1.45, z: Z1 - 0.22, yaw: Math.PI, h: 0.5, tag: '通讯台', on: 'wall' });
+  pic(out, 'textures/b07/B07_封锁调度单.png', 9.77, y + 1.9, -114.6, ROT.W, 0.6, 0.8, 'cork', { cork: [0.8, 1.0] });
+  // ② 军械 · 补给（东墙北段）：铁皮柜 ×3（步枪/手枪/弹药）+ 军用木箱 + 绿油桶 + 防毒面具
+  for (const z of [-127.6, -128.7, -129.8]) out.push({ m: 'r2/metal_storage_cabinet', x: 9.45, y, z, yaw: ROT.W, h: 1.9, tag: '军械柜', on: 'floor', col: [0.6, 1.9, 1.0] });
+  out.push({ m: 'r2/wooden_military_crate', x: 9.1, y, z: -131.6, yaw: ROT.W, w: 0.9, tag: '补给', on: 'floor', col: [0.38, 0.34, 0.9] });
+  out.push({ m: 'r2/wooden_military_crate', x: 9.1, y: y + 0.34, z: -131.6, yaw: ROT.W + 0.1, w: 0.9, tag: '补给', on: 'shelf' });
+  for (const [x, z] of [[9.3, -133.2], [8.75, -133.3], [8.2, -133.25]]) out.push({ m: 'r2/metal_jerrycan_green', x, y, z, yaw: 0.05, h: 0.46, tag: '补给', on: 'floor' });
+  out.push({ m: 'r2/bolt_action_rifle_7_62', x: 9.7, y: y + 0.6, z: -126.6, yaw: ROT.W, rz: 1.45, w: 1.1, tag: '军械柜', on: 'shelf' });
+  out.push({ m: 'r2/long_life_food', x: 6.9, y, z: -133.1, yaw: 0.2, w: 0.5, tag: '补给', on: 'floor' });
+  // ③ 地图作业台（会商长桌与危机看板之间）：两张长木桌拼成 + 折叠凳 ×6 + 罗盘 / 望远镜 / 地图
+  for (const x of [1.25, 3.35]) out.push({ m: 'r2/woodentable_03', x, y, z: -128.4, yaw: 0, h: 0.78, tag: '地图台', on: 'floor', col: [1.25, 0.78, 0.55] });
+  out.push({ box: 'r3_mapPaper', x: 2.3, y: y + 0.785, z: -128.4, w: 3.4, h: 0.004, d: 0.8, tag: '地图台', on: 'partv' });
+  for (const [x, z, r] of [[0.6, -127.4, 0.2], [2.3, -127.3, -0.1], [4.0, -127.4, 0.3], [0.8, -129.5, 2.9], [2.4, -129.6, 3.3], [3.9, -129.4, 3.0]]) out.push({ m: 'r2/folding_wooden_stool', x, y, z, yaw: r, h: 0.45, tag: '地图台', on: 'floor' });
+  out.push({ m: 'r2/seadogs_compass', x: 1.4, y: y + 0.79, z: -128.2, yaw: 0.4, w: 0.16, tag: '地图台', on: 'shelf' });
+  out.push({ m: 'r2/binoculars', x: 3.6, y: y + 0.79, z: -128.6, yaw: 1.2, w: 0.2, tag: '地图台', on: 'shelf' });
+  out.push({ m: 'r2/glass_ashtray', x: 2.9, y: y + 0.79, z: -128.1, yaw: 0, w: 0.12, tag: '地图台', on: 'shelf' });
+  // ④ 休整角（西南，入口西侧）：双层铁床 ×2（床头靠南隔墙）+ 储物柜 ×2 + 小桌（收音机/保温壶）——与外界隔绝的值守常驻
+  for (const x of [-6.9, -4.3]) out.push({ m: 'r2/simple_bunk_bed', x, y, z: Z1 - 0.66, yaw: 0, h: 1.75, tag: '休整角', on: 'floor', col: [1.96, 1.75, 1.22] });
+  for (const x of [-7.2, -6.1]) out.push({ m: 'r2/locker_equipment', x, y, z: -120.6, yaw: 0, h: 1.9, tag: '休整角', on: 'floor', col: [1.1, 1.9, 0.47] });
+  out.push({ m: 'r2/small_wooden_table_01', x: -4.6, y, z: -117.4, yaw: 0.1, h: 0.72, tag: '休整角', on: 'floor', col: [0.8, 0.72, 0.6] });
+  out.push({ m: 'r2/vintage_radio', x: -4.75, y: y + 0.72, z: -117.45, yaw: 0.2, w: 0.36, tag: '休整角', on: 'shelf' });
+  out.push({ m: 'r2/modified_thermos', x: -4.3, y: y + 0.72, z: -117.3, yaw: 0, h: 0.3, tag: '休整角', on: 'shelf' });
+  for (const [x, z, r] of [[-5.3, -116.6, 0.6], [-3.9, -118.1, 2.6]]) out.push({ m: 'r2/folding_wooden_stool', x, y, z, yaw: r, h: 0.45, tag: '休整角', on: 'floor' });
+  light(out, -5.6, y + 2.6, -116.0, 0xffcf98, 1.4, 6);
+  // 西墙：衣帽架（礼帽）+ 立式黑板（K 的推演）+ 第七局徽 N02 + 地堡灯
+  out.push({ m: 'r2/coat_rack_bowler_hat', x: -9.2, y, z: -120.4, yaw: ROT.E, h: 1.85, tag: '西墙', on: 'floor' });
+  out.push({ m: 'r2/standing_chalkboard_01', x: -8.0, y, z: -130.6, yaw: 0.7, h: 1.8, tag: '西墙', on: 'floor' });
+  pic(out, 'textures/b06/B06_K的工作笔记.png', -9.77, y + 1.7, -128.4, ROT.E, 0.6, 0.8, 'cork', { cork: [0.8, 1.0] });
+  pic(out, 'textures/emblems/N02.jpg', -4.6, y + 4.2, Z0 + 0.22, 0, 1.0, 1.0, 'black');
+  for (const [x, z, yaw] of [[X1 - 0.18, -117.8, ROT.W], [X1 - 0.18, -126.2, ROT.W], [X0 + 0.18, -122.6, ROT.E], [X0 + 0.18, -131.2, ROT.E]]) out.push({ m: 'r2/bunker_lamps', x, y: y + 2.8, z, yaw, h: 0.3, tag: '地堡灯', on: 'wall' });
+  for (const [x, z] of [[8.4, -115], [8.4, -129.6], [2.3, -128.4], [-8.4, -129.0]]) light(out, x, y + 2.8, z, 0xffd0a0, 1.6, 7);
+  floorZ(out, 'dz_rugRed', -0.9, 5.5, -130.2, -126.6, y, {}); out[out.length - 1].box = 'r3_carpetBrown';
+  return { room, items: out };
+}
+// —— 第七局 · 杀青室（x −7.8…7.8，z −157.8…−134.2，层高 5.4）——
+export function planS7Wrap(y) {
+  const out = []; const X0 = -7.8, X1 = 7.8, Z0 = -157.8, Z1 = -134.2, H = 5.4;
+  const room = { name: '第七局 · 杀青室（批次7）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H, doors: [{ wall: 'N', a: -1.4, b: 1.4, label: '门（← 作战室）' }], windows: [],
+    rooms: [['档案列 西', -6.8, -146], ['档案列 东', 6.8, -146], ['空白档案袋台', 0, -146], ['落地镜', 0, -157]], aisles: [{ label: '中轴（门 → 档案袋台）', x0: -1.2, x1: 1.2, z0: -144.9, z1: -134.2 }] };
+  for (let r = 0; r < 4; r++) for (const sx of [-1, 1]) F7(out, '书脊架', sx * 7.4, -138 - r * 4.6, 0.6, 3.6, y, 0, 4.4);
+  F7(out, '档案袋台', 0, -146, 3.4, 0.9, y, 0, 0.9); for (let k = 0; k < 6; k++) F7(out, '木凳', -1.6 + (k % 2) * 3.2, -138 - Math.floor(k / 2) * 6, 0.5, 0.5, y, 0, 0.45);
+  F7(out, '落地镜', 0, -157.6, 1.5, 0.2, y, 0, 2.6);
+  // 档案列之间：滑梯（木梯靠架）、档案盒推车、地上待归档盒
+  for (const [x, z] of [[-5.9, -144.9], [5.9, -140.3], [-5.9, -154.1]]) { out.push({ m: 'r2/filing_box', x, y, z, yaw: x * 0.3, w: 0.4, tag: '待归档', on: 'floor', col: [0.4, 0.3, 0.32] }); out.push({ m: 'r2/filing_box', x: x + 0.02, y: y + 0.3, z: z + 0.03, yaw: x * 0.3 + 0.2, w: 0.4, tag: '待归档', on: 'shelf' }); }
+  out.push({ m: 'r2/simple_warehouse_pallet_hand_truck', x: 4.6, y, z: -152.4, yaw: 0.3, w: 0.7, tag: '档案列', on: 'floor' });
+  // 档案袋台：两盏维多利亚台灯 + 铜烛台 + 印章
+  for (const x of [-1.4, 1.4]) out.push({ m: 'r2/victorian_desk_lamp', x, y: y + 0.9, z: -146.3, yaw: Math.PI, h: 0.45, tag: '档案袋台', on: 'desk' });
+  out.push({ m: 'r2/old_victorian_rubber_stamp', x: 0.5, y: y + 0.9, z: -145.75, yaw: 0.4, h: 0.1, tag: '档案袋台', on: 'desk' });
+  for (const x of [-1.4, 1.4]) light(out, x, y + 1.6, -146.3, 0xffd49a, 1.2, 5);
+  // 南墙：镜旁 N27（橡皮擦）、杀青室档案墙；北门内 柒字徽
+  pic(out, 'textures/emblems/N27.jpg', 2.6, y + 1.7, Z0 + 0.03, 0, 1.2, 0.68, 'black');
+  pic(out, 'textures/b06/B06_杀青室档案墙.png', -2.6, y + 1.7, Z0 + 0.03, 0, 0.9, 1.2, 'wood');
+  for (const z of [-140, -152]) light(out, 0, y + 4.2, z, 0xe8d8b8, 1.6, 9);
+  return { room, items: out };
+}
+// —— 墨渊 · 倒悬书城街道（x −12…12，z −186…−86）+ 漂浮文件柜阵列 ——
+export function planAbyssCity(y) {
+  const out = []; const X0 = -12, X1 = 12, Z0 = -186, Z1 = -86;
+  const room = { name: '墨渊 · 倒悬书城（批次7）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H: 20, doors: [], windows: [],
+    rooms: [['西侧 被改写的机构', -10.5, -110], ['东侧 被改写的机构', 10.5, -110]], aisles: [{ label: '纸页大街', x0: -8.2, x1: 8.2, z0: -186, z1: -86 }] };
+  for (let z = -92; z > -182; z -= 10) for (const sx of [-1, 1]) F7(out, '书签灯柱', sx * 9, z, 0.3, 0.3, y, 0, 4.2);
+  const C = [-97, -107, -117, -127, -137, -147, -157, -165];
+  C.forEach((z, k) => { for (const sx of [-1, 1]) { const x = sx * 10.6, t = (k + (sx > 0 ? 1 : 0)) % 4, tag = '被改写的机构';
+    if (t === 0) { out.push({ m: 'r2/dusty_bookshelfs', x: sx * 11.2, y, z, yaw: sx < 0 ? ROT.E : ROT.W, rz: sx * 0.12, h: 2.6, tag, on: 'floor', col: [0.6, 2.6, 1.2] }); out.push({ m: 'r2/medieval_book_stack', x: x - sx * 1.0, y, z: z + 0.9, yaw: z, h: 0.5, tag, on: 'floor' }); }
+    if (t === 1) { out.push({ m: 'r2/lectern', x, y, z, yaw: sx < 0 ? ROT.E : ROT.W, h: 1.15, tag, on: 'floor', col: [0.6, 1.15, 0.5] }); out.push({ m: 'r2/old_typewriter', x, y: y + 1.15, z, yaw: sx < 0 ? ROT.E : ROT.W, w: 0.4, tag, on: 'shelf' }); out.push({ m: 'r2/iron_chain', x, y: y + 1.0, z: z + 0.2, yaw: 0.4, h: 0.7, tag, on: 'shelf' }); out.push({ m: 'r2/medieval_candelabra_free_download', x, y, z: z + 1.3, yaw: 0, h: 1.6, tag, on: 'floor', col: [0.5, 1.6, 0.5] }); light(out, x, y + 1.9, z + 1.3, 0xffb060, 1.6, 6); }
+    if (t === 2) { out.push({ m: 'r2/dead_tree_trunk', x: sx * 11.0, y, z, yaw: Math.PI / 2, w: 3.4, tag, on: 'floor', col: [0.35, 0.35, 3.4] }); out.push({ m: 'r2/rock_moss_set_02', x: x - sx * 0.6, y, z: z + 2.3, yaw: z * 2, w: 1.2, tag, on: 'floor' }); }
+    if (t === 3) { out.push({ m: 'r2/rusty_filing_cabinet', x, y, z, yaw: sx < 0 ? ROT.E : ROT.W, rz: sx * 1.5, h: 1.3, tag, on: 'decal' }); out.push({ m: 'r2/barrel_01', x: x + sx * 0.4, y, z: z - 1.2, yaw: z, h: 0.9, tag, on: 'floor', col: [0.6, 0.9, 0.6] }); out.push({ m: 'r2/barrel_02', x: x + sx * 0.5, y, z: z - 1.9, yaw: z * 3, h: 0.9, tag, on: 'floor', col: [0.6, 0.9, 0.6] }); out.push({ m: 'r2/candelabra', x: x - sx * 0.6, y, z: z + 1.4, yaw: 0, h: 1.3, tag, on: 'floor' }); light(out, x - sx * 0.6, y + 1.5, z + 1.4, 0xffb060, 1.4, 6); } } });
+  // 漂浮文件柜阵列（街道上空 7–14 m，缓慢倾斜，成排「错位」）
+  for (let k = 0; k < 18; k++) { const z = -96 - k * 4.8, x = ((k * 37) % 13) - 6, yy = 7 + ((k * 53) % 70) / 10; out.push({ m: k % 3 ? 'file_cabinet' : 'r2/rusty_filing_cabinet', x, y: y + yy, z, yaw: k * 0.7, rx: ((k % 5) - 2) * 0.25, rz: ((k % 3) - 1) * 0.4, h: 1.32, tag: '漂浮文件柜', on: 'ceil' }); }
+  for (const z of [-102, -132, -162]) out.push({ m: 'r2/medieval_chandelier', x: 0, y: y + 9.0, z, yaw: z, h: 1.6, tag: '烛火吊灯', on: 'ceil' });
+  for (const z of [-102, -132, -162]) light(out, 0, y + 8.4, z, 0xffb060, 2.4, 14);
+  return { room, items: out };
+}
+// —— 墨渊 · 考场母本（x −70…−14，z −162…−118）：监考台 + 烛台 + 错乱挂钟 ——
+export function planAbyssExam(y) {
+  const out = []; const X0 = -70, X1 = -14, Z0 = -162, Z1 = -118;
+  const room = { name: '墨渊 · 考场母本（批次7）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H: 8, doors: [{ wall: 'E', a: -160, b: -120, label: '→ 倒悬书城' }], windows: [],
+    rooms: [['监考台', -43.6, -121.4]], aisles: [] };
+  for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) F7(out, '考桌椅', -22 - c * 5.4, -124 - r * 3.6 + 0.3, 1.25, 1.6, y, 0, 0.9);
+  F7(out, '黑板', -24, -120.2, 10, 0.3, y, 0, 3.2);
+  out.push({ m: 'r2/antique_desk', x: -43.6, y, z: -121.0, yaw: Math.PI, w: 1.6, tag: '监考台', on: 'floor', col: [1.6, 0.78, 0.8] });
+  out.push({ m: 'r2/worn_leather_office_chair', x: -43.6, y, z: -119.9, yaw: Math.PI, h: 1.0, tag: '监考台', on: 'floor' });
+  out.push({ m: 'r2/1800s_kerosene_desk_lamps_type_b', x: -44.2, y: y + 0.78, z: -121.1, yaw: 0, h: 0.45, tag: '监考台', on: 'shelf' });
+  out.push({ m: 'r2/mantel_clock_01', x: -43.0, y: y + 0.78, z: -121.0, yaw: Math.PI, h: 0.28, tag: '监考台', on: 'shelf' });
+  for (const sx of [-1, 1]) { out.push({ m: 'r2/medieval_candelabra_free_download', x: -43.6 + sx * 1.6, y, z: -120.8, yaw: 0, h: 1.6, tag: '监考台', on: 'floor', col: [0.5, 1.6, 0.5] }); light(out, -43.6 + sx * 1.6, y + 1.9, -120.8, 0xffb060, 1.8, 6); }
+  for (const [x, z] of [[-24.7, -137.8], [-40.9, -137.8], [-57.1, -137.8], [-30.1, -152.2], [-46.3, -152.2]]) { out.push({ m: 'r2/candelabra', x, y, z, yaw: x, h: 1.3, tag: '巡考烛台', on: 'floor' }); light(out, x, y + 1.5, z, 0xffb060, 1.2, 6); }
+  for (const [k, x] of [-30, -43.6, -57].entries()) out.push({ m: 'r2/vintage_wall_clock', x, y: y + 4.6, z: -119.0, yaw: k * 0.4, rz: (k - 1) * 0.5, h: 0.8, tag: '错乱挂钟', on: 'ceil' });
+  return { room, items: out };
+}
+Object.assign(PLANS, { training: (Y) => fixYaw(planTraining(Y)), metro: (Y) => fixYaw(planMetro(Y)), memorial: (Y) => fixYaw(planMemorial(Y)), s7_ops: (Y) => fixYaw(planS7Ops(Y)), s7_wrap: (Y) => fixYaw(planS7Wrap(Y)), abyss_city: (Y) => fixYaw(planAbyssCity(Y)), abyss_exam: (Y) => fixYaw(planAbyssExam(Y)) });
+Object.assign(R3, { training: true, metro: true, memorial: true, s7_ops: true, s7_wrap: true, abyss_city: true, abyss_exam: true });
+// —— B5 深库主室（金库门内，x −14…14，z −134…−100，层高 7）：补「黑空间」——值守台、收容法阵隔离带、北墙装甲柜列、转运车、灯槽 ——
+export function planB5Deep(y) {
+  const out = []; const X0 = -14, X1 = 14, Z0 = -134, Z1 = -100, H = 7;
+  const room = { name: 'B5 · 深库主室（批次7 补全）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H, doors: [{ wall: 'S', a: -2.4, b: 2.4, label: '圆形金库门' }], windows: [],
+    rooms: [['值守台', 4.4, -102.2], ['收容法阵', 0, -117], ['装甲柜列', 0, -132.8]], aisles: [{ label: '金库门内通道', x0: -1.6, x1: 1.6, z0: -112, z1: -100.4 }] };
+  for (const [x, z] of [[-9, -108], [9, -108], [-9, -118], [9, -118], [-9, -128], [9, -128]]) F7(out, '单件收容室', x, z, 6, 8, y, 0, 3);
+  F7(out, '收容法阵', 0, -117, 7.2, 7.2, y, 0, 0.02);
+  // 值守台（门内东侧，面朝门与法阵）：金属桌 + 椅 + 监视器 + 电话 + 登记簿；对面 双喇叭警报 + 铁皮柜
+  out.push({ m: 'office_desk', x: 4.4, y, z: -102.4, yaw: ROT.W, h: 0.76, tag: '值守台', on: 'floor', col: [0.91, 0.76, 1.93] });
+  out.push({ m: 'r2/old_computer_chair', x: 5.3, y, z: -102.4, yaw: ROT.W + Math.PI, h: 0.92, tag: '值守台', on: 'floor' });
+  out.push({ m: 'monitor', x: 4.3, y: y + 0.76, z: -102.9, yaw: ROT.E, h: 0.42, tag: '值守台', on: 'desk' });
+  out.push({ m: 'r2/office_phone', x: 4.2, y: y + 0.76, z: -101.8, yaw: ROT.E, w: 0.22, tag: '值守台', on: 'desk' });
+  out.push({ m: 'r2/bankers_lamp', x: 4.15, y: y + 0.76, z: -103.25, yaw: ROT.E, h: 0.4, tag: '值守台', on: 'desk' });
+  out.push({ m: 'r2/metal_storage_cabinet', x: -4.4, y, z: -100.75, yaw: 0, h: 1.9, tag: '值守台', on: 'floor', col: [1.0, 1.9, 0.65] });
+  pic(out, 'textures/b07/B07_分级收容制度.png', -2.9, y + 1.8, Z1 - 0.42, Math.PI, 0.6, 0.8, 'black');
+  pic(out, 'textures/b07/B07_畸变物上交须知.png', 2.9, y + 1.8, Z1 - 0.42, Math.PI, 0.6, 0.8, 'black');
+  // 法阵四周铜立柱隔离带（八角）
+  { const pts = []; for (let k = 0; k < 8; k++) { const a = (k / 8) * Math.PI * 2 + Math.PI / 8; pts.push([Math.cos(a) * 4.3, -117 + Math.sin(a) * 4.3]); } stanchions(out, pts, y, '法阵隔离带'); }
+  // 北墙：装甲柜 / 保险柜列（正面朝南）+ 转运车 + 气体灭火瓶
+  for (const [k, x] of [-4.2, -3.0, -1.8, 1.8, 3.0, 4.2].entries()) out.push({ m: k % 3 === 1 ? 'r2/safe_hw' : 'r2/metal_storage_cabinet', x, y, z: Z0 + (k % 3 === 1 ? 0.56 : 0.36), yaw: 0, h: k % 3 === 1 ? 1.2 : 1.9, tag: '装甲柜列', on: 'floor', col: k % 3 === 1 ? [1.17, 1.2, 1.04] : [1.03, 1.9, 0.64] });
+  out.push({ m: 'r2/safe_vault', x: 0, y, z: Z0 + 0.82, yaw: 0, h: 1.6, tag: '装甲柜列', on: 'floor', col: [1.6, 1.6, 1.6] });
+  out.push({ m: 'r2/tool_cart', x: 2.6, y, z: -130.6, yaw: 0.3, w: 0.9, tag: '装甲柜列', on: 'floor', col: [0.9, 0.7, 0.7] });
+  for (const x of [-5.6, 5.6]) out.push({ m: 'r2/fire_extinguisher_5676b1', x, y, z: Z0 + 0.3, yaw: 0, h: 0.9, tag: 'K3', on: 'floor' });
+  // 灯：中轴吸顶灯槽每 4 m（冷白）+ 各收容室门前补光 + 北墙柜列补光
+  for (let z = -102; z > -133; z -= 4) troffer(out, 0, z, y, H, 0, 1.6, { cold: true });
+  for (const [x, z] of [[-5.4, -108], [5.4, -108], [-5.4, -118], [5.4, -118], [-5.4, -128], [5.4, -128]]) light(out, x, y + 3.2, z, 0xe8eeff, 1.6, 7);
+  light(out, 0, y + 3.0, -131.0, 0xffe2c0, 2.0, 9); light(out, 4.4, y + 2.4, -102.4, 0xfff0d8, 1.4, 5);
+  floorZ(out, 'r3_epoxy', -1.6, 1.6, -112.8, -100.4, y, { border: 0.1, bmat: 'r3_paintYellow' }); floorZ(out, 'r3_epoxy', -1.6, 1.6, -133.4, -121.2, y, { border: 0.1, bmat: 'r3_paintYellow' });
+  wear(out, -1.2, 1.2, -112.4, -100.6, y);
+  return { room, items: out };
+}
+Object.assign(PLANS, { b5_deep: (Y) => fixYaw(planB5Deep(Y)) }); Object.assign(R3, { b5_deep: true });

@@ -1,7 +1,9 @@
 // 布景加密工具包（M4）：护墙板/壁柱/踢脚/檐口、藻井天花、地毯与拼花、成组家具、GLB 实例化（InstancedMesh）
 // 所有静态几何走 Batch 合批；重复的 GLB 小件走 Props（每个子网格一个 InstancedMesh）
 import * as THREE from 'three';
-import { loadModel, pbr } from '../engine/assets.js';
+import { loadModel, pbr, loadTex } from '../engine/assets.js';
+// 批次7：Poly Haven 实拍 PBR（col/nrm/arm，arm.g=粗糙度）→ 墙面石膏/护墙板/墙布/混凝土
+export const phm = (name, o = {}) => { const m = new THREE.MeshStandardMaterial({ map: loadTex(`assets/tex/ph/${name}_col.webp`, { srgb: true }), normalMap: loadTex(`assets/tex/ph/${name}_nrm.webp`), roughnessMap: loadTex(`assets/tex/ph/${name}_arm.webp`), color: o.color ?? 0xffffff, roughness: o.roughness ?? 1, envMapIntensity: o.env ?? 0.4 }); if (o.ns) m.normalScale.set(o.ns, o.ns); m.name = 'ph_' + name; return m; };
 import { weather } from '../engine/weather.js';
 
 const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
@@ -36,18 +38,19 @@ export function dressMats(M) {
     dz_wain2: W(pbr('Wood051', { color: 0x5e4230, roughness: 0.42, env: 0.7 }), { macro: 0.1 }),
     dz_base: M.stoneDark,
     dz_pil: W(pbr('Marble016', { rn: true, color: 0x2a2a30, roughness: 0.34, env: 0.6 }), { macro: 0.12, grime: 0.2, ground: 1.2 }),
-    dz_damask: W(new THREE.MeshStandardMaterial({ map: damask('#1d2232', '#4a5270', '#2a3046'), roughness: 0.85, envMapIntensity: 0.4 }), { macro: 0.15, grime: 0.15 }),
-    dz_damaskRed: W(new THREE.MeshStandardMaterial({ map: damask('#3a1416', '#6a2a26', '#4a1c1c'), roughness: 0.85, envMapIntensity: 0.4 }), { macro: 0.15, grime: 0.15 }),
-    dz_damaskGreen: W(new THREE.MeshStandardMaterial({ map: damask('#1a2a22', '#3e5a48', '#22362c'), roughness: 0.85, envMapIntensity: 0.4 }), { macro: 0.15, grime: 0.15 }),
-    dz_plaster: W(pbr('Concrete034', { color: 0x8a8070, roughness: 0.85, env: 0.3 }), { macro: 0.2, grime: 0.25, streak: 0.1 }),
+    dz_damask: W(phm('quatrefoil_jacquard_fabric', { color: 0x4a5682, env: 0.35 }), { macro: 0.15, grime: 0.15 }),
+    dz_damaskRed: W(phm('quatrefoil_jacquard_fabric', { color: 0x823430, env: 0.35 }), { macro: 0.15, grime: 0.15 }),
+    dz_damaskGreen: W(phm('quatrefoil_jacquard_fabric', { color: 0x46664f, env: 0.35 }), { macro: 0.15, grime: 0.15 }),
+    dz_panel: W(phm('dark_paneled_wood', { color: 0xc8a68a, env: 0.5 }), { macro: 0.1, grime: 0.2, ground: 1.0 }),
+    dz_plaster: W(phm('grey_plaster_02', { color: 0xb8ac94, env: 0.3 }), { macro: 0.2, grime: 0.25, streak: 0.1 }),
     dz_ceil: W(new THREE.MeshStandardMaterial({ color: 0x3e3830, roughness: 0.92, envMapIntensity: 0.2 }), { macro: 0.25, grime: 0.1 }),
     dz_beam: W(pbr('Wood051', { color: 0x2a1c14, roughness: 0.6, env: 0.3 }), { macro: 0.12 }),
     dz_tileW: W(new THREE.MeshStandardMaterial({ map: tile('#c8ccc6', '#7a7e7a', 8), roughness: 0.3, envMapIntensity: 0.6 }), { macro: 0.15, grime: 0.35, ground: 1.2 }),
     dz_tileG: W(new THREE.MeshStandardMaterial({ map: tile('#4c6658', '#2a3430', 8), roughness: 0.3, envMapIntensity: 0.6 }), { macro: 0.15, grime: 0.3, ground: 1.2 }),
     dz_tileB: W(new THREE.MeshStandardMaterial({ map: tile('#1a1c22', '#3a3a40', 4), roughness: 0.35, envMapIntensity: 0.5 }), { macro: 0.12, grime: 0.3 }),
-    dz_paintClinic: W(pbr('Concrete034', { color: 0xa8b0a6, roughness: 0.8, env: 0.3 }), { macro: 0.12, grime: 0.15 }),
+    dz_paintClinic: W(phm('grey_plaster_02', { color: 0xd4dbd0, env: 0.3 }), { macro: 0.12, grime: 0.15 }),
     dz_paintLow: W(new THREE.MeshStandardMaterial({ color: 0x2c3a34, roughness: 0.55, metalness: 0.1 }), { macro: 0.2, grime: 0.5, ground: 1.2, streak: 0.2 }),
-    dz_paintUp: W(pbr('Concrete034', { color: 0x6c6e6a, roughness: 0.8, env: 0.3 }), { macro: 0.25, grime: 0.3, streak: 0.25 }),
+    dz_paintUp: W(phm('concrete_wall_008', { color: 0x9a9c96, env: 0.3 }), { macro: 0.25, grime: 0.3, streak: 0.25 }),
     dz_parquet: W(new THREE.MeshStandardMaterial({ map: parquet(), roughness: 0.42, envMapIntensity: 0.5 }), { macro: 0.15, dust: 0.15 }),
     dz_rugRed: new THREE.MeshStandardMaterial({ map: rugTex('#4a1418', '#1a1a2a', '#b08a40'), roughness: 1 }),
     dz_rugNavy: new THREE.MeshStandardMaterial({ map: rugTex('#14203e', '#3a1014', '#b08a40'), roughness: 1 }),
@@ -132,9 +135,9 @@ export function wallSeg(cx, cz, len, n, y) { const u = [n[1], -n[0]]; return new
 
 const STYLES = {
   // 机构正式：深色胡桃护墙板 + 大马士革墙布 + 黑石壁柱 + 金线
-  office: { low: 'dz_wain', field: 'dz_wain2', up: 'dz_damask', pil: 'dz_pil', base: 'dz_base', crown: 'dz_pil', trim: 'gold', lowH: 1.15 },
-  red: { low: 'dz_wain', field: 'dz_wain2', up: 'dz_damaskRed', pil: 'dz_pil', base: 'dz_base', crown: 'dz_pil', trim: 'gold', lowH: 1.15 },
-  green: { low: 'dz_wain', field: 'dz_wain2', up: 'dz_damaskGreen', pil: 'dz_wain', base: 'dz_base', crown: 'dz_wain', trim: 'brass', lowH: 1.15 },
+  office: { low: 'dz_panel', field: 'dz_wain2', up: 'dz_damask', pil: 'dz_pil', base: 'dz_base', crown: 'dz_pil', trim: 'gold', lowH: 1.15 },
+  red: { low: 'dz_panel', field: 'dz_wain2', up: 'dz_damaskRed', pil: 'dz_pil', base: 'dz_base', crown: 'dz_pil', trim: 'gold', lowH: 1.15 },
+  green: { low: 'dz_panel', field: 'dz_wain2', up: 'dz_damaskGreen', pil: 'dz_wain', base: 'dz_base', crown: 'dz_wain', trim: 'brass', lowH: 1.15 },
   // 黑石：黑大理石墙裙 + 暖灰抹灰 + 黑石壁柱
   stone: { low: 'dz_pil', field: 'stoneDark', up: 'dz_plaster', pil: 'dz_pil', base: 'dz_base', crown: 'dz_pil', trim: 'gold', lowH: 1.3 },
   // 医务/实验：白瓷砖墙裙 + 灰绿涂料，不锈钢护角
