@@ -863,6 +863,50 @@ function idCardBig(name, brass) {
   g.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.receiveShadow = true; } });
   return g;
 }
+// 批次31（用户 07:20 覆盖上一条）：证件照不再挂在大衣 / 椅背上 → 座位 / 衣帽架旁放一张胡桃木边几，几面摊开牛皮纸人事档案夹，
+// 证件照（A6 以上 0.12×0.16 m）用铜回形针夹在右页左上角，页面打字机式档案文字，旁边立一张打字机名签。边几自带，不依赖各处桌子尺寸（避免悬空 / 穿模）。
+const _dos = {};
+function dossierPageMat(name) {
+  if (_dos[name]) return _dos[name];
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 700; const c = cv.getContext('2d');
+  c.fillStyle = '#efe8d6'; c.fillRect(0, 0, 512, 700); c.fillStyle = '#2a2420'; c.font = '600 30px "NB Mono","Courier New",monospace'; c.textBaseline = 'top';
+  c.fillText('人员档案', 300, 30); c.font = '22px "NB Mono","Courier New",monospace';
+  const L = ['姓名：' + name, '所属：叙事管理局', '状态：在册 / 暂离', '', '备注：', '本人物品原位封存，', '请勿移动。'];
+  L.forEach((t, i) => c.fillText(t, 300 - (i > 2 ? 270 : 0), 90 + i * 34 + (i > 2 ? 200 : 0)));
+  for (let i = 0; i < 7; i++) { c.fillStyle = 'rgba(40,36,32,0.35)'; c.fillRect(30, 560 + i * 18, 300 + (i * 37) % 140, 3); }
+  c.strokeStyle = 'rgba(150,40,30,0.7)'; c.lineWidth = 4; c.beginPath(); c.arc(420, 600, 48, 0, Math.PI * 2); c.stroke(); c.font = '700 40px "NB Serif",serif'; c.fillStyle = 'rgba(150,40,30,0.7)'; c.fillText('叙', 400, 580);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  return (_dos[name] = new THREE.MeshStandardMaterial({ map: t, roughness: 0.85 }));
+}
+function tagMat(name) {
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 80; const c = cv.getContext('2d');
+  c.fillStyle = '#f4efe2'; c.fillRect(0, 0, 256, 80); c.fillStyle = '#1e1a16'; c.font = '600 40px "NB Mono","Courier New",monospace'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, 128, 42);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.8 });
+}
+/** 边几 + 摊开档案夹 + 回形针证件照 + 打字机名签；(x, z) 为边几中心（person 局部坐标，面朝 +Z） */
+function dossierStand(g, M, name, x, z) {
+  const k = IDPHOTO[name]; if (!k) return;
+  const wood = M.wood ?? new THREE.MeshStandardMaterial({ color: 0x4a3020, roughness: 0.6 }); const brass = M.brass ?? M.gold;
+  const kraft = new THREE.MeshStandardMaterial({ color: 0xa47e4e, roughness: 0.9 });
+  const add = (geo, m, px, py, pz, rx = 0, ry = 0, rz = 0) => { const me = new THREE.Mesh(geo, m); me.position.set(x + px, py, z + pz); me.rotation.set(rx, ry, rz); me.castShadow = me.receiveShadow = true; g.add(me); return me; };
+  const TOP = 0.62;
+  add(new THREE.BoxGeometry(0.56, 0.03, 0.42), wood, 0, TOP - 0.015, 0); // 几面
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) add(new THREE.CylinderGeometry(0.016, 0.012, TOP - 0.03, 10), wood, sx * 0.24, (TOP - 0.03) / 2, sz * 0.17);
+  add(new THREE.BoxGeometry(0.5, 0.02, 0.36), wood, 0, 0.2, 0); // 下层隔板
+  add(new THREE.BoxGeometry(0.565, 0.012, 0.425), brass, 0, TOP - 0.034, 0); // 几面下铜线
+  // 档案夹：两页牛皮纸封皮（各 0.22×0.3）+ 右页内衬档案纸
+  add(new THREE.BoxGeometry(0.225, 0.004, 0.3), kraft, -0.115, TOP + 0.002, 0.01, 0, 0.04, 0);
+  add(new THREE.BoxGeometry(0.225, 0.004, 0.3), kraft, 0.115, TOP + 0.002, 0.01);
+  add(new THREE.PlaneGeometry(0.21, 0.287), dossierPageMat(name), 0.115, TOP + 0.0045, 0.01, -Math.PI / 2);
+  add(new THREE.PlaneGeometry(0.2, 0.28), new THREE.MeshStandardMaterial({ color: 0xe9e2cf, roughness: 0.9 }), -0.115, TOP + 0.0045, 0.012, -Math.PI / 2, 0, 0.04);
+  // 证件照（整张证件卡图，0.12×0.16 m ≥ A6）夹在右页左上角，略斜
+  const ph = add(new THREE.PlaneGeometry(0.12, 0.16), new THREE.MeshStandardMaterial({ map: loadTex(`content/textures/idphoto/${k}.jpg`, { srgb: true }), roughness: 0.5, emissive: 0xffffff, emissiveIntensity: 0.05 }), 0.075, TOP + 0.006, -0.045, -Math.PI / 2, 0, 0.05);
+  ph.castShadow = false;
+  add(new THREE.TorusGeometry(0.012, 0.0015, 4, 16), brass, 0.035, TOP + 0.0075, -0.122, -Math.PI / 2, 0, 0).scale.set(0.6, 1.6, 1); // 回形针
+  // 打字机名签（帐篷形折卡）立在档案夹右前
+  const tm = tagMat(name);
+  add(new THREE.PlaneGeometry(0.09, 0.032), tm, 0.2, TOP + 0.016, 0.165, -0.38); add(new THREE.BoxGeometry(0.09, 0.034, 0.002), new THREE.MeshStandardMaterial({ color: 0xe8e2d2, roughness: 0.85 }), 0.2, TOP + 0.016, 0.1635, -0.38).castShadow = false;
+}
 function namePlateMat(name) {
   const cv = document.createElement('canvas'); cv.width = 256; cv.height = 72; const c = cv.getContext('2d');
   c.fillStyle = '#6b4f22'; c.fillRect(0, 0, 256, 72); c.strokeStyle = '#d8b56a'; c.lineWidth = 4; c.strokeRect(4, 4, 248, 64);
@@ -885,11 +929,7 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
     placeModel('r4/exam_chair', { height: 0.84 }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); g.add(o); });
     placeModel('r4/wool_coat', { height: 0.886 }).then((o) => { o.position.set(0, 0.01, -0.28); g.add(coatTint(o)); });
     if (cap) add(new THREE.CylinderGeometry(0.11, 0.12, 0.06, 16), cloth, 0.08, 0.485, 0.06);
-    if (name) { const card = idCardBig(name, brass);
-      if (card) { // 批次31：A5 档案照片卡立在椅面铜卡座上、后仰 30°（底边 y0.465 z+0.04，顶边 y0.66 z−0.07；中档在 z≈−0.16、y0.615–0.665，不相交；卡上已有姓名 → 去掉椅面前沿名牌免得挡卡）
-        card.position.set(0, 0.465 + 0.113 * Math.cos(0.52), 0.04 - 0.113 * Math.sin(0.52)); card.rotation.x = -0.52; g.add(card);
-        add(new THREE.BoxGeometry(0.19, 0.012, 0.05), brass, 0, 0.462, 0.04).castShadow = false; add(new THREE.BoxGeometry(0.19, 0.016, 0.006), brass, 0, 0.465, 0.066).castShadow = false; // 卡座 + 前挡
-      } else { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 0.49, 0.12, -0.5); np.castShadow = false; } }
+    if (name) dossierStand(g, M, name, 0.62, 0.05); // 批次31（用户 07:20）：证件照从椅上拿掉 → 椅旁边几上的人事档案夹
     return g; }
   if (clue === 'coat' || clue === 'hanger') { // 衣帽架 / 制服挂架
     if (clue === 'coat') { add(new THREE.CylinderGeometry(0.02, 0.025, 1.75, 10), wood, 0, 0.875, 0); add(new THREE.CylinderGeometry(0.2, 0.22, 0.03, 20), wood, 0, 0.015, 0);
@@ -899,7 +939,7 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
     placeModel('r4/wool_coat', { height: 1.03 }).then((o) => { o.position.set(0, top + 0.03 - 1.03, 0.07); g.add(coatTint(o)); });
     if (cap && clue === 'coat') add(new THREE.CylinderGeometry(0.12, 0.13, 0.07, 16), cloth, 0.05, 1.79, 0);
     if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, top - 1.18, 0.03); np.castShadow = false;
-      const card = idCardBig(name, brass); if (card) { card.position.set(0.1, top - 0.27, 0.196); card.rotation.x = -0.06; g.add(card); } } // 批次31：A5 档案照片卡夹在大衣左胸驳头外（x 0.02–0.18 避开中线扣子 x0±0.012；y top−0.157…−0.383，在领口之下、首粒扣 top−0.40 之上；卡面 z0.196 > 驳头前沿 ≈0.175，不穿模）
+      dossierStand(g, M, name, 0.55, 0.12); } // 批次31（用户 07:20）：证件照从大衣上拿掉 → 衣帽架旁边几上的人事档案夹 // 批次31：A5 档案照片卡夹在大衣左胸驳头外（x 0.02–0.18 避开中线扣子 x0±0.012；y top−0.157…−0.383，在领口之下、首粒扣 top−0.40 之上；卡面 z0.196 > 驳头前沿 ≈0.175，不穿模）
     return g; }
   return g;
 }
