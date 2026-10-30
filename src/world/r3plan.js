@@ -2074,7 +2074,6 @@ export function planCitizenService(y) {
   for (const z of [-38.45, -39.55]) leafletRack(out, 26.55, z, ROT.W, y);
   pic(out, 'textures/b02/B02_市民服务窗口牌.png', 26.2, y + 1.45, -35.0, ROT.W + 0.35, 0.95, 0.41, 'black', { tag: '办事指南', stand: true, fy: y });
   out.push({ fixed: true, m: '固定:展板', x: 26.2, y, z: -35.0, yaw: 0, size: [1.05, 1.75, 0.45], tag: '办事指南', on: 'floor' });
-  out.push({ m: 'r2/monstera_deliciosa_potted_mid_century_pl', x: 23.9, y, z: -33.15, yaw: 2.1, h: 1.0, tag: '绿植', on: 'floor' });
   return { room, items: out };
 }
 /** 三层插袋式宣传资料架（木柜身 + 阶梯插袋 + 亚克力挡条 + 竖插的折页），正面朝 yaw */
@@ -2119,7 +2118,7 @@ function planLobby(y, F) {
   for (const s of [-1, 1]) { const x = s * (X - 0.56);
     for (const bz of [-87.4, -90.0]) out.push({ m: 'r2/18th_century_bench_from_hungarian_opera', x, y, z: bz, yaw: s < 0 ? ROT.E : ROT.W, w: 1.5, tag: '休息长凳', on: 'floor' });
     out.push({ m: 'r4/furniture_trashBin_lid_a01', x: s * 4.45, y, z: -91.5, yaw: 0, fit: [0.384, 0.848, 0.364], tag: '垃圾桶', on: 'floor' });
-    out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x: s * (X - 0.6), y, z: -88.72, yaw: 0, h: 0.6, tag: '绿植', on: 'floor' });
+    out.push({ m: 'r2/monstera_deliciosa_potted_mid_century_pl', x: s * (X - 0.62), y, z: -88.72, yaw: s * 0.8, h: 0.7, tag: '绿植', on: 'floor' }); // 批次13：绿萝陶盆偏粉 → 龟背竹
     for (const z of [-86.9, -90.3]) { sconce(out, s * (X - 0.19), y + 2.1, z, s < 0 ? ROT.E : ROT.W); light(out, s * (X - 0.5), y + 2.5, z, 0xfff0dc, 0.9, 5); } }
   out.push({ m: 'r2/victorian_umbrella_stand', x: -6.9, y, z: -91.2, yaw: 0, h: 1.9, tag: '伞架', on: 'floor' });
   out.push({ m: 'r4/fireExtinguisher_abc_a03', x: 7.4, y, z: -91.55, yaw: ROT.W, fit: [0.144, 0.545, 0.192], tag: '消防', on: 'floor' });

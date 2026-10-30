@@ -290,7 +290,7 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
     pnl.position.set(x + (x > 0 ? 2.0 : -2.0) + (UP ? (x > 0 ? 0.45 : -0.45) : 0), y + 1.3, Z0 - 0.23 - dz); zone.add(pnl);
     ctx.elevatorCalls.push({ obj: pnl, x, floor: name });
   }
-  const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.7), brassPlaqueMaterial(name, [HALL_TEXT[name] ?? '']));
+  const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.7), UP ? floorPlateMat(name, UP_TEXT[name] ?? []) : brassPlaqueMaterial(name, [HALL_TEXT[name] ?? ''])); // 批次13：上层原用竖版铜牌贴图拉伸到横版且无文字 → 横版深铜底金字楼层牌
   plate.position.set(0, y + 2.2, Z0 - 0.22 - dz); plate.rotation.y = Math.PI; zone.add(plate);
   if (name === 'B3') ctx.anchors.doc_spine_floorplate_b3 = plate;
   if (name === 'B4') { const sf = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.6), signMaterial('电梯安全须知', ['若电梯显示不存在的楼层', '请勿出梯', '', '若轿厢内多出一名乘客', '请不要数人数'], 420, 600)); sf.position.set(-3.0, y + 1.6, Z0 - 0.22); sf.rotation.y = Math.PI; zone.add(sf); ctx.anchors.doc_spine_safety = sf; }
@@ -298,6 +298,16 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
   if (!UP) for (const x of [-6, 0, 6]) { b.box('blackMetal', 1.6, 0.06, 0.4, [x, y + H - 0.03, -88], { uv: 1 }); const l = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.03, 0.26), Mx.lampAmber); l.position.set(x, y + H - 0.07, -88); zone.add(l); }
   point(zone, UP ? 0xfff0dc : 0xffd0a0, 8, [0, y + 4, -88], 12);
   rectLight(zone, 0xffe8c8, 1.2, 16, 6, [0, y + H - 0.2, -88], [0, y, -88]);
+}
+const UP_TEXT = { '2F': ['国际联络处', '宣传处 · 新闻发布厅'], '3F': ['政策研究室 · 法务处', '医务室 · 观察病房'], '4F': ['典籍藏书阁', '阅览 · 借阅 · 古籍修复'], '12F': ['局长室', '机要室 · 会客厅'] };
+function floorPlateMat(name, lines) { // 横版楼层牌：深铜底 + 金色描边 + 大号楼层 + 两行科室
+  const W = 1024, H = 512; const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#2a2016'); g.addColorStop(1, '#17110b'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  c.strokeStyle = '#c9a052'; c.lineWidth = 10; c.strokeRect(22, 22, W - 44, H - 44); c.lineWidth = 3; c.strokeRect(44, 44, W - 88, H - 88);
+  c.fillStyle = '#e6c67c'; c.textAlign = 'left'; c.textBaseline = 'middle'; c.font = '900 210px "NB Title","NB Serif",serif'; c.fillText(name, 90, H / 2 + 8);
+  c.fillStyle = '#c9a052'; c.fillRect(name.length > 2 ? 470 : 400, 120, 4, H - 240);
+  c.fillStyle = '#e8d6a8'; c.font = '700 58px "NB Serif",serif'; lines.forEach((l, i) => c.fillText(l, name.length > 2 ? 505 : 435, H / 2 - 50 + i * 100));
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return new THREE.MeshStandardMaterial({ map: t, metalness: 0.35, roughness: 0.45, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.08 });
 }
 function floorIndicatorMat(name) { // 电梯门头楼层指示器：黑底琥珀数码 + 上下箭头
   const cv = document.createElement('canvas'); cv.width = 256; cv.height = 100; const c = cv.getContext('2d'); c.fillStyle = '#0b0906'; c.fillRect(0, 0, 256, 100);
