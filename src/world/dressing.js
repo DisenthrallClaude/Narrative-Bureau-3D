@@ -100,19 +100,19 @@ export async function buildDressing(scene, world, ctx) {
     const zone = zoneOf('floor3'), b = new Batch(), P = new Props(), y = UPPER['3F'], H = 5.4;
     const W5 = wins([-95, -100, -105, -110, -115]);
     WX(b, -28, -92.2, -119.8, 1, y, H, { style: 'green', skip: W5, sconce: true, pitch: 5 });
-    WX(b, 28, -92.2, -119.8, -1, y, H, { style: 'stone', skip: W5, pilSkip: [[-106.5, -113.5]] });
+    WX(b, 28, -92.2, -119.8, -1, y, H, { style: R3.lab3 ? 'lab' : 'stone', skip: W5, pilSkip: [[-106.5, -113.5]] });
     WZ(b, -119.8, -28, -9.75, 1, y, H, { style: 'green', pilSkip: [[-26, -12]] });
     WZ(b, -119.8, -9.45, 9.45, 1, y, H, { style: 'clinic', pilSkip: [[-0.8, 0.8]] });
-    WZ(b, -119.8, 9.75, 28, 1, y, H, { style: 'stone' });
+    WZ(b, -119.8, 9.75, 28, 1, y, H, { style: R3.lab3 ? 'lab' : 'stone' });
     WZ(b, -92.2, -28, -9.75, -1, y, H, { style: 'green', skip: [[-9.75, -9.0]], pilSkip: [[-20.2, -15.8], [-4.8, -3.2]] });
     WZ(b, -92.2, -9.45, 9.45, -1, y, H, { style: 'clinic', skip: [[-2.3, 2.3], [-9.45, -9.0], [9.0, 9.45], [-9.45, -3.3]], pilSkip: [[-2.4, 2.4]] });
-    WZ(b, -92.2, 9.75, 28, -1, y, H, { style: 'stone', skip: [[9.75, 10.1]], pilSkip: [[15.8, 20.2]] });
+    WZ(b, -92.2, 9.75, 28, -1, y, H, { style: R3.lab3 ? 'lab' : 'stone', skip: [[9.75, 10.1]], pilSkip: [[15.8, 20.2]] });
     WX(b, -9.75, -94, -119.8, -1, y, H, { style: 'green', skip: [[-95.9, -101.2]] });
     WX(b, -9.45, -94.3, -119.8, 1, y, H, { style: 'clinic', skip: [[-95.9, -99.1]] });
     WX(b, 9.45, -94, -119.8, -1, y, H, { style: 'clinic', skip: [[-95.9, -99.1], [-105.2, -106.8]] });
-    WX(b, 9.75, -94, -119.8, 1, y, H, { style: 'stone', skip: [[-93.6, -99.1]] });
+    WX(b, 9.75, -94, -119.8, 1, y, H, { style: R3.lab3 ? 'lab' : 'stone', skip: [[-93.6, -99.1]] });
     coffered(b, -28, -9.6, -92, -120, y + H, { cell: 3.0, lightEvery: 2, beam: 'dz_beam' });
-    tGrid(b, -9.45, 9.45, -92.2, -119.8, y + H); tGrid(b, 9.75, 28, -92.2, -119.8, y + H, { warm: false, lx: 4.8 });
+    tGrid(b, -9.45, 9.45, -92.2, -119.8, y + H); if (!R3.lab3) tGrid(b, 9.75, 28, -92.2, -119.8, y + H, { warm: false, lx: 4.8 }); // 批次18：lab3 白网格吊顶 → r3plan 深色木格藻井
     // 办公区：桌面杂物（工位岛已有显示器/椅），文件柜墙、打印机、饮水机、挂钟、吊牌
     if (!R3.floor3_office) { for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) { const x = -24 + k * 7, z = -98 - r * 6, t = y + 0.79; for (const dx of [-1.6, 0, 1.6]) for (const dz of [-0.55, 0.55]) { const sx = x + dx + 0.5, sz = z + dz * 1.2; if ((r + k + dx) % 2) paperStack(b, sx, t, sz, dz * 2, 4); else folderStack(b, sx, t, sz, dz, 3); P.add('keyboard', [x + dx, t, z + dz * 1.15], { w: 0.42, yaw: dz > 0 ? 0 : Math.PI }); } telephone(b, x - 2.1, t, z + 0.6, 0.3); greenLamp(b, x + 2.1, t, z - 0.6, Math.PI); bin(b, x + 2.8, y, z + 1.4); } }
     if (!R3.floor3_office) { cabinetRow(P, world, -19, y, -119.4, 0, 14, 0.62, 'file_cabinet', 1.35); }
