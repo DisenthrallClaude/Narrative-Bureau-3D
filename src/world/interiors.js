@@ -367,8 +367,9 @@ function buildHall(zone, world, ctx, M, add) {
   ctx.scanRings = [];
   for (let i = 0; i < 8; i++) {
     const x = lanes[i], z = GZ - 3.2;
-    for (const ex of [-1, 1]) { bA.box('blackMetal', 0.22, 2.3, 0.55, [x + ex * 0.62, Y + 1.15, z], { uv: 1 }); bA.box('gold', 0.24, 0.05, 0.57, [x + ex * 0.62, Y + 2.0, z], { uv: 1 }); world.box(x + ex * 0.62, Y + 1.15, z, 0.24, 2.3, 0.56); b.box('runeGold', 0.02, 2.0, 0.08, [x + ex * 0.51, Y + 1.15, z + 0.2], { uv: false }); }
-    bA.box('blackMetal', 1.46, 0.3, 0.6, [x, Y + 2.45, z], { uv: 1 }); bA.box('gold', 1.48, 0.04, 0.62, [x, Y + 2.3, z], { uv: 1 });
+    // 批次30：黑方柱 + 金带 + 顶梁方块 → Blender 精建 scan_gate_6080（tools/blender/hall_props.py：黑漆立柱 + 铜框线 / 铜踢脚 + 内侧感应格栅 + 指示灯列 + 顶梁铭牌框），碰撞体不变
+    add(placeModel('r2/scan_gate_6080', { width: 1.5, pos: [x, Y, z] }));
+    for (const ex of [-1, 1]) { world.box(x + ex * 0.62, Y + 1.15, z, 0.24, 2.3, 0.56); b.box('runeGold', 0.02, 2.0, 0.08, [x + ex * 0.505, Y + 1.15, z + 0.2], { uv: false }); }
     const ind = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.06, 0.02), new THREE.MeshStandardMaterial({ color: 0, emissive: 0x44ff88, emissiveIntensity: 2 })); ind.position.set(x, Y + 2.45, z + 0.31); zone.add(ind);
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.035, 8, 64), M.runeGold.clone()); ring.rotation.x = Math.PI / 2; ring.position.set(x, Y + (i === 6 ? 2.25 : 1.2), z); zone.add(ring);
     const lane = goldText(`${i + 1}`, 0.3, 0.3, M.goldBright, { res: 64 }); lane.position.set(x, Y + 2.45, z + 0.32); zone.add(lane);
@@ -439,7 +440,7 @@ function buildHall(zone, world, ctx, M, add) {
   for (const z of [-36, -70]) for (const sx of [-1, 1]) add(placeModel('extinguisher', { height: 0.65, pos: [sx * (X - 0.4), Y, z] }));
   for (const p of [[-15.5, -33], [15.5, -33], [15.5, -73.5]]) add(placeModel('potted_plant', { height: 1.8, pos: [p[0], Y, p[1]] }).then((o) => { world.boundsOf(o, 0.6); return o; }));
   // 等候长椅（闸机后）
-  for (const x of [-8, 8]) add(placeModel('street_seating', { width: 4.2, pos: [x, Y, -68], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.85); return o; }));
+  for (const x of [-8, 8]) add(placeModel('r2/wait_bench_6080', { width: 4.2, pos: [x, Y, -68] }) /* 批次30：street_seating → Blender 精建候检长椅（实木条 + 铸铁扶手），坐面朝南 */.then((o) => { world.boundsOf(o, 0.85); return o; }));
   // 西门洞（通往档案馆）
   if (!HH) archPortal(b, new Frame([-X + 0.1, Y, -51.5], Math.PI / 2), 8, 8 - 8 * 0.866 * 0.5, 0.3);
   const way = goldText('← 西翼　人事档案馆', 3.6, 0.42, M.goldBright, { res: 128 }); way.position.set(-X + 0.4, Y + 9.6, -51.5); way.rotation.y = Math.PI / 2; zone.add(way);

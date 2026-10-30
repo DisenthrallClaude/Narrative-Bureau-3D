@@ -622,14 +622,9 @@ export function planSecurityHall(y) {
   const BX = [-10.0, -6.4, 6.4, 10.0], BZ = -49.5;
   for (const [i, x] of BX.entries()) {
     out.push({ fixed: true, m: '固定:查验柜台（台面 1.09 m）', x, y, z: BZ, yaw: 0, size: [2.0, 1.09, 0.8], col: [2.0, 1.09, 0.8], tag: '证件查验', on: 'floor' });
-    out.push({ box: 'r3_walnutLt', x, y: y + 0.525, z: BZ, w: 1.9, h: 1.05, d: 0.7, uv: 0.5, tag: '证件查验', on: 'partv' });
-    for (const dx of [-0.62, 0, 0.62]) out.push({ box: 'dz_beam', x: x + dx, y: y + 0.52, z: BZ + 0.36, w: 0.06, h: 0.9, d: 0.03, tag: '证件查验', on: 'partv' }); // 立梃（南面）
-    out.push({ box: 'dz_brassDim', x, y: y + 0.06, z: BZ + 0.36, w: 1.9, h: 0.12, d: 0.03, tag: '证件查验', on: 'partv' }); // 铜踢脚
-    out.push({ box: 'blackMarble', x, y: y + 1.07, z: BZ, w: 2.0, h: 0.04, d: 0.8, uv: 0.5, tag: '证件查验', on: 'partv' });
-    out.push({ box: 'glassClear', x, y: y + 1.42, z: BZ + 0.18, w: 1.6, h: 0.66, d: 0.015, tag: '证件查验', on: 'partv' });
-    out.push({ box: 'dz_brassDim', x, y: y + 1.76, z: BZ + 0.18, w: 1.64, h: 0.03, d: 0.03, tag: '证件查验', on: 'partv' });
-    out.push({ box: 'blackMarble', x, y: y + 1.12, z: BZ + 0.3, w: 0.5, h: 0.02, d: 0.16, tag: '证件查验', on: 'partv' }); // 递件槽
-    out.push({ sign: `证件查验　${i + 1}`, sub: '请出示临时或正式证件', x, y: y + 0.85, z: BZ + 0.375, yaw: 0, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
+    // 批次30：柜身 / 立梃 / 铜踢脚 / 黑石台面 / 玻璃挡板 / 递件槽 方块 → Blender 精建 sec_counter_6080（tools/blender/hall_props.py：胡桃木框芯板 + 黑石台面 + 铜包边 + 铜立柱玻璃挡板 + 编号牌框）
+    out.push({ m: 'r2/sec_counter_6080', x, y, z: BZ, yaw: 0, w: 2.012, tag: '证件查验', on: 'partv' });
+    out.push({ sign: `证件查验　${i + 1}`, sub: '请出示临时或正式证件', x, y: y + 0.85, z: BZ + 0.385, yaw: 0, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
     out.push({ m: 'r2/bar_chair_round_01', x, y, z: BZ - 0.85, yaw: ROT.S, h: 0.78, tag: '证件查验', on: 'floor' });
     out.push({ m: 'r2/bankers_lamp', x: x - 0.7, y: y + 1.09, z: BZ - 0.2, yaw: ROT.S, h: 0.4, tag: '证件查验', on: 'desk' });
     out.push({ m: i % 2 ? 'r2/wooden_flat_filing_tray' : 'r2/document_letter_tray_documents_organizer', x: x + 0.55, y: y + 1.09, z: BZ - 0.15, yaw: 0, w: 0.32, tag: '证件查验', on: 'desk' });
