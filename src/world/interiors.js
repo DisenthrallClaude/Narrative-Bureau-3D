@@ -399,7 +399,10 @@ function buildHall(zone, world, ctx, M, add) {
   for (const side of [1, -1]) { const sm = new THREE.Mesh(new THREE.PlaneGeometry(SW, SH), hud.mat); sm.position.set(0, SY, SZ + side * 0.26); sm.rotation.y = side > 0 ? 0 : Math.PI; zone.add(sm); }
   ctx.mainScreenPos = new THREE.Vector3(0, SY, SZ);
   // 东墙通缉公告栏
-  const wb = content.texPatched('tex_sec_wanted_board', [{ rect: [814 / 2176, 1322 / 1632, 72 / 2176, 72 / 1632], fill: '#161617', text: '叙', color: '#d8b56c', size: 0.86 }]); // 生图底部「敘事管理局」改简体
+  const wb = content.texPatched('tex_sec_wanted_board', [{ rect: [814 / 2176, 1322 / 1632, 72 / 2176, 72 / 1632], fill: '#161617', text: '叙', color: '#d8b56c', size: 0.86 },
+    // 批次16：两张「A 级通缉」卡中间的灰色空照片框 → 填秦骁 / 江戾档案海报头像裁切（做旧灰调）
+    { rect: [223 / 1536, 504 / 1152, 155 / 1536, 176 / 1152], img: content.texUrl('tex_archive_portrait_qinxiao'), crop: [300, 330, 360, 410], filter: 'grayscale(1) sepia(0.3) contrast(1.08)' },
+    { rect: [537 / 1536, 504 / 1152, 154 / 1536, 176 / 1152], img: content.texUrl('tex_archive_portrait_jiangli'), crop: [400, 300, 360, 410], filter: 'grayscale(1) sepia(0.3) contrast(1.08)' }]); // 生图底部「敘事管理局」改简体
   b.box('wood', 0.2, 2.6, 5.6, [X - 0.1, Y + 2.2, -64], { uv: 0.5 });
   b.box('gold', 0.22, 2.7, 0.08, [X - 0.1, Y + 2.2, -61.2], { uv: 1 }); b.box('gold', 0.22, 2.7, 0.08, [X - 0.1, Y + 2.2, -66.8], { uv: 1 });
   const wbm = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 2.4), wb ? new THREE.MeshStandardMaterial({ map: wb, roughness: 0.6 }) : wantedBoardMaterial());
@@ -441,7 +444,7 @@ function buildHall(zone, world, ctx, M, add) {
   const way = goldText('← 西翼　人事档案馆', 3.6, 0.42, M.goldBright, { res: 128 }); way.position.set(-X + 0.4, Y + 9.6, -51.5); way.rotation.y = Math.PI / 2; zone.add(way);
   // 殷泽
   const yz = person(M, { coat: 0x0b0d14 }); yz.position.set(lanes[6] + 1.6, Y, GZ - 6.2); yz.rotation.y = Math.PI * 0.85; zone.add(yz); ctx.yinze = yz; // 殷泽：不显形（剧情走位逻辑保留），原位放他的衣帽架 + 名牌，台词走安检广播
-  { const yc = person(M, { coat: 0x0b0d14, cap: true, clue: 'coat', name: '殷泽' }); yc.position.set(lanes[6] + 2.4, Y, GZ - 6.8); yc.rotation.y = Math.PI; zone.add(yc); }
+  { const yc = person(M, { coat: 0x5a4632, clue: 'coat', name: '殷泽' }) /* 批次16：驼色呢料（原 0x0b0d14 近黑看不清）；去掉程序化黑圆柱帽 */; yc.position.set(lanes[6] + 2.4, Y, GZ - 6.8); yc.rotation.y = Math.PI; zone.add(yc); }
   // —— 光：玫瑰窗光柱、侧窗斜射光柱、尘埃 ——
   ctx.shafts = ctx.shafts ?? [];
   const rs = lightShaft({ from: [0, Y + 19, Z0 - 0.2], to: [0, Y + 0.5, -54], r0: 4.2, r1: 6.5, color: 0xffd9a0, intensity: 0.12 }); zone.add(rs); ctx.shafts.push(rs);

@@ -2272,7 +2272,7 @@ export function planExamCenter(y) {
     out.push({ m: 'r2/schooldesk_01', x, y, z, yaw: 0, w: 0.7, tag: '① 考位', on: 'floor', col: [0.7, 0.75, 0.5] });
     out.push({ m: 'r4/exam_chair', x, y, z: z + 0.5, yaw: Math.PI, h: 0.84, tag: '① 考位', on: 'floor' }); // 批次15：Blender 精建实木课椅（原蓝色塑料椅）
     // 批次15：schooldesk_01 台面实测 0.882 × 缩放 0.972 = 0.857（原 0.757 埋在桌面里）
-    out.push({ box: 'dz_paper', x: x - 0.04, y: y + 0.861, z: z + 0.02, w: 0.21, h: 0.004, d: 0.297, yaw: 0.04 * ((n % 3) - 1), tag: '① 考位', on: 'desk' });
+    out.push({ examPaper: true, x: x - 0.04, y: y + 0.861, z: z + 0.02, w: 0.21, h: 0.002, d: 0.297, yaw: 0.04 * ((n % 3) - 1), tag: '① 考位', on: 'desk' }); // 批次16：印刷试卷贴图（原纯色纸块与桌面同色）
     out.push({ box: 'r3_paintYellow', x: x + 0.2, y: y + 0.867, z: z + 0.04, w: 0.012, h: 0.008, d: 0.17, yaw: 0, tag: '① 考位', on: 'desk' });
     n++;
   }
@@ -2299,8 +2299,22 @@ export function planExamCenter(y) {
   // ③ 北墙（批次15 补满）：局徽（顶）→ 铜框大挂钟 + 两侧「肃」「静」铜字 → 告示板（印刷告示）+ 样张 + 两条标语
   out.push({ box: 'stoneDark', x: 35, y: y + 3.55, z: -75.975, w: 1.7, h: 1.7, d: 0.04, uv: 0.5, tag: '③ 钟', on: 'partv' });
   out.push({ box: 'dz_brassDim', x: 35, y: y + 3.55, z: -75.99, w: 1.84, h: 1.84, d: 0.03, tag: '③ 钟', on: 'partv' });
-  out.push({ m: 'r2/1950s_wall_clock', x: 35, y: y + 3.55 - 0.65, z: -75.77, yaw: 0, h: 1.3, tag: '③ 钟', on: 'wall' });
-  pic(out, 'textures/emblems/N01.jpg', 35, y + 5.35, -75.95, 0, 0.9, 0.9, 'gold', { tag: '③ 局徽' });
+  out.push({ clock: true, r: 0.6, x: 35, y: y + 3.55, z: -75.9, yaw: 0, w: 1.36, h: 1.36, size: [1.36, 1.36, 0.16], tag: '③ 钟', on: 'sign' }); // 批次16：象牙白表盘 + 黑罗马数字 + 铜框（原 1950s_wall_clock 表盘偏青像盾牌）
+  pic(out, 'textures/emblems/N01.jpg', 35, y + 4.95, -75.95, 0, 0.8, 0.8, 'gold', { tag: '③ 局徽' }); // 批次16：下移，不再与「阅卷中心」金字重叠
+  // 批次16：墙面统一 = 胡桃木墙裙（原有）+ 方石上墙 dz_ashlarEC（北 / 西 / 南三面，原北墙黑、南墙绿色斑驳抹灰）
+  const AH = H - 1.25, AY = y + 1.25 + AH / 2;
+  out.push({ box: 'dz_ashlarEC', x: 35.1, y: AY, z: -75.993, w: 29.6, h: AH, d: 0.01, tag: '墙面', on: 'partv' });
+  out.push({ box: 'dz_ashlarEC', x: 20.307, y: AY, z: -68.6, w: 0.01, h: AH, d: 14.8, tag: '墙面', on: 'partv' });
+  for (const [a, c] of [[20.3, 40], [43, 49.9]]) out.push({ box: 'dz_ashlarEC', x: (a + c) / 2, y: AY, z: -61.207, w: c - a, h: AH, d: 0.01, tag: '墙面', on: 'partv' });
+  out.push({ box: 'dz_ashlarEC', x: 41.5, y: y + 3 + (H - 3) / 2, z: -61.207, w: 3, h: H - 3, d: 0.01, tag: '墙面', on: 'partv' });
+  // 北墙上半：黑石腰线 + 两组钢框高窗（每侧 3 樘，磨砂天光）
+  out.push({ box: 'stoneDark', x: 35.1, y: y + 4.72, z: -75.95, w: 29.6, h: 0.14, d: 0.08, uv: 0.5, tag: '③ 腰线', on: 'partv' });
+  for (const wx of [23.4, 26.5, 29.6, 40.4, 43.5, 46.6]) {
+    out.push({ box: 'blackMetal', x: wx, y: y + 5.55, z: -75.96, w: 1.62, h: 1.06, d: 0.05, tag: '③ 高窗', on: 'partv' });
+    out.push({ box: 'r3_clerestory', x: wx, y: y + 5.55, z: -75.93, w: 1.5, h: 0.94, d: 0.01, tag: '③ 高窗', on: 'partv' });
+    out.push({ box: 'blackMetal', x: wx, y: y + 5.55, z: -75.92, w: 0.04, h: 0.94, d: 0.02, tag: '③ 高窗', on: 'partv' });
+    out.push({ box: 'blackMetal', x: wx, y: y + 5.55, z: -75.92, w: 1.5, h: 0.035, d: 0.02, tag: '③ 高窗', on: 'partv' });
+    out.push({ box: 'stoneDark', x: wx, y: y + 5.0, z: -75.92, w: 1.72, h: 0.06, d: 0.1, uv: 0.5, tag: '③ 高窗', on: 'partv' }); }
   for (const [ch, dx] of [['肃', -1.75], ['静', 1.75]]) out.push({ wtext: ch, x: 35 + dx, y: y + 3.55, z: -75.95, yaw: 0, w: 0.82, h: 0.82, size: [1.08, 1.04, 0.05], tag: '③ 铜字', on: 'sign' });
   const NOTE = [[['阅卷工作通知', true], ['各阅卷组须于每日八时前到岗签到，领卷、交卷均须两人在场清点。', '阅卷期间不得携带纸张出入。']],
     [['评分细则摘要', false], ['作文按内容、结构、语言三项给分，分差超过五分者交三评。', '不得在试卷上作任何记号。']],
@@ -2345,7 +2359,7 @@ export function planExamCenter(y) {
   out.push({ sign: '试 卷 封 存', sub: '双人双锁 · 启封须登记', x: 20.5, y: y + 1.75, z: -69.4, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
   light(out, 22.0, y + 2.8, -69.4, 0xffe6c8, 0.9, 6);
   // ⑥ 南墙门西侧倒计时告示 + 西南角灭火器；门内吊牌
-  pic(out, 'textures/b04/B04_高考倒计时屏.png', 30.0, y + 2.6, -61.2, ROT.N, 1.8, 1.0, 'black', { tag: '⑥ 告示' });
+  out.push({ flip: '距 高 考 还 有', days: 222, x: 30.0, y: y + 2.6, z: -61.21, yaw: ROT.N, w: 1.6, h: 0.9, size: [1.76, 1.06, 0.14], tag: '⑥ 翻牌倒计时', on: 'sign' }); // 批次16：机械翻牌（原 B04 平板电视图不合年代）
   out.push({ m: 'r2/fire_extinguisher', x: 20.66, y, z: -61.55, yaw: ROT.E, h: 0.6, tag: '消防', on: 'floor' });
   hang(out, '阅 卷 区', 41.5, y + 3.3, -63.0, 0, 1.9, 0.42, y + H);
   // 照明：两列乳白球吊灯（东西两块考位正上方）+ 暖白补光

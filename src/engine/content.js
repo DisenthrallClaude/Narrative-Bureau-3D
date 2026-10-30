@@ -27,7 +27,11 @@ export class Content {
     const img = new Image(); img.onload = async () => {
       try { await document.fonts.load('900 40px \"NB Title\", \"NB Serif\"', '叙'); } catch { /* */ }
       cv.width = img.naturalWidth; cv.height = img.naturalHeight; const c = cv.getContext('2d'); c.drawImage(img, 0, 0); const W = cv.width, H = cv.height;
-      for (const p of patches) { const [x, y, w, h] = [p.rect[0] * W, p.rect[1] * H, p.rect[2] * W, p.rect[3] * H]; c.fillStyle = p.fill; c.fillRect(x, y, w, h); c.fillStyle = p.color; c.font = `900 ${Math.round(h * (p.size ?? 0.8))}px \"NB Title\", \"NB Serif\", serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(p.text, x + w / 2, y + h * 0.54); }
+      for (const p of patches) { const [x, y, w, h] = [p.rect[0] * W, p.rect[1] * H, p.rect[2] * W, p.rect[3] * H];
+        if (p.img) { // 批次16：图片补丁（照片框填档案海报裁切）
+          try { const im = await new Promise((ok, no) => { const q = new Image(); q.onload = () => ok(q); q.onerror = no; q.src = p.img; }); const [sx, sy, sw, sh] = p.crop ?? [0, 0, im.naturalWidth, im.naturalHeight];
+            c.save(); c.filter = p.filter ?? 'none'; c.drawImage(im, sx, sy, sw, sh, x, y, w, h); c.restore(); } catch { /* */ } continue; }
+        c.fillStyle = p.fill; c.fillRect(x, y, w, h); c.fillStyle = p.color; c.font = `900 ${Math.round(h * (p.size ?? 0.8))}px \"NB Title\", \"NB Serif\", serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(p.text, x + w / 2, y + h * 0.54); }
       t.needsUpdate = true;
     }; img.src = u; return t;
   }
