@@ -265,7 +265,7 @@ const ZONE_LOOK = {
   command_center: { env: 'hall', envI: 0.5, sun: 0, exp: 1.3, fog: [0x0a1020, 0.008], hemi: 0.16 },
   zone_control: { env: 'hall', envI: 0.5, sun: 0, exp: 1.1, fog: [0x1a140e, 0.012], hemi: 0.1 },
   spine_b3: { env: 'hall', envI: 0.35, sun: 0, exp: 1.15, fog: [0x15130f, 0.02], hemi: 0.06 },
-  vault_b3: { env: 'hall', envI: 0.35, sun: 0, exp: 1.1, fog: [0x12161c, 0.022], hemi: 0.06 },
+  vault_b3: { env: 'hall', envI: 0.4, sun: 0, exp: 1.3, fog: [0x12161c, 0.017], hemi: 0.11 }, // 批次20：整体提亮（原 exp 1.1 / hemi 0.06 / fog 0.022 太黑），保留冷色雾
   vault_b4: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a120a, 0.03], hemi: 0.05 },
   vault_b5: { env: 'hall', envI: 0.3, sun: 0, exp: 1.42, fog: [0x0a0806, 0.022], hemi: 0.1 }, // 批次10：B5 偏暗 → 环境 0.18→0.3、曝光 1.3→1.42、雾 0.034→0.022、半球 0.02→0.1
   spine_b4: null, spine_b5: null,

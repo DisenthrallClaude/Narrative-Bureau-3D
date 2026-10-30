@@ -2663,6 +2663,18 @@ export function planVaultB3(y) {
     light(out, x + 0.6, y + 1.6, z, 0xffe0b0, 0.8, 3); }
   // ③ 收容格：两侧各 6 间（z 中心 −98.5 … −123.5，每间 5 m），进深 4.3 m
   const cases = [['r4/case_a01', 0.62], ['r4/case_c02', 0.78], ['r4/case_d01', 0.48]];
+  // 批次20：证物箱改 军绿 / 冷灰涂装钢箱 + 牛皮纸档案箱（程序化，定点轮换；R4 黑铝箱在暖光下像藤箱 → 只留格内少量）
+  const crate = (kind, x, by, z, w, h, d, tag, yawX = false) => { const [W2, D2] = yawX ? [d, w] : [w, d];
+    if (kind === 2) { out.push({ box: 'kraftDark', x, y: by + h / 2, z, w: W2, h, d: D2, uv: 0.5, tag, on: 'partv' });
+      out.push({ box: 'kraftDark', x, y: by + h - 0.02, z, w: W2 + 0.03, h: 0.06, d: D2 + 0.03, uv: 0.5, tag: tag + '·盒盖', on: 'partv' });
+      out.push(yawX ? { box: 'r3_stencil', x: x + Math.sign(x || 1) * -(W2 / 2 + 0.003), y: by + h * 0.5, z, w: 0.004, h: 0.1, d: D2 * 0.5, tag: tag + '·标签', on: 'partv' } : { box: 'r3_stencil', x, y: by + h * 0.5, z: z + D2 / 2 + 0.003, w: W2 * 0.5, h: 0.1, d: 0.004, tag: tag + '·标签', on: 'partv' }); return; }
+    const m = kind === 0 ? 'r3_crateOlive' : 'r3_crateGrey';
+    out.push({ box: m, x, y: by + h / 2, z, w: W2, h, d: D2, uv: 0.6, tag, on: 'partv' });
+    out.push({ box: 'r3_steelOld', x, y: by + h - 0.06, z, w: W2 + 0.02, h: 0.03, d: D2 + 0.02, tag: tag + '·箱盖缝', on: 'partv' });
+    if (yawX) { const fx = x + Math.sign(x || 1) * -(W2 / 2 + 0.006); for (const dz of [-D2 * 0.3, D2 * 0.3]) out.push({ box: 'dz_pipe', x: fx, y: by + h - 0.1, z: z + dz, w: 0.02, h: 0.07, d: 0.05, tag: tag + '·搭扣', on: 'partv' });
+      out.push({ box: 'r3_stencil', x: fx, y: by + h * 0.42, z, w: 0.004, h: 0.07, d: D2 * 0.45, tag: tag + '·喷码', on: 'partv' }); }
+    else { for (const dx of [-W2 * 0.3, W2 * 0.3]) out.push({ box: 'dz_pipe', x: x + dx, y: by + h - 0.1, z: z + D2 / 2 + 0.006, w: 0.05, h: 0.07, d: 0.02, tag: tag + '·搭扣', on: 'partv' });
+      out.push({ box: 'r3_stencil', x, y: by + h * 0.42, z: z + D2 / 2 + 0.004, w: W2 * 0.45, h: 0.07, d: 0.004, tag: tag + '·喷码', on: 'partv' }); } };
   for (const s of [-1, 1]) { const xf = s * 15.5, xw = s * 19.8, xm = (xf + xw) / 2;
     for (let k = 0; k <= 6; k++) out.push({ box: 'r3_bunkerConc', x: xm, y: y + 1.5, z: -96 - k * 5, w: 4.3, h: 3.0, d: 0.24, uv: 0.5, tag: '③ 隔墙', on: 'partv' });
     for (let k = 0; k < 6; k++) { const zc = -98.5 - k * 5, n = String((s < 0 ? 1 : 7) + k).padStart(2, '0');
@@ -2672,7 +2684,8 @@ export function planVaultB3(y) {
       out.push({ box: 'r3_warnRed', x: xf - s * 0.16, y: y + 2.82, z: zc - 1.4, w: 0.1, h: 0.14, d: 0.14, tag: '③ 警示灯', on: 'partv' });
       out.push({ box: 'blackMetal', x: xf - s * 0.13, y: y + 2.82, z: zc - 1.4, w: 0.04, h: 0.2, d: 0.2, tag: '③ 警示灯座', on: 'partv' });
       light(out, xf - s * 0.5, y + 2.6, zc - 1.4, 0xff3020, 0.5, 2.2);
-      const [m, w] = cases[k % 3]; out.push({ m, x: s * 18.2, y, z: zc + (k % 2 ? 0.8 : -0.8), yaw: ROT.N, w, tag: '③ 格内证物箱', on: 'floor' });
+      { const zz = zc + (k % 2 ? 0.8 : -0.8); crate(k % 3 === 2 ? 1 : 0, s * 18.4, y, zz, 1.0, 0.55, 0.62, '③ 格内钢箱', true); crate(k % 2 ? 2 : 1, s * 18.4, y + 0.55, zz, 0.8, 0.4, 0.5, '③ 格内叠箱', true);
+        if (k % 2 === 0) { const [m, w] = cases[k % 3]; out.push({ m, x: s * 18.3, y, z: zc + 1.2 * (k % 2 ? -1 : 1), yaw: ROT.N, w: Math.min(w, 0.6), tag: '③ 格内黑铝箱', on: 'floor' }); } }
       light(out, s * 17.7, y + 2.7, zc, 0xdfe8ff, 0.7, 4); } }
   // ⑤ 两侧中区：沿 z 交替 深灰绿钢架（z −99 / −111 / −123）与 标本罐柜（z −105 / −117）
   for (const s of [-1, 1]) { const cx = s * 9.5;
@@ -2681,8 +2694,8 @@ export function planVaultB3(y) {
       for (const dx of [-1.97, 0, 1.97]) for (const dz of [-0.33, 0.33]) out.push({ box: 'r3_rackGreen', x: cx + dx, y: y + 1.05, z: z + dz, w: 0.05, h: 2.1, d: 0.05, tag: '⑤ 立柱', on: 'partv' });
       for (const [lv, hy] of [0.12, 0.72, 1.32, 1.92].entries()) { out.push({ box: 'r3_rackGreen', x: cx, y: y + hy, z, w: 4.0, h: 0.04, d: 0.7, tag: '⑤ 层板', on: 'partv' });
         if (lv === 3) continue;
-        for (let i = 0; i < 4; i++) { const [m, w] = cases[(i + lv + (z === -111 ? 1 : 0)) % 3]; out.push({ m, x: cx - 1.45 + i * 0.97, y: y + hy + 0.02, z, yaw: 0, w: Math.min(w, 0.75), tag: '⑤ 证物箱', on: 'partv' });
-          out.push({ box: 'dz_paper', x: cx - 1.45 + i * 0.97, y: y + hy + 0.14, z: z + 0.36, w: 0.16, h: 0.08, d: 0.004, tag: '⑤ 编号签', on: 'partv' }); } } }
+        for (let i = 0; i < 4; i++) { const kind = (i + lv + (z === -111 ? 1 : 0)) % 3, xx = cx - 1.45 + i * 0.97; crate(kind, xx, y + hy + 0.02, z, kind === 2 ? 0.7 : 0.82, kind === 2 ? 0.34 : 0.4, 0.5, '⑤ 证物箱');
+          out.push({ box: 'dz_paper', x: xx + 0.28, y: y + hy + 0.16, z: z + 0.256, w: 0.12, h: 0.07, d: 0.004, tag: '⑤ 编号签', on: 'partv' }); } } }
     for (const z of [-105, -117]) {
       out.push({ fixed: true, m: '固定:标本罐柜', x: cx, y, z, yaw: 0, size: [3.0, 2.0, 0.6], col: [3.0, 2.0, 0.6], tag: '⑤ 标本罐柜', on: 'floor' });
       out.push({ box: 'r3_rackGreen', x: cx, y: y + 0.15, z, w: 3.0, h: 0.3, d: 0.6, tag: '⑤ 柜座', on: 'partv' });
@@ -2712,6 +2725,17 @@ export function planVaultB3(y) {
   for (let z = -97.5; z > -127; z -= 5) out.push({ box: 'r3_bunkerConc', x: 0, y: y + H - 0.35, z, w: 39.8, h: 0.6, d: 0.45, uv: 0.4, tag: '天花主梁', on: 'partv' });
   for (const s of [-1, 1]) for (const z of [-100, -110, -120]) light(out, s * 17.6, y + 4.6, z, 0xd8e2f0, 1.2, 8);
   light(out, 0, y + 4.6, -125.5, 0xd8e2f0, 1.0, 9);
+  // 批次20：亮度提升但保留压迫感——两侧墙防爆壁灯成排（隔墙上方，钢底座 + 冷白灯罩 + 黑钢护笼）+ 中央 / 中道冷白吸顶灯管（梁间）
+  for (const s of [-1, 1]) for (let k = 0; k < 6; k++) { const z = -98.5 - k * 5, xw = s * 19.82;
+    out.push({ box: 'r3_steelGrey', x: xw, y: y + 3.75, z, w: 0.1, h: 0.42, d: 0.3, tag: '防爆壁灯座', on: 'partv' });
+    out.push({ box: 'dz_glowCold', x: xw - s * 0.13, y: y + 3.72, z, w: 0.16, h: 0.26, d: 0.18, tag: '防爆壁灯罩', on: 'partv' });
+    for (const dz of [-0.1, 0.1]) out.push({ box: 'blackMetal', x: xw - s * 0.22, y: y + 3.72, z: z + dz, w: 0.02, h: 0.32, d: 0.02, tag: '防爆灯护笼', on: 'partv' });
+    out.push({ box: 'blackMetal', x: xw - s * 0.15, y: y + 3.89, z, w: 0.18, h: 0.03, d: 0.24, tag: '防爆灯护笼', on: 'partv' });
+    if (k % 2 === 0) light(out, xw - s * 0.8, y + 3.6, z - 2.5, 0xe4ecff, 1.1, 7); }
+  for (const x of [-4.95, 4.95]) for (let z = -100; z > -126; z -= 5) { // x 0 已有 vault.js 荧光灯带
+    out.push({ box: 'r3_steelGrey', x, y: y + H - 0.12, z, w: 0.3, h: 0.08, d: 2.6, tag: '吸顶灯槽', on: 'partv' });
+    out.push({ box: 'dz_glowCold', x, y: y + H - 0.175, z, w: 0.16, h: 0.03, d: 2.4, tag: '冷白灯管', on: 'partv' }); }
+  for (const z of [-102.5, -117.5]) light(out, 0, y + 4.9, z, 0xeef3ff, 1.3, 11);
   return { room, items: out };
 }
 PLANS.vault_b3 = (Y) => fixYaw(planVaultB3(Y)); R3.vault_b3 = true;

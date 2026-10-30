@@ -58,6 +58,15 @@ export function buildVault(scene, world, ctx) {
     b.box('blackMetal', 1.0, 1.3, 0.04, [3.4, y + 1.7, Z0 - 0.4], { uv: 1 });
     // 地面黄黑警示线 + 通道
     for (const x of [-2.4, 2.4]) b.box('hazard', 0.18, 0.012, Z0 - Z1 - 1, [x, y + 0.006, (Z0 + Z1) / 2], { uv: 0.8 });
+    if (R3.vault_b3) { // 批次20：入口告示 + 门槛警示带 + 中央通道地面编号（黄漆）
+      const MY = dressMats(M);
+      b.box('hazard', 5.2, 0.014, 0.36, [0, y + 0.007, Z0 - 0.75], { uv: 0.8 }); // 门槛黄黑警示带
+      for (let k = 0; k < 6; k++) b.box('hazard', 4.6, 0.013, 0.18, [0, y + 0.0065, Z0 - 5.2 - k * 5], { uv: 0.8 }); // 与收容格对位的横向警示线
+      b.box('blackMetal', 5.8, 0.46, 0.04, [0, y + 3.95, Z0 - 0.17], { uv: 1 }); // 门楣外侧（电梯厅面）黑底横匾
+      const ban = goldText('B3 证物收容库 · 未经批准禁止入内', 5.4, 0.36, M.goldBright ?? M.gold, { res: 160 }); ban.position.set(0, y + 3.95, Z0 - 0.145); zone.add(ban);
+      const pq = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.8), brassPlaqueMaterial('B3 证物收容库', ['未经批准', '禁止入内', '', '进出须双人登记', '随身物品寄存', '外勤缉拿处 · 收容科'])); pq.position.set(2.95, y + 1.75, Z0 - 0.19); zone.add(pq); // 门垛外侧铜牌（朝电梯厅）
+      const pq2 = pq.clone(); pq2.position.x = -2.95; zone.add(pq2);
+      for (let k = 0; k < 6; k++) { const t = goldText('通道 ' + String(k + 1).padStart(2, '0'), 1.1, 0.34, MY.r3_paintYellow, { res: 128 }); t.rotation.x = -Math.PI / 2; t.position.set(1.5, y + 0.016, Z0 - 7.5 - k * 4.6); zone.add(t); } }
     // 货架：两侧各 6 排，垂直于中轴
     const shelfZ = []; for (let k = 0; k < 6; k++) shelfZ.push(Z0 - 5 - k * 5);
     let label = null;
