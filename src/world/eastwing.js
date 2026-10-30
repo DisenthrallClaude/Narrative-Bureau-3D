@@ -7,6 +7,7 @@ import { Frame, archRingGeo, archShape, emblem, goldText } from './gothic.js';
 import { CanvasScreen, lightShaft, dust } from '../engine/fx.js';
 import { content } from '../engine/content.js';
 import { FLOOR, T } from './exterior.js';
+import { R3 } from './r3plan.js';
 import { wallX, wallZ, archPortal, rectLight, spot, point, person, signMaterial, brassPlaqueMaterial, posterMaterial, woodChair, slabWithHole } from './interiors.js';
 
 const Y = FLOOR, F2 = Y + 7, F3 = Y + 14;
@@ -134,7 +135,8 @@ export function buildEastWing(scene, world, ctx) {
   // 排队座椅（三排）
   for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) add(placeModel('street_seating', { width: 4.2, pos: [27 + k * 10, Y, ZA - 11 - r * 2.4], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.85); return o; }));
   // 排队市民
-  const citizens = [[25, ZA - 11, 0x3a3020], [29, ZA - 13.4, 0x22324a], [39, ZA - 11, 0x4a2a2a], [35, ZA - 13.4, 0x2a3a2a]];
+  // 批次12：4 位排队市民原本站在候号长椅里（x 25/29/35/39 正落在长椅端部，穿模）→ R3 下同一 x、退到相邻两排长椅之间的过道（z 各 −1.2 m），面向窗口不变
+  const citizens = R3.citizen_service ? [[25, -44.2, 0x3a3020], [29, -46.6, 0x22324a], [39, -44.2, 0x4a2a2a], [35, -46.6, 0x2a3a2a]] : [[25, ZA - 11, 0x3a3020], [29, ZA - 13.4, 0x22324a], [39, ZA - 11, 0x4a2a2a], [35, ZA - 13.4, 0x2a3a2a]];
   for (const [x, z, c] of citizens) { const p = person(M, { coat: c }); p.position.set(x, Y, z); p.rotation.y = Math.PI; p.scale.y = 0.96; zone.add(p); }
   // 电饭锅大妈
   const auntie = person(M, { coat: 0x6a3a4a }); auntie.position.set(33, Y, ZA - 13.4); auntie.rotation.y = Math.PI; zone.add(auntie);
@@ -147,10 +149,11 @@ export function buildEastWing(scene, world, ctx) {
   const lw = new THREE.Mesh(new THREE.PlaneGeometry(9, 3.4), lt ? new THREE.MeshStandardMaterial({ map: lt, roughness: 0.7 }) : lettersMaterial());
   lw.position.set(X1 - 0.05 - 5.8, Y + 2.4, ZA - 0.25); lw.rotation.y = Math.PI; zone.add(lw); ctx.anchors.doc_cit_letters = lw;
   b.box('wood', 9.4, 3.8, 0.12, [X1 - 5.8, Y + 2.4, ZA - 0.12], { uv: 0.5 });
-  for (let x = X0 + 4; x < XS; x += 4) b.box('gold', 0.05, 0.01, ZA - ZB, [x, Y + 0.004, (ZA + ZB) / 2], { uv: 1 });
-  for (let z = ZA - 4; z > ZB; z -= 4) b.box('gold', XS - X0, 0.01, 0.05, [(X0 + XS) / 2, Y + 0.004, z], { uv: 1 });
+  // 批次12：R3 市民服务大厅改铺哑光大理石 + 铜嵌条（r3plan），原金线网格只保留南区（考务大厅）段；穿过候号座椅的 5 道导引线关闭
+  for (let x = X0 + 4; x < XS; x += 4) { if (R3.citizen_service) b.box('gold', 0.05, 0.01, ZM - ZB, [x, Y + 0.004, (ZM + ZB) / 2], { uv: 1 }); else b.box('gold', 0.05, 0.01, ZA - ZB, [x, Y + 0.004, (ZA + ZB) / 2], { uv: 1 }); }
+  for (let z = ZA - 4; z > ZB; z -= 4) if (!R3.citizen_service || z < ZM) b.box('gold', XS - X0, 0.01, 0.05, [(X0 + XS) / 2, Y + 0.004, z], { uv: 1 });
   // 地面导引
-  for (let k = 0; k < 5; k++) b.box('gold', 0.08, 0.012, 14, [23.5 + k * 5.4, Y + 0.005, ZA - 11], { uv: 1 });
+  if (!R3.citizen_service) for (let k = 0; k < 5; k++) b.box('gold', 0.08, 0.012, 14, [23.5 + k * 5.4, Y + 0.005, ZA - 11], { uv: 1 });
   const csTitle = goldText('市民服务大厅　·　污染举报', 6, 0.5, M.goldBright, { res: 128 }); csTitle.position.set(X0 + 0.25, Y + 5.2, -48); csTitle.rotation.y = Math.PI / 2; zone.add(csTitle);
   // 灯
   for (const x of [26, 36, 46]) { point(zone, 0xfff0d8, 14, [x, Y + 5.8, csz], 14); b.box('lampWarm', 4, 0.06, 0.5, [x, F2 - 0.37, csz], { uv: false }); }

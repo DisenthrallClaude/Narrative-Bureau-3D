@@ -92,9 +92,12 @@ export function dressMats(M) {
     r3_screenAmber: new THREE.MeshStandardMaterial({ color: 0x1a1006, emissive: 0xffa040, emissiveIntensity: 0.8, roughness: 0.3 }),
     r3_mapPaper: new THREE.MeshStandardMaterial({ color: 0xcfc3a0, roughness: 0.85 }),
     r3_hazard: new THREE.MeshStandardMaterial({ map: hazardTex(), roughness: 0.7 }),
+    // 批次12：市民服务大厅哑光黑大理石（原 blackMarble 清漆镜面反光过强）、屏风磨砂玻璃
+    r3_marbleHoned: W(pbr('Marble016', { rn: true, color: 0x8a8a92, roughness: 0.46, env: 0.42 }), { macro: 0.12, dust: 0.05 }),
+    r3_frosted: new THREE.MeshPhysicalMaterial({ color: 0xe6ece8, roughness: 0.55, metalness: 0, transparent: true, opacity: 0.55, envMapIntensity: 0.5, depthWrite: false }),
     r3_paintYellow: W(new THREE.MeshStandardMaterial({ color: 0xc8a020, roughness: 0.7 }), { macro: 0.3, dust: 0.2 }),
   };
-  for (const m of [DM.dz_glow, DM.dz_glowCold, DM.dz_shade, DM.dz_glassDark, DM.r3_globe, DM.r3_wear, DM.r3_glassCase, DM.r3_screen, DM.r3_screenAmber]) m.userData.noShadow = true;
+  for (const m of [DM.dz_glow, DM.dz_glowCold, DM.dz_shade, DM.dz_glassDark, DM.r3_globe, DM.r3_wear, DM.r3_glassCase, DM.r3_screen, DM.r3_screenAmber, DM.r3_frosted]) m.userData.noShadow = true;
   return DM;
 }
 

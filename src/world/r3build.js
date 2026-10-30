@@ -9,6 +9,7 @@ import { UPPER } from './upper.js';
 import { FLOOR } from './exterior.js';
 import { point, rectLight, spot, brassPlaqueMaterial } from './interiors.js';
 import { lightShaft } from '../engine/fx.js';
+import { goldText } from './gothic.js';
 
 const ZONE_OF = { east_cloister: ['east_cloister', () => FLOOR], citizen_service: ['east_wing', () => FLOOR], floor3_office: ['floor3', () => UPPER['3F']], floor2_liaison: ['floor2', () => UPPER['2F']], floor2_pub: ['floor2', () => UPPER['2F']], director: ['director', () => UPPER['12F']], gate: ['gate', () => FLOOR], archive: ['archive', () => FLOOR], command_center: ['east_wing', () => FLOOR + 7], canteen: ['canteen', () => FLOOR], b1: ['armory', () => -10], b2: ['interrogation', () => -18], archive_b1: ['archive_b1', () => FLOOR - 6], b4: ['vault_b4', () => -34], b5: ['vault_b5', () => -42], b6: ['training', () => -52], b7: ['abyss', () => -300], medical: ['floor3', () => UPPER['3F']], dorm: ['surface', () => 0.046], dorm2: ['surface', () => 4.64], interrogation: ['interrogation', () => -18], hangar: ['surface', () => 0], training: ['training', () => -52], b5_deep: ['vault_b5', () => -42], metro: ['surface', () => -3.955], memorial: ['surface', () => 0.08], s7_ops: ['seventh', () => -500], s7_wrap: ['seventh', () => -500], abyss_city: ['abyss', () => -300], abyss_exam: ['abyss', () => -300], abyss_core: ['abyss', () => -280], abyss_tide: ['abyss', () => -300], s7_entry: ['seventh', () => -500] };
 // 做旧：冷轧钢/喷漆钢件压暗、偏橄榄灰、提高粗糙度（「过白过新」）
@@ -65,6 +66,13 @@ export async function buildR3(ctx, world, MAT, late = false) {
         if (it.spot) spot(zone, 0xe4ecff, 38 * it.i, [it.x - it.nx * 0.3, it.y + 0.8, it.z - it.nz * 0.3], to, 0.42, false, 14);
         continue; }
       if (it.light) { if (it.win) rectLight(zone, it.c, it.i * 1.5, it.w, it.h, [it.x, it.y, it.z], it.look); else point(zone, it.c, it.i * 3, [it.x, it.y, it.z], it.d * 1.15); continue; }
+      if (it.hang) { // 批次12：吊牌（黑铁底板 + 双面金字 + 两根铜吊杆到顶棚）
+        const n = [Math.sin(yaw), Math.cos(yaw)], u = [n[1], -n[0]];
+        b.box('blackMetal', it.w, it.h, 0.04, [it.x, it.y, it.z], { uv: 1, rot: [0, yaw, 0] });
+        b.box('dz_brassDim', it.w + 0.04, 0.025, 0.05, [it.x, it.y + it.h / 2, it.z], { uv: 1, rot: [0, yaw, 0] }); b.box('dz_brassDim', it.w + 0.04, 0.025, 0.05, [it.x, it.y - it.h / 2, it.z], { uv: 1, rot: [0, yaw, 0] });
+        const rod = (it.top ?? it.y + 2) - (it.y + it.h / 2); for (const s of [-1, 1]) b.box('dz_brassDim', 0.015, rod, 0.015, [it.x + u[0] * s * it.w * 0.38, it.y + it.h / 2 + rod / 2, it.z + u[1] * s * it.w * 0.38], { uv: 1 });
+        const gm = MAT.goldBright ?? MAT.gold; for (const s of [1, -1]) { const t = goldText(it.text, it.w * 0.86, it.h * 0.62, gm, { res: 96 }); t.position.set(it.x + n[0] * s * 0.022, it.y, it.z + n[1] * s * 0.022); t.rotation.y = yaw + (s < 0 ? Math.PI : 0); zone.add(t); }
+        continue; }
       if (it.sign) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.12), brassPlaqueMaterial(it.sign, it.sub ? [it.sub] : [])); m.position.set(it.x, it.y, it.z); m.rotation.y = yaw; zone.add(m); continue; }
       if (it.sconce) { // 铜壁灯：底座 + 弯臂 + 灯罩（自发光）
         const n = [Math.sin(yaw), Math.cos(yaw)], o = (d) => [it.x + n[0] * d, it.z + n[1] * d];
