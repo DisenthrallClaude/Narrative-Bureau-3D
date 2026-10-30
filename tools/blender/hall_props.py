@@ -44,6 +44,7 @@ def mats():
         green=mat('hp_ledGreen', (0.1, 0.6, 0.25), rough=0.3, emit=(0.25, 1.0, 0.5)),
         amber=mat('hp_ledAmber', (0.6, 0.4, 0.1), rough=0.3, emit=(1.0, 0.65, 0.25)),
         enamel=mat('hp_enamelPlate', (0.05, 0.07, 0.12), rough=0.3),
+        baize=mat('hp_baize', (0.025, 0.075, 0.045), rough=0.92),
     )
 M = None
 def box(name, m, sx, sy, sz, x=0, y=0, z=0, bev=0.004, ry=0):
@@ -219,6 +220,63 @@ def vitrine():
     box('lock', 'brass', 0.05, 0.03, 0.01, y=0.77, z=D / 2 + 0.02, bev=0.003)
     finish('vitrine_6080', [((2.6, 1.6, 2.6), (0, 0.6, 0)), ((0.4, 1.2, 1.4), (0.4, 0.6, 0))])
 
-for nm, fn in [('sec_counter', counter), ('scan_gate', gate), ('wait_bench', bench), ('vitrine', vitrine)]:
+# ---------------- 档案馆 阅览长桌（批次32）----------------
+#   reading_table  5.6 × 1.5，桌面顶 0.82（中间绿呢 5.2 × 1.2 内嵌 + 铜压条），车削桌腿 ×6 + 牙板线脚 + 落地横枨
+def reading_table():
+    L, D, T = 5.6, 1.5, 0.82
+    box('top', 'walnut', L, 0.05, D, y=T - 0.025, bev=0.012)
+    box('topEdge', 'walnut', L + 0.03, 0.025, D + 0.03, y=T - 0.06, bev=0.008)
+    box('baize', 'baize', 5.2, 0.004, 1.2, y=T + 0.001, bev=0)
+    for sz in (-1, 1): box(f'brassZ{sz}', 'brass', 5.22, 0.006, 0.02, y=T + 0.003, z=sz * 0.61, bev=0.001)
+    for sx in (-1, 1): box(f'brassX{sx}', 'brass', 0.02, 0.006, 1.24, x=sx * 2.61, y=T + 0.003, bev=0.001)
+    # 牙板（四周）+ 下沿线脚
+    for sz in (-1, 1):
+        box(f'apron{sz}', 'walnutD', L - 0.24, 0.12, 0.03, y=T - 0.135, z=sz * (D / 2 - 0.1))
+        box(f'apronBead{sz}', 'walnut', L - 0.22, 0.018, 0.04, y=T - 0.2, z=sz * (D / 2 - 0.1), bev=0.006)
+    for sx in (-1, 1):
+        box(f'apronE{sx}', 'walnutD', 0.03, 0.12, D - 0.24, x=sx * (L / 2 - 0.12), y=T - 0.135)
+    # 车削桌腿：方颈 + 圆柱身 + 鼓形 + 锥脚 + 铜脚套
+    for lx in (-(L / 2 - 0.12), 0, L / 2 - 0.12):
+        for sz in (-1, 1):
+            z = sz * (D / 2 - 0.1)
+            box(f'legBlock{lx}{sz}', 'walnut', 0.09, 0.16, 0.09, x=lx, y=T - 0.135, z=z, bev=0.006)
+            cyl(f'legA{lx}{sz}', 'walnut', 0.04, 0.2, x=lx, y=T - 0.31, z=z, r2=0.034)
+            cyl(f'legB{lx}{sz}', 'walnut', 0.05, 0.08, x=lx, y=T - 0.45, z=z)
+            cyl(f'legC{lx}{sz}', 'walnut', 0.038, 0.3, x=lx, y=T - 0.64, z=z, r2=0.026)
+            cyl(f'shoe{lx}{sz}', 'brass', 0.03, 0.03, x=lx, y=0.015, z=z, r2=0.026)
+    box('stretcher', 'walnut', L - 0.3, 0.04, 0.05, y=0.16, bev=0.008)
+    for lx in (-(L / 2 - 0.12), 0, L / 2 - 0.12): box(f'stretchX{lx}', 'walnut', 0.05, 0.04, D - 0.24, x=lx, y=0.16, bev=0.008)
+    finish('reading_table_6080', [((3.6, 1.8, 3.2), (0, 0.6, 0)), ((1.2, 1.1, 1.8), (1.6, 0.6, 0))])
+
+# ---------------- 档案馆 借阅柜台（批次32）----------------
+#   loan_counter  7.2 长（沿 x）× 1.2 柜身 / 1.4 台面，台面顶 1.11；公众面 +Z：胡桃木框 6 间凸起芯板 + 铜踢脚 + 铜扶手杆；职员面 −Z：开放格架
+def loan_counter():
+    L, D, T = 7.0, 1.2, 1.08
+    box('plinth', 'stone', L - 0.06, 0.1, D - 0.08, y=0.05)
+    box('carcass', 'walnut', L, T - 0.1, D - 0.06, y=0.1 + (T - 0.1) / 2)
+    zf = (D - 0.06) / 2 + 0.006
+    n = 7; bw = L / n
+    for i in range(n + 1):
+        box(f'stile{i}', 'walnut', 0.07, T - 0.18, 0.014, x=-L / 2 + i * bw + (0.035 if i == 0 else -0.035 if i == n else 0), y=0.1 + (T - 0.1) / 2, z=zf)
+    for yy in (0.17, T - 0.07): box(f'rail{yy}', 'walnut', L - 0.02, 0.06, 0.014, y=yy, z=zf - 0.006)
+    for i in range(n):
+        cx = -L / 2 + (i + 0.5) * bw
+        box(f'panel{i}', 'walnutD', bw - 0.15, T - 0.36, 0.018, x=cx, y=0.1 + (T - 0.1) / 2, z=zf + 0.004, bev=0.014)
+        box(f'boss{i}', 'brass', 0.07, 0.07, 0.008, x=cx, y=0.1 + (T - 0.1) / 2, z=zf + 0.016, bev=0.003)
+    box('toe', 'brass', L - 0.04, 0.03, 0.012, y=0.115, z=zf + 0.002, bev=0.002)
+    # 铜扶手杆（公众侧离地 0.25，托架 1 m 一只）
+    cyl('footRail', 'brass', 0.022, L - 0.3, y=0.25, z=zf + 0.14, axis='x')
+    for k in range(7): box(f'railBr{k}', 'brass', 0.025, 0.025, 0.14, x=-3.0 + k * 1.0, y=0.25, z=zf + 0.07, bev=0.004)
+    # 台面：黑石 + 前缘铜包边 + 胡桃木下沿线脚
+    box('top', 'stone', L + 0.2, 0.05, 1.4, y=T + 0.025, z=0.08, bev=0.01)
+    box('topBrass', 'brass', L + 0.21, 0.014, 0.012, y=T + 0.025, z=0.08 + 0.706, bev=0.002)
+    box('topMould', 'walnut', L + 0.1, 0.04, 0.05, y=T - 0.02, z=zf + 0.02, bev=0.008)
+    # 职员侧开放格架（3 层隔板 + 竖隔）
+    zb = -(D - 0.06) / 2 - 0.005
+    for yy in (0.45, 0.8): box(f'shelf{yy}', 'walnutD', L - 0.1, 0.025, 0.012, y=yy, z=zb)
+    for k in range(8): box(f'div{k}', 'walnut', 0.03, T - 0.2, 0.014, x=-L / 2 + 0.05 + k * (L - 0.1) / 7, y=0.1 + (T - 0.1) / 2, z=zb)
+    finish('loan_counter_6080', [((3.2, 1.9, 4.2), (0, 0.6, 0)), ((-2.5, 1.8, -3.0), (0, 0.6, 0))])
+
+for nm, fn in [('sec_counter', counter), ('scan_gate', gate), ('wait_bench', bench), ('vitrine', vitrine), ('reading_table', reading_table), ('loan_counter', loan_counter)]:
     if ONLY and ONLY != nm: continue
     reset(); M = mats(); fn()

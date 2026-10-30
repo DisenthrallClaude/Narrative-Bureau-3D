@@ -606,10 +606,8 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   for (let r = 0; r < 4; r++) for (const sx of [-1, 1]) {
     const tx = cx + sx * 6.5, tz = Z0 - 9.5 - r * 7;
     if (tz < Z1 + 6) continue;
-    b.box('wood', 5.6, 0.08, 1.5, [tx, Y + 0.78, tz], { uv: 0.6 });
-    b.box('baize', 5.2, 0.006, 1.2, [tx, Y + 0.823, tz], { uv: 1 }); for (const ez of [-0.6, 0.6]) b.box('brass', 5.2, 0.012, 0.025, [tx, Y + 0.826, tz + ez], { uv: 1 });
-    for (const ex of [-1, 1]) for (const ez of [-1, 1]) b.box('wood', 0.1, 0.74, 0.1, [tx + ex * 2.6, Y + 0.37, tz + ez * 0.6], { uv: 1 });
-    b.box('wood', 5.2, 0.12, 0.06, [tx, Y + 0.68, tz], { uv: 1 });
+    // 批次32：阅览长桌方块（板 + 绿呢 + 4 方腿 + 横枨）→ Blender 精建 r2/reading_table_6080（胡桃木桌面 + 内嵌绿呢铜压条 + 牙板线脚 + 6 只车削腿铜脚套 + 落地横枨；tools/blender/hall_props.py reading_table），桌面顶 0.82 不变
+    add(placeModel('r2/reading_table_6080', { width: 5.63, pos: [tx, Y, tz] }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); return o; }));
     world.box(tx, Y + 0.4, tz, 5.6, 0.8, 1.5);
     for (const ex of [-1.4, 1.4]) { bankerLamp(b, zone, M, tx + ex, Y + 0.82, tz); ctx.archiveLamps.push([tx + ex, tz]); }
     for (const ex of [-1.6, 0, 1.6]) for (const ez of [-1, 1]) woodChair(b, tx + ex, Y, tz + ez * 1.05, ez);
@@ -620,10 +618,9 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   { const lx = -42, lz = Z0 - 1.5; for (const ex of [-1, 1]) b.box('wood', 0.06, 5.2, 0.06, [lx + ex * 0.25, Y + 2.6, lz], { uv: 1, rot: [0.18, 0, 0] }); for (let k = 0; k < 14; k++) b.box('brass', 0.5, 0.03, 0.03, [lx, Y + 0.3 + k * 0.36, lz + 0.05 - k * 0.065], { uv: 1 }); b.box('brass', 3, 0.04, 0.04, [lx, Y + 5.3, Z0 - 0.72], { uv: 1 }); }
   // —— 管理员柜台（西端）——
   const kx = X0 + 6, kz = -51.5;
-  b.box('wood', 1.2, 1.05, 7, [kx, Y + 0.525, kz], { uv: 0.5, collide: true });
-  b.box('onyx', 1.4, 0.06, 7.2, [kx, Y + 1.08, kz], { uv: 0.4 });
-  b.box('brass', 0.03, 0.04, 7.2, [kx + 0.71, Y + 1.06, kz], { uv: 1 });
-  for (let k = -3; k <= 3; k++) b.box('brass', 0.02, 0.8, 0.02, [kx + 0.62, Y + 0.5, kz + k], { uv: 1 });
+  // 批次32：借阅柜台方块 → Blender 精建 r2/loan_counter_6080（公众面 +X：胡桃木 7 间凸起芯板 + 铜钮 + 铜踢脚 + 铜扶脚杆；黑石台面铜包边；职员面开放格架），台面顶对齐原 Y+1.11
+  world.box(kx, Y + 0.525, kz, 1.2, 1.05, 7);
+  add(placeModel('r2/loan_counter_6080', { width: 7.21, pos: [kx, Y - 0.02, kz], rotY: Math.PI / 2 }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); return o; }));
   // 台面：登记簿（摊开）、印章、放大镜、订书机、显示器
   const ledger = new THREE.Group();
   for (const s of [-1, 1]) { const pg = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.025, 0.42), new THREE.MeshStandardMaterial({ map: ledgerTexture(), roughness: 0.85 })); pg.position.set(0, 0.012, s * 0.215); pg.rotation.x = s * 0.06; ledger.add(pg); }

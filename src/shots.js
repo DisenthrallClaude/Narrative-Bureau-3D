@@ -70,7 +70,7 @@ export const SHOTS = {
   hall_wanted: { pos: [12.6, 1.8 + 2.0, -64], look: [17.4, 1.8 + 2.2, -64], fov: 70 },
   b1_wanted: { pos: [-13.0, -10 + 1.8, -114], look: [-15.75, -10 + 2.0, -114], fov: 60 },
   int_reg: { pos: [-8.5, -18 + 1.6, -101.7], look: [-8.5, -18 + 1.55, -104], fov: 60, zone: 'interrogation' },
-  id_yexun: { target: 'pframe_叶寻', fov: 30, zone: 'archive',  pos: [-49.35, 1.8 + 1.9, -51.5], look: [-51.25, 1.8 + 0.62, -51.5] }, // 越过管理员柜台看叶寻空椅
+  id_yexun: { target: 'pframe_叶寻', tcam: [0, 1.4, 0.9], fov: 22, zone: 'archive',  pos: [-49.35, 1.8 + 1.9, -51.5], look: [-51.25, 1.8 + 0.62, -51.5] }, // 越过管理员柜台看叶寻空椅
   id_zhouwen: { target: 'pframe_周闻', fov: 30,  pos: [35.12, 10.6 + 1.3, -59.3], look: [35.12, 10.6 + 0.6, -59.95], /* 批次18：拉近、收窄视角让证件卡可读，配 eastwing 椅前补光 */ zone: 'command_center' }, // 批次16：再抬高后退一点，带上椅背与大衣 // 值班台高 1.06 > 椅背卡 0.86，只能从台北沿上方俯看
   id_yinze: { target: 'pframe_殷泽', fov: 30,  pos: [9.55, 1.8 + 1.45, -48.1], look: [9.4, 1.8 + 0.75, -47.05] },
   id_zhouye: { target: 'pframe_周也', fov: 30, pos: [3.6, -10 + 1.5, -122.6], look: [3.6, -10 + 0.7, -123.6], zone: 'armory' }, // 批次32

@@ -77,3 +77,5 @@
 "lab_round_bottom_flasks" — cesar.seidel (sketchfab.com/3d-models/7433a11498464de78f7751578bbbe211), CC BY 4.0
 "case_a01"、"case_c02"、"case_d01"、"wire_securityRoom_b01"、"misc_bottle_corked_a01"、"container_jar_glass_silver_a01"、"safety_eyewashStation_combo_shower_a01" — NVIDIA SimReady (huggingface.co/datasets/nvidia/simready-assets), CC BY 4.0; web GLB via huggingface.co/datasets/codepawl/simready-glb
 "Lynx Helicopter" — artfletch (sketchfab.com/3d-models/9028fe1f38a74a789a023300e034efd3), CC BY 4.0（机库停机位 A；批次24 补署名）
+
+r2/reading_table_6080.glb, r2/loan_counter_6080.glb — 本项目 Blender 自建（tools/blender/hall_props.py，批次32）；贴图 ambientCG CC0（Wood051 / Marble006 / Metal048A）
