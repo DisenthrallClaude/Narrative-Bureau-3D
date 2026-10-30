@@ -52,7 +52,7 @@ export async function buildR3(ctx, world, MAT, late = false) {
         const rod = it.top - it.y - it.r; b.box('dz_brassDim', 0.02, rod, 0.02, [it.x, it.y + it.r + rod / 2, it.z], { uv: 1 });
         b.add('dz_brassDim', new THREE.CylinderGeometry(0.06, 0.09, 0.08, 12), { pos: [it.x, it.y + it.r + 0.02, it.z] }, { uv: 1 });
         b.add('dz_brassDim', new THREE.CylinderGeometry(0.12, 0.12, 0.03, 16), { pos: [it.x, it.top - 0.015, it.z] }, { uv: 1 });
-        b.add(it.cold ? 'dz_glowCold' : 'r3_globe', new THREE.SphereGeometry(it.r, 18, 12), { pos: [it.x, it.y, it.z] }, { uv: false }); continue; }
+        b.add(it.cold ? 'dz_glowCold' : it.dim ? 'r3_globeDim' : 'r3_globe', new THREE.SphereGeometry(it.r, 18, 12), { pos: [it.x, it.y, it.z] }, { uv: false }); continue; }
       if (it.pipe) { const L = Math.abs(it.a1 - it.a0), g = new THREE.CylinderGeometry(it.r, it.r, L, 12); if (it.axis === 'x') g.rotateZ(Math.PI / 2); else g.rotateX(Math.PI / 2); b.add(it.mat, g, { pos: [it.x, it.y, it.z] }, { uv: 1 });
         for (let a = Math.min(it.a0, it.a1) + 0.4; a < Math.max(it.a0, it.a1); a += 3) { const r2 = new THREE.CylinderGeometry(it.r * 1.25, it.r * 1.25, 0.05, 12); if (it.axis === 'x') r2.rotateZ(Math.PI / 2); else r2.rotateX(Math.PI / 2); b.add(it.mat, r2, { pos: [it.axis === 'x' ? a : it.x, it.y, it.axis === 'x' ? it.z : a] }, { uv: 1 }); }
         continue; }
@@ -87,6 +87,13 @@ export async function buildR3(ctx, world, MAT, late = false) {
         if (it.stand) { const bot = it.y - it.h / 2 - 0.04, hh = bot - it.fy;
           for (const s of [-1, 1]) { const x = it.x + u[0] * s * it.w * 0.36 - n[0] * 0.04, z = it.z + u[1] * s * it.w * 0.36 - n[1] * 0.04; b.box('blackMetal', 0.05, hh, 0.05, [x, it.fy + hh / 2, z], { uv: 1 }); b.box('blackMetal', 0.08, 0.03, 0.5, [x, it.fy + 0.015, z], { uv: 1, rot: [0, yaw, 0] }); } }
         continue; }
+      if (it.notice) { // 批次15：告示纸（Canvas 印刷字 + 红头 + 公章），替代白色纸块
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(it.w, it.h), noticeMat(it.notice, it.lines ?? [], it.red)); m.position.set(it.x, it.y, it.z); m.rotation.y = yaw; zone.add(m); continue; }
+      if (it.wtext) { // 批次15：墙面铜字（黑石底板 + 铜边 + 金字）
+        const n = [Math.sin(yaw), Math.cos(yaw)];
+        b.box('stoneDark', it.w + 0.2, it.h + 0.16, 0.05, [it.x, it.y, it.z], { uv: 0.5, rot: [0, yaw, 0] });
+        b.box('dz_brassDim', it.w + 0.26, it.h + 0.22, 0.03, [it.x - n[0] * 0.012, it.y, it.z - n[1] * 0.012], { uv: 1, rot: [0, yaw, 0] });
+        const t = goldText(it.wtext, it.w, it.h, MAT.goldBright ?? MAT.gold, { res: 256, stroke: 0.03 }); t.position.set(it.x + n[0] * 0.03, it.y, it.z + n[1] * 0.03); t.rotation.y = yaw; zone.add(t); continue; }
       if (it.sign) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.12), brassPlaqueMaterial(it.sign, it.sub ? [it.sub] : [])); m.position.set(it.x, it.y, it.z); m.rotation.y = yaw; zone.add(m); continue; }
       if (it.sconce) { // 铜壁灯：底座 + 弯臂 + 灯罩（自发光）
         const n = [Math.sin(yaw), Math.cos(yaw)], o = (d) => [it.x + n[0] * d, it.z + n[1] * d];
@@ -137,4 +144,20 @@ function ledMat(title, rows = [], aspect = 2) {
   c.globalAlpha = 0.35; c.fillStyle = '#000'; for (let x = 0; x < W; x += 4) c.fillRect(x, 0, 1, H); for (let y = 0; y < H; y += 4) c.fillRect(0, y, W, 1);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
   return new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 1.25, roughness: 0.35 });
+}
+
+// 批次15：告示纸材质（米黄纸 + 红头标题 + 正文行 + 落款 + 红色公章）
+const _notice = new Map();
+function noticeMat(title, lines, red) {
+  const key = title + '|' + lines.join('/'); if (_notice.has(key)) return _notice.get(key);
+  const w = 360, h = 480, cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
+  const g = c.createRadialGradient(w / 2, h / 2, 60, w / 2, h / 2, 320); g.addColorStop(0, '#ece4cc'); g.addColorStop(1, '#cfc3a2'); c.fillStyle = g; c.fillRect(0, 0, w, h);
+  c.textAlign = 'center'; c.fillStyle = red ? '#9c1c16' : '#1d1a16'; c.font = '700 34px "NB Title","NB Serif",serif'; c.fillText(title, w / 2, 62);
+  if (red) { c.fillStyle = '#9c1c16'; c.fillRect(28, 82, w - 56, 3); }
+  c.textAlign = 'left'; c.fillStyle = '#2a2620'; c.font = '19px "NB Serif",serif';
+  let y = 122; for (const l of lines) { for (let i = 0; i < l.length; i += 15) { c.fillText((i ? '' : '　　') + l.slice(i, i + 15), 30, y); y += 30; if (y > h - 90) break; } y += 4; }
+  c.textAlign = 'right'; c.font = '17px "NB Serif",serif'; c.fillText('叙事管理局 · 阅卷中心', w - 30, h - 52); c.fillText('一九七七年十二月', w - 30, h - 28);
+  c.strokeStyle = 'rgba(176,30,24,0.82)'; c.lineWidth = 4; c.beginPath(); c.arc(w - 92, h - 52, 40, 0, Math.PI * 2); c.stroke(); c.fillStyle = 'rgba(176,30,24,0.82)'; c.font = '28px serif'; c.textAlign = 'center'; c.fillText('★', w - 92, h - 42);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  const m = new THREE.MeshStandardMaterial({ map: t, roughness: 0.9 }); _notice.set(key, m); return m;
 }

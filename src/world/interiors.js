@@ -842,29 +842,26 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
   const wood = M.wood ?? new THREE.MeshStandardMaterial({ color: 0x4a3020, roughness: 0.6 });
   const brass = M.brass ?? M.gold;
   if (clue === 'shadow') { const d = add(new THREE.CircleGeometry(0.45, 28), material ?? new THREE.MeshBasicMaterial({ color: 0, transparent: true, opacity: 0.8, depthWrite: false }), 0, 0.012, 0, -Math.PI / 2); d.scale.set(1, 1.6, 1); d.castShadow = false; return g; }
-  if (clue === 'chair') { // 空椅（面朝 +Z），椅背搭外套
-    add(new THREE.BoxGeometry(0.46, 0.05, 0.44), wood, 0, 0.46, 0);
-    for (const sx of [-1, 1]) for (const sz of [-1, 1]) add(new THREE.BoxGeometry(0.04, 0.46, 0.04), wood, sx * 0.2, 0.23, sz * 0.19);
-    for (const sx of [-1, 1]) add(new THREE.BoxGeometry(0.04, 0.5, 0.04), wood, sx * 0.2, 0.73, -0.2);
-    add(new THREE.BoxGeometry(0.44, 0.16, 0.03), wood, 0, 0.9, -0.2);
-    add(new THREE.BoxGeometry(0.5, 0.06, 0.12), cloth, 0, 0.97, -0.21); // 搭在椅背上的外套（肩部）
-    add(new THREE.BoxGeometry(0.46, 0.5, 0.025), cloth, 0, 0.7, -0.24, 0.06); // 外套后片垂下
-    add(new THREE.BoxGeometry(0.44, 0.34, 0.025), cloth, 0, 0.8, -0.165, -0.12); // 前襟垂在椅面后
-    if (cap) add(new THREE.CylinderGeometry(0.11, 0.12, 0.06, 16), cloth, 0.08, 0.51, 0.06);
-    if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 0.53, 0.12, -0.5); np.castShadow = false;
-      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.11, 0.86, -0.148, -0.12); card.castShadow = false; } } // 证件照小卡别在椅背外套前襟上（面朝 +Z）
+  // 批次15：空椅 / 外套改用 Blender 精建模型（r4/exam_chair 实木课椅、r4/wool_coat 呢子大衣：领口、驳头、双袖、褶皱、扣子、袋盖、里衬；work/r3/b15/prev/build.py）
+  const coatTint = (o) => { const c = new THREE.Color(coat); const k = 2.1; c.setRGB(Math.min(1, c.r * k + 0.06), Math.min(1, c.g * k + 0.06), Math.min(1, c.b * k + 0.06));
+    o.traverse((m) => { if (!m.isMesh) return; m.castShadow = m.receiveShadow = true; if (material) { m.material = material; return; }
+      if (/wool/.test(m.material?.name ?? '')) { m.material = m.material.clone(); m.material.color.copy(c); } }); return o; };
+  if (clue === 'chair') { // 空椅（面朝 +Z），呢子大衣搭在椅背上（肩线压在弯靠背上档、衣身垂在椅背后）
+    placeModel('r4/exam_chair', { height: 0.84 }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); g.add(o); });
+    placeModel('r4/wool_coat', { height: 0.886 }).then((o) => { o.position.set(0, 0.01, -0.28); g.add(coatTint(o)); });
+    if (cap) add(new THREE.CylinderGeometry(0.11, 0.12, 0.06, 16), cloth, 0.08, 0.485, 0.06);
+    if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 0.49, 0.12, -0.5); np.castShadow = false;
+      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.1, 0.64, -0.168, -0.06); card.castShadow = false; } } // 证件照小卡别在大衣胸前（面朝 +Z）
     return g; }
   if (clue === 'coat' || clue === 'hanger') { // 衣帽架 / 制服挂架
     if (clue === 'coat') { add(new THREE.CylinderGeometry(0.02, 0.025, 1.75, 10), wood, 0, 0.875, 0); add(new THREE.CylinderGeometry(0.2, 0.22, 0.03, 20), wood, 0, 0.015, 0);
       for (let k = 0; k < 4; k++) add(new THREE.CylinderGeometry(0.008, 0.008, 0.16, 6), brass, Math.sin(k * 1.57) * 0.07, 1.68, Math.cos(k * 1.57) * 0.07, 0.9 * Math.cos(k * 1.57), 0, -0.9 * Math.sin(k * 1.57)); }
     const top = clue === 'coat' ? 1.62 : 1.5;
     add(new THREE.BoxGeometry(0.44, 0.012, 0.012), brass, 0, top + 0.02, 0.06); // 衣架横杆
-    add(new THREE.BoxGeometry(0.46, 0.7, 0.12), material ?? cloth, 0, top - 0.37, 0.07); // 外套身
-    for (const sx of [-1, 1]) add(new THREE.BoxGeometry(0.09, 0.6, 0.1), material ?? cloth, sx * 0.25, top - 0.36, 0.07, 0, 0, sx * 0.05); // 袖子垂下
-    add(new THREE.BoxGeometry(0.16, 0.22, 0.005), new THREE.MeshStandardMaterial({ color: 0xa9a59c, roughness: 0.8 }), 0, top - 0.12, 0.135); // 领口衬衣（批次13：近白色远看像一张白纸 → 压暗）
+    placeModel('r4/wool_coat', { height: 1.03 }).then((o) => { o.position.set(0, top + 0.03 - 1.03, 0.07); g.add(coatTint(o)); });
     if (cap && clue === 'coat') add(new THREE.CylinderGeometry(0.12, 0.13, 0.07, 16), cloth, 0.05, 1.79, 0);
-    if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 1.15, 0.03); np.castShadow = false;
-      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.12, top - 0.43, 0.133); card.castShadow = false; } } // 证件照小卡别在外套胸前
+    if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, top - 1.18, 0.03); np.castShadow = false;
+      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.1, top - 0.36, 0.178); card.castShadow = false; } } // 证件照小卡别在大衣胸前
     return g; }
   return g;
 }
