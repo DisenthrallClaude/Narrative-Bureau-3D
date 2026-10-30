@@ -171,6 +171,28 @@
 3. plaza / facade 高画质截图贴着内存上限：可考虑截图模式上传后释放贴图 CPU 端图片，或先拍低一档画质。
 4. tristat.mjs 拆 pass 会让 plaza 崩，测 plaza 时只用截图会话的整帧统计。
 
+## R3 批次9（2026-10-30 11:16 CST 接手）
+### 完成
+1. **远景主楼 LOD 变黑 = 根因找到并修复**（commit 12197f5）：`tools/facade_lod.mjs` 和 `facade_lod_fixn.mjs` 末尾的 `prune()`（gltf-transform 新版默认 keepAttributes=false）会删掉「材质没引用贴图」的顶点属性——hero GLB 里的材质本来就没贴图（three 端 placeHero 按材质名换成 extMats 的 PBR 材质），于是 **TEXCOORD_0 被整组删掉**，lo 的砌块 / 风化 / 金属贴图全部采样 (0,0) 单像素 → 远景发黑、砌缝消失；`dedup()` 还把 marbleDark 合并成 marble。批次8 怀疑的法线 / AO 不是主因。检查工具 `tools/_insp.mjs`（列每个网格的属性，lo 少了 TEXCOORD_0 一眼可见）。
+   - 新 `tools/facade_lod2.mjs`：`simplifyWithAttributes`（UV 权重 3、法线 0.15）+ Permissive；**玫瑰窗球形区（世界坐标 (0,39.4,−5.5) r 5.2）顶点锁定**——窗花在 F_trim 里（2.6 万面），普通塌边后只剩 457 面 → 窗花消失，锁定后 25420 面保留；`prune({keepAttributes:true})` + dedup 不合并材质。fixn 同修。用法：`RT=0.1 RG=0.2 UVW=3 PERM=1 node tools/facade_lod2.mjs public/assets/hero/hero_facade.glb /tmp/lo.glb && node tools/facade_lod_fixn.mjs /tmp/lo.glb public/assets/hero/hero_facade_lo.glb public/assets/hero/hero_facade.glb`。lo 32.3 万 → 37.3 万面。UV 拉伸检查 `tools/_uvchk.mjs`（F_trim 28%、F_gold 14% 面积 texel 密度偏离 >2 倍，花岗岩/金属噪声贴图远看不明显）；区域面数 `tools/_region.mjs`。批次8 lo 备份 work/r3/b9/hero_facade_lo.b8.glb。
+   - 玫瑰窗中心金色局徽（three 程序化 emblem，半径 1.05 m）被批次8 的 DistCull（r<1.5 → 60 m）剔掉，plaza 主机位（约 80 m）看不到 → exterior.js 给玫瑰窗局徽、门楣局徽设 `userData.noCull`。
+   - `?lodNear=90` 对照：plaza 全 hi 在 7.8 GB 云电脑上整帧黑屏（着色器链接失败/内存，和批次8 lodNear=200 同症），只能拿批次7 全 hi 截图 work/r3/before8/plaza_b7.png 做参照。
+2. **metro_r3 整帧 5.27M → 4.72M**（commit 8ad920d）：同屏大头是实例化小件，street_lamp_02 / bollard / military_crate / r2/park_bench / r2/potted_plant_04 再减面（原件 work/models_pre_b9/）。tristat 结果 work/r3/b9/ts_metro_r3_{before,after}.json。
+3. **批次8 改动区 r3plan 复查**（commit 7c2f889）：training / metro / abyss_core / abyss_tide / s7_entry / archive / canteen / medical / b1 / b2 / b4 全部 0 错误；B2 power_box_01 贴墙。俯视图 screenshots/r3/plan_<区>.png。
+4. **余力**（commit b6265d1）：岗哨陈设+灯光；训练场提亮；定稿厅主机位南口补 2 席校对台 + 烛台（r3plan.js 末尾 `X9`，同 X8 包装方式）。
+### 截图 / 对比图
+- screenshots/r3/ 覆盖：plaza（局徽修复后重拍，1280×720）、plaza_aerial（新增，r3 目录此前无此机位）、facade、memorial、metro_r3、metro_b、wall_post、training_r3/_b/_range、abyss_core/_b、plan_*.png（11 张）。批次9 工作副本 work/r3/b9/s9a…s9d/。
+- 对比图：work/r3/cmp9_lod.jpg（批次7 全 hi / 批次8 旧 lo / 批次9 新 lo，含玫瑰窗与塔身放大）、cmp9_metro.jpg、cmp9_extras.jpg（岗哨/训练场/定稿厅）。脚本 work/r3/b9/cmp9.py（多列、可裁剪放大）。
+- 云电脑脚本：work/r3/b9/rs9.sh（W/H 可调的 rshotx）；本批用 aa/bb/cc/dd（zz 未用），结束已全部 ssh-token --revoke、本地 .ibtok_* 已删。
+### 诚实评估
+- LOD：远景主楼恢复了砌块纹理、亮度和玫瑰窗窗花，和批次7 全 hi 基本一致；仍有差距——小尖塔/线脚轮廓更粗（F_trim 8→10% 面数），塔身窗花（非玫瑰窗）仍是简化后的，亮度比全 hi 略高一点（AO 增益）。
+- metro 达标 4.72M，但只是小件减面；外景 exterior 主视 1.13M 未动。
+- 岗哨：从「全黑空亭」变成能读出值班室的陈设；门外仍偏暗，岗亭外墙本身是程序化盒子。训练场亮度明显提高，但依旧是大面积深色地坪 + 点光，没有烘焙。定稿厅主机位多了前景校对席和烛台，但视野主体仍是巨柱和巨书。
+### 遗留
+1. plaza 高画质截图仍贴着 7.8 GB 内存上限；全 hi（lodNear≥90）对照在云电脑上出不了图。
+2. 塔身其他窗花若要保留，可在 facade_lod2.mjs 的 LOCK 里加球形区（会增加面数）。
+3. 外景 exterior 在 metro 视角主视 1.13M（城景块），下一步可加距离剔除。
+
 ---
 # HANDOFF · R2 美术重建（blender-lead-2，接手 2026-10-29 19:08 CST）
 崩溃后接续：从「R2 当前进度」最后一条往下做。旧 M7 交接记录保留在文末。
