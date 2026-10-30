@@ -154,7 +154,7 @@ export function buildEastWing(scene, world, ctx) {
   for (let z = ZA - 4; z > ZB; z -= 4) if (!R3.citizen_service || z < ZM) b.box('gold', XS - X0, 0.01, 0.05, [(X0 + XS) / 2, Y + 0.004, z], { uv: 1 });
   // 地面导引
   if (!R3.citizen_service) for (let k = 0; k < 5; k++) b.box('gold', 0.08, 0.012, 14, [23.5 + k * 5.4, Y + 0.005, ZA - 11], { uv: 1 });
-  const csTitle = goldText('市民服务大厅　·　污染举报', 6, 0.5, M.goldBright, { res: 128 }); csTitle.position.set(X0 + 0.25, Y + 5.2, -48); csTitle.rotation.y = Math.PI / 2; zone.add(csTitle);
+  const csTitle = goldText('市民服务大厅　·　污染举报', 6, 0.5, M.goldBright, { res: 192 }); csTitle.position.set(X0 + 0.3, Y + 4.4, -40.3); // 批次13：原在西门洞（z −45…−51）正上方、背后是连廊黑洞且被门垛切断 → 移到西墙实墙段（壁柱 −36.3 与门垛 −44.6 之间） csTitle.rotation.y = Math.PI / 2; zone.add(csTitle);
   // 灯
   for (const x of [26, 36, 46]) { point(zone, 0xfff0d8, 14, [x, Y + 5.8, csz], 14); b.box('lampWarm', 4, 0.06, 0.5, [x, F2 - 0.37, csz], { uv: false }); }
   rectLight(zone, 0xfff2e0, 1.4, 28, 16, [35, F2 - 0.4, csz], [35, Y, csz]);

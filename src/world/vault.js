@@ -268,8 +268,9 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
   // 批次12 收尾返工（用户 22:20：上层电梯厅乱石墙像洞穴、偏粉、空）：R3 上层电梯厅墙面 = 胡桃木墙裙 + 方石上墙 + 黑石壁柱，顶棚 = 藻井；门两侧铜框立柱 + 楼层指示器；暖白光
   const UP = R3['lobby_' + name] === true; const dz = UP ? 0.1 : 0; // 墙面布景厚约 0.085 → 墙上件前移 0.1
   if (UP) { dressMats(M);
-    roomDress(b, -X, X, Z0 - 0.2, Z1 + 0.2, y, H - 0.4, { style: 'office', over: { up: 'dz_ashlarEC' }, upOff: [0, 1.43 - y], pil: true, pitch: 3.0, sconce: false,
-      s: { skip: [[X - 6 - 1.95, X - 6 + 1.95], [X + 6 - 1.95, X + 6 + 1.95]] }, n: { skip: [[X - 2.3, X + 2.3]] } });
+    roomDress(b, -X, X, Z0 - 0.2, Z1 + 0.2, y, H - 0.04, { // 批次13：檐口顶到藻井下沿（原 H−0.4 露出 0.4 m 粉色乱石带）
+      style: 'office', over: { up: 'dz_ashlarEC' }, upOff: [0, 1.43 - y], pil: true, pitch: 3.0, sconce: false,
+      s: { skip: [[X - 6 - 1.95, X - 6 + 1.95], [X + 6 - 1.95, X + 6 + 1.95]], pilSkip: [[X - 0.95, X + 0.95]] }, // 批次13：南墙正中壁柱挡住楼层铭牌 → 让开 n: { skip: [[X - 2.3, X + 2.3]] } });
     coffered(b, -X, X, Z0, Z1, y + H, { cell: 3.0, depth: 0.36, lights: true, lightEvery: 1 }); }
   // 门
   for (const x of [-6, 6]) {
@@ -277,6 +278,7 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
     b.add('stoneDark', archRingGeo(3.6, 3.4, 2.4, 3.4, 0.4), f.at(0, 0, 0.0), { uv: 0.5 });
     b.add('gold', archRingGeo(3.7, 3.4, 3.6, 3.4, 0.42), f.at(0, 0, 0.0), { uv: 1 });
     for (const s of [-1, 1]) b.add('elevDoor', new THREE.BoxGeometry(1.18, 3.3, 0.08), f.at(s * 0.6, 1.65, 0.05), { uv: false });
+    if (UP) b.add('dz_pil', new THREE.BoxGeometry(3.9, H - 3.34, 0.01), f.at(0, 3.3 + (H - 3.34) / 2, -0.005), { uv: 0.5 }); // 批次13：门头拱内补黑石门楣板（原露出乱石）
     if (UP) { for (const s of [-1, 1]) { b.add('brass', new THREE.BoxGeometry(0.2, 3.9, 0.16), f.at(s * 1.98, 1.95, 0.02), { uv: 1 }); b.add('dz_pil', new THREE.BoxGeometry(0.3, 0.2, 0.2), f.at(s * 1.98, 0.1, 0.02), { uv: 1 }); b.add('dz_pil', new THREE.BoxGeometry(0.3, 0.16, 0.2), f.at(s * 1.98, 3.98, 0.02), { uv: 1 }); }
       b.add('brass', new THREE.BoxGeometry(4.2, 0.12, 0.16), f.at(0, 4.12, 0.02), { uv: 1 });
       const ind = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.24), floorIndicatorMat(name)); ind.applyMatrix4(f.at(0, 3.72, 0.12)); zone.add(ind); b.add('brass', new THREE.BoxGeometry(0.7, 0.32, 0.03), f.at(0, 3.72, 0.1), { uv: 1 }); }

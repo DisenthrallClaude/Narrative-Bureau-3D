@@ -79,6 +79,14 @@ export async function buildR3(ctx, world, MAT, late = false) {
         const rod = (it.top ?? it.y + 2) - (it.y + it.h / 2); for (const s of [-1, 1]) b.box('dz_brassDim', 0.015, rod, 0.015, [it.x + u[0] * s * it.w * 0.38, it.y + it.h / 2 + rod / 2, it.z + u[1] * s * it.w * 0.38], { uv: 1 });
         const gm = MAT.goldBright ?? MAT.gold; for (const s of [1, -1]) { const t = goldText(it.text, it.w * 0.86, it.h * 0.62, gm, { res: 192, stroke: 0.03 }); t.position.set(it.x + n[0] * s * 0.022, it.y, it.z + n[1] * s * 0.022); t.rotation.y = yaw + (s < 0 ? Math.PI : 0); zone.add(t); }
         continue; }
+      if (it.led) { // 批次13：叫号 LED 显示屏（黑铁壳 + 自发光点阵字），stand 时带落地立杆底座
+        const n = [Math.sin(yaw), Math.cos(yaw)], u = [n[1], -n[0]];
+        b.box('blackMetal', it.w + 0.08, it.h + 0.08, 0.08, [it.x - n[0] * 0.04, it.y, it.z - n[1] * 0.04], { uv: 1, rot: [0, yaw, 0] });
+        b.box('dz_brassDim', it.w + 0.1, 0.02, 0.09, [it.x - n[0] * 0.04, it.y + it.h / 2 + 0.05, it.z - n[1] * 0.04], { uv: 1, rot: [0, yaw, 0] });
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(it.w, it.h), ledMat(it.title, it.rows, it.w / it.h)); m.position.set(it.x + n[0] * 0.002, it.y, it.z + n[1] * 0.002); m.rotation.y = yaw; zone.add(m);
+        if (it.stand) { const bot = it.y - it.h / 2 - 0.04, hh = bot - it.fy;
+          for (const s of [-1, 1]) { const x = it.x + u[0] * s * it.w * 0.36 - n[0] * 0.04, z = it.z + u[1] * s * it.w * 0.36 - n[1] * 0.04; b.box('blackMetal', 0.05, hh, 0.05, [x, it.fy + hh / 2, z], { uv: 1 }); b.box('blackMetal', 0.08, 0.03, 0.5, [x, it.fy + 0.015, z], { uv: 1, rot: [0, yaw, 0] }); } }
+        continue; }
       if (it.sign) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.12), brassPlaqueMaterial(it.sign, it.sub ? [it.sub] : [])); m.position.set(it.x, it.y, it.z); m.rotation.y = yaw; zone.add(m); continue; }
       if (it.sconce) { // 铜壁灯：底座 + 弯臂 + 灯罩（自发光）
         const n = [Math.sin(yaw), Math.cos(yaw)], o = (d) => [it.x + n[0] * d, it.z + n[1] * d];
@@ -107,6 +115,7 @@ export async function buildR3(ctx, world, MAT, late = false) {
       for (const m of ms) {
         const nm = m.name.slice(6);
         if (nm.includes('ceiling_light') || nm.includes('smoke')) m.castShadow = false;
+        if (nm.includes('18th_century_bench')) { const tint = (x) => { const c = x.clone(); c.color = new THREE.Color(0x5a3f30); return c; }; m.material = Array.isArray(m.material) ? m.material.map(tint) : tint(m.material); } // 批次13：歌剧院长凳粉色绒面 + 白漆框 → 压成深胡桃木 + 暗酒红
         if (AGE[nm]) m.material = Array.isArray(m.material) ? m.material.map((x) => ageMat(x, nm)) : ageMat(m.material, nm);
         if (nm.includes('bankers_lamp') || nm.includes('ceiling_light')) m.material = Array.isArray(m.material) ? m.material.map((x) => glowMat(x, nm)) : glowMat(m.material, nm);
       }
@@ -114,4 +123,18 @@ export async function buildR3(ctx, world, MAT, late = false) {
     ctx.r3 = ctx.r3 ?? {}; ctx.r3[id] = plan;
   }
   await Promise.all(jobs);
+}
+
+/** 叫号 LED 屏贴图：深色底 + 琥珀标题 + 红色号码 / 绿色窗口（每行「号码  →  窗口」） */
+function ledMat(title, rows = [], aspect = 2) {
+  const W = 768, H = Math.round(W / aspect); const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  c.fillStyle = '#050505'; c.fillRect(0, 0, W, H); const F = '"NB Serif","Noto Serif SC",serif', n = rows.length + 1, rh = H / (n + 0.3);
+  c.textBaseline = 'middle'; c.fillStyle = '#ffb648'; c.font = `700 ${Math.round(rh * 0.62)}px ${F}`; c.textAlign = 'center'; c.fillText(title ?? '', W / 2, rh * 0.62);
+  c.fillStyle = '#3a2a10'; c.fillRect(W * 0.04, rh * 1.18, W * 0.92, 3);
+  rows.forEach((r, i) => { const yy = rh * (i + 1.75); const [a, b2] = String(r).split('|'); c.font = `700 ${Math.round(rh * 0.6)}px ${F}`;
+    c.textAlign = 'left'; c.fillStyle = '#ff3b24'; c.fillText(a ?? '', W * 0.07, yy); c.textAlign = 'right'; c.fillStyle = '#5cff7c'; c.fillText(b2 ?? '', W * 0.93, yy); });
+  // 点阵网格感：细暗线
+  c.globalAlpha = 0.35; c.fillStyle = '#000'; for (let x = 0; x < W; x += 4) c.fillRect(x, 0, 1, H); for (let y = 0; y < H; y += 4) c.fillRect(0, y, W, 1);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  return new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 1.25, roughness: 0.35 });
 }

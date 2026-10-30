@@ -396,6 +396,12 @@ export async function buildSurface(scene, world, ctx) {
     }
     hangingSign(zc, mats(), '东廊　·　通往职工食堂', (XW + XE) / 2, Y + 3.9, -79, 0, 2.6);
     hangingSign(zc, mats(), '← 食堂　东翼 →', 21.5, Y + 3.6, -113, Math.PI / 2, 2.2);
+    if (R3.east_cloister) { // 批次13：东西段西端 = 食堂东墙门洞（h 3.4），门洞上方原来直接看到食堂墙背面（无光、像一块黑板）→ 黑石门楣板 + 铜门套 + 金字「职工食堂」+ 门头暖光
+      const xf = 18.43; bc.box('dz_pil', 0.04, H - 3.4, 4.0, [xf, Y + 3.4 + (H - 3.4) / 2, -113], { uv: 0.5 });
+      bc.box('dz_brassDim', 0.06, 0.08, 3.5, [xf + 0.03, Y + 3.44, -113], { uv: 1 }); for (const z of [-111.35, -114.65]) bc.box('dz_brassDim', 0.06, 3.44, 0.1, [xf + 0.03, Y + 1.72, z], { uv: 1 });
+      bc.box('dz_brassDim', 0.05, 0.03, 4.0, [xf + 0.02, Y + 4.6, -113], { uv: 1 });
+      const tt = goldText('职 工 食 堂', 2.2, 0.42, M.goldBright ?? mats().goldBright, { res: 192 }); tt.position.set(xf + 0.03, Y + 4.05, -113); tt.rotation.y = Math.PI / 2; zc.add(tt);
+      point(zc, 0xffe2b8, 3.0, [19.4, Y + 4.6, -113], 5); }
     rectLight(zc, 0xffe6c8, 0.8, 4, 40, [(XW + XE) / 2, Y + H - 0.3, -95], [(XW + XE) / 2, Y, -95]);
     bc.build(zc, MAT); for (const g of bc.colliders) world.addGeo(g); jobs.push(Pc.build(zc));
   }
