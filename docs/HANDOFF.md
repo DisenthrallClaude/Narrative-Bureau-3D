@@ -204,7 +204,7 @@
 ### 5 收尾
 - 走查 run 41105984310（walk:walk，7e1c862，含 B3 收容库）：**通过 31 / 失败 0 / 控制台错误 0**（205 s）→ docs/WALKTHROUGH.md 已更新。ef9996a 只加了 r3plan 盒体和灯，未再走查。
 - Pages：189908f 的 Deploy 成功（41107087302）；之后 ef9996a / 文档提交自动部署。
-- Drive 快照 1AxRm2Q4BurQh9HDT9l1fZEO4y1T9hdC2 已覆盖（02:30 CST，内容截至 **189908f**，未压缩 tar 891 MB，`tar xf` 解；tar 与 gws 上传分两步）。
+- Drive 快照 1AxRm2Q4BurQh9HDT9l1fZEO4y1T9hdC2 已覆盖（02:37 CST，内容截至 **5319540**，未压缩 tar 891 MB，`tar xf` 解；tar 与 gws 上传分两步）。
 ### 下批先做
 1. 取图看：41107732529（vault_r3 / vault_r3_b 修复后）、41105952659（vault_top / vault_r3_b）、41105387071（lab_r3_b / zone_r3_b）、41104621398（hall_wanted / exam_r3 / exam_r3_b）、41104636732（cs_top）；超 25 分钟的取消重派。跑 work/r3/b19/cmp19.py。
 2. B3：若仍空旷——中央通道两侧加推车 / 登记表架 / 转运箱；收容格内加标本台或吊牌；补 CREDITS（5 个 R4 资产）。
