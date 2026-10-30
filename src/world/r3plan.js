@@ -2973,3 +2973,60 @@ function planSpine(y, lv) {
   return { room, items: out };
 }
 for (const lv of ['B3', 'B4', 'B5']) { const id = 'spine_' + lv.toLowerCase(); PLANS[id] = (Y) => fixYaw(planSpine(Y, lv)); R3[id] = true; }
+
+// ================= R3 批次23 · 东楼梯前室走廊 east_ante（2F / 3F；东翼楼梯井列南段 x 50…56，z −54…−32） =================
+//  功能平面：北端 z −54 开敞接东楼梯（到达口），西墙 z −44…−47.5 门洞进本层大房间（2F 监测指挥中心 / 3F 区域管控室），南端 z −32 封墙。
+//  动线：楼梯口 → 沿走廊中轴 → 西门；中轴 x 51.0…54.6 净宽 3.6 m 不放任何落地件。
+//  ① 地面：浅水磨石 + 深色石材收边（与东廊 / 电梯厅同系）；楼梯口与西门前磨损
+//  ② 墙面：0–1.15 m 胡桃木墙裙 + 压线 + 踢脚，上墙方石护面到吊顶；吊顶 y+4.6 白色抹灰 + 檐口线脚，楼梯口一道过梁
+//  ③ 西门：木门套 + 门楣铜牌（房间名）；门两侧墙面各一块楼层导览 / 值班告示
+//  ④ 东墙（正对西门）：公告栏（木框软木板 + 告示）居中，两侧成对长凳（坐东面西，靠墙）；北端楼梯口旁消火栓箱 + 灭火器
+//  ⑤ 照明：中轴乳白球吊灯 ×4（z −35.5 / −40.5 / −45.75 / −51），东墙公告栏洗墙暖光；南端墙挂局徽铜牌
+function planEastAnte(y, lv) {
+  const out = [], X0 = 50.15, X1 = 55.97, ZN = -54, ZS = -32.03, CH = 4.6, room2 = lv === '2F' ? '监测指挥中心' : '区域管控室';
+  const room = { name: '东楼梯前室走廊 · ' + lv + '（批次23）', x0: X0, x1: X1, z0: ZN, z1: ZS, y, H: CH,
+    doors: [{ wall: 'N', a: 50.2, b: 55.8, label: '东楼梯（开敞）' }, { wall: 'W', a: -47.5, b: -44, label: room2 }], windows: [],
+    rooms: [['楼梯口', 53, -52.8], ['公告栏', 55.2, -45.75], ['长凳', 55.2, -42.4], ['长凳', 55.2, -49.1], ['消火栓', 55.4, -52.6]],
+    aisles: [{ label: '中轴通道', x0: 51.0, x1: 54.6, z0: -53.9, z1: -32.8 }, { label: '西门口', x0: X0, x1: 54.6, z0: -47.7, z1: -43.8 }] };
+  const B = (box, x, yy, z, w, h, d, tag, uv = 1) => out.push({ box, x, y: yy, z, w, h, d, uv, tag, on: 'partv' });
+  // ① 地面
+  floorZ(out, 'r3_corr', X0, X1, ZN, ZS, y, { border: 0.3, bmat: 'r3_stoneBorder', uv: 0.5 });
+  wear(out, 51.4, 54.4, -53.6, -50.5, y); wear(out, 50.4, 52.6, -47.2, -44.3, y);
+  // ② 墙面（墙裙 + 压线 + 踢脚 + 方石上墙）
+  const wall = (alongZ, c, a0, a1, s, hi = CH) => { const L = a1 - a0, m = (a0 + a1) / 2;
+    if (alongZ) { B('dz_wain', c + s * 0.03, y + 0.575, m, 0.06, 1.15, L, '② 墙裙', 0.6); B('dz_beam', c + s * 0.06, y + 1.17, m, 0.05, 0.05, L, '② 墙裙压线'); B('stoneDark', c + s * 0.04, y + 0.08, m, 0.08, 0.16, L, '② 踢脚');
+      B('dz_ashlarEC', c + s * 0.005, y + 1.2 + (hi - 1.2) / 2, m, 0.01, hi - 1.2, L, '② 方石上墙', 1); }
+    else { B('dz_wain', m, y + 0.575, c + s * 0.03, L, 1.15, 0.06, '② 墙裙', 0.6); B('dz_beam', m, y + 1.17, c + s * 0.06, L, 0.05, 0.05, '② 墙裙压线'); B('stoneDark', m, y + 0.08, c + s * 0.04, L, 0.16, 0.08, '② 踢脚');
+      B('dz_ashlarEC', m, y + 1.2 + (hi - 1.2) / 2, c + s * 0.005, L, hi - 1.2, 0.01, '② 方石上墙', 1); } };
+  wall(true, X0, -53.9, -47.6, 1); wall(true, X0, -43.9, ZS, 1); wall(true, X1, -53.9, ZS, -1); wall(false, ZS, X0, X1, -1);
+  B('dz_ashlarEC', X0 + 0.005, y + 3.1 + (CH - 3.1) / 2, -45.75, 0.01, CH - 3.1, 3.7, '② 门头上墙');
+  // 吊顶 + 檐口 + 楼梯口过梁
+  B('r3_labUpper', 53.06, y + CH + 0.04, (ZN + ZS) / 2, X1 - X0, 0.08, ZS - ZN, '② 吊顶', 0.5);
+  for (const [x, w] of [[X0 + 0.08, 0.16], [X1 - 0.08, 0.16]]) B('dz_beam', x, y + CH - 0.08, (ZN + ZS) / 2, w, 0.16, ZS - ZN, '② 檐口');
+  B('dz_beam', 53.06, y + CH - 0.08, ZS - 0.08, X1 - X0, 0.16, 0.16, '② 檐口');
+  B('dz_ashlarEC', 53.06, y + CH - 0.3, ZN + 0.15, X1 - X0, 0.6, 0.3, '② 楼梯口过梁');
+  // ③ 西门：木门套 + 门楣铜牌 + 两侧告示
+  for (const z of [-43.92, -47.58]) B('dz_beam', X0 + 0.05, y + 1.55, z, 0.12, 3.1, 0.16, '③ 门套');
+  B('dz_beam', X0 + 0.05, y + 3.13, -45.75, 0.12, 0.16, 3.82, '③ 门套');
+  out.push({ sign: room2, sub: lv + ' · 东翼', x: X0 + 0.03, y: y + 3.45, z: -45.75, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '③ 门楣铜牌', on: 'sign' });
+  out.push({ plaque: true, title: lv + ' 楼 层 导 览', lines: lv === '2F' ? ['监测指挥中心　西', '阅卷中心　北（经楼梯井列）', '东楼梯　↑3F　↓1F', '', '', '办公室'] : ['区域管控室　西', '副本投放调度室　经管控室北门', '东楼梯　↓2F　↓1F', '', '', '办公室'], x: X0 + 0.04, y: y + 1.75, z: -41.6, yaw: ROT.E, w: 0.75, h: 1.0, size: [0.8, 1.05, 0.04], tag: '③ 导览', on: 'pic' });
+  out.push({ plaque: true, title: '值 班 告 示', lines: ['进出须佩戴证件', '夜间值班　内线 3' + (lv === '2F' ? '2' : '3') + '0', '外来人员请在楼梯口等候', '', '', '保卫科'], x: X0 + 0.04, y: y + 1.75, z: -49.9, yaw: ROT.E, w: 0.75, h: 1.0, size: [0.8, 1.05, 0.04], tag: '③ 告示', on: 'pic' });
+  // ④ 东墙：公告栏 + 成对长凳 + 消火栓 / 灭火器
+  B('dz_wain2', X1 - 0.04, y + 1.85, -45.75, 0.05, 1.3, 2.6, '④ 公告栏木框'); B('dz_cork', X1 - 0.075, y + 1.85, -45.75, 0.02, 1.14, 2.44, '④ 公告栏软木');
+  out.push({ plaque: true, title: '公　告', lines: ['关于加强夜间巡查的通知', '本周会商：周三 14:00', '寻物：一枚铜质证章', '', '', '办公室'], x: X1 - 0.1, y: y + 1.92, z: -45.2, yaw: ROT.W, w: 0.8, h: 0.9, size: [0.84, 0.94, 0.02], tag: '④ 告示', on: 'pic' });
+  out.push({ plaque: true, title: '值 班 表', lines: ['周一　　周二', '周三　　周四', '周五　　周六', '', '', ''], x: X1 - 0.1, y: y + 1.88, z: -46.55, yaw: ROT.W, w: 0.56, h: 0.72, size: [0.6, 0.76, 0.02], tag: '④ 告示', on: 'pic' });
+  for (const z of [-42.4, -49.1]) out.push({ m: 'r2/church_pew_bench', x: X1 - 0.52, y, z, yaw: ROT.W, w: 1.5, tag: '④ 长凳', on: 'floor' });
+  B('dz_pipeRed', X1 - 0.11, y + 0.88, -52.6, 0.22, 1.0, 0.7, '④ 消火栓箱'); B('dz_glassDark', X1 - 0.225, y + 0.95, -52.6, 0.01, 0.62, 0.5, '④ 消火栓玻璃'); B('r3_steelGrey', X1 - 0.235, y + 0.95, -52.32, 0.02, 0.12, 0.03, '④ 消火栓把手');
+  out.push({ sign: '消 火 栓', sub: '火警 119 · 内线 0', x: X1 - 0.02, y: y + 1.58, z: -52.6, yaw: ROT.W, size: [0.34, 0.12, 0.01], tag: '④ 消火栓牌', on: 'sign' });
+  B('r3_steelGrey', X1 - 0.03, y + 0.95, -51.7, 0.04, 0.3, 0.12, '④ 灭火器托架');
+  out.push({ cyl: true, mat: 'dz_pipeRed', x: X1 - 0.16, y: y + 0.84, z: -51.7, r: 0.085, h: 0.5, size: [0.17, 0.5, 0.17], tag: '④ 灭火器', on: 'partv' });
+  B('blackMetal', X1 - 0.16, y + 1.12, -51.7, 0.06, 0.06, 0.06, '④ 灭火器阀头');
+  // ⑤ 照明 + 南端局徽铜牌
+  for (const z of [-35.5, -40.5, -45.75, -51]) { globe(out, 52.8, z, y, CH, CH - 1.1); light(out, 52.8, y + CH - 1.4, z, 0xffe2b8, 1.6, 7); }
+  light(out, X1 - 1.0, y + 3.2, -45.75, 0xffe6c4, 1.4, 4);
+  out.push({ m: 'r2/old_radiator', x: 53.06, y, z: ZS - 0.22, yaw: ROT.N, w: 1.0, tag: '⑤ 南墙暖气片', on: 'floor' }); // 南端墙下老式铸铁暖气片
+  out.push({ sign: '叙 事 管 理 局', sub: '东翼 · ' + lv, x: 53.06, y: y + 2.4, z: ZS - 0.03, yaw: ROT.N, size: [0.5, 0.16, 0.01], tag: '⑤ 局徽铜牌', on: 'sign' });
+  return { room, items: out };
+}
+PLANS.east_ante = (Y) => fixYaw(planEastAnte(Y, '3F')); R3.east_ante = true;
+PLANS.east_ante2 = (Y) => fixYaw(planEastAnte(Y, '2F')); R3.east_ante2 = true;
