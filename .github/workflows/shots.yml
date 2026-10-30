@@ -1,0 +1,90 @@
+# 托管 runner 出截图（本机 8GB 拍 1600×900 high 必 OOM）。只手动触发，不影响 pages.yml。
+# shots 输入：分号分隔，每项 "组:机位[:额外参数]"，如 "after:cs_r3;before:cs_r3:&r3off=citizen_service"
+# 每项一个矩阵任务（各自独立 runner、新开浏览器），产物 artifact 名 shot-<组>-<机位>，内含 <组>/<机位>.png + 日志
+name: Screenshots
+on:
+  workflow_dispatch:
+    inputs:
+      shots:
+        description: '机位清单：组:机位[:额外参数]，分号分隔'
+        required: true
+        default: 'after:cs_r3'
+      quality:
+        description: '画质档 q'
+        required: true
+        default: 'high'
+      width:
+        description: '宽'
+        required: true
+        default: '1600'
+      height:
+        description: '高'
+        required: true
+        default: '900'
+      frames:
+        description: 'frames'
+        required: false
+        default: '8'
+permissions:
+  contents: read
+concurrency:
+  group: shots-${{ github.run_id }}
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+    steps:
+      - id: m
+        env:
+          SHOTS: ${{ inputs.shots }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import os, json
+          items = []
+          for raw in os.environ['SHOTS'].split(';'):
+              raw = raw.strip()
+              if not raw: continue
+              p = raw.split(':', 2)
+              if len(p) == 1: p = ['after'] + p
+              items.append({'grp': p[0], 'shot': p[1], 'extra': p[2] if len(p) > 2 else ''})
+          print('matrix=' + json.dumps({'include': items}, ensure_ascii=False))
+          PY
+  shot:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: 安装 headless shell（与 playwright-core 同版本）
+        run: npx playwright-core install --with-deps chromium-headless-shell
+      - name: 拍
+        env:
+          GRP: ${{ matrix.grp }}
+          SHOT: ${{ matrix.shot }}
+          EXTRA: ${{ matrix.extra }}
+        run: |
+          free -m; nproc
+          CHROME=$(find ~/.cache/ms-playwright -type f \( -name headless_shell -o -name chrome-headless-shell \) | head -1)
+          echo "CHROME=$CHROME"
+          mkdir -p out/$GRP
+          CHROME="$CHROME" node tools/shot.mjs out/$GRP "$SHOT" --q ${{ inputs.quality }} --w ${{ inputs.width }} --h ${{ inputs.height }} --frames ${{ inputs.frames }} --fresh 1 --extra "$EXTRA" 2>&1 | tee out/$GRP/$SHOT.log
+          free -m
+          test -f out/$GRP/$SHOT.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shot-${{ matrix.grp }}-${{ matrix.shot }}
+          path: out
+          if-no-files-found: warn
+          retention-days: 14
