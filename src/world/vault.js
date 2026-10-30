@@ -275,11 +275,14 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
   const slab = (m, yy, th, hole, o) => { if (!hole) { b.box(m, 2 * X, th, Z0 - Z1, [0, yy, (Z0 + Z1) / 2], o); return; }
     b.box(m, 2 * X, th, Z0 - hz1, [0, yy, (Z0 + hz1) / 2], o); b.box(m, 2 * X, th, hz0 - Z1, [0, yy, (hz0 + Z1) / 2], o);
     for (const s of [-1, 1]) b.box(m, X - hx, th, hz1 - hz0, [s * (X + hx) / 2, yy, (hz0 + hz1) / 2], o); };
-  slab('darkTile', y - 0.1, 0.2, SPN && name !== 'B5', { uv: 0.3 }); world.box(0, y - 0.1, (Z0 + Z1) / 2, 2 * X, 0.2, Z0 - Z1);
-  slab('vaultWall', y + H + 0.15, 0.3, SPN && name !== 'B3', { uv: 0.25 });
-  wallX(b, 'vaultWall', -X - 0.2, Z0, Z1, y, H, 0.4, [], true); wallX(b, 'vaultWall', X + 0.2, Z0, Z1, y, H, 0.4, [], true);
-  wallZ(b, 'vaultWall', Z0, -X, X, y, H, 0.4, [], true);
-  if (name !== 'B3') wallZ(b, 'vaultWall', Z1, -X, X, y, H, 0.4, [{ x0: -2.2, x1: 2.2, h: 3.2 }], true);
+  const BM = name[0] === 'B'; // 批次22：B 层电梯厅地下化——乱石墙 / 蓝调深砖地 → 素混凝土墙顶 + 哑光环氧地坪（墙裙 / 灯 / 设施见 r3plan basementHall）
+  if (BM) { const D = dressMats(M); M.r3_bunkerConc = M.r3_bunkerConc ?? D.r3_bunkerConc; M.r3_epoxy = M.r3_epoxy ?? D.r3_epoxy; }
+  const WM = BM ? 'r3_bunkerConc' : 'vaultWall';
+  slab(BM ? 'r3_epoxy' : 'darkTile', y - 0.1, 0.2, SPN && name !== 'B5', { uv: 0.3 }); world.box(0, y - 0.1, (Z0 + Z1) / 2, 2 * X, 0.2, Z0 - Z1);
+  slab(WM, y + H + 0.15, 0.3, SPN && name !== 'B3', { uv: 0.25 });
+  wallX(b, WM, -X - 0.2, Z0, Z1, y, H, 0.4, [], true); wallX(b, WM, X + 0.2, Z0, Z1, y, H, 0.4, [], true);
+  wallZ(b, WM, Z0, -X, X, y, H, 0.4, [], true);
+  if (name !== 'B3') wallZ(b, WM, Z1, -X, X, y, H, 0.4, [{ x0: -2.2, x1: 2.2, h: 3.2 }], true);
   // 批次12 收尾返工（用户 22:20：上层电梯厅乱石墙像洞穴、偏粉、空）：R3 上层电梯厅墙面 = 胡桃木墙裙 + 方石上墙 + 黑石壁柱，顶棚 = 藻井；门两侧铜框立柱 + 楼层指示器；暖白光
   const UP = R3['lobby_' + name] === true; const dz = UP ? 0.1 : 0; // 墙面布景厚约 0.085 → 墙上件前移 0.1
   if (UP) { dressMats(M);

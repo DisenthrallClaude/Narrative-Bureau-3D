@@ -114,6 +114,7 @@ export function dressMats(M) {
     r3_bunkerConc: W(phm('concrete_wall_008', { color: 0x8a8a84, env: 0.25 }), { macro: 0.3, grime: 0.45, streak: 0.35, ground: 1.2 }), // 批次19 B3：收容格隔墙混凝土
     r3_crateOlive: W(new THREE.MeshStandardMaterial({ color: 0x4d5639, roughness: 0.62, metalness: 0.35, envMapIntensity: 0.4 }), { macro: 0.2, grime: 0.3, tarnish: 0.2, ground: 0.6 }), // 批次20 B3：军绿涂装钢证物箱（替代暖光下像藤箱的黑铝箱）
     r3_crateGrey: W(new THREE.MeshStandardMaterial({ color: 0x6f7678, roughness: 0.5, metalness: 0.5, envMapIntensity: 0.45 }), { macro: 0.2, grime: 0.25, tarnish: 0.25 }), // 批次20 B3：冷灰涂装钢证物箱
+    r3_walnutLt: W(pbr('Wood051', { color: 0x9a7050, roughness: 0.45, env: 0.6 }), { macro: 0.12, grime: 0.15 }), // 批次22：值班台浅胡桃木（dz_wain 0x4a3222 在管控室暗光下近黑）
     r3_kraftBox: W(new THREE.MeshStandardMaterial({ color: 0x8a7a62, roughness: 0.92 }), { macro: 0.2, grime: 0.3 }), // 批次20 看图：kraftDark 在冷光下渲成橙红 → 压低饱和的牛皮纸档案箱
     r3_stencil: new THREE.MeshStandardMaterial({ color: 0xe8e4d4, roughness: 0.8 }), // 批次20 B3：箱面白色喷码条
     r3_paintYellow: new THREE.MeshStandardMaterial({ color: 0xd8a818, roughness: 0.7 }), // 批次20 B3：地面黄色编号漆

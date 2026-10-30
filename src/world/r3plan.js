@@ -1402,7 +1402,7 @@ export function planDorm3(y0) {
     light(out, f.X(2.3), y + 2.7, r.zc, anchor ? 0xffd2a0 : 0xffe2c0, anchor ? 2.4 : 1.7, 5.5);
     if (r.num === '306') { // 空床：被褥卷起、桌上留下的信 + 合影 + 钥匙
       out.push({ box: 'kraft', x: f.X(0.4), y: y + 0.805, z: f.desk.z + 0.05, w: 0.12, h: 0.006, d: 0.22, tag: '306 锚点', on: 'desk' });
-      out.push({ box: 'dz_paper', x: f.X(0.42), y: y + 0.81, z: f.desk.z + 0.1, w: 0.2, h: 0.003, d: 0.28, tag: '306 锚点', on: 'desk' });
+      out.push({ box: 'dz_paper', x: f.X(0.42), y: y + 0.81, z: f.desk.z + 0.1, w: 0.2, h: 0.003, d: 0.28, tag: '306 锚点', on: 'desk', anchor: 'doc_dorm3_letter' });
       out.push({ m: 'r2/standing_picture_frame_01', x: f.X(0.25), y: y + 0.8, z: f.desk.z - 0.05, yaw: f.desk.yaw, h: 0.2, tag: '306 锚点', on: 'desk' });
       light(out, f.X(0.6), y + 1.4, f.desk.z, 0xffcf96, 0.9, 2.5);
     }
@@ -2505,7 +2505,7 @@ export function planZoneControl(y) {
   { const top = y + 1.06, cz = -34.6;
     out.push({ fixed: true, m: '固定:值班台desk（eastwing 原有盒体）', x: 35, y, z: cz, yaw: 0, size: [6, 1.06, 1.2], col: [6, 1.06, 1.2], tag: '⑤ 值班台', on: 'floor' });
     // 批次19：zone_r3_b 看图值班台是一整块纯黑盒（eastwing b.box('wood') 渲黑）→ 套胡桃木柜身 + 两面凸起芯板 + 深色台面 + 踢脚
-    out.push({ box: 'dz_wain', x: 35, y: y + 0.5, z: cz, w: 6.03, h: 0.98, d: 1.23, uv: 0.5, tag: '⑤ 值班台饰面', on: 'partv' });
+    out.push({ box: 'r3_walnutLt', x: 35, y: y + 0.5, z: cz, w: 6.03, h: 0.98, d: 1.23, uv: 0.5, tag: '⑤ 值班台饰面', on: 'partv' });
     out.push({ box: 'dz_beam', x: 35, y: y + 1.03, z: cz, w: 6.1, h: 0.06, d: 1.28, uv: 0.5, tag: '⑤ 值班台饰面', on: 'partv' });
     out.push({ box: 'dz_paintLow', x: 35, y: y + 0.05, z: cz, w: 6.06, h: 0.1, d: 1.26, uv: 0.5, tag: '⑤ 值班台饰面', on: 'partv' });
     for (const sz of [-1, 1]) for (let k = 0; k < 4; k++) out.push({ box: 'dz_wain2', x: 35 - 2.25 + k * 1.5, y: y + 0.55, z: cz + sz * 0.625, w: 1.3, h: 0.62, d: 0.03, uv: 0.5, tag: '⑤ 值班台芯板', on: 'partv' });
@@ -2553,7 +2553,7 @@ export function planZoneControl(y) {
     out.push({ box: 'dz_glow', x: 41.5, y: y + 3.85, z: zw + 0.08, w: 0.4, h: 0.1, d: 0.1, tag: '⑧ 门头壁灯', on: 'partv' });
     light(out, 41.5, y + 3.4, zw + 0.8, 0xfff0dc, 1.2, 5);
     // 值班台饰面在 zone_r3_b 里仍近乎全黑 → 台前补一盏低位暖光
-    light(out, 35, y + 1.6, -35.6, 0xffe6c0, 1.4, 4.5); }
+    light(out, 35, y + 1.6, -35.6, 0xffe6c0, 1.4, 4.5); light(out, 33.2, y + 0.9, -33.3, 0xffe2b8, 1.3, 3.5); light(out, 36.8, y + 0.9, -33.3, 0xffe2b8, 1.3, 3.5); } // 批次22：值班台仍黑 → 柜身换浅胡桃木 r3_walnutLt + 正面两盏低位补光
   // ⑦ 批次18：东门（楼梯井门洞 z −44…−47.5）原是一块纯黑洞 → 钢门套 + 两扇木门扇向室内开到 180° 贴墙 + 门后走廊吸顶灯
   { const X = 49.8, a = -44, b = -47.5;
     for (const z of [a + 0.04, b - 0.04]) out.push({ box: 'r3_steelOld', x: X, y: y + 1.52, z, w: 0.16, h: 3.04, d: 0.08, tag: '⑦ 门套', on: 'partv' });
@@ -2818,6 +2818,62 @@ PLANS.vault_b3 = (Y) => fixYaw(planVaultB3(Y)); R3.vault_b3 = true;
 //   井内：四角钢立柱 + 每 2 m 横撑 + 南北两面导轨 + 4 根钢索（B3 顶曳引轮 → B5 轿厢顶）+ 东侧通长检修梯（带护笼）+ 西侧管线束；
 //   层间楼板段（B3 地面以下 / B4 地面以下）四面混凝土井壁，井壁内侧刷下一层层号；每层厅内西墙层号大字、东墙管线束、井架四角防爆灯。
 const SP = { x0: -1.8, x1: 1.8, z0: -89.2, z1: -86.4, zc: -87.8 };
+// ================= R3 批次22 · B 层电梯厅地下化（B1–B6 共用；电梯厅 x −9…9，z −92…−84，层高 5.2） =================
+//  功能平面：南墙两部电梯——西 x −6 客梯（铜门）、东 x +6 货梯（门洞内两侧收拢的折叠铁闸门 + 顶部滑轨 + 门前黄黑警示带）；两门前 1.2 m 黄线候梯线；
+//  西墙：防爆壁灯 ×2（z −85.5 / −90.5）、通行须知告示框（z −85.6）、层号大字（z −88，竖井层已有）、消火栓箱（z −90.6）；
+//  东墙：防爆壁灯 ×2（z −85.5 / −89.6）、成对长凳 ×2（z −85.9 / −88.1，坐东面西）、层号大字（z −87.0）、北端管线束（竖井层已有）；
+//  三面墙 0–1.3 m 铆钉钢板墙裙（墙面 / 顶棚由 vault.js 换素混凝土 + 环氧地坪）；顶棚 x ±4.5 两道纵向混凝土梁（避开竖井洞口）；北门槛黄黑警示带（通收容库 / 本层主区）。
+function basementHall(out, y, lv, spine) {
+  const H = 5.2, B = (box, x, yy, z, w, h, d, tag, uv = 1) => out.push({ box, x, y: yy, z, w, h, d, uv, tag, on: 'partv' });
+  // 铆钉钢板墙裙：西 / 东墙通长，北墙门两侧
+  const wain = (alongZ, c, a0, a1) => { const L = a1 - a0, m = (a0 + a1) / 2;
+    if (alongZ) B('r3_steelOld', c, y + 0.65, m, 0.05, 1.3, L, 'B 墙裙'); else B('r3_steelOld', m, y + 0.65, c, L, 1.3, 0.05, 'B 墙裙');
+    const off = c < 0 ? 0.03 : -0.03;
+    for (let t = a0 + 0.25; t < a1 - 0.1; t += 0.5) for (const hy of [0.12, 1.2]) { if (alongZ) B('dz_pipe', c + off, y + hy, t, 0.03, 0.035, 0.035, 'B 铆钉'); else B('dz_pipe', t, y + hy, c + off, 0.035, 0.035, 0.03, 'B 铆钉'); }
+    for (let t = a0 + 1.2; t < a1 - 0.3; t += 1.2) { if (alongZ) B('blackMetal', c + off, y + 0.65, t, 0.02, 1.3, 0.025, 'B 钢板接缝'); else B('blackMetal', t, y + 0.65, c + off, 0.025, 1.3, 0.02, 'B 钢板接缝'); }
+    if (alongZ) B('r3_steelGrey', c + off * 1.3, y + 1.32, m, 0.06, 0.05, L, 'B 墙裙压条'); else B('r3_steelGrey', m, y + 1.32, c + off * 1.3, L, 0.05, 0.06, 'B 墙裙压条'); };
+  wain(true, -8.97, -91.8, -84.25); wain(true, 8.97, -91.8, -84.25);
+  wain(false, lv === 'B3' ? -91.97 : -91.77, -8.9, -2.75); wain(false, lv === 'B3' ? -91.97 : -91.77, 2.75, 8.9);
+  // 顶棚纵梁（x ±4.5，避开竖井洞口 x ±1.8）
+  for (const x of [-4.5, 4.5]) B('r3_bunkerConc', x, y + H - 0.25, -88, 0.42, 0.5, 7.5, 'B 顶棚梁', 0.5);
+  // 防爆壁灯：钢灯座 + 冷白灯罩 + 黑钢护笼 + 补光
+  for (const [x, z] of [[-8.95, -85.5], [-8.95, -90.5], [8.95, -85.5], [8.95, -89.6]]) { const s = Math.sign(x);
+    B('r3_steelGrey', x - s * 0.08, y + 3.3, z, 0.12, 0.32, 0.22, 'B 防爆灯座'); B('dz_glowCold', x - s * 0.2, y + 3.24, z, 0.14, 0.2, 0.14, 'B 防爆灯罩');
+    for (const dz of [-0.085, 0.085]) B('blackMetal', x - s * 0.2, y + 3.24, z + dz, 0.16, 0.24, 0.012, 'B 护笼');
+    B('blackMetal', x - s * 0.285, y + 3.24, z, 0.012, 0.24, 0.17, 'B 护笼'); light(out, x - s * 0.7, y + 3.0, z, 0xf2ead8, 1.3, 6); }
+  // 层号大字（东墙；西墙竖井层已有，非竖井层补上）
+  out.push({ wtext: lv, x: 8.9, y: y + 2.6, z: -87.0, yaw: ROT.W, w: 1.6, h: 1.0, size: [1.6, 1.0, 0.05], tag: 'B 层号大字', on: 'sign' });
+  if (!spine) out.push({ wtext: lv, x: -8.9, y: y + 2.6, z: -88.0, yaw: ROT.E, w: 1.8, h: 1.1, size: [1.8, 1.1, 0.05], tag: 'B 层号大字', on: 'sign' });
+  // 西墙：通行须知告示框 + 消火栓箱
+  out.push({ plaque: true, title: lv + ' 通 行 须 知', lines: ['凭证件进入　双人同行', '货梯限载 3000 kg', '证物转运走货梯', '黄线外候梯　禁止倚靠闸门', '', '安全保卫科'], x: -8.92, y: y + 1.85, z: -85.6, yaw: ROT.E, w: 0.8, h: 1.0, size: [0.86, 1.06, 0.04], tag: 'B 告示框', on: 'pic' });
+  B('dz_pipeRed', -8.83, y + 0.88, -90.6, 0.22, 1.0, 0.7, 'B 消火栓箱'); B('dz_glassDark', -8.715, y + 0.95, -90.6, 0.01, 0.62, 0.5, 'B 消火栓箱玻璃');
+  B('r3_steelGrey', -8.705, y + 0.95, -90.32, 0.02, 0.12, 0.03, 'B 消火栓箱把手');
+  out.push({ sign: '消 火 栓', sub: '火警 119 · 内线 0', x: -8.93, y: y + 1.58, z: -90.6, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: 'B 消火栓牌', on: 'sign' });
+  // 东墙：成对长凳（坐东面西）
+  for (const z of [-85.9, -88.1]) out.push({ m: 'r2/church_pew_bench', x: 8.42, y, z, yaw: ROT.W, w: 1.5, tag: 'B 候梯长凳', on: 'floor' });
+  // 南墙两部电梯：客梯 / 货梯铭牌 + 候梯黄线 + 货梯门前黄黑警示带 + 收拢折叠铁闸门 + 滑轨
+  out.push({ sign: '客 梯', sub: '限乘 13 人', x: -8.25, y: y + 2.1, z: -84.23, yaw: ROT.N, size: [0.34, 0.12, 0.01], tag: 'B 电梯铭牌', on: 'sign' });
+  out.push({ sign: '货 梯', sub: '限载 3000 kg · 证物转运', x: 8.25, y: y + 2.1, z: -84.23, yaw: ROT.N, size: [0.34, 0.12, 0.01], tag: 'B 电梯铭牌', on: 'sign' });
+  for (const x of [-6, 6]) B('r3_paintYellow', x, y + 0.006, -85.45, 2.8, 0.012, 0.1, 'B 候梯黄线');
+  B('r3_hazard', 6, y + 0.007, -84.62, 2.4, 0.014, 0.36, 'B 货梯警示带', 0.8);
+  for (const s of [-1, 1]) { const xs = 6 + s * 1.12;
+    for (let k = 0; k < 6; k++) B('r3_steelOld', xs - s * k * 0.03, y + 1.5, -84.42, 0.018, 3.0, 0.02, 'B 折叠闸门（收拢）');
+    for (const hy of [0.3, 1.5, 2.7]) B('r3_steelOld', xs - s * 0.075, y + hy, -84.44, 0.17, 0.03, 0.025, 'B 闸门拉杆'); }
+  B('r3_steelGrey', 6, y + 3.05, -84.42, 2.5, 0.08, 0.08, 'B 闸门滑轨'); B('r3_hazard', 6, y + 3.2, -84.3, 2.6, 0.18, 0.04, 'B 货梯门楣警示', 0.8);
+  // 北门槛黄黑警示带
+  B('r3_hazard', 0, y + 0.007, -91.55, 4.4, 0.014, 0.3, 'B 门槛警示带', 0.8);
+}
+export function planBLobby(y, lv) {
+  const out = [];
+  const room = { name: lv + ' 电梯厅 · 地下化（批次22）', x0: -9, x1: 9, z0: -92, z1: -84, y, H: 5.2,
+    doors: [{ wall: 'S', a: -7.2, b: -4.8, label: '客梯' }, { wall: 'S', a: 4.8, b: 7.2, label: '货梯' }, { wall: 'N', a: -2.3, b: 2.3, label: '本层主区' }], windows: [],
+    rooms: [['客梯（铜门）', -6, -85.0], ['货梯（铁闸门）', 6, -85.0], ['告示 / 消火栓', -8.3, -88.5], ['候梯长凳', 8.2, -87.0]],
+    aisles: [{ label: '候梯区', x0: -7.4, x1: 7.4, z0: -86.6, z1: -84.6 }, { label: '中轴通道', x0: -2.3, x1: 2.3, z0: -91.8, z1: -84.6 }] };
+  basementHall(out, y, lv, false);
+  light(out, 0, y + 3.4, -88, 0xf2e6d2, 1.6, 9);
+  return { room, items: out };
+}
+for (const [id, lv] of [['blobby_b1', 'B1'], ['blobby_b2', 'B2'], ['blobby_b6', 'B6']]) { PLANS[id] = (Y) => fixYaw(planBLobby(Y, lv)); R3[id] = true; }
 function planSpine(y, lv) {
   const out = []; const H = 5.2, top = y + H, ceil = lv === 'B3' ? top : top + 0.3; // B3 顶即曳引机房楼板；B4/B5 顶板开洞，井架穿过
   const below = { B3: -34 + 5.5, B4: -42 + 5.5, B5: y }[lv]; // 本层地面下面井壁 / 井架延伸到下一层顶板上沿（B5 为井底）
@@ -2876,12 +2932,13 @@ function planSpine(y, lv) {
   for (const x of [SP.x0 + 0.15, SP.x1 - 0.15]) for (const z of [SP.z0 + 0.15, SP.z1 - 0.15]) { const sx = Math.sign(x), sz = z < SP.zc ? -1 : 1;
     B('r3_steelGrey', x + sx * 0.12, y + 2.9, z + sz * 0.12, 0.14, 0.24, 0.14, '⑦ 防爆灯座'); B('dz_glowCold', x + sx * 0.16, y + 2.78, z + sz * 0.16, 0.12, 0.18, 0.12, '⑦ 防爆灯罩'); }
   for (const x of [-5.4, 5.4]) light(out, x, y + 3.6, -88.4, 0xffe2b8, 1.4, 8); // 批次20 spine_top 看图：电梯厅地面近乎全黑 → 东西两侧补暖光（未重拍）
-  light(out, 0, y + 3.0, SP.zc, 0xe4ecff, 1.6, 7); light(out, 0, y + 0.6 - (lv === 'B5' ? 0 : 1.4), SP.zc, 0xd8e2f0, 0.9, 5);
+  light(out, 0, y + 3.0, SP.zc, 0xf0eadc, 1.6, 7); light(out, 0, y + 0.6 - (lv === 'B5' ? 0 : 1.4), SP.zc, 0xe8e0d0, 0.9, 5); // 批次22：spine_r3 看图地面泛蓝 → 井内光去蓝
   // 厅内：西墙层号大字 + 东墙管线束（竖向 4 根 + 管卡）+ 层号铜牌
   out.push({ wtext: lv, x: -8.75, y: y + 2.6, z: -88, yaw: ROT.E, w: 1.8, h: 1.1, size: [1.8, 1.1, 0.05], tag: '② 层号大字', on: 'sign' });
   out.push({ sign: lv + ' · 书脊井', sub: { B3: '证物收容库 开架区 · 1–3 级', B4: '单独收容柜 · 4–6 级', B5: '深库 · 双人双锁' }[lv], x: -8.85, y: y + 1.55, z: -88, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '② 层号铜牌', on: 'sign' });
   [['r3_rackGreen', 0.18], ['r3_steelGrey', 0.12], ['r3_crateOlive', 0.1], ['dz_pipe', 0.08]].forEach(([m, w], i) => { const z = -91.5 + i * 0.3; B(m, 8.72 - w / 2, y + H / 2, z, w, H, w, '③ 管线束'); });
   for (const yy of [0.8, 2.6, 4.4]) B('blackMetal', 8.62, y + yy, -91.05, 0.06, 0.08, 1.15, '③ 管卡');
+  basementHall(out, y, lv, true); // 批次22：B 层电梯厅地下化（墙裙 / 防爆灯 / 消火栓 / 告示 / 长凳 / 货梯闸门）
   return { room, items: out };
 }
 for (const lv of ['B3', 'B4', 'B5']) { const id = 'spine_' + lv.toLowerCase(); PLANS[id] = (Y) => fixYaw(planSpine(Y, lv)); R3[id] = true; }

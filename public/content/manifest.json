@@ -648,6 +648,14 @@
    "texture": "tex_dorm_assign"
   },
   {
+   "id": "doc_dorm3_letter",
+   "area": "dorm",
+   "location": "宿舍三号楼 306 室书桌上拆开的信",
+   "type": "letter",
+   "title": "留给下一位住户",
+   "text": "留给下一位住户：\n\n床板第三根横档松了，睡觉别往左翻。\n暖瓶塞子漏气，开水房第二个龙头水最烫。\n衣柜顶上原来有只皮箱，不是我的，我走那天它自己不见了。\n\n还有一件事。\n如果夜里听见走廊有人一间一间念名字——\n不要应。\n念到 306 的时候也不要应。\n他念的不是你，是我。\n\n　　　　　　　　前住户 留\n　　　　　　　　（落款处的名字被人用钢笔划掉了）"
+  },
+  {
    "id": "doc_cit_windows",
    "area": "citizen_service",
    "location": "服务窗口上方一整排 LED 窗口牌",

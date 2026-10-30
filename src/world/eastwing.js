@@ -291,6 +291,13 @@ export function buildEastWing(scene, world, ctx) {
   ctx.anchors.int_exam_shelf = { box: [35, F3 + 1.8, dzc + 1, 3.6, 3.6, 3.6] };
   b.box('blackMetal', 4, 1.0, 1.2, [28, F3 + 0.5, dz0 - 2], { uv: 0.5, collide: true });
   if (R3.zone_control) { point(zone, 0xfff0dc, 3.2, [41.5, F3 + 3.0, dz0 - 1.6], 9); point(zone, 0xffe8c8, 1.6, [41.5, F3 + 2.2, dz0 - 5.0], 8); } // 批次20：zone_r3_b 看图北墙门洞（→ 副本投放调度室）一块纯黑 → 门后补灯，透出调度室内景
+  if (R3.zone_control) { // 批次22：zone_r3_b 门洞后仍黑 → 门洞视线落点（x 44…47.5，z −65）立一面「投放任务板」（胡桃木框 + 自发光告示）+ 两侧铁皮档案柜 + 暖光
+    const tb = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 1.7), signMaterial('副本投放任务板', ['冀-03　时流异常　5 级　投放中', '雾港-19　回声　3 级　待命', '沪-07　空房间　2 级　已回收', '', '投放前须双人复核母带编号', '值班员签字：________'], 900, 510));
+    tb.material.emissive = new THREE.Color(0xffffff); tb.material.emissiveMap = tb.material.map; tb.material.emissiveIntensity = 0.12;
+    tb.position.set(45.6, F3 + 1.9, -65.18); zone.add(tb);
+    b.box('doorWood', 3.2, 1.9, 0.08, [45.6, F3 + 1.9, -65.26], { uv: 0.5 }); b.box('doorWood', 3.4, 0.08, 0.3, [45.6, F3 + 0.85, -65.1], { uv: 0.5 });
+    for (const x of [43.5, 47.7]) b.box('paintedGreen', 0.9, 1.8, 0.6, [x, F3 + 0.9, -65.0], { uv: 0.5, collide: true });
+    point(zone, 0xffe2b8, 2.4, [45.6, F3 + 2.8, -63.4], 6); }
   const dsp = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.06, 0.31), M.kraft); dsp.position.set(28, F3 + 1.03, dz0 - 2); zone.add(dsp); ctx.anchors.doc_exam_dispatch = dsp;
   const dTitle = goldText('副本投放调度室', 4, 0.5, M.goldBright, { res: 128 }); dTitle.position.set(X0 + 0.25, F3 + 5.4, dzc); dTitle.rotation.y = Math.PI / 2; zone.add(dTitle);
   rectLight(zone, 0xc8d8ff, 1.0, 20, 10, [35, Y + 20.8, dzc], [35, F3, dzc]);
