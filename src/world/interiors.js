@@ -831,8 +831,38 @@ export function envelopeMesh(M, withString = true) {
 // 不给 clue = 什么都不画（路人、人群）。
 // 批次13：用户「人物图片保留并多用」→ 名牌旁加证件照小卡（白底立绘裁头肩 / 齐仇用档案海报裁），work/r3/b13/idp/mk.py 生成
 const IDPHOTO = { 周闻: 'zhouwen', 殷泽: 'yinze', 叶寻: 'yexun', 周也: 'zhouye', 齐凌云: 'qilingyun', 齐仇: 'qichou' };
-const _idMat = {};
-function idCardMat(name) { const k = IDPHOTO[name]; if (!k) return null; return (_idMat[k] = _idMat[k] ?? new THREE.MeshStandardMaterial({ map: loadTex(`content/textures/idphoto/${k}.jpg`, { srgb: true }), roughness: 0.45, emissive: 0xffffff, emissiveIntensity: 0.06 })); }
+// 批次31（用户 07:02 要求）：证件照小卡 0.105×0.14 太小 → 约 A5（0.16×0.226 m，面积 ≈2.5 倍）档案照片卡：米白卡纸 + 顶部「叙事管理局 人员档案」+ 大头像（0.136×0.18 m）+ 姓名，铜框 + 顶部铜夹
+const _idCard = {};
+function idCardBigMat(name) {
+  const k = IDPHOTO[name]; if (!k) return null; if (_idCard[k]) return _idCard[k];
+  const cv = document.createElement('canvas'); cv.width = 640; cv.height = 904; const c = cv.getContext('2d');
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  const draw = (img) => {
+    c.fillStyle = '#ece3cc'; c.fillRect(0, 0, 640, 904);
+    c.strokeStyle = '#7a5a2a'; c.lineWidth = 6; c.strokeRect(14, 14, 612, 876); c.lineWidth = 2; c.strokeRect(26, 26, 588, 852);
+    c.fillStyle = '#5a3c18'; c.font = '600 38px "NB Serif","Noto Serif SC",serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('叙事管理局　人员档案', 320, 70);
+    c.fillStyle = '#8a6a3a'; c.fillRect(60, 100, 520, 3);
+    const px = 48, py = 118, pw = 544, ph = 725 * 544 / 544 * 0.92; // 头像 3:4
+    c.fillStyle = '#d8d2c4'; c.fillRect(px, py, pw, pw * 4 / 3 > 660 ? 660 : pw * 4 / 3);
+    const H = 660, W = H * 3 / 4, X = (640 - W) / 2; void ph; void px;
+    if (img) c.drawImage(img, X, py, W, H); c.strokeStyle = '#3a2a14'; c.lineWidth = 3; c.strokeRect(X, py, W, H);
+    c.fillStyle = '#1e140a'; c.font = '700 64px "NB Serif","Noto Serif SC",serif'; c.fillText(name, 320, py + H + 52);
+    t.needsUpdate = true;
+  };
+  draw(null); const img = new Image(); img.onload = () => draw(img); img.src = `./content/textures/idphoto/${k}.jpg`;
+  return (_idCard[k] = new THREE.MeshStandardMaterial({ map: t, roughness: 0.55, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.08 }));
+}
+/** A5 档案照片卡（面朝 +Z，中心在原点）：卡面 + 铜框 + 顶部铜夹 */
+function idCardBig(name, brass) {
+  const m = idCardBigMat(name); if (!m) return null;
+  const g = new THREE.Group(); const W = 0.16, H = 0.226;
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(W, H), m); face.position.z = 0.004; g.add(face);
+  const fr = new THREE.Mesh(new THREE.BoxGeometry(W + 0.014, H + 0.014, 0.006), brass); g.add(fr);
+  const clip = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.03, 0.012), brass); clip.position.set(0, H / 2 - 0.004, 0.006); g.add(clip);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.012, 0.003, 6, 14), brass); ring.position.set(0, H / 2 + 0.016, 0.004); g.add(ring);
+  g.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.receiveShadow = true; } });
+  return g;
+}
 function namePlateMat(name) {
   const cv = document.createElement('canvas'); cv.width = 256; cv.height = 72; const c = cv.getContext('2d');
   c.fillStyle = '#6b4f22'; c.fillRect(0, 0, 256, 72); c.strokeStyle = '#d8b56a'; c.lineWidth = 4; c.strokeRect(4, 4, 248, 64);
@@ -855,8 +885,11 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
     placeModel('r4/exam_chair', { height: 0.84 }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); g.add(o); });
     placeModel('r4/wool_coat', { height: 0.886 }).then((o) => { o.position.set(0, 0.01, -0.28); g.add(coatTint(o)); });
     if (cap) add(new THREE.CylinderGeometry(0.11, 0.12, 0.06, 16), cloth, 0.08, 0.485, 0.06);
-    if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 0.49, 0.12, -0.5); np.castShadow = false;
-      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.1, 0.537, -0.165, -0.12); card.castShadow = false; } } // 证件照小卡立在椅面与中档之间、靠着大衣前襟（面朝 +Z；原 0.64 正好压在中档上、像浮在椅背前）
+    if (name) { const card = idCardBig(name, brass);
+      if (card) { // 批次31：A5 档案照片卡立在椅面铜卡座上、后仰 30°（底边 y0.465 z+0.04，顶边 y0.66 z−0.07；中档在 z≈−0.16、y0.615–0.665，不相交；卡上已有姓名 → 去掉椅面前沿名牌免得挡卡）
+        card.position.set(0, 0.465 + 0.113 * Math.cos(0.52), 0.04 - 0.113 * Math.sin(0.52)); card.rotation.x = -0.52; g.add(card);
+        add(new THREE.BoxGeometry(0.19, 0.012, 0.05), brass, 0, 0.462, 0.04).castShadow = false; add(new THREE.BoxGeometry(0.19, 0.03, 0.006), brass, 0, 0.47, 0.066).castShadow = false; // 卡座 + 前挡
+      } else { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 0.49, 0.12, -0.5); np.castShadow = false; } }
     return g; }
   if (clue === 'coat' || clue === 'hanger') { // 衣帽架 / 制服挂架
     if (clue === 'coat') { add(new THREE.CylinderGeometry(0.02, 0.025, 1.75, 10), wood, 0, 0.875, 0); add(new THREE.CylinderGeometry(0.2, 0.22, 0.03, 20), wood, 0, 0.015, 0);
@@ -866,7 +899,7 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
     placeModel('r4/wool_coat', { height: 1.03 }).then((o) => { o.position.set(0, top + 0.03 - 1.03, 0.07); g.add(coatTint(o)); });
     if (cap && clue === 'coat') add(new THREE.CylinderGeometry(0.12, 0.13, 0.07, 16), cloth, 0.05, 1.79, 0);
     if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, top - 1.18, 0.03); np.castShadow = false;
-      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.1, top - 0.36, 0.178); card.castShadow = false; } } // 证件照小卡别在大衣胸前
+      const card = idCardBig(name, brass); if (card) { card.position.set(0.1, top - 0.27, 0.196); card.rotation.x = -0.06; g.add(card); } } // 批次31：A5 档案照片卡夹在大衣左胸驳头外（x 0.02–0.18 避开中线扣子 x0±0.012；y top−0.157…−0.383，在领口之下、首粒扣 top−0.40 之上；卡面 z0.196 > 驳头前沿 ≈0.175，不穿模）
     return g; }
   return g;
 }
