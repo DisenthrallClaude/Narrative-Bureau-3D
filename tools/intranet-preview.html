@@ -1,0 +1,18 @@
+<!doctype html>
+<!-- 局内网预览（开发用，不进 vite build）：npx vite → http://localhost:5173/tools/intranet-preview.html?st=legal&tab=dept -->
+<html lang="zh-CN"><head><meta charset="utf-8"><base href="/"><title>局内网预览</title>
+<style>
+@font-face { font-family: 'NB Serif'; src: url('/fonts/serif-regular.woff2') format('woff2'); font-weight: 400; }
+@font-face { font-family: 'NB Serif'; src: url('/fonts/serif-semibold.woff2') format('woff2'); font-weight: 600; }
+@font-face { font-family: 'NB Serif'; src: url('/fonts/serif-bold.woff2') format('woff2'); font-weight: 700; }
+@font-face { font-family: 'NB Title'; src: url('/fonts/title.woff2') format('woff2'); font-weight: 400 900; }
+@font-face { font-family: 'NB Sans'; src: url('/fonts/sans-regular.woff2') format('woff2'); font-weight: 400; }
+@font-face { font-family: 'NB Sans'; src: url('/fonts/sans-medium.woff2') format('woff2'); font-weight: 500 700; }
+@font-face { font-family: 'NB Latin Title'; src: url('/fonts/latin-title.woff2') format('woff2'); font-weight: 400 900; }
+@font-face { font-family: 'NB Latin'; src: url('/fonts/latin-serif.woff2') format('woff2'); font-weight: 400 700; }
+@font-face { font-family: 'NB Latin'; src: url('/fonts/latin-italic.woff2') format('woff2'); font-weight: 400 700; font-style: italic; }
+:root { --gold: #d8b469; --gold2: #f3dc9c; --title: 'NB Latin Title', 'NB Title', serif; --serif: 'NB Latin', 'NB Serif', serif; --serif-zh: 'NB Serif', serif; --sans: 'NB Sans', sans-serif; --latin: 'NB Latin Title', serif; }
+html, body { margin: 0; height: 100%; background: #1a1712 url('/assets/tex/Paper006_color.webp'); overflow: hidden; }
+#screens { position: fixed; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; background: #111; overflow: auto; }
+#screens canvas { width: 100%; border: 1px solid #333; }
+</style></head><body><script type="module" src="/tools/intranet-preview.js"></script></body></html>

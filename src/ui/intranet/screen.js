@@ -1,7 +1,7 @@
 // 局内网「屏幕截图」：把各终端当前页画到 Canvas（静态纹理，近看像真的在显示局内网）。与 intranet.css 同一套配色和字体。
 import * as THREE from 'three';
 import { content } from '../../engine/content.js';
-import { NET, NOTICES, DEPT, LEGAL_CASES, FACTIONS, CMD, LOANS, SANITY, DIR, B2, B5 } from './data.js';
+import { NET, NOTICES, DEPT, LEGAL_CASES, LEGAL_REFS, FACTIONS, CMD, LOANS, SANITY, DIR, B2, B5 } from './data.js';
 
 const C = { bg: '#06100e', ivory: '#e9e0c8', dim: '#8f9c91', gold: '#d8b469', gold2: '#f0d898', ph: '#8fdcb0', red: '#d0473b', line: 'rgba(216,180,105,0.35)' };
 const F = { title: '"NB Title", "NB Serif", serif', serif: '"NB Latin", "NB Serif", serif', zh: '"NB Serif", serif', mono: '"NB Mono", "NB Sans", monospace', latin: '"NB Latin Title", serif' };
@@ -12,7 +12,7 @@ function loadEmblem() { if (emblem) return; const u = content.texUrl('tex_emblem
 function summary(st) {
   const D = DEPT[st.page];
   switch (st.page) {
-    case 'legal': return { t: '契约类能力合同解除登记', rows: LEGAL_CASES.map((r) => [r[0], r[1].replace('（姓名已遮挡）', ''), r[4]]), note: '叙管办〔2026〕117 号　·　法律顾问 方妍' };
+    case 'legal': return { t: '契约类能力合同解除登记', rows: [...LEGAL_CASES.map((r) => [r[0], r[1].replace('（姓名已遮挡）', ''), r[4]]), ...LEGAL_REFS.map((r) => ['法规速查', r[0], ''])], note: '叙管办〔2026〕117 号　·　法律顾问 方妍' };
     case 'liaison': return { t: '势力评估摘要', rows: FACTIONS.slice(0, 8).map((f, i) => [String(i + 1).padStart(2, '0'), f[0], f[2]]), note: '灰塔来电 10-28 21:40　答复：是我们的人。' };
     case 'publicity': return { t: '通稿审核队列', rows: [['XC-1028-03', '通州区「重复路段」通稿', '第三稿'], ['XC-1027-01', '2027 加试报名启动', '已发布'], ['4.1', '对「祂」一律称「不可描述的自然现象」', '口径']], note: '短视频后台：热门评论 5 条（已折叠 3 条）' };
     case 'command': return { t: '全国现实稳定度 ' + CMD.national, rows: CMD.hourly.slice(2).map((h) => [h[0], h[1], h[2] ? '自动消除' : '正常']), note: '冀 橙色　粤 黄色　京 通州 黄色', big: true };
@@ -26,6 +26,7 @@ function summary(st) {
 }
 
 export function drawScreen(c, W, H, st) {
+  loadEmblem();
   const s = H / 600; // 以 600 高为基准缩放
   const g = c.createRadialGradient(W * 0.5, H * 0.42, 10, W * 0.5, H * 0.5, Math.max(W, H) * 0.75); g.addColorStop(0, '#0d1f1a'); g.addColorStop(0.7, C.bg); g.addColorStop(1, '#020605');
   c.fillStyle = g; c.fillRect(0, 0, W, H);
@@ -37,7 +38,7 @@ export function drawScreen(c, W, H, st) {
   c.textAlign = 'right'; c.fillStyle = C.dim; c.font = `${13 * s}px ${F.mono}`; c.fillText('终端 ' + st.term, W - pad, 40 * s); c.fillText(NET.date.replace('　', ' '), W - pad, 60 * s); c.textAlign = 'left';
   line(c, 0, 88 * s, W, C.line, 1.5 * s);
   // 导航
-  const D = DEPT[st.page]; const tabs = ['门户首页', '人员档案', '内部邮件', '异常登记簿', D.title.split('　')[0]]; let x = pad;
+  const D = DEPT[st.page]; const tabs = ['门户首页', '人员档案', '内部邮件', '异常登记簿', D.short ?? D.title]; let x = pad;
   c.font = `600 ${14 * s}px ${F.zh}`;
   tabs.forEach((t, i) => { const w = c.measureText(t).width + 54 * s; if (i === 4) { c.fillStyle = 'rgba(216,180,105,0.12)'; c.fillRect(x - 8 * s, 90 * s, w, 32 * s); line(c, x - 8 * s, 120 * s, x - 8 * s + w, C.gold, 2 * s); }
     c.strokeStyle = 'rgba(216,180,105,0.6)'; c.lineWidth = 1; c.strokeRect(x, 99 * s, 22 * s, 15 * s); c.fillStyle = C.gold; c.font = `${10 * s}px ${F.mono}`; c.fillText('F' + (i + 1), x + 4 * s, 111 * s);
@@ -45,8 +46,8 @@ export function drawScreen(c, W, H, st) {
   line(c, 0, 122 * s, W, 'rgba(216,180,105,0.18)', 1);
   // 本处标题
   let y = 162 * s;
-  c.fillStyle = C.gold2; c.font = `900 ${22 * s}px ${F.title}`; spaced(c, D.title, pad, y, 0.2);
-  c.fillStyle = '#7f8b80'; c.font = `600 ${10 * s}px ${F.latin}`; spaced(c, D.en, pad + c.measureText(D.title).width * 1.25 + 30 * s, y, 0.35);
+  c.fillStyle = C.gold2; c.font = `900 ${22 * s}px ${F.title}`; const tx = spaced(c, D.title, pad, y, 0.2);
+  c.fillStyle = '#7f8b80'; c.font = `600 ${10 * s}px ${F.latin}`; spaced(c, D.en, tx + 18 * s, y, 0.35);
   y += 12 * s; const gr = c.createLinearGradient(pad, 0, W * 0.8, 0); gr.addColorStop(0, C.gold); gr.addColorStop(1, 'rgba(216,180,105,0)'); c.fillStyle = gr; c.fillRect(pad, y, W * 0.75, 1.5 * s);
   const S = summary(st); y += 40 * s;
   c.fillStyle = S.big ? C.ph : C.ivory; c.font = S.big ? `${30 * s}px ${F.mono}` : `600 ${18 * s}px ${F.zh}`; c.fillText(S.t, pad, y); y += 16 * s;
@@ -54,7 +55,7 @@ export function drawScreen(c, W, H, st) {
   for (const r of S.rows.slice(0, Math.floor((H - y - 90 * s) / (36 * s)))) {
     y += 36 * s; line(c, pad, y + 12 * s, W - pad, 'rgba(216,180,105,0.13)', 1);
     c.fillStyle = '#cfe0cf'; c.font = `${15 * s}px ${F.mono}`; clip(c, r[0], cols[0], y, cols[1] - cols[0] - 12 * s);
-    c.fillStyle = C.ivory; c.font = `${16 * s}px ${F.serif}`; clip(c, r[1], cols[1], y, cols[2] - cols[1] - 14 * s);
+    c.fillStyle = C.ivory; c.font = `${16 * s}px ${F.zh}`; clip(c, r[1], cols[1], y, cols[2] - cols[1] - 14 * s);
     c.fillStyle = /自动消除|待解除|第三稿/.test(r[2]) ? '#e9c58f' : C.ph; c.font = `${15 * s}px ${F.zh}`; clip(c, r[2], cols[2], y, W - pad - cols[2]);
   }
   c.fillStyle = C.dim; c.font = `${13.5 * s}px ${F.zh}`; c.fillText(S.note, pad, H - 52 * s);
@@ -66,7 +67,7 @@ export function drawScreen(c, W, H, st) {
   c.fillStyle = 'rgba(0,0,0,0.22)'; for (let yy = 0; yy < H; yy += 3) c.fillRect(0, yy, W, 1);
   const v = c.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.72); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.55)'); c.fillStyle = v; c.fillRect(0, 0, W, H);
 }
-function spaced(c, t, x, y, em) { const fs = parseFloat(c.font.match(/(\d+(\.\d+)?)px/)[1]); for (const ch of t) { c.fillText(ch, x, y); x += c.measureText(ch).width + fs * em; } }
+function spaced(c, t, x, y, em) { const fs = parseFloat(c.font.match(/(\d+(\.\d+)?)px/)[1]); for (const ch of t) { c.fillText(ch, x, y); x += c.measureText(ch).width + fs * em; } return x; }
 function line(c, x0, y, x1, col, w) { c.fillStyle = col; c.fillRect(x0, y, x1 - x0, w); }
 function clip(c, t, x, y, maxW) { t = String(t ?? ''); if (c.measureText(t).width <= maxW) return c.fillText(t, x, y); while (t.length > 1 && c.measureText(t + '…').width > maxW) t = t.slice(0, -1); c.fillText(t + '…', x, y); }
 

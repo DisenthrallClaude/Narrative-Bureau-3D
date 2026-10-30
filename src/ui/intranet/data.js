@@ -70,16 +70,16 @@ export const INCIDENTS = [
 
 // —— 各处室专页 ——
 export const DEPT = {
-  legal: { title: '法务处', en: 'LEGAL AFFAIRS', sub: '法律顾问　方妍（B 级许可）　·　来访请先敲门', },
-  liaison: { title: '国际联络处', en: 'FOREIGN LIAISON', sub: '外事接待 · 情报交换 · 通缉协查 · 跨境禁区合作' },
-  publicity: { title: '宣传处', en: 'PUBLICITY', sub: '新闻发布 · 口径管理 · 舆情监测' },
-  command: { title: '全国现实稳定度监测指挥中心', en: 'STABILITY COMMAND', sub: '7×24 小时监测　·　值班长 周闻' },
-  archive: { title: '人事档案馆　借阅系统', en: 'PERSONNEL ARCHIVE', sub: '管理员 叶寻　·　调阅本人档案须由管理员陪同' },
-  medical: { title: '医务 · 理智值科', en: 'CLINIC · SANITY', sub: '主治 苏予　·　理智值记录与净化排班' },
-  director: { title: '局长室　秘书台', en: 'DIRECTOR\u2019S OFFICE', sub: '主塔 12F　·　来访登记 · 日程 · 机要文件' },
-  interrogation: { title: 'B2　审讯室 · 临时羁押', en: 'INTERROGATION · B2', sub: '监看台　·　笔录与羁押台账' },
-  portal: { title: '门户首页', en: 'PORTAL', sub: '' },
-  vault: { title: 'B5　深库值守台', en: 'DEEP VAULT · B5', sub: '七级以上及特殊藏品　·　双人双锁' },
+  legal: { short: '法务处', title: '法务处', en: 'LEGAL AFFAIRS', sub: '法律顾问　方妍（B 级许可）　·　来访请先敲门', },
+  liaison: { short: '联络处', title: '国际联络处', en: 'FOREIGN LIAISON', sub: '外事接待 · 情报交换 · 通缉协查 · 跨境禁区合作' },
+  publicity: { short: '宣传处', title: '宣传处', en: 'PUBLICITY', sub: '新闻发布 · 口径管理 · 舆情监测' },
+  command: { short: '指挥中心', title: '全国现实稳定度监测指挥中心', en: 'STABILITY COMMAND', sub: '7×24 小时监测　·　值班长 周闻' },
+  archive: { short: '档案馆', title: '人事档案馆　借阅系统', en: 'PERSONNEL ARCHIVE', sub: '管理员 叶寻　·　调阅本人档案须由管理员陪同' },
+  medical: { short: '医务', title: '医务 · 理智值科', en: 'CLINIC · SANITY', sub: '主治 苏予　·　理智值记录与净化排班' },
+  director: { short: '局长室', title: '局长室　秘书台', en: 'DIRECTOR\u2019S OFFICE', sub: '主塔 12F　·　来访登记 · 日程 · 机要文件' },
+  interrogation: { short: '审讯室', title: 'B2　审讯室 · 临时羁押', en: 'INTERROGATION · B2', sub: '监看台　·　笔录与羁押台账' },
+  portal: { short: '门户', title: '门户首页', en: 'PORTAL', sub: '' },
+  vault: { short: '深库', title: 'B5　深库值守台', en: 'DEEP VAULT · B5', sub: '七级以上及特殊藏品　·　双人双锁' },
 };
 
 // 法务处：契约类能力合同解除登记（117 号通知）

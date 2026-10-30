@@ -4,7 +4,7 @@
   --nb-ivory: #e9e0c8; --nb-dim: #9aa79c; --nb-gold: #d8b469; --nb-gold2: #f0d898; --nb-ph: #8fdcb0; --nb-red: #c8453a;
   --nb-mono: 'NB Mono', 'IBM Plex Mono', 'NB Sans', ui-monospace, monospace;
   position: fixed; inset: 0; z-index: 32; display: flex; align-items: center; justify-content: center;
-  background: radial-gradient(ellipse at 50% 45%, rgba(10, 14, 12, .72), rgba(0, 0, 0, .94)); font-family: var(--serif); color: var(--nb-ivory); user-select: none;
+  background: radial-gradient(ellipse at 50% 45%, rgba(10, 14, 12, .72), rgba(0, 0, 0, .94)); font-family: var(--serif); color: var(--nb-ivory); user-select: none; font-variant-numeric: lining-nums;
   animation: nbIn .35s ease;
 }
 @keyframes nbIn { from { opacity: 0; } to { opacity: 1; } }

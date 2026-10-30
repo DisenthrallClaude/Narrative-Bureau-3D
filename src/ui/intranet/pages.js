@@ -14,7 +14,7 @@ export function frame(state) {
   return `<div class="bezel"><div class="screen">
   <div class="top"><img src="${content.texUrl('tex_emblem_hd') ?? ''}" alt=""><div><div class="t1">${NET.name}</div><div class="t2">${NET.en}</div></div>
     <div class="who">终端 <b>${st.term}</b>　·　${esc(st.label)}<br>用户 <b>XS-2026-1029-07</b>（临时权限）　${NET.date}</div></div>
-  <div class="nav">${TABS.map(([k, n], i) => `<span data-tab="${k}" class="${state.tab === k ? 'on' : ''}"><i>F${i + 1}</i>${k === 'dept' ? dept.title.split('　')[0] : n}</span>`).join('')}<span class="esc" data-act="close"><i>Esc</i>退出登录</span></div>
+  <div class="nav">${TABS.map(([k, n], i) => `<span data-tab="${k}" class="${state.tab === k ? 'on' : ''}"><i>F${i + 1}</i>${k === 'dept' ? (dept.short ?? dept.title) : n}</span>`).join('')}<span class="esc" data-act="close"><i>Esc</i>退出登录</span></div>
   <div class="main" id="nbmain">${page(state)}</div>
   <div class="status"><span>NB-NET　<b>连接正常</b></span><span>京城总部　现实稳定度 <b>${NET.stab}</b></span><span>叙事污染指数 <b>${NET.pol}</b></span><span>地下驯化空间 驯化度 <b>${NET.tame}</b></span><span class="cur">▮</span></div>
   </div><div class="plate"><b>叙事管理局</b>NB-4 TERMINAL · ${st.term}</div><div class="led"></div></div>`;
