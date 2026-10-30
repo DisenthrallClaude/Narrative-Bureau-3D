@@ -171,6 +171,32 @@
 3. plaza / facade 高画质截图贴着内存上限：可考虑截图模式上传后释放贴图 CPU 端图片，或先拍低一档画质。
 4. tristat.mjs 拆 pass 会让 plaza 崩，测 plaza 时只用截图会话的整帧统计。
 
+## ★ 用户长期要求（2026-10-30 23:05 记）
+- **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
+- 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
+
+## R3 批次13（2026-10-30 22:29 CST 接手）
+### 人物模型移除（3f779f4，本批推送）
+- `person()`（interiors.js）不再生成人形，按 `clue` 换成非人物线索：`chair` 空椅 + 椅背搭外套 + 椅面名牌；`coat` 衣帽架 + 外套 + 名牌；`hanger` 挂着的制服；`shadow` 叶寻地面墨影；无 clue → 空组（排队市民、食堂闲聊者、大妈等直接消失，电饭锅留下）。热点/锚点位置不变；NPC 台词标注终端/广播/对讲/纸条渠道。
+- 核对：3f779f4 没有删除任何文件、没有去掉任何贴图引用（`git show 3f779f4 --diff-filter=D` 为空）；content/textures/archives/ 22 张档案海报全部在。
+- Actions 重拍确认画面无人形：hall、canteen_r3、archive_r3、cc_r3、director_r3（半身像保留）、b4_r3、es_land、lib_r3、cs_r3/_b/_top（work/r3/b13/gh1/）。
+- **人物图片多用（批次13 新增）**：安检大厅通缉栏两侧挂秦骁/江戾整张档案海报（金框 + 玻璃 + 铜签，interiors.js）；B1 A 级通缉档案柜上方两张（rooms.js）；B2 羁押室隔墙南面「羁押登记」软木板两张（r3plan interrogation）；空椅/衣帽架名牌旁加**证件照小卡**（`IDPHOTO` 表：周闻/殷泽/叶寻/周也/齐凌云 = Drive「项目图片」白底立绘自动裁头肩，齐仇 = 档案海报手工裁；生成脚本 work/r3/b13/idp/mk.py → public/content/textures/idphoto/*.jpg）。新机位 hall_wanted / b1_wanted / int_reg / id_yexun / id_zhouwen / id_yinze / id_qilingyun。
+### 电梯厅返工（2F/3F/4F/12F 共用 vault.js elevatorHall + r3plan planLobby）
+- 墙：胡桃木墙裙 + 方石上墙（dz_ashlarEC）+ 黑石壁柱，檐口顶到藻井（H−0.04，原 H−0.4 露出粉色乱石带）；南墙正中让开楼层牌（pilSkip）；电梯门头拱内补黑石门楣板；铜框立柱 + 门头琥珀楼层指示器 + 双钮呼梯面板。
+- 顶：藻井（3 m 格，每格筒灯），暖白光 0xfff0dc。地：**哑光深色大理石 r3_marbleHoned**（水磨石在顶灯下近白）+ 中轴花边红地毯 dz_rugRed + 铜压条。
+- 陈设：每面墙两张长凳成对（opera bench 在 r3build 压成深胡桃木/暗酒红，原粉绒白框）、凳间龟背竹（原绿萝陶盆偏粉）、铜垃圾桶、伞架、灭火器、铜壁灯（r3 sconce，原 copper_wall_sconce 像粉水晶）、导览铜牌/告示框/4F N24 壁画移出壁柱（x ±3.97）。楼层牌改**横版深铜底金字**（floorPlateMat + UP_TEXT；原竖版铜牌贴图拉伸到横版且 3F 等没有文字）。
+- r3plan lobby_3F / lobby_4F 0 错误。
+### 市民服务大厅（citizen_service，r3plan 440 件 0 错误）
+- 中南部补成组陈设：⑧ 东区南「综合候号」——叫号 LED 立屏（r3build 新 `led` 类型：黑铁壳 + 自发光点阵字，号码红 / 窗口绿）背靠 5 号窗屏风面朝南，两排候号长椅面朝屏，东侧铜柱红绳与楼梯通道隔开，龟背竹，吊牌；⑨ 南墙休息带——正中一排长椅背靠南墙、两端龟背竹、南墙两角各 2 只三层插袋宣传资料架（leafletRack）+ 铜牌；⑩ 西区——岛西端外侧两只资料架面朝取号人流 + 「办事指南」落地立架（B02_市民服务窗口牌）。南侧通道收窄到 1.7 m，新增西区南北通道。
+- **5 号窗等候区地面黑色弧形 = street_seating 模型里悬在座面上方的 60° 弧形连接件（connector_60）**，所有候号座椅都有；用 tools/_rmnode.mjs 从 GLB 删掉该节点（原件 work/models_pre_b13/street_seating.glb；tools/_nodebb.mjs 看各节点世界包围盒）。
+- 西墙大标题原在西门洞正上方（背后是连廊黑洞、被门垛切断）→ 移到西墙实墙段 z −40.3、y+4.4，res 192。
+- 东廊拐角食堂门洞上半「黑板」= 食堂东墙门洞（h 3.4）上方直接看到的墙背面（无光）→ 黑石门楣板 + 铜门套 + 金字「职工食堂」+ 门头暖光（surface.js）。
+### 广场地徽（用户 23:05）
+- 广场南端大地徽底盘原用 M.stoneDark（抛光黑大理石 env 1.0）把蓝天整片映成蓝圆盘 → 暗铜褐哑光花岗岩（Marble016 × 0x3b332b，roughness 0.78，env 0.18）。
+### 坑
+- 不要把「build ; echo」与 commit 用 && 串：本批 2d3a087 构建失败仍被提交推送（57ac349 修复；Pages 那次被 concurrency cancel，没上线）。现在用 `E=$?` 判断后再提交。
+- gh_shots_fetch.sh 用 /tmp/afz 的 .done 标记，工作区被重置后要 `rm -rf /tmp/afz` 再取。
+
 ## R3 批次12 验收（2026-10-30 21:00 CST 接手；截图改用 GitHub Actions 托管 runner）
 ### Actions 截图（本机 8 GB 拍不了 1600×900 high → 已解决）
 - `.github/workflows/shots.yml`「Screenshots」：**只有 workflow_dispatch**（无 schedule、无 push 触发，不影响 pages.yml）。输入 `shots`（分号分隔，每项 `组:机位[:额外参数]`，如 `after:cs_r3;before:cs_r3:&r3off=citizen_service`）、`quality`（默认 high）、`width`/`height`（默认 1600×900）、`frames`（默认 8）。

@@ -861,10 +861,10 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
     add(new THREE.BoxGeometry(0.44, 0.012, 0.012), brass, 0, top + 0.02, 0.06); // 衣架横杆
     add(new THREE.BoxGeometry(0.46, 0.7, 0.12), material ?? cloth, 0, top - 0.37, 0.07); // 外套身
     for (const sx of [-1, 1]) add(new THREE.BoxGeometry(0.09, 0.6, 0.1), material ?? cloth, sx * 0.25, top - 0.36, 0.07, 0, 0, sx * 0.05); // 袖子垂下
-    add(new THREE.BoxGeometry(0.16, 0.22, 0.005), new THREE.MeshStandardMaterial({ color: 0xe8e6e0, roughness: 0.7 }), 0, top - 0.12, 0.135); // 领口衬衣
+    add(new THREE.BoxGeometry(0.16, 0.22, 0.005), new THREE.MeshStandardMaterial({ color: 0xa9a59c, roughness: 0.8 }), 0, top - 0.12, 0.135); // 领口衬衣（批次13：近白色远看像一张白纸 → 压暗）
     if (cap && clue === 'coat') add(new THREE.CylinderGeometry(0.12, 0.13, 0.07, 16), cloth, 0.05, 1.79, 0);
     if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 1.15, 0.03); np.castShadow = false;
-      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.12, top - 0.22, 0.133); card.castShadow = false; } } // 证件照小卡别在外套胸前
+      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.12, top - 0.43, 0.133); card.castShadow = false; } } // 证件照小卡别在外套胸前
     return g; }
   return g;
 }
