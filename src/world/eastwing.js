@@ -318,29 +318,33 @@ function textGlobe() {
   g.userData.spin = s; g.frustumCulled = false;
   return g;
 }
-function sandTable(M) {
-  const g = new THREE.Group();
-  const base = new THREE.Mesh(new THREE.BoxGeometry(22, 0.9, 9), M.blackMarble); base.position.y = 0.45; g.add(base);
-  const rim = new THREE.Mesh(new THREE.BoxGeometry(22.2, 0.06, 9.2), M.gold); rim.position.y = 0.92; g.add(rim);
-  // 版图（canvas：黑石底 + 金线边界）
-  const cv = document.createElement('canvas'); cv.width = 2048; cv.height = 840; const c = cv.getContext('2d');
-  c.fillStyle = '#0c0d10'; c.fillRect(0, 0, 2048, 840); c.strokeStyle = '#c9a052'; c.lineWidth = 3;
-  c.beginPath(); const pts = []; for (let i = 0; i < 40; i++) { const a = (i / 40) * Math.PI * 2; const r = 360 + Math.sin(a * 3) * 60 + Math.sin(a * 7) * 30; pts.push([1024 + Math.cos(a) * r * 2.1, 420 + Math.sin(a) * r * 0.95]); } pts.forEach((p, i) => (i ? c.lineTo(...p) : c.moveTo(...p))); c.closePath(); c.stroke();
-  c.lineWidth = 1; for (let i = 0; i < 26; i++) { c.beginPath(); c.moveTo(300 + Math.random() * 1450, 100 + Math.random() * 640); for (let k = 0; k < 4; k++) c.lineTo(300 + Math.random() * 1450, 100 + Math.random() * 640); c.stroke(); }
-  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
-  const top = new THREE.Mesh(new THREE.PlaneGeometry(21.6, 8.6), new THREE.MeshStandardMaterial({ map: t, roughness: 0.35, metalness: 0.3, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.25 }));
-  top.rotation.x = -Math.PI / 2; top.position.y = 0.951; g.add(top);
-  // 禁区棱柱（1–9 级）
+function sandTable(M) { // 批次17：沙盘重做——原黑大理石高光侧面在近景成一条模糊反光横条、台面金属感 + Math.random 散布 → 哑光胡桃木框 + 墨绿漆裙板 + 铜踢脚 + 地形版图（等高线/河道/环路/区块）+ 按区块定点的分级棱柱（种子确定，不随机）
+  const g = new THREE.Group(); let sd = 7; const rnd = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
+  const skirtMat = new THREE.MeshStandardMaterial({ color: 0x2c3a30, roughness: 0.78, metalness: 0.05 });
+  const base = new THREE.Mesh(new THREE.BoxGeometry(22, 0.86, 9), skirtMat); base.position.y = 0.43; g.add(base);
+  const kick = new THREE.Mesh(new THREE.BoxGeometry(22.04, 0.1, 9.04), M.brass); kick.position.y = 0.05; g.add(kick);
+  const frameMat = M.wood; for (const [w, d, x, z] of [[22.3, 0.22, 0, 4.54], [22.3, 0.22, 0, -4.54], [0.22, 9.08, 11.04, 0], [0.22, 9.08, -11.04, 0]]) { const f = new THREE.Mesh(new THREE.BoxGeometry(w, 0.1, d), frameMat); f.position.set(x, 0.91, z); g.add(f); }
+  for (const x of [-7.33, -3.67, 0, 3.67, 7.33]) for (const z of [4.505, -4.505]) { const pl = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.6, 0.012), M.brass); pl.position.set(x, 0.46, z); g.add(pl); } // 裙板分格铜线
+  const cv = document.createElement('canvas'); cv.width = 2048; cv.height = 820; const c = cv.getContext('2d');
+  c.fillStyle = '#5b5a3e'; c.fillRect(0, 0, 2048, 820);
+  for (let k = 0; k < 9; k++) { c.strokeStyle = `rgba(${40 + k * 8},${44 + k * 7},${28 + k * 4},0.55)`; c.lineWidth = 2; for (const [cx, cy, r0] of [[520, 300, 60], [1500, 560, 80], [1180, 220, 50]]) { c.beginPath(); for (let i = 0; i <= 64; i++) { const a = i / 64 * Math.PI * 2, r = r0 + k * 34 + Math.sin(a * 3 + k) * 14; c.lineTo(cx + Math.cos(a) * r * 1.6, cy + Math.sin(a) * r); } c.stroke(); } }
+  c.strokeStyle = '#3b6a88'; c.lineWidth = 14; c.beginPath(); c.moveTo(0, 610); c.bezierCurveTo(500, 520, 800, 700, 1200, 470); c.bezierCurveTo(1500, 300, 1800, 420, 2048, 330); c.stroke();
+  c.strokeStyle = '#b8a77a'; c.lineWidth = 5; c.beginPath(); c.ellipse(1024, 410, 620, 290, 0, 0, Math.PI * 2); c.stroke(); c.beginPath(); c.ellipse(1024, 410, 330, 160, 0, 0, Math.PI * 2); c.stroke();
+  for (const a of [0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6]) { c.beginPath(); c.moveTo(1024, 410); c.lineTo(1024 + Math.cos(a) * 980, 410 + Math.sin(a) * 460); c.stroke(); }
+  const blocks = []; for (let i = 0; i < 6; i++) for (let j = 0; j < 3; j++) { const x = 230 + i * 300 + (j % 2) * 60, y = 140 + j * 240; blocks.push([x, y]); c.fillStyle = 'rgba(30,28,20,0.35)'; c.fillRect(x - 70, y - 50, 140, 100); c.strokeStyle = '#e0cf9a'; c.lineWidth = 2; c.strokeRect(x - 70, y - 50, 140, 100); c.fillStyle = '#efe2b8'; c.font = '700 26px "NB Serif",serif'; c.fillText('甲乙丙丁戊己'[i] + '-' + (j * 6 + i + 1), x - 40, y + 10); }
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  const top = new THREE.Mesh(new THREE.PlaneGeometry(21.86, 8.86), new THREE.MeshStandardMaterial({ map: t, roughness: 0.9, metalness: 0, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.1 }));
+  top.rotation.x = -Math.PI / 2; top.position.y = 0.865; g.add(top);
+  // 分级棱柱：每区块 2–3 根、成簇定点（种子确定）
   const colors = [0xfff0b0, 0xffe080, 0xffc860, 0xffa040, 0xff8030, 0xff5a28, 0xff3a20, 0xd02020, 0xa01030];
-  for (let i = 0; i < 48; i++) {
-    const lvl = 1 + Math.floor(Math.pow(Math.random(), 1.8) * 7);
-    const h = 0.15 + lvl * 0.09;
-    const m = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, h, 6), new THREE.MeshStandardMaterial({ color: 0x000000, emissive: colors[lvl - 1], emissiveIntensity: 1.6, roughness: 0.3 }));
-    m.position.set(-9 + Math.random() * 18, 0.95 + h / 2, -3.4 + Math.random() * 6.8); g.add(m);
-  }
-  // 京城：不发光的 8 级黑色棱柱
-  const bj = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.95, 6), new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.15, metalness: 0.8 })); bj.position.set(2.2, 0.95 + 0.475, -0.8); g.add(bj);
-  const bjr = new THREE.Mesh(new THREE.RingGeometry(0.16, 0.2, 24), new THREE.MeshBasicMaterial({ color: 0xc9a052, side: THREE.DoubleSide })); bjr.rotation.x = -Math.PI / 2; bjr.position.set(2.2, 0.955, -0.8); g.add(bjr);
+  const pinMats = colors.map((cl) => new THREE.MeshStandardMaterial({ color: 0x111111, emissive: cl, emissiveIntensity: 1.1, roughness: 0.4 }));
+  const capMat = M.brass;
+  for (const [bx, by] of blocks) { const n = 2 + Math.floor(rnd() * 2); for (let k = 0; k < n; k++) { const lvl = 1 + Math.floor(Math.pow(rnd(), 1.8) * 7), h = 0.12 + lvl * 0.07;
+    const x = (bx - 1024) / 2048 * 21.86 + (k - (n - 1) / 2) * 0.32, z = (by - 410) / 820 * 8.86 + 0.15;
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, h, 8), pinMats[lvl - 1]); m.position.set(x, 0.865 + h / 2, z); g.add(m);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.02, 12), capMat); cap.position.set(x, 0.865 + h + 0.01, z); g.add(cap); } }
+  const bj = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.95, 8), new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.4, metalness: 0.6 })); bj.position.set(2.2, 0.865 + 0.475, -0.8); g.add(bj);
+  const bjr = new THREE.Mesh(new THREE.RingGeometry(0.16, 0.2, 24), new THREE.MeshBasicMaterial({ color: 0xc9a052, side: THREE.DoubleSide })); bjr.rotation.x = -Math.PI / 2; bjr.position.set(2.2, 0.868, -0.8); g.add(bjr);
   g.userData.beijing = bj;
   g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   return g;
