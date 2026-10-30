@@ -290,6 +290,7 @@ export function buildEastWing(scene, world, ctx) {
   const shelf = masterShelf(M); shelf.position.set(35, F3, dzc + 1); zone.add(shelf); ctx.masterShelf = shelf; world.box(35, F3 + 1.8, dzc + 1, 3.2, 3.6, 3.2);
   ctx.anchors.int_exam_shelf = { box: [35, F3 + 1.8, dzc + 1, 3.6, 3.6, 3.6] };
   b.box('blackMetal', 4, 1.0, 1.2, [28, F3 + 0.5, dz0 - 2], { uv: 0.5, collide: true });
+  if (R3.zone_control) { point(zone, 0xfff0dc, 3.2, [41.5, F3 + 3.0, dz0 - 1.6], 9); point(zone, 0xffe8c8, 1.6, [41.5, F3 + 2.2, dz0 - 5.0], 8); } // 批次20：zone_r3_b 看图北墙门洞（→ 副本投放调度室）一块纯黑 → 门后补灯，透出调度室内景
   const dsp = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.06, 0.31), M.kraft); dsp.position.set(28, F3 + 1.03, dz0 - 2); zone.add(dsp); ctx.anchors.doc_exam_dispatch = dsp;
   const dTitle = goldText('副本投放调度室', 4, 0.5, M.goldBright, { res: 128 }); dTitle.position.set(X0 + 0.25, F3 + 5.4, dzc); dTitle.rotation.y = Math.PI / 2; zone.add(dTitle);
   rectLight(zone, 0xc8d8ff, 1.0, 20, 10, [35, Y + 20.8, dzc], [35, F3, dzc]);

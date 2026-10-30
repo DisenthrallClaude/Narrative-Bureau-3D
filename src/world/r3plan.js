@@ -2483,6 +2483,14 @@ export function planZoneControl(y) {
       out.push({ m: 'file_cabinet', x, y, z: -32.4, yaw: ROT.N, h: 1.32, tag: '⑥ 资料柜', on: 'floor', col: [0.7, 1.32, 0.5] }); }
     out.push({ sign: '分 片 资 料', sub: '甲—己 六片 · 按号取阅', x: 42.6, y: y + 1.75, z: -32.06, yaw: Math.PI, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
     light(out, 42.5, y + 2.8, cz, 0xfff0dc, 1.2, 6); }
+  // ⑧ 批次20：北墙门洞（x 40…43 → 副本投放调度室，zone_r3_b 后墙中部那块深色门洞）：钢门套 + 门楣铜牌 + 门头壁灯（门后灯在 eastwing.js）
+  { const zw = -60.8; for (const x of [40.05, 42.95]) out.push({ box: 'r3_steelOld', x, y: y + 1.6, z: zw, w: 0.12, h: 3.2, d: 0.1, tag: '⑧ 门套', on: 'partv' });
+    out.push({ box: 'r3_steelOld', x: 41.5, y: y + 3.25, z: zw, w: 3.02, h: 0.12, d: 0.1, tag: '⑧ 门套', on: 'partv' });
+    out.push({ sign: '副本投放调度室', sub: '闲人免进', x: 41.5, y: y + 3.55, z: zw + 0.06, yaw: ROT.S, size: [0.34, 0.12, 0.01], tag: '⑧ 门楣铜牌', on: 'sign' });
+    out.push({ box: 'dz_glow', x: 41.5, y: y + 3.85, z: zw + 0.08, w: 0.4, h: 0.1, d: 0.1, tag: '⑧ 门头壁灯', on: 'partv' });
+    light(out, 41.5, y + 3.4, zw + 0.8, 0xfff0dc, 1.2, 5);
+    // 值班台饰面在 zone_r3_b 里仍近乎全黑 → 台前补一盏低位暖光
+    light(out, 35, y + 1.6, -35.6, 0xffe6c0, 1.4, 4.5); }
   // ⑦ 批次18：东门（楼梯井门洞 z −44…−47.5）原是一块纯黑洞 → 钢门套 + 两扇木门扇向室内开到 180° 贴墙 + 门后走廊吸顶灯
   { const X = 49.8, a = -44, b = -47.5;
     for (const z of [a + 0.04, b - 0.04]) out.push({ box: 'r3_steelOld', x: X, y: y + 1.52, z, w: 0.16, h: 3.04, d: 0.08, tag: '⑦ 门套', on: 'partv' });
