@@ -1188,6 +1188,10 @@ export function planInterrogation(y) {
   // 批次6：北端隔出 B2-07 羁押室（钢板墙 + 门），挂钟移到羁押室隔墙南面（仍正对受审者）
   partition(out, 'x', -104.0, X0, -7.55, y, { up: 'r3_steelGrey', doors: [{ at: -11.4, w: 0.9, s: -1 }] });
   out.push({ m: 'r2/1950s_wall_clock', x: -9.6, y: y + 2.35, z: -104.0 + 0.08, yaw: 0, h: 0.4, tag: 'K3', on: 'wall' });
+  // 批次13：羁押室隔墙南面「羁押登记」软木板：江戾 / 秦骁通缉档案（IMAGE-PLAN 未用 → B2 羁押登记墙）+ 铜牌
+  pic(out, 'textures/archives/jiangli.jpg', -8.82, y + 1.55, -104.0 + 0.08, 0, 0.36, 0.64, 'none', { cork: [1.3, 0.95], tag: '羁押登记' });
+  pic(out, 'textures/archives/qinxiao.jpg', -8.18, y + 1.55, -104.0 + 0.1, 0, 0.36, 0.64, 'none', { tag: '羁押登记' });
+  out.push({ sign: '羁押登记', sub: 'A 级在逃 · 见即上报', x: -8.5, y: y + 2.12, z: -104.0 + 0.09, yaw: 0, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
   pic(out, 'textures/b03/B03_羁押室门牌.png', -10.55, y + 1.65, -104.0 + 0.07, 0, 0.32, 0.32, 'none');
   out.push({ box: 'r3_steelOld', x: -9.4, y: y + 0.45, z: -106.5, w: 2.2, h: 0.06, d: 0.5, tag: '羁押室', on: 'partv' });
   for (const dx of [-1.0, 1.0]) out.push({ box: 'r3_steelOld', x: -9.4 + dx, y: y + 0.21, z: -106.5, w: 0.06, h: 0.42, d: 0.45, tag: '羁押室', on: 'partv' });

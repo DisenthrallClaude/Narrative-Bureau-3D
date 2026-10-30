@@ -1,7 +1,7 @@
 // 室内：正门门廊/服务台、安检大厅（扇形拱顶、玫瑰窗、闸机与扫描门、LED 大屏）、人事档案馆（回廊、阅览大厅、B1 密集库）
 import * as THREE from 'three';
 import { Batch } from '../engine/batch.js';
-import { placeModel } from '../engine/assets.js';
+import { placeModel, loadTex } from '../engine/assets.js';
 import { mats } from './mats.js';
 import { Frame, archRingGeo, archSolidGeo, archShape, archApex, lancetWindow, emblem, goldText } from './gothic.js';
 import { lightShaft, dust, CanvasScreen, time, roseGlassTexture } from '../engine/fx.js';
@@ -406,6 +406,12 @@ function buildHall(zone, world, ctx, M, add) {
   wbm.position.set(X - 0.21, Y + 2.2, -64); wbm.rotation.y = -Math.PI / 2; zone.add(wbm);
   const wbg = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 2.5), M.glassClear); wbg.position.set(X - 0.3, Y + 2.2, -64); wbg.rotation.y = -Math.PI / 2; zone.add(wbg);
   ctx.wantedBoard = wbm;
+  // 批次13：通缉栏两侧加挂江戾 / 秦骁整张档案海报（IMAGE-PLAN「未用」→ F2 安检大厅通缉栏；栏内原生图保持不动），金框 + 玻璃 + 铜签
+  for (const [id, z, nm] of [['tex_archive_portrait_qinxiao', -60.3, '秦骁'], ['tex_archive_portrait_jiangli', -67.7, '江戾']]) { const t = content.tex(id); if (!t) continue;
+    const pm = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 1.28), new THREE.MeshStandardMaterial({ map: t, roughness: 0.55, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.12 })); pm.position.set(X - 0.215, Y + 2.2, z); pm.rotation.y = -Math.PI / 2; zone.add(pm);
+    b.box('wood', 0.2, 1.4, 0.84, [X - 0.1, Y + 2.2, z], { uv: 0.5 }); b.box('gold', 0.22, 1.46, 0.05, [X - 0.1, Y + 2.2, z - 0.44], { uv: 1 }); b.box('gold', 0.22, 1.46, 0.05, [X - 0.1, Y + 2.2, z + 0.44], { uv: 1 });
+    const gl = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 1.36), M.glassClear); gl.position.set(X - 0.3, Y + 2.2, z); gl.rotation.y = -Math.PI / 2; zone.add(gl);
+    const tg = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.12), brassPlaqueMaterial('A 级通缉', [nm])); tg.position.set(X - 0.215, Y + 1.3, z); tg.rotation.y = -Math.PI / 2; zone.add(tg); }
   // 西墙违禁品展示柜（相框）
   bA.box('blackMarble', 1.0, 1.0, 4.4, [-X + 0.6, Y + 0.5, -62], { uv: 0.5, collide: true });
   bA.box('gold', 1.04, 0.06, 4.44, [-X + 0.6, Y + 1.0, -62], { uv: 1 });
@@ -818,6 +824,10 @@ export function envelopeMesh(M, withString = true) {
 // 批次12（用户 2026-10-30 22:16 要求「游戏里不要放人物模型」）：person() 不再生成人形，只返回一个占位 Group（位置/朝向/剧情逻辑照旧可用）。
 // clue 给出「人不在、但有人在此」的非人物线索：'chair' 空椅 + 椅背搭着外套（+ 名牌）、'coat' 衣帽架挂外套/帽（+ 名牌）、'hanger' 挂着的制服（无头无手）、'shadow' 地面一摊墨影。
 // 不给 clue = 什么都不画（路人、人群）。
+// 批次13：用户「人物图片保留并多用」→ 名牌旁加证件照小卡（白底立绘裁头肩 / 齐仇用档案海报裁），work/r3/b13/idp/mk.py 生成
+const IDPHOTO = { 周闻: 'zhouwen', 殷泽: 'yinze', 叶寻: 'yexun', 周也: 'zhouye', 齐凌云: 'qilingyun', 齐仇: 'qichou' };
+const _idMat = {};
+function idCardMat(name) { const k = IDPHOTO[name]; if (!k) return null; return (_idMat[k] = _idMat[k] ?? new THREE.MeshStandardMaterial({ map: loadTex(`content/textures/idphoto/${k}.jpg`, { srgb: true }), roughness: 0.45, emissive: 0xffffff, emissiveIntensity: 0.06 })); }
 function namePlateMat(name) {
   const cv = document.createElement('canvas'); cv.width = 256; cv.height = 72; const c = cv.getContext('2d');
   c.fillStyle = '#6b4f22'; c.fillRect(0, 0, 256, 72); c.strokeStyle = '#d8b56a'; c.lineWidth = 4; c.strokeRect(4, 4, 248, 64);
@@ -841,7 +851,8 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
     add(new THREE.BoxGeometry(0.46, 0.5, 0.025), cloth, 0, 0.7, -0.24, 0.06); // 外套后片垂下
     add(new THREE.BoxGeometry(0.44, 0.34, 0.025), cloth, 0, 0.8, -0.165, -0.12); // 前襟垂在椅面后
     if (cap) add(new THREE.CylinderGeometry(0.11, 0.12, 0.06, 16), cloth, 0.08, 0.51, 0.06);
-    if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 0.53, 0.12, -0.5); np.castShadow = false; }
+    if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 0.53, 0.12, -0.5); np.castShadow = false;
+      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.11, 0.86, -0.148, -0.12); card.castShadow = false; } } // 证件照小卡别在椅背外套前襟上（面朝 +Z）
     return g; }
   if (clue === 'coat' || clue === 'hanger') { // 衣帽架 / 制服挂架
     if (clue === 'coat') { add(new THREE.CylinderGeometry(0.02, 0.025, 1.75, 10), wood, 0, 0.875, 0); add(new THREE.CylinderGeometry(0.2, 0.22, 0.03, 20), wood, 0, 0.015, 0);
@@ -852,7 +863,8 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
     for (const sx of [-1, 1]) add(new THREE.BoxGeometry(0.09, 0.6, 0.1), material ?? cloth, sx * 0.25, top - 0.36, 0.07, 0, 0, sx * 0.05); // 袖子垂下
     add(new THREE.BoxGeometry(0.16, 0.22, 0.005), new THREE.MeshStandardMaterial({ color: 0xe8e6e0, roughness: 0.7 }), 0, top - 0.12, 0.135); // 领口衬衣
     if (cap && clue === 'coat') add(new THREE.CylinderGeometry(0.12, 0.13, 0.07, 16), cloth, 0.05, 1.79, 0);
-    if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 1.15, 0.03); np.castShadow = false; }
+    if (name) { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 1.15, 0.03); np.castShadow = false;
+      const im = idCardMat(name); if (im) { const card = add(new THREE.PlaneGeometry(0.105, 0.14), im, 0.12, top - 0.22, 0.133); card.castShadow = false; } } // 证件照小卡别在外套胸前
     return g; }
   return g;
 }

@@ -116,6 +116,11 @@ export function buildRooms(scene, world, ctx) {
     // A 级通缉档案柜
     add(placeModel('file_cabinet', { height: 1.4, pos: [-X + 1.0, y, -114], rotY: Math.PI / 2 }));
     const fl = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.12), tagMaterial('A 级　高危通缉')); fl.position.set(-X + 1.45, y + 1.2, -114); fl.rotation.y = Math.PI / 2; zone.add(fl); ctx.anchors.doc_arm_wanted_files = { obj: fl, range: 3 };
+    // 批次13：高危档案柜上方墙面挂江戾 / 秦骁通缉档案海报（IMAGE-PLAN「未用」→ B1 高危档案位），黑铁框 + 铜签条
+    for (const [id, z, nm] of [['tex_archive_portrait_jiangli', -113.45, '江戾　A 级'], ['tex_archive_portrait_qinxiao', -114.55, '秦骁　A 级']]) { const t = content.tex(id); if (!t) continue;
+      const pm = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.889), new THREE.MeshStandardMaterial({ map: t, roughness: 0.6 })); pm.position.set(-X + 0.245, y + 2.2, z); pm.rotation.y = Math.PI / 2; zone.add(pm);
+      b.box('blackMetal', 0.03, 0.95, 0.56, [-X + 0.215, y + 2.2, z], { uv: 1 });
+      const tg = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.1), tagMaterial(nm)); tg.position.set(-X + 0.245, y + 1.66, z); tg.rotation.y = Math.PI / 2; zone.add(tg); }
     // 装备墙（北墙）：防污染作战服、面罩、背心、锁喉铐
     for (let k = 0; k < 9; k++) {
       const x = -10 + k * 2.5;
