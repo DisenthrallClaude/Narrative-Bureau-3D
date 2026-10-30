@@ -191,15 +191,27 @@
 4. **metro 视角外景距离剔除**（main.js `G.metroCull`）：只在 metro_exit 区生效——外景 + 地表组里包围球 r<60 m、非外立面（F_*）、非 noCull 的网格，离相机 >130 m 不画（含阴影 pass）。离开该区时全部恢复。`?nometrocull=1` 对照。依据：tools/_cullprobe.mjs（`?probe=1` 时 `window.__CULLPROBE__` 按距离分段统计同屏三角面）测得 metro_r3 主视里地表组 150–250 m 段 31.5 万面（宿舍/机库/城墙塔楼的屋顶金饰与石作，被主楼挡住大半）。
 ### 截图 / 对比图
 - screenshots/r3/ 覆盖：见文末「本批截图」。工作副本 work/r3/b10/（ao/ noao/ v2/ m0/ m1/ final/）。
-- 对比图（work/r3/cmp10_*.jpg，脚本 work/r3/b10/cmp10.py）：见文末。
+- 对比图（work/r3/cmp10_*.jpg，脚本 work/r3/b10/cmp10.py）：
+  - `cmp10_ao_archive.jpg`：档案馆 archive_west / archive_r3 无 AO ↔ 有 AO（定稿）
+  - `cmp10_ao_cc.jpg`：指挥中心 cc_r3 / cc_r3_b 无 AO ↔ 有 AO（定稿）
+  - `cmp10_ao_misc.jpg`：训练场 training_r3 / training_b、第七局 seventh_ops / s7_ops_b 无 AO ↔ 有 AO
+  - `cmp10_aofix.jpg`：AO 整体压暗修正前后（旧 norm .9 / lo 0 ↔ 新 norm .72 / lo .42 / direct .3）
+  - `cmp10_extras.jpg`：B5 深库 / B5 前室 / 审讯室 / 岗哨 / 定稿厅主机位 批次9 ↔ 批次10
+- 本批截图入库 screenshots/r3/：training_r3、training_b、cc_r3、cc_r3_b、archive_r3、archive_west、seventh_ops、s7_ops_b、b5_deep、b5_r3、int_r3、int_obs、metro_r3、wall_post、wall_post_out（新机位）、abyss_core。
+### 收尾验收（批次11 接手时补做，2026-10-30 17:00–18:00 CST）
+- **AO 整体压暗**：按接收面 UV 面积加权统计 AO（`work/r3/b10/recvstat.py <区>`）：档案馆中位数 **0.475**、指挥中心 **0.545**（训练场 0.88、第七局 0.99、B5 0.86）。原因是这两区的接收面多是跨层合批大块（档案馆墙柜一体合批 5.7 万顶点、东翼 1F–3F 楼板/墙体），整块被 1.8 m AO 射线判成「半封闭」。截图实测 archive_west 中位像素被压暗 9%（均值 35→31），确属整体压暗。
+- **修正**（bakeao.js）：aoPatch 新增下限 `lo`（`nbA = mix(lo, 1, clamp(ao/norm)^gamma)`），BAKES 每区可带 `look`；档案馆 / 指挥中心 `norm 0.72、lo 0.42、direct 0.3`，其余三区不变。修正后 archive_west 中位像素比 0.909 → **1.000**（均值 33.6 vs 无 AO 35.0），cc_r3 / cc_r3_b / archive_r3 中位比均 1.000；接触阴影保留（p10 比 0.68–0.91，柜脚、桌下、展柜底仍有压暗）。
+- **档案馆北墙「大厅照片」**：云电脑上 08:53 的旧构建（index-RT41ujTM.js）拍 archive_r3 时 **无 AO（noao=1）也出现**北墙/回廊墙变成大厅光照贴图照片，说明不是烘焙 uv1 导致；当前源码构建（index-SY4C5OnB / k_unvnF3）无 AO / 有 AO 各拍一张都是正常绿墙，未再复现。根因未定位（怀疑旧构建里大厅 lightmapPatch 的材质与档案馆共用），**下批若再出现**，先查 hallMats 材质是否被档案馆网格引用。
 ### 诚实评估
-（见文末）
+- AO 管线跑通、匹配率 95–100%，家具落地 / 墙角 / 柜间有了接触阴影，训练场装备区、第七局桌下、B5 收容室门口层次比批次9 明显；但它只是 AO，不是 GI：整体亮度仍靠点光，大面墙依旧偏平。档案馆 / 指挥中心为避免整体压暗加了下限，AO 在这两区的效果因此偏弱（只剩接触阴影）。
+- 偏暗偏空：B5 深库均值亮度 25→38、B5 前室 23→32、审讯室 18→39、岗哨 19→24、定稿厅主机位能看到前景校对席；岗哨门外仍偏暗，审讯室补光后压抑感减弱了一些（刻意保留单吊灯）。
+- 指挥中心纹素密度被跨层合批摊薄，近看 AO 糊。
 ### 遗留 / 待办
 1. 完整光照贴图（直射 + 间接 GI）仍未做；AO 只补了接触阴影和角落层次，不解决「靠点光撑亮度」的平。
 2. 档案馆 / 指挥中心的接收面里有一部分是大厅材质（运行时跳过），图集里白占了位置，下次重导出时在 exportBake 也加 usesUv1 过滤（代码已加，产物是加之前导出的）。
 3. 同一个合批网格横跨多层（东翼指挥中心所在的 east_wing 合批包含 1F–3F），整块进图集，指挥中心的纹素密度被摊薄；要更清晰需按楼层拆合批或 4096 图集。
 4. **用户要求：所有主体完成后再做一轮细节优化**，例如游戏里电脑屏幕显示可交互的局内网页面（本批未做，只记待办）。
-5. InstaBox：本批用了 zz（Blender 烘焙 + 截图）、aa/bb/cc/dd（导出/截图），结束已全部 `ssh-token --revoke`。截图一律 `--fresh 1`（work/r3/rs10.sh）：同会话连拍 5 张以上会 OOM（int_r3 / metro_r3 崩过），zz 在 Blender 跑烘焙时同时截图也会崩。
+5. InstaBox：本批用了 zz（Blender 烘焙 + 截图）、aa/bb/cc/dd（导出/截图）；批次10 结束时**令牌并未吊销、后台截图仍在跑**，批次11 接手后已取回截图、停任务、逐台 `ssh-token --revoke`。截图一律 `--fresh 1`（work/r3/rs10.sh）：同会话连拍 5 张以上会 OOM（int_r3 / metro_r3 崩过），zz 在 Blender 跑烘焙时同时截图也会崩。
 
 ## R3 批次9（2026-10-30 11:16 CST 接手）
 ### 完成

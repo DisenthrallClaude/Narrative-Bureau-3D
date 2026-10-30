@@ -9,8 +9,11 @@ import { hallMats } from '../world/hero.js';
 // box = [x0, x1, y0, y1, z0, z1]（世界坐标）
 export const BAKES = {
   training: { group: 'training', box: [-33, 33, -52.6, -30, -157, -91] },
-  command_center: { group: 'east_wing', box: [17.2, 57.2, 8.3, 15.4, -61.6, -30.6] },
-  archive: { group: 'archive', box: [-57.6, -17.2, 1.3, 40, -71.6, -30.6] },
+  // look：aoPatch 强度。档案馆 / 指挥中心接收面多是跨层合批大块（墙柜一体、东翼 1F–3F 楼板），面积加权 AO 中位数只有 0.48 / 0.55
+  // （训练场 0.88、第七局 0.99、B5 0.86）→ 整体压暗（archive_west 截图中位像素 −9%）。这两区 norm 降到 0.72、下限 lo 0.42、直射只压 0.3：
+  // 中位 AO 0.45 → 间接 ×0.79、直射 ×0.94，柜脚/墙角（AO<0.15）仍压到 0.42–0.5
+  command_center: { group: 'east_wing', box: [17.2, 57.2, 8.3, 15.4, -61.6, -30.6], look: { norm: 0.72, lo: 0.42, direct: 0.3 } },
+  archive: { group: 'archive', box: [-57.6, -17.2, 1.3, 40, -71.6, -30.6], look: { norm: 0.72, lo: 0.42, direct: 0.3 } },
   s7_ops: { group: 'seventh', box: [-10.4, 10.4, -500.6, -485, -134.4, -111.6] },
   b5: { group: 'vault_b5', box: [-40, 40, -42.6, -34.5, -140, -85] },
 };
@@ -82,7 +85,7 @@ export async function exportBake(scene, id, url) {
 }
 
 /** AO 补丁：uv1 采样 AO 图；压间接漫反射 / 间接镜面，直射按 direct 比例压（点光无实时投影 → 用 AO 补接触阴影） */
-export function aoPatch(mat, tex, { direct = 0.5, gamma = 1.0, norm = 0.9 } = {}) { // norm：AO≥norm 视为全亮（开阔地面不整体压暗，只加接触阴影）
+export function aoPatch(mat, tex, { direct = 0.5, gamma = 1.0, norm = 0.9, lo = 0 } = {}) { // lo：AO 下限（最暗只压到 lo） // norm：AO≥norm 视为全亮（开阔地面不整体压暗，只加接触阴影）
   const prev = mat.onBeforeCompile;
   mat.onBeforeCompile = (sh, r) => {
     prev?.call(mat, sh, r);
@@ -91,14 +94,14 @@ export function aoPatch(mat, tex, { direct = 0.5, gamma = 1.0, norm = 0.9 } = {}
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvNbAOuv = uv1;');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D nbAO; varying vec2 vNbAOuv;')
       .replace('#include <aomap_fragment>', `#include <aomap_fragment>
-        { float nbA = pow(clamp(texture2D(nbAO, vNbAOuv).r / ${norm.toFixed(3)}, 0.0, 1.0), ${gamma.toFixed(2)});
+        { float nbA = mix(${lo.toFixed(3)}, 1.0, pow(clamp(texture2D(nbAO, vNbAOuv).r / ${norm.toFixed(3)}, 0.0, 1.0), ${gamma.toFixed(2)}));
           reflectedLight.indirectDiffuse *= nbA;
           reflectedLight.indirectSpecular *= mix(1.0, nbA, 0.85);
           reflectedLight.directDiffuse *= mix(1.0, nbA, ${direct.toFixed(2)});
           reflectedLight.directSpecular *= mix(1.0, nbA, ${(direct * 0.7).toFixed(2)}); }`);
   };
   const k = mat.customProgramCacheKey?.bind(mat);
-  mat.customProgramCacheKey = () => (k ? k() : '') + '|bakeao' + direct + gamma + norm;
+  mat.customProgramCacheKey = () => (k ? k() : '') + '|bakeao' + direct + gamma + norm + '_' + lo;
   mat.userData.bakeAO = true; mat.needsUpdate = true;
   return mat;
 }
@@ -127,7 +130,7 @@ export async function applyBakes(scene, ids = Object.keys(BAKES), opts = {}) {
         const tex = await loader.loadAsync(base + '_ao.webp').catch(() => null);
         if (!tex) { st.dead = true; return; }
         tex.colorSpace = THREE.NoColorSpace; tex.generateMipmaps = true; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.magFilter = THREE.LinearFilter; tex.anisotropy = 4;
-        st.tex = /[?&]aowhite=1/.test(location.search) ? Object.assign(new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1), { needsUpdate: true }) : tex; st.uv = new Uint16Array(uv); st.map = new Map(head.recv.map((r) => [r.key, r])); st.left = new Set(st.map.keys()); st.mats = new Map(); st.direct = 0.5; st.norm = 0.9;
+        st.tex = /[?&]aowhite=1/.test(location.search) ? Object.assign(new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1), { needsUpdate: true }) : tex; st.uv = new Uint16Array(uv); st.map = new Map(head.recv.map((r) => [r.key, r])); st.left = new Set(st.map.keys()); st.mats = new Map(); Object.assign(st, { direct: 0.5, norm: 0.9, lo: 0 }, BAKES[id]?.look);
       })();
     }
     await st.pending;
@@ -145,7 +148,7 @@ export async function applyBakes(scene, ids = Object.keys(BAKES), opts = {}) {
       g.setAttribute('uv1', new THREE.BufferAttribute(a, 2));
       o.geometry = g; o.userData.bakeAO = true;
       let m = st.mats.get(o.material.uuid);
-      if (!m) { m = aoPatch(cloneMat(o.material), st.tex, { direct: st.direct, norm: st.norm }); st.mats.set(o.material.uuid, m); }
+      if (!m) { m = aoPatch(cloneMat(o.material), st.tex, { direct: st.direct, norm: st.norm, lo: st.lo }); st.mats.set(o.material.uuid, m); }
       o.material = m; st.left.delete(k); hit++;
     });
     opts.log?.(`bake ${id}: +${hit} matched, ${st.left.size} left / ${st.map.size}`);
