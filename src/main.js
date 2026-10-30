@@ -257,7 +257,7 @@ const ZONE_LOOK = {
   floor3: { env: 'hall', envI: 0.75, sun: 0, exp: 1.3, fog: [0x1c1c1e, 0.006], hemi: 0.24 },
   library: { env: 'hall', envI: 0.5, sun: 0, exp: 1.15, fog: [0x241c12, 0.008], hemi: 0.1 },
   director: { env: 'sky', envI: 0.6, sun: 0, exp: 1.2, fog: [0x1e1814, 0.004], hemi: 0.2 },
-  training: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x060a14, 0.012], hemi: 0.05 },
+  training: { env: 'hall', envI: 0.48, sun: 0, exp: 1.45, fog: [0x0e1424, 0.007], hemi: 0.2 }, // 批次9：用户反馈训练场整体偏暗 → 环境 0.3→0.48、曝光 1.2→1.45、雾减薄提亮、半球 0.05→0.2
   east_stair: { env: 'hall', envI: 0.55, sun: 0, exp: 1.1, fog: [0x1d1915, 0.012], hemi: 0.12 },
 };
 // R3 批次6 全局提亮：室内（无阳光、非烘焙大厅、非墨渊/第七局）曝光 ×1.18、环境 ×1.15、半球补光至少 0.1（用户：室内整体偏暗）；?dim=1 关闭

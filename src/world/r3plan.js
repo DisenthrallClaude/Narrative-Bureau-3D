@@ -1794,3 +1794,26 @@ export function planS7Entry(y) {
   return { room, items: out };
 }
 Object.assign(PLANS, { abyss_core: (Y) => fixYaw(planAbyssCore(Y)), abyss_tide: (Y) => fixYaw(planAbyssTide(Y)), s7_entry: (Y) => fixYaw(planS7Entry(Y)) }); Object.assign(R3, { abyss_core: true, abyss_tide: true, s7_entry: true });
+
+// ================= R3 批次9：训练场整体提亮 / 定稿厅主机位可见陈设 =================
+const X9 = {
+  // 训练场：64×64 m 高顶大厅，原来只有灯管自发光 + 局部补光 → 地面大片死黑。按 4×4 网格在 y+11 m 布宽范围补光（冷白，和灯管同色），主通道/简报区/领用区上方加暖色中层光
+  training(out, y) {
+    for (const x of [-24, -8, 8, 24]) for (const z of [-100, -116, -132, -148]) light(out, x, y + 11, z, 0xe4ecff, 3.4, 28);
+    light(out, 0, y + 5, -104, 0xffe2b8, 2.0, 14); light(out, -22, y + 5, -109, 0xffe2b8, 2.0, 12); light(out, 9.5, y + 5, -110, 0xffe2b8, 2.0, 12);
+  },
+  // 定稿厅：主机位（南，r≈20）只能从书环南口看进来，原校对席都在西/北/东侧被巨书挡住 → 在南口西侧（避开东南红线扇区）补 2 席校对台、南口两侧落地烛台，地毯带延伸过来，席灯加亮
+  abyss_core(out, y) {
+    const cx = 8, cz = -228;
+    [-0.38, -0.71].forEach((a, i) => { const r = 10.6, x = cx + Math.sin(a) * r, z = cz + Math.cos(a) * r, n = [Math.sin(a), Math.cos(a)], t = [Math.cos(a), -Math.sin(a)];
+      out.push({ m: 'r2/antique_desk', x, y, z, yaw: a, w: 1.6, tag: '校对席', on: 'floor', col: [1.6, 0.78, 0.8] });
+      out.push({ m: 'r2/worn_leather_office_chair', x: x + n[0] * 0.85, y, z: z + n[1] * 0.85, yaw: a + Math.PI, h: 1.0, tag: '校对席', on: 'floor' });
+      out.push({ m: 'r2/1800s_kerosene_desk_lamps_type_b', x: x + t[0] * 0.55, y: y + 0.78, z: z + t[1] * 0.55, yaw: a, h: 0.45, tag: '校对席', on: 'shelf' });
+      out.push(i === 0 ? { m: 'r2/old_typewriter', x: x - t[0] * 0.2, y: y + 0.78, z: z - t[1] * 0.2, yaw: a + Math.PI, w: 0.4, tag: '校对席', on: 'shelf' } : { m: 'r2/medieval_book_stack', x: x - t[0] * 0.3, y: y + 0.78, z: z - t[1] * 0.3, yaw: a, h: 0.3, tag: '校对席', on: 'shelf' });
+      if (i === 0) out.push({ m: 'r2/medieval_book_stack', x: x - t[0] * 1.55 - n[0] * 0.4, y, z: z - t[1] * 1.55 - n[1] * 0.4, yaw: a * 2, h: 0.55, tag: '稿件堆', on: 'floor' });
+      light(out, x + t[0] * 0.55, y + 1.5, z + t[1] * 0.55, 0xffc890, 2.4, 7); });
+    for (const [a, r] of [[-0.28, 8.0], [0.28, 8.0]]) { const x = cx + Math.sin(a) * r, z = cz + Math.cos(a) * r; out.push({ m: 'r2/medieval_candelabra_free_download', x, y, z, yaw: 0, h: 1.8, tag: '烛台', on: 'floor', col: [0.5, 1.8, 0.5] }); light(out, x, y + 2.0, z, 0xffc070, 2.2, 8); }
+    for (let k = 0; k < 3; k++) { const a = -0.36 - k * 0.24; out.push({ box: 'r3_carpetRed', x: cx + Math.sin(a) * 10.9, y: y + 0.007, z: cz + Math.cos(a) * 10.9, w: 2.5, h: 0.014, d: 3.4, yaw: a, tag: '地毯', on: 'partv' }); }
+  },
+};
+for (const [id, f] of Object.entries(X9)) { const base = PLANS[id]; if (!base) continue; PLANS[id] = (Y) => { const p = base(Y); const n0 = p.items.length; f(p.items, Y, p.room); fixYaw({ items: p.items.slice(n0) }); return p; }; }

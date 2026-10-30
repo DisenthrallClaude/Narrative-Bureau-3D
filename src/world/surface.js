@@ -254,7 +254,30 @@ export async function buildSurface(scene, world, ctx) {
     box('steel', 0.8, 0.4, 1.9, W / 2 - 0.7, 0.35, 0.3, { collide: true }); box('m5_olive', 0.75, 0.12, 1.85, W / 2 - 0.7, 0.6, 0.3);
     { const tt = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.35, 10), M.paintedGreen); tt.applyMatrix4(f.at(-1.6, 1.0, -Dp / 2 + 0.7)); zone.add(tt); const rad = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 0.05), M.blackMetal); rad.applyMatrix4(f.at(-1.2, 0.95, -Dp / 2 + 0.75)); zone.add(rad); }
     const guard = person(M, { coat: 0x14203e, cap: true }); guard.applyMatrix4(f.at(1.6, 0, Dp / 2 + 1.0, [0, 0, 0])); zone.add(guard);
-    { const l = new THREE.PointLight(0xffe0b0, 3.5, 7, 2); l.position.copy(new THREE.Vector3(0, 3.4, 0).applyMatrix4(f.m)); zone.add(l); }
+    { const l = new THREE.PointLight(0xffe0b0, 4.5, 8, 2); l.position.copy(new THREE.Vector3(0, 3.4, 0).applyMatrix4(f.m)); zone.add(l); }
+    // R3 批次9：岗亭补陈设与灯光（局部坐标：+z 门面，后墙 z=−2.5 监控台，东墙 x=+3.5 行军床，西墙 x=−3.5 塔楼附图）
+    // 平面：监控台前值班椅（面朝屏幕墙）→ 台面台灯/电话/保温瓶/文件；西墙北段文件柜 + 衣帽架，西南角灭火器；前墙两窗下暖气片；东墙床尾储物柜；中央地垫；顶棚两支灯管；门外笼罩壁灯
+    { const wp = (x, y, z) => new THREE.Vector3(x, y, z).applyMatrix4(f.m).toArray();
+      P.add('office_chair', wp(0.2, 0.06, -Dp / 2 + 1.55), { h: 1.0, yaw: yaw + Math.PI + 0.15 });
+      P.add('r2/bankers_lamp', wp(-1.75, 0.845, -Dp / 2 + 0.6), { h: 0.42, yaw: yaw + 0.25 });
+      P.add('r2/rotary_telephone', wp(1.55, 0.845, -Dp / 2 + 0.62), { h: 0.13, yaw: yaw - 0.3 });
+      P.add('r2/plastic_thermos', wp(-1.3, 0.845, -Dp / 2 + 0.45), { h: 0.32, yaw });
+      P.add('file_cabinet', wp(-W / 2 + 0.5, 0.06, -Dp / 2 + 0.55), { h: 1.32, yaw: yaw + Math.PI / 2 });
+      P.add('r2/coat_rack', wp(-W / 2 + 0.45, 0.06, 1.55), { h: 1.8, yaw: yaw + Math.PI / 2 });
+      P.add('r2/fire_extinguisher', wp(-W / 2 + 0.4, 0.06, Dp / 2 - 0.55), { h: 0.55, yaw: yaw + Math.PI / 2 });
+      for (const sx of [-1, 1]) P.add('r2/old_radiator', wp(sx * 2.3, 0.2, Dp / 2 - 0.32), { h: 0.6, yaw: yaw + Math.PI });
+      P.add('r2/locker_equipment', wp(W / 2 - 0.42, 0.06, -Dp / 2 + 0.9), { h: 1.85, yaw: yaw - Math.PI / 2 });
+      P.add('r2/1950s_wall_clock', wp(-2.75, 2.75, -Dp / 2 + 0.27), { h: 0.34, yaw });
+      P.add('caged_light', wp(0, 2.95, Dp / 2 + 0.33), { h: 0.28, yaw });
+      paperStack(b, ...wp(0.75, 0.845, -Dp / 2 + 0.55), yaw + 0.2, 5); folderStack(b, ...wp(-0.6, 0.845, -Dp / 2 + 0.5), yaw - 0.1, 3);
+      box('dz_rugRed', 2.6, 0.012, 1.6, 0, 0.066, 0.1);
+      for (const z of [-0.9, 0.9]) { b.add('dm_sillWhite', new THREE.BoxGeometry(1.25, 0.06, 0.22), f.at(0, H - 0.03, z), { uv: false }); b.add('dz_glowCold', new THREE.CylinderGeometry(0.018, 0.018, 1.18, 8), f.at(0, H - 0.075, z, [0, 0, Math.PI / 2]), { uv: false }); }
+      const pl = (c, i, d, x, y, z) => { const l = new THREE.PointLight(c, i, d, 2); l.position.set(...wp(x, y, z)); zone.add(l); };
+      pl(0xffd9a8, 1.6, 4, -1.75, 1.35, -Dp / 2 + 0.75);   // 台灯
+      pl(0x8fe0b0, 0.9, 3.5, 0, 1.6, -Dp / 2 + 0.9);       // 屏幕墙绿光
+      pl(0xe8eeff, 2.2, 6, 0, H - 0.4, 0.4);               // 灯管
+      pl(0xffc890, 4.0, 9, 0, 2.7, Dp / 2 + 0.9);          // 门外壁灯
+    }
     const sg = goldText('城墙岗哨　十二号塔', 3.2, 0.36, M.goldBright, { res: 96 }); sg.applyMatrix4(f.at(0, 3.3, Dp / 2 + 0.27)); zone.add(sg);
     // 岗亭顶部瞭望台：外挂铁梯 + 黄铜望远镜
     { for (let k = 0; k < 10; k++) box('iron', 0.6, 0.04, 0.04, W / 2 + 0.4, 0.3 + k * 0.42, 1.6); for (const dz of [1.3, 1.9]) box('iron', 0.04, 4.6, 0.04, W / 2 + 0.4, 2.3, dz); const p0 = new THREE.Vector3(W / 2 + 0.6, 0, 1.6).applyMatrix4(f.m), p1 = new THREE.Vector3(W / 2 - 0.4, H + 0.4, 1.6).applyMatrix4(f.m); world.ramp([p0.x, 0, p0.z], [p1.x, H + 0.4, p1.z], 0.9); world.box(...new THREE.Vector3(0, H + 0.2, 0).applyMatrix4(f.m).toArray(), W, 0.4, Dp, yaw);
