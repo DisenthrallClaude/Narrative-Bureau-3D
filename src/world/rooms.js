@@ -83,8 +83,8 @@ export function buildRooms(scene, world, ctx) {
     ctx.anchors.int_canteen_gossip = { box: [-9, Y + 1.0, Z0 - 5, 3, 2, 3] };
     // 入口公告栏
     const bd = docMesh('doc_canteen_board', 3.2, 2.0, signMaterial('员工公告栏', ['· 本周加试阅卷人员 可在 B 窗口加餐', '· 请勿与倒影共餐', '· 失物招领：一枚无字书签', '· 食堂 21:00 后不供应任何「回忆」'], 640, 400));
-    bd.position.set(X - 0.02, Y + 2.2, Z0 - 3.2); bd.rotation.y = -Math.PI / 2; zone.add(bd); ctx.anchors.doc_canteen_board = bd;
-    b.box('wood', 0.08, 2.3, 3.5, [X - 0.02, Y + 2.2, Z0 - 3.2], { uv: 0.6 });
+    bd.position.set(X - 0.02, Y + 2.2, Z0 - 8.5); // 批次17：原 Z0−3.2 正好挡住 M5 东墙门洞（z −111.4…−114.6），东廊看进门洞只见公告栏背板（ec_corner 深色木纹面，pick 实测命中 wood@x18.02 z−112.95）→ 南移到门洞以南 bd.rotation.y = -Math.PI / 2; zone.add(bd); ctx.anchors.doc_canteen_board = bd;
+    b.box('wood', 0.08, 2.3, 3.5, [X - 0.02, Y + 2.2, Z0 - 8.5], { uv: 0.6 });
     // 绿植、吊灯
     for (const [x, z] of (R3.canteen ? [[-15, -113], [15, -113], [-15, -136], [15, -136]] : [[-15, -113], [15, -113], [-15, -136], [15, -136], [-4.5, -125], [4.5, -125]])) add(placeModel('potted_plant', { height: 2.0, pos: [x, Y, z] }));
     for (let r = 0; r < 3; r++) for (const x of [-9, 0, 9]) add(placeModel('chandelier', { height: 1.6, pos: [x, Y + 9.2, Z0 - 7 - r * 8] }));
