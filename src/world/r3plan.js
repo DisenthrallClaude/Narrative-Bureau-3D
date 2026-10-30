@@ -2477,7 +2477,7 @@ export function planLab3(y) {
     out.push({ box: 'paintedGreen', x: BX, y: y + 0.43, z, w: 2.96, h: 0.78, d: 1.36, uv: 1, tag: '① 实验台', on: 'partv' });
     out.push({ box: 'blackMetal', x: BX, y: y + 0.04, z, w: 2.9, h: 0.08, d: 1.3, tag: '① 踢脚', on: 'partv' });
     for (const s of [-1, 1]) for (let k = 0; k < 4; k++) out.push({ box: 'dz_brassDim', x: BX - 1.11 + k * 0.74, y: y + 0.62, z: z + s * 0.685, w: 0.1, h: 0.02, d: 0.02, tag: '① 柜门拉手', on: 'partv' });
-    out.push({ box: 'onyx', x: BX, y: y + 0.88, z, w: 3.04, h: 0.04, d: 1.54, uv: 0.5, tag: '① 环氧台面', on: 'partv' });
+    out.push({ box: 'stoneDark', x: BX, y: y + 0.88, z, w: 3.04, h: 0.04, d: 1.54, uv: 0.5, tag: '① 环氧台面', on: 'partv' });
     // 中脊试剂架：两立柱 + 两层木隔板 + 试剂瓶（棕瓶 / 白瓶交替，定点）
     for (const dx of [-1.38, 1.38]) out.push({ box: 'steel', x: BX + dx, y: y + 1.25, z, w: 0.04, h: 0.7, d: 0.04, tag: '① 试剂架', on: 'partv' });
     for (const hy of [1.18, 1.56]) { out.push({ box: 'wood', x: BX, y: y + hy, z, w: 2.8, h: 0.025, d: 0.26, uv: 0.6, tag: '① 试剂架', on: 'partv' });
@@ -2495,7 +2495,7 @@ export function planLab3(y) {
   for (let i = 0; i < 5; i++) { const x = 11.0 + i * 1.75, z = -119.33, W = 1.65;
     out.push({ fixed: true, m: '固定:通风橱', x, y, z, yaw: 0, size: [W, 2.9, 0.9], col: [W, 2.9, 0.9], tag: '② 通风橱', on: 'floor' });
     out.push({ box: 'paintedGreen', x, y: y + 0.42, z, w: W, h: 0.84, d: 0.88, uv: 1, tag: '② 下柜', on: 'partv' });
-    out.push({ box: 'onyx', x, y: y + 0.86, z: z + 0.01, w: W + 0.02, h: 0.04, d: 0.9, uv: 0.5, tag: '② 台面', on: 'partv' });
+    out.push({ box: 'stoneDark', x, y: y + 0.86, z: z + 0.01, w: W + 0.02, h: 0.04, d: 0.9, uv: 0.5, tag: '② 台面', on: 'partv' });
     for (const s of [-1, 1]) out.push({ box: 'paintedGreen', x: x + s * (W / 2 - 0.04), y: y + 1.62, z, w: 0.08, h: 1.48, d: 0.88, uv: 1, tag: '② 侧板', on: 'partv' });
     out.push({ box: 'r3_tile', x, y: y + 1.62, z: z - 0.43, w: W - 0.16, h: 1.48, d: 0.02, uv: 0.5, tag: '② 白瓷砖内衬', on: 'partv' });
     out.push({ box: 'paintedGreen', x, y: y + 2.62, z, w: W, h: 0.52, d: 0.88, uv: 1, tag: '② 顶箱', on: 'partv' });
@@ -2515,7 +2515,7 @@ export function planLab3(y) {
   for (let s = 0; s < 3; s++) for (let k = 0; k < 6; k++) out.push({ box: k % 2 ? 'dz_glassDark' : 'glassClear', x: 22.45 + k * 0.22, y: y + 0.5 + s * 0.6, z: -119.4, w: 0.1, h: 0.2, d: 0.1, tag: '③ 试剂瓶', on: 'partv' });
   out.push({ fixed: true, m: '固定:水槽台', x: 25.25, y, z: -119.45, yaw: 0, size: [1.5, 0.9, 0.65], col: [1.5, 0.9, 0.65], tag: '③ 水槽台', on: 'floor' });
   out.push({ box: 'paintedGreen', x: 25.25, y: y + 0.42, z: -119.45, w: 1.48, h: 0.84, d: 0.62, uv: 1, tag: '③ 水槽台', on: 'partv' });
-  out.push({ box: 'onyx', x: 25.25, y: y + 0.87, z: -119.44, w: 1.52, h: 0.04, d: 0.66, uv: 0.5, tag: '③ 水槽台面', on: 'partv' });
+  out.push({ box: 'stoneDark', x: 25.25, y: y + 0.87, z: -119.44, w: 1.52, h: 0.04, d: 0.66, uv: 0.5, tag: '③ 水槽台面', on: 'partv' });
   out.push({ box: 'whiteMarble', x: 25.05, y: y + 0.86, z: -119.42, w: 0.6, h: 0.05, d: 0.42, uv: 0.3, tag: '③ 白瓷水盆', on: 'partv' });
   out.push({ box: 'steel', x: 25.05, y: y + 1.1, z: -119.68, w: 0.04, h: 0.42, d: 0.04, tag: '③ 鹅颈龙头', on: 'partv' });
   out.push({ box: 'steel', x: 25.05, y: y + 1.31, z: -119.55, w: 0.04, h: 0.04, d: 0.26, tag: '③ 鹅颈龙头', on: 'partv' });
