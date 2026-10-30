@@ -276,7 +276,7 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
     b.box(m, 2 * X, th, Z0 - hz1, [0, yy, (Z0 + hz1) / 2], o); b.box(m, 2 * X, th, hz0 - Z1, [0, yy, (hz0 + Z1) / 2], o);
     for (const s of [-1, 1]) b.box(m, X - hx, th, hz1 - hz0, [s * (X + hx) / 2, yy, (hz0 + hz1) / 2], o); };
   const BM = name[0] === 'B'; // 批次22：B 层电梯厅地下化——乱石墙 / 蓝调深砖地 → 素混凝土墙顶 + 哑光环氧地坪（墙裙 / 灯 / 设施见 r3plan basementHall）
-  if (BM) { const D = dressMats(M); M.r3_bunkerConc = M.r3_bunkerConc ?? D.r3_bunkerConc; M.r3_epoxy = M.r3_epoxy ?? D.r3_epoxy; }
+  if (BM) { const D = dressMats(M); M.r3_bunkerConc = M.r3_bunkerConc ?? D.r3_bunkerConc; M.r3_epoxy = M.r3_epoxy ?? D.r3_epoxy; for (const k of ['r3_steelGrey', 'r3_steelOld', 'dz_brassDim']) M[k] = M[k] ?? D[k]; }
   const WM = BM ? 'r3_bunkerConc' : 'vaultWall';
   slab(BM ? 'r3_epoxy' : 'darkTile', y - 0.1, 0.2, SPN && name !== 'B5', { uv: 0.3 }); world.box(0, y - 0.1, (Z0 + Z1) / 2, 2 * X, 0.2, Z0 - Z1);
   slab(WM, y + H + 0.15, 0.3, SPN && name !== 'B3', { uv: 0.25 });
@@ -304,6 +304,9 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
     } else {
     b.add('stoneDark', archRingGeo(3.6, 3.4, 2.4, 3.4, 0.4), f.at(0, 0, 0.0), { uv: 0.5 });
     b.add('gold', archRingGeo(3.7, 3.4, 3.6, 3.4, 0.42), f.at(0, 0, 0.0), { uv: 1 }); }
+    if (BM) { // 批次23 看图：B 层门扇仍是金色书页浮雕（上层风格）→ 客梯拉丝钢门扇 + 中缝 + 视窗条；货梯同（门框钢）
+      for (const s of [-1, 1]) { b.add('r3_steelGrey', new THREE.BoxGeometry(1.18, 3.3, 0.08), f.at(s * 0.6, 1.65, 0.05), { uv: 1 }); b.add('r3_steelOld', new THREE.BoxGeometry(1.0, 0.04, 0.02), f.at(s * 0.6, 1.1, 0.1), { uv: 1 }); b.add('r3_steelOld', new THREE.BoxGeometry(1.0, 0.04, 0.02), f.at(s * 0.6, 2.4, 0.1), { uv: 1 }); }
+    } else
     for (const s of [-1, 1]) b.add('elevDoor', new THREE.BoxGeometry(1.18, 3.3, 0.08), f.at(s * 0.6, 1.65, 0.05), { uv: false });
     if (UP) b.add('dz_pil', new THREE.BoxGeometry(3.9, H - 3.34, 0.01), f.at(0, 3.3 + (H - 3.34) / 2, -0.005), { uv: 0.5 }); // 批次13：门头拱内补黑石门楣板（原露出乱石）
     if (UP) { for (const s of [-1, 1]) { b.add('brass', new THREE.BoxGeometry(0.2, 3.9, 0.16), f.at(s * 1.98, 1.95, 0.02), { uv: 1 }); b.add('dz_pil', new THREE.BoxGeometry(0.3, 0.2, 0.2), f.at(s * 1.98, 0.1, 0.02), { uv: 1 }); b.add('dz_pil', new THREE.BoxGeometry(0.3, 0.16, 0.2), f.at(s * 1.98, 3.98, 0.02), { uv: 1 }); }
