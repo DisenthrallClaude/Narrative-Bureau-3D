@@ -307,7 +307,7 @@ export async function buildSurface(scene, world, ctx) {
     // R3 批次9：岗亭补陈设与灯光（局部坐标：+z 门面，后墙 z=−2.5 监控台，东墙 x=+3.5 行军床，西墙 x=−3.5 塔楼附图）
     // 平面：监控台前值班椅（面朝屏幕墙）→ 台面台灯/电话/保温瓶/文件；西墙北段文件柜 + 衣帽架，西南角灭火器；前墙两窗下暖气片；东墙床尾储物柜；中央地垫；顶棚两支灯管；门外笼罩壁灯
     { const wp = (x, y, z) => new THREE.Vector3(x, y, z).applyMatrix4(f.m).toArray();
-      P.add('office_chair', wp(0.2, 0.06, -Dp / 2 + 1.55), { h: 1.0, yaw: yaw + Math.PI + 0.15 });
+      P.add('r4/exam_chair', wp(0.2, 0.06, -Dp / 2 + 1.55), { h: 0.84, yaw: yaw + Math.PI + 0.15 }); // 批次31：wall_r3 里现代网面转椅不合年代 → 已验收的 Blender 胡桃木课椅（r4/exam_chair）
       P.add('r2/bankers_lamp', wp(-1.75, 0.845, -Dp / 2 + 0.6), { h: 0.42, yaw: yaw + 0.25 });
       P.add('r2/rotary_telephone', wp(1.55, 0.845, -Dp / 2 + 0.62), { h: 0.13, yaw: yaw - 0.3 });
       P.add('r2/plastic_thermos', wp(-1.3, 0.845, -Dp / 2 + 0.45), { h: 0.32, yaw });
