@@ -270,7 +270,8 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
   if (UP) { dressMats(M);
     roomDress(b, -X, X, Z0 - 0.2, Z1 + 0.2, y, H - 0.04, { // 批次13：檐口顶到藻井下沿（原 H−0.4 露出 0.4 m 粉色乱石带）
       style: 'office', over: { up: 'dz_ashlarEC' }, upOff: [0, 1.43 - y], pil: true, pitch: 3.0, sconce: false,
-      s: { skip: [[X - 6 - 1.95, X - 6 + 1.95], [X + 6 - 1.95, X + 6 + 1.95]], pilSkip: [[X - 0.95, X + 0.95]] }, // 批次13：南墙正中壁柱挡住楼层铭牌 → 让开 n: { skip: [[X - 2.3, X + 2.3]] } });
+      s: { skip: [[X - 6 - 1.95, X - 6 + 1.95], [X + 6 - 1.95, X + 6 + 1.95]], pilSkip: [[X - 0.95, X + 0.95]] }, // 批次13：南墙正中壁柱挡住楼层铭牌 → 让开
+      n: { skip: [[X - 2.3, X + 2.3]] } });
     coffered(b, -X, X, Z0, Z1, y + H, { cell: 3.0, depth: 0.36, lights: true, lightEvery: 1 }); }
   // 门
   for (const x of [-6, 6]) {
