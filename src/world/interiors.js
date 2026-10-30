@@ -403,18 +403,18 @@ function buildHall(zone, world, ctx, M, add) {
     // 批次16：两张「A 级通缉」卡中间的灰色空照片框 → 填秦骁 / 江戾档案海报头像裁切（做旧灰调）
     { rect: [223 / 1536, 504 / 1152, 155 / 1536, 176 / 1152], img: content.texUrl('tex_archive_portrait_qinxiao'), crop: [300, 330, 360, 410], filter: 'grayscale(1) sepia(0.3) contrast(1.08)' },
     { rect: [537 / 1536, 504 / 1152, 154 / 1536, 176 / 1152], img: content.texUrl('tex_archive_portrait_jiangli'), crop: [400, 300, 360, 410], filter: 'grayscale(1) sepia(0.3) contrast(1.08)' }]); // 生图底部「敘事管理局」改简体
-  b.box('wood', 0.2, 2.6, 5.6, [X - 0.1, Y + 2.2, -64], { uv: 0.5 });
-  b.box('gold', 0.22, 2.7, 0.08, [X - 0.1, Y + 2.2, -61.2], { uv: 1 }); b.box('gold', 0.22, 2.7, 0.08, [X - 0.1, Y + 2.2, -66.8], { uv: 1 });
+  b.box('wood', 0.2, 2.6, 5.6, [X - 0.23, Y + 2.2, -64], { uv: 0.5 }); // 批次17：通缉栏整组前移 0.13 m——hall_wanted 前景「半透明横杆」= 墙面 H_trim 线脚（x≈17.13，离地 2.64–2.84）凸出在栏面（原 X−0.21）前，隔着玻璃看像横杆（pick 实测）
+  b.box('gold', 0.22, 2.7, 0.08, [X - 0.23, Y + 2.2, -61.2], { uv: 1 }); b.box('gold', 0.22, 2.7, 0.08, [X - 0.23, Y + 2.2, -66.8], { uv: 1 });
   const wbm = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 2.4), wb ? new THREE.MeshStandardMaterial({ map: wb, roughness: 0.6 }) : wantedBoardMaterial());
-  wbm.position.set(X - 0.21, Y + 2.2, -64); wbm.rotation.y = -Math.PI / 2; zone.add(wbm);
-  const wbg = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 2.5), M.glassClear); wbg.position.set(X - 0.3, Y + 2.2, -64); wbg.rotation.y = -Math.PI / 2; zone.add(wbg);
+  wbm.position.set(X - 0.34, Y + 2.2, -64); wbm.rotation.y = -Math.PI / 2; zone.add(wbm);
+  const wbg = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 2.5), M.glassClear); wbg.position.set(X - 0.43, Y + 2.2, -64); wbg.rotation.y = -Math.PI / 2; zone.add(wbg);
   ctx.wantedBoard = wbm;
   // 批次13：通缉栏两侧加挂江戾 / 秦骁整张档案海报（IMAGE-PLAN「未用」→ F2 安检大厅通缉栏；栏内原生图保持不动），金框 + 玻璃 + 铜签
   for (const [id, z, nm] of [['tex_archive_portrait_qinxiao', -60.3, '秦骁'], ['tex_archive_portrait_jiangli', -67.7, '江戾']]) { const t = content.tex(id); if (!t) continue;
-    const pm = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 1.28), new THREE.MeshStandardMaterial({ map: t, roughness: 0.55, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.12 })); pm.position.set(X - 0.215, Y + 2.2, z); pm.rotation.y = -Math.PI / 2; zone.add(pm);
-    b.box('wood', 0.2, 1.4, 0.84, [X - 0.1, Y + 2.2, z], { uv: 0.5 }); b.box('gold', 0.22, 1.46, 0.05, [X - 0.1, Y + 2.2, z - 0.44], { uv: 1 }); b.box('gold', 0.22, 1.46, 0.05, [X - 0.1, Y + 2.2, z + 0.44], { uv: 1 });
-    const gl = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 1.36), M.glassClear); gl.position.set(X - 0.3, Y + 2.2, z); gl.rotation.y = -Math.PI / 2; zone.add(gl);
-    const tg = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.12), brassPlaqueMaterial('A 级通缉', [nm])); tg.position.set(X - 0.215, Y + 1.3, z); tg.rotation.y = -Math.PI / 2; zone.add(tg); }
+    const pm = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 1.28), new THREE.MeshStandardMaterial({ map: t, roughness: 0.55, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.12 })); pm.position.set(X - 0.345, Y + 2.2, z); pm.rotation.y = -Math.PI / 2; zone.add(pm);
+    b.box('wood', 0.2, 1.4, 0.84, [X - 0.23, Y + 2.2, z], { uv: 0.5 }); b.box('gold', 0.22, 1.46, 0.05, [X - 0.23, Y + 2.2, z - 0.44], { uv: 1 }); b.box('gold', 0.22, 1.46, 0.05, [X - 0.23, Y + 2.2, z + 0.44], { uv: 1 });
+    const gl = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 1.36), M.glassClear); gl.position.set(X - 0.43, Y + 2.2, z); gl.rotation.y = -Math.PI / 2; zone.add(gl);
+    const tg = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.12), brassPlaqueMaterial('A 级通缉', [nm])); tg.position.set(X - 0.345, Y + 1.3, z); tg.rotation.y = -Math.PI / 2; zone.add(tg); }
   // 西墙违禁品展示柜（相框）
   bA.box('blackMarble', 1.0, 1.0, 4.4, [-X + 0.6, Y + 0.5, -62], { uv: 0.5, collide: true });
   bA.box('gold', 1.04, 0.06, 4.44, [-X + 0.6, Y + 1.0, -62], { uv: 1 });
