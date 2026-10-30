@@ -190,7 +190,12 @@ fc37cd0 P0 外观（E1 绿团→花箱修剪侧柏、E5 门卫岗亭、E8/E4 黄
 - **E2 未完成**：附楼素灰墙（ext_side）未加线脚 / 窗。
 ### 3 未出图（下批先取）
 - 41133662803（fc37cd0：ext ×6 + plaza ×3，ext_street 已回）、41133825400（ba8fbb0：ext_door_mid / ext_side / ext_booth）、41133746086（hall ×3）、走查 41133899135（ba8fbb0）。取回后 `python3 work/r3/b27/cmp27.py` 重出 work/r3/cmp27_*.jpg（缺图格标「缺图」）。**洗墙灯强度是估算值，必须看 ext_door_near / plaza_r3 校**（过曝则降 1400→700；仍黑则加到 3000 + 把 hero_facade 贴图提亮）。
-### 4 P1 远景城市（E3）未开始
+- **plaza_top 改后（41133662803）已看**：布局不变 ✔；黄昏下俯视整体偏暗、草坪方格读得比白昼差（扣分，下批可给 plaza_top 机位单独提曝光或加广场路灯补光）；柏树列俯视为花箱 + 圆锥，不再是绿团 ✔。→ work/r3/cmp27_plaza_top.jpg。
+### 4 P1 远景城市（E3）未开始（时间用完）
+### 收尾
+- 走查 **41133899135（ba8fbb0）通过 31 / 失败 0 / 控制台错误 0**（work/r3/b27/r41133899135/walk/WALKTHROUGH.md）。黄昏改默认后剧情流程无回归。
+- **Drive 快照本批跳过**：tar 两次都撞 115 s 前台超时（第一次去 .git / node_modules / dist 后 1.5 GB 未完；第二次只打 game + docs + files 且去 work/r3 / web，530 MB 未完），按“失败两次记录跳过”处理，半截 tar 已删。Drive 上仍是批次26 快照 1AxRm2Q4BurQh9HDT9l1fZEO4y1T9hdC2；**本批代码全部在 GitHub（eb68dd7 及之后）**。下批建议分卷：`tar cf` 按子目录拆成多份、每份 <60 s，各自上传。
+- Pages：pages.yml eb68dd7 部署 success，站点 200。
 ### 下批先做
 1. 取上面 4 个 run；验收安检大厅、岗亭近景、立面投光强度。
 2. E3 远景城市：近排街屋立面卡片 + 远天际线剪影 / 雾；E2 附楼线脚；大道西侧黑方盒查源。
