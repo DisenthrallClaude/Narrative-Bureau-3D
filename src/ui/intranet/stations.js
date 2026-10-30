@@ -23,15 +23,15 @@ export const STATIONS = [
   { id: 'director', kind: 'table', plan: 'director', zone: 'director', floor: '12F', page: 'director', label: '局长室 · 秘书台', term: '12F-MS-01',
     desk: { x: -6.17, z: -93.96, yaw: -Math.PI / 2, D: 0.59, top: 0.72, w: 1.24 }, lx: 0.12 },
   { id: 'publicity', kind: 'model', plan: 'floor2_pub', zone: 'floor2', floor: '2F', page: 'publicity', label: '宣传处 · 运营组', term: '2F-XC-04',
-    near: [-16.1, 0.76, -96.2] },
+    near: [-16.1, 0.76, -96.2], yaw: 0 },
   { id: 'jiyao', kind: 'model', zone: 'director', floor: '12F', page: 'director', sub: 'classified', label: '局长室 · 机要室　密电终端', term: '12F-JY-00',
-    near: [11.8, 0.76, -102.85] },
+    near: [11.8, 0.76, -102.85], yaw: -Math.PI / 2 },
   { id: 'command', kind: 'console', zone: 'command_center', floor: '2F', page: 'command', label: '监测指挥中心 · 席位 A-04', term: 'EW2-ZH-A04',
     screen: { x: 36.8, y: 1.12, z: -40.05 - 0.006, yaw: Math.PI, w: 0.84, h: 0.46 } },
   { id: 'interrogation', kind: 'model', plan: 'interrogation', zone: 'interrogation', floor: 'B2', page: 'interrogation', label: 'B2 · 观察间监看台', term: 'B2-SX-01',
-    near: [-5.6, 0.885, -95.65] },
+    near: [-5.6, 0.885, -95.65], yaw: Math.PI },
   { id: 'vault', kind: 'model', plan: 'b5_deep', zone: 'vault_b5', floor: 'B5', page: 'vault', label: 'B5 · 深库值守台', term: 'B5-ZS-01',
-    near: [4.3, 0.76, -102.9] },
+    near: [4.3, 0.76, -102.9], yaw: Math.PI / 2 },
 ];
 
 /** desk / table 类终端要新加的规划条目（相对楼面 Y） */
@@ -50,7 +50,7 @@ export function stationItems(s, Y = 0) {
 /** 终端屏幕的大致中心与朝向（截图机位、交互热点用；model 类运行时再吸附到真实屏幕） */
 export function stationScreenGuess(s, Y = 0) {
   if (s.kind === 'console') return { c: [s.screen.x, Y + s.screen.y, s.screen.z], yaw: s.screen.yaw };
-  if (s.kind === 'model') return { c: [s.near[0], Y + s.near[1] + 0.22, s.near[2]], yaw: null };
+  if (s.kind === 'model') { const [fx, fz] = rot(s.yaw, 0, 0.06); return { c: [s.near[0] + fx, Y + s.near[1] + 0.24, s.near[2] + fz], yaw: s.yaw }; }
   const it = stationItems(s, Y).find((i) => i.m === CRT); const [fx, fz] = rot(s.desk.yaw, 0, 0.16);
   return { c: [it.x + fx, it.y + CRT_H * 0.56, it.z + fz], yaw: s.desk.yaw };
 }

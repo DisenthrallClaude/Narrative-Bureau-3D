@@ -78,6 +78,7 @@ export const DEPT = {
   medical: { title: '医务 · 理智值科', en: 'CLINIC · SANITY', sub: '主治 苏予　·　理智值记录与净化排班' },
   director: { title: '局长室　秘书台', en: 'DIRECTOR\u2019S OFFICE', sub: '主塔 12F　·　来访登记 · 日程 · 机要文件' },
   interrogation: { title: 'B2　审讯室 · 临时羁押', en: 'INTERROGATION · B2', sub: '监看台　·　笔录与羁押台账' },
+  portal: { title: '门户首页', en: 'PORTAL', sub: '' },
   vault: { title: 'B5　深库值守台', en: 'DEEP VAULT · B5', sub: '七级以上及特殊藏品　·　双人双锁' },
 };
 
