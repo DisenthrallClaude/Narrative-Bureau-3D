@@ -29,8 +29,12 @@ const LATE = new Set(['b7']); // 墨渊等深层区在 buildDepths 之后才建 
 export async function buildR3(ctx, world, MAT, late = false) {
   const jobs = []; ctx._r3mat = MAT;
   for (const [id, on] of Object.entries(R3)) {
-    if (!on || !ZONE_OF[id] || LATE.has(id) !== late) continue;
-    const [zn, yf] = ZONE_OF[id]; const zone = ctx.zones[zn]; if (!zone) continue;
+    if (!on || !ZONE_OF[id]) continue;
+    ctx._r3built = ctx._r3built ?? new Set(); if (ctx._r3built.has(id)) continue;
+    if (!late && LATE.has(id)) continue;
+    // 批次6 修：surface（宿舍/机库）、training（B6）等分区在 buildDressing 之后才建 → 第一遍找不到 zone 时留到 late 那一遍（之前这些区的 R3 陈设整批没实例化）
+    const [zn, yf] = ZONE_OF[id]; const zone = ctx.zones[zn]; if (!zone) { if (late) console.warn('[NB] R3 区缺 zone', id, zn); continue; }
+    ctx._r3built.add(id);
     const plan = PLANS[id](yf()); const P = new Props(), b = new Batch();
     for (const it of plan.items) {
       const yaw = it.yaw ?? 0;

@@ -243,6 +243,9 @@ const ZONE_LOOK = {
   training: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x060a14, 0.012], hemi: 0.05 },
   east_stair: { env: 'hall', envI: 0.55, sun: 0, exp: 1.1, fog: [0x1d1915, 0.012], hemi: 0.12 },
 };
+// R3 批次6 全局提亮：室内（无阳光、非烘焙大厅、非墨渊/第七局）曝光 ×1.18、环境 ×1.15、半球补光至少 0.1（用户：室内整体偏暗）；?dim=1 关闭
+if (!/[?&]dim=1/.test(location.search)) for (const [k, L] of Object.entries(ZONE_LOOK)) { if (!L || L.sun > 0 || k === 'security_hall' || /^(abyss|seventh)/.test(k)) continue; L.exp *= 1.18; L.envI *= 1.15; L.hemi = Math.max(L.hemi * 1.5, 0.1); }
+{ const d = ZONE_LOOK.dorm; if (d && !/[?&]dim=1/.test(location.search)) { d.exp *= 1.15; d.envI = 0.32; d.hemi = 0.18; } } // 宿舍（sun>0 但室内）单独提亮
 let targetExp = 1, curExp = 1; const FILLS = [];
 function setZone(z, force = false) {
   if (z === G.zone && !force) return;
