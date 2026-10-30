@@ -3030,3 +3030,55 @@ function planEastAnte(y, lv) {
 }
 PLANS.east_ante = (Y) => fixYaw(planEastAnte(Y, '3F')); R3.east_ante = true;
 PLANS.east_ante2 = (Y) => fixYaw(planEastAnte(Y, '2F')); R3.east_ante2 = true;
+
+// ================= R3 批次23 · 屋顶停机坪 helipad_roof（机库平屋顶 x 73…99，z −87…−53，顶面 y 12.4；先做平面 + 主体） =================
+//  原有（surface.js）：混凝土屋面、黄色接地圈 r 8.2…8.8 + 白圈 + 局徽、16 盏圈灯 r 9.4、东北角风向袋、石砌女儿墙 1.1 m。
+//  功能平面：中心 (86, −70) 起降区 TLOF——白色 H 标识（压在局徽外圈上，H 竖笔 6 m）+ 22 m 方形 FATO 白色虚线框；
+//   西南角停机位（飞行器挪离 H，黄色停机框 x 74.4…82.6，z −63.6…−54.6）；
+//   西北角楼梯间出口（x 74…78.4，z −86.4…−81.6，门朝东）→ 黄色步行线到 FATO 边；东北偏西设备房（x 90…95.6，z −86.4…−82.2，百叶 + 屋顶风机）；
+//   女儿墙顶加钢栏杆（立柱 2 m 一根 + 两道扶手）；探照灯 ×2（东南角 / 西侧中段，钢座 + 灯筒）。远景天际线 = exterior.js 城墙外城市体量（已有）。
+function planHelipadRoof(y) {
+  const out = [], X0 = 73.2, X1 = 98.8, Z0 = -86.8, Z1 = -53.2, cx = 86, cz = -70;
+  const room = { name: '屋顶停机坪（批次23 · 平面 + 主体）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H: 6,
+    doors: [{ wall: 'N', a: 74, b: 78.4, label: '楼梯间出口' }], windows: [],
+    rooms: [['TLOF / H', cx, cz], ['停机位', 78.5, -59], ['楼梯间', 76.2, -84], ['设备房', 92.8, -84.3], ['探照灯', 97.2, -55], ['探照灯', 74.6, -72]],
+    aisles: [{ label: '步行线', x0: 78.6, x1: 84.2, z0: -84.0, z1: -82.6 }, { label: 'FATO 东侧净空', x0: 90.0, x1: 96.0, z0: -78.0, z1: -62.0 }] };
+  const B = (box, x, yy, z, w, h, d, tag, uv = 1) => out.push({ box, x, y: yy, z, w, h, d, uv, tag, on: 'partv' });
+  // ① H 标识 + FATO 虚线框
+  for (const dx of [-1.8, 1.8]) B('r3_stencil', cx + dx, y + 0.012, cz, 0.9, 0.01, 6.0, '① H 竖笔');
+  B('r3_stencil', cx, y + 0.012, cz, 2.7, 0.01, 0.9, '① H 横笔');
+  for (let t = -10.5; t <= 10.5; t += 3) { for (const zz of [cz - 11, cz + 11]) B('r3_stencil', cx + t, y + 0.011, zz, 1.5, 0.008, 0.3, '① FATO 虚线');
+    for (const xx of [cx - 11, cx + 11]) B('r3_stencil', xx, y + 0.011, cz + t, 0.3, 0.008, 1.5, '① FATO 虚线'); }
+  // ② 停机位黄框 + 步行线
+  for (const [x, z, w, d] of [[78.5, -63.6, 8.2, 0.15], [78.5, -54.6, 8.2, 0.15], [74.4, -59.1, 0.15, 9.0], [82.6, -59.1, 0.15, 9.0]]) B('r3_paintYellow', x, y + 0.011, z, w, 0.008, d, '② 停机框');
+  for (const z of [-84.0, -82.6]) B('r3_paintYellow', 81.4, y + 0.011, z, 5.6, 0.008, 0.12, '② 步行线');
+  // ③ 楼梯间出口（混凝土小屋，门朝东）
+  out.push({ fixed: true, m: '固定:楼梯间', x: 76.2, y, z: -84.0, yaw: 0, size: [4.4, 3.0, 4.8], col: [4.4, 3.0, 4.8], tag: '③ 楼梯间', on: 'floor' });
+  B('r3_bunkerConc', 76.2, y + 1.5, -84.0, 4.4, 3.0, 4.8, '③ 楼梯间墙体', 0.4);
+  B('r3_bunkerConc', 76.2, y + 3.08, -84.0, 4.8, 0.16, 5.2, '③ 楼梯间顶板', 0.4);
+  B('r3_steelOld', 78.42, y + 1.05, -83.3, 0.06, 2.1, 1.1, '③ 钢门'); B('r3_steelGrey', 78.44, y + 1.05, -83.3, 0.04, 2.24, 1.26, '③ 门框');
+  B('blackMetal', 78.47, y + 1.05, -82.85, 0.03, 0.04, 0.16, '③ 门把手'); B('r3_hazard', 78.43, y + 2.3, -83.3, 0.02, 0.16, 1.3, '③ 门楣警示', 0.8);
+  out.push({ sign: '楼梯间', sub: '下至机库 · 随手关门', x: 78.44, y: y + 2.6, z: -83.3, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '③ 门牌', on: 'sign' });
+  B('dz_glow', 78.5, y + 2.85, -83.3, 0.12, 0.14, 0.3, '③ 门头灯'); light(out, 79.2, y + 2.6, -83.3, 0xffe2b8, 1.4, 6);
+  // ④ 设备房（百叶 + 门 + 屋顶两台风机）
+  out.push({ fixed: true, m: '固定:设备房', x: 92.8, y, z: -84.3, yaw: 0, size: [5.6, 2.8, 4.2], col: [5.6, 2.8, 4.2], tag: '④ 设备房', on: 'floor' });
+  B('r3_bunkerConc', 92.8, y + 1.4, -84.3, 5.6, 2.8, 4.2, '④ 设备房墙体', 0.4); B('r3_bunkerConc', 92.8, y + 2.88, -84.3, 6.0, 0.16, 4.6, '④ 设备房顶板', 0.4);
+  for (let k = 0; k < 9; k++) B('r3_steelGrey', 94.2, y + 0.7 + k * 0.16, -82.17, 2.0, 0.05, 0.06, '④ 百叶');
+  B('r3_steelOld', 91.2, y + 1.05, -82.17, 1.0, 2.1, 0.06, '④ 钢门');
+  out.push({ sign: '设备房', sub: '高压危险 · 非请勿入', x: 91.2, y: y + 2.4, z: -82.14, yaw: ROT.S, size: [0.34, 0.12, 0.01], tag: '④ 门牌', on: 'sign' });
+  for (const x of [91.4, 94.2]) { B('r3_steelGrey', x, y + 3.36, -84.3, 1.6, 0.8, 1.6, '④ 屋顶风机'); out.push({ cyl: true, mat: 'blackMetal', x, y: y + 3.78, z: -84.3, r: 0.6, h: 0.04, size: [1.2, 0.04, 1.2], tag: '④ 风机格栅', on: 'partv' }); }
+  // ⑤ 女儿墙顶钢栏杆（女儿墙顶 y+1.1；立柱 2 m 一根 + 两道扶手）
+  const rail = (alongX, c, a0, a1) => { const L = a1 - a0, m = (a0 + a1) / 2;
+    for (let t = a0; t <= a1 + 0.01; t += 2) alongX ? B('r3_steelGrey', t, y + 1.4, c, 0.05, 0.6, 0.05, '⑤ 栏杆立柱') : B('r3_steelGrey', c, y + 1.4, t, 0.05, 0.6, 0.05, '⑤ 栏杆立柱');
+    for (const hy of [1.45, 1.7]) alongX ? B('r3_steelGrey', m, y + hy, c, L, 0.04, 0.04, '⑤ 扶手') : B('r3_steelGrey', c, y + hy, m, 0.04, 0.04, L, '⑤ 扶手'); };
+  rail(true, -53.0, 73.5, 98.5); rail(true, -87.0, 73.5, 98.5); rail(false, 73.0, -86.5, -53.5); rail(false, 99.0, -86.5, -53.5);
+  // ⑥ 探照灯 ×2（钢座 + 叉架 + 灯筒 + 冷白灯面）
+  for (const [x, z, yaw] of [[97.2, -55.0, -2.4], [74.6, -72.0, 1.57]]) {
+    out.push({ cyl: true, mat: 'r3_steelGrey', x, y: y + 0.45, z, r: 0.22, h: 0.9, size: [0.44, 0.9, 0.44], tag: '⑥ 探照灯座', on: 'floor' });
+    for (const s of [-1, 1]) out.push({ box: 'blackMetal', x: x + Math.cos(yaw) * s * 0.36, y: y + 1.15, z: z - Math.sin(yaw) * s * 0.36, w: 0.06, h: 0.5, d: 0.06, tag: '⑥ 叉架', on: 'partv' });
+    out.push({ box: 'r3_steelOld', x, y: y + 1.25, z, w: 0.62, h: 0.62, d: 0.7, yaw, tag: '⑥ 灯筒', on: 'partv' });
+    out.push({ box: 'dz_glowCold', x: x + Math.sin(yaw) * 0.36, y: y + 1.25, z: z + Math.cos(yaw) * 0.36, w: 0.52, h: 0.52, d: 0.02, yaw, tag: '⑥ 灯面', on: 'partv' });
+    light(out, x + Math.sin(yaw) * 1.5, y + 1.4, z + Math.cos(yaw) * 1.5, 0xe8f0ff, 1.6, 10); }
+  return { room, items: out };
+}
+PLANS.helipad_roof = (Y) => fixYaw(planHelipadRoof(Y)); R3.helipad_roof = true;

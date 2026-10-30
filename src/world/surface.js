@@ -233,7 +233,7 @@ export async function buildSurface(scene, world, ctx) {
       for (const [px, pz] of [[-0.8, -1.8], [0.8, -1.8], [-0.8, 2], [0.8, 2]]) add(new THREE.CylinderGeometry(0.05, 0.05, 0.8, 6), M.steel, px, 0.4, pz); for (const sx of [-1, 1]) add(new THREE.BoxGeometry(0.12, 0.08, 4.6), M.steel, sx * 0.8, 0.04, 0.1);
       const em = emblem(0.42, M.goldBright, M.navy); em.position.set(1.13, 1.9, 0.6); em.rotation.y = Math.PI / 2; g.add(em);
       g.position.set(x, y, z); g.rotation.y = yaw; zone.add(g); world.box(x, y + 1.6, z, 3.2, 3.2, 7.4, yaw); return g; };
-    if (!R3.hangar) { vtol(84, 0, -63.5, Math.PI / 2 + 0.1); vtol(86, 0, -78, Math.PI / 2 - 0.15); } vtol(cx, H + 0.4, cz, 0.7); // 批次6：机库内两架胶囊体飞行器 → r3plan 直升机 + 勤务车
+    if (!R3.hangar) { vtol(84, 0, -63.5, Math.PI / 2 + 0.1); vtol(86, 0, -78, Math.PI / 2 - 0.15); } vtol(R3.helipad_roof ? 78.5 : cx, H + 0.4, R3.helipad_roof ? -59.1 : cz, R3.helipad_roof ? Math.PI / 2 : 0.7); // 批次23：屋顶飞行器挪到西南停机位，H 标识露出； 批次6：机库内两架胶囊体飞行器 → r3plan 直升机 + 勤务车
     // 机库内：维修吊臂、充电桩、调度台（起降日志）、防爆运输箱（证物标签）、行李箱、工具车
     b.box('paintY', 0.4, 0.4, 32, [93, 9.6, -70], { uv: false }); b.box('paintY', 0.4, 0.4, 32, [79, 9.6, -70], { uv: false }); b.box('paintY', 14.4, 0.5, 0.5, [86, 9.2, -71], { uv: false }); b.add('steel', new THREE.CylinderGeometry(0.02, 0.02, 4, 4), { pos: [86, 7.0, -71] }, { uv: 1 });
     for (const z of [-58, -82]) { b.box('paintW', 0.5, 1.6, 0.4, [97.8, 0.8, z], { uv: false, collide: true }); plane(zone, new THREE.MeshStandardMaterial({ color: 0, emissive: 0x40d080, emissiveIntensity: 1 }), 0.3, 0.2, 97.53, 1.2, z, -Math.PI / 2); }

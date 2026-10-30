@@ -292,7 +292,7 @@ function setZone(z, force = false) {
   scene.getObjectByName('exterior').visible = !!vis.exterior;
   for (const [k, g] of Object.entries(ctx.zones)) g.visible = !!vis[k] || GROUP_OF[z] === k || k === z;
   for (const f of FILLS) f.visible = f.userData.fillOf === (GROUP_OF[z] ?? z);
-  { const R3V = { dorm: ['dorm', 'dorm2', 'dorm3'], hangar: ['hangar'], helipad: ['hangar'], memorial: ['memorial'], metro_exit: ['metro'], plaza: ['memorial', 'metro'], wall_posts: ['memorial'] }; const on = R3V[z] ?? []; for (const [id, g] of Object.entries(ctx.r3groups ?? {})) g.visible = on.includes(id); }
+  { const R3V = { dorm: ['dorm', 'dorm2', 'dorm3'], hangar: ['hangar', 'helipad_roof'], helipad: ['hangar', 'helipad_roof'], memorial: ['memorial'], metro_exit: ['metro'], plaza: ['memorial', 'metro'], wall_posts: ['memorial'] }; const on = R3V[z] ?? []; for (const [id, g] of Object.entries(ctx.r3groups ?? {})) g.visible = on.includes(id); }
   const L = ZONE_LOOK[z] ?? ZONE_LOOK.spine_b3;
   scene.environment = L.env === 'sky' ? envSky : envHall;
   scene.environmentIntensity = L.envI;
