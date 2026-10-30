@@ -837,16 +837,16 @@ function idCardBigMat(name) {
   const k = IDPHOTO[name]; if (!k) return null; if (_idCard[k]) return _idCard[k];
   const cv = document.createElement('canvas'); cv.width = 640; cv.height = 904; const c = cv.getContext('2d');
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
-  const draw = (img) => {
+  const draw = (img) => { // 批次31 看图修：源图本身是带姓名/编号/印章的小卡 → 只裁头像框（40,25,305×400）放大，姓名改用大字（96 px ≈ 2.4 cm）
     c.fillStyle = '#ece3cc'; c.fillRect(0, 0, 640, 904);
     c.strokeStyle = '#7a5a2a'; c.lineWidth = 6; c.strokeRect(14, 14, 612, 876); c.lineWidth = 2; c.strokeRect(26, 26, 588, 852);
-    c.fillStyle = '#5a3c18'; c.font = '600 38px "NB Serif","Noto Serif SC",serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('叙事管理局　人员档案', 320, 70);
-    c.fillStyle = '#8a6a3a'; c.fillRect(60, 100, 520, 3);
-    const px = 48, py = 118, pw = 544, ph = 725 * 544 / 544 * 0.92; // 头像 3:4
-    c.fillStyle = '#d8d2c4'; c.fillRect(px, py, pw, pw * 4 / 3 > 660 ? 660 : pw * 4 / 3);
-    const H = 660, W = H * 3 / 4, X = (640 - W) / 2; void ph; void px;
-    if (img) c.drawImage(img, X, py, W, H); c.strokeStyle = '#3a2a14'; c.lineWidth = 3; c.strokeRect(X, py, W, H);
-    c.fillStyle = '#1e140a'; c.font = '700 64px "NB Serif","Noto Serif SC",serif'; c.fillText(name, 320, py + H + 52);
+    c.fillStyle = '#5a3c18'; c.font = '600 44px "NB Serif","Noto Serif SC",serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('叙事管理局　人员档案', 320, 66);
+    c.fillStyle = '#8a6a3a'; c.fillRect(60, 98, 520, 3);
+    const W = 500, H = 656, X = 70, py = 112;
+    c.fillStyle = '#b8c4cc'; c.fillRect(X, py, W, H);
+    if (img) c.drawImage(img, 40, 25, 305, 400, X, py, W, H);
+    c.strokeStyle = '#3a2a14'; c.lineWidth = 4; c.strokeRect(X, py, W, H);
+    c.fillStyle = '#1e140a'; c.font = '700 96px "NB Serif","Noto Serif SC",serif'; c.fillText(name, 320, py + H + 64);
     t.needsUpdate = true;
   };
   draw(null); const img = new Image(); img.onload = () => draw(img); img.src = `./content/textures/idphoto/${k}.jpg`;
@@ -888,7 +888,7 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
     if (name) { const card = idCardBig(name, brass);
       if (card) { // 批次31：A5 档案照片卡立在椅面铜卡座上、后仰 30°（底边 y0.465 z+0.04，顶边 y0.66 z−0.07；中档在 z≈−0.16、y0.615–0.665，不相交；卡上已有姓名 → 去掉椅面前沿名牌免得挡卡）
         card.position.set(0, 0.465 + 0.113 * Math.cos(0.52), 0.04 - 0.113 * Math.sin(0.52)); card.rotation.x = -0.52; g.add(card);
-        add(new THREE.BoxGeometry(0.19, 0.012, 0.05), brass, 0, 0.462, 0.04).castShadow = false; add(new THREE.BoxGeometry(0.19, 0.03, 0.006), brass, 0, 0.47, 0.066).castShadow = false; // 卡座 + 前挡
+        add(new THREE.BoxGeometry(0.19, 0.012, 0.05), brass, 0, 0.462, 0.04).castShadow = false; add(new THREE.BoxGeometry(0.19, 0.016, 0.006), brass, 0, 0.465, 0.066).castShadow = false; // 卡座 + 前挡
       } else { const np = add(new THREE.BoxGeometry(0.2, 0.06, 0.012), namePlateMat(name), 0, 0.49, 0.12, -0.5); np.castShadow = false; } }
     return g; }
   if (clue === 'coat' || clue === 'hanger') { // 衣帽架 / 制服挂架
