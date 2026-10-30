@@ -220,7 +220,7 @@ export async function buildSurface(scene, world, ctx) {
     b.box('dz_ceil', X1 - X0 - 2.4, 0.05, Z0 - Z1 - 2.4, [cx, H - 0.05, cz], { uv: 0.3 });
     for (const [x, z, w, d] of [[cx, Z0, X1 - X0, 0.4], [cx, Z1, X1 - X0, 0.4], [X1, cz, 0.4, Z0 - Z1], [X0, cz, 0.4, Z0 - Z1]]) { b.box('stone', w, 1.1, d, [x, H + 0.95, z], { uv: 0.4, collide: true }); b.box('gold', w + 0.02, 0.06, d + 0.02, [x, H + 1.5, z], { uv: 1 }); }
     { const r = new THREE.RingGeometry(8.2, 8.8, 64); r.rotateX(-Math.PI / 2); b.add('paintY', r, { pos: [cx, H + 0.41, cz] }, { uv: false }); const r2 = new THREE.RingGeometry(6.3, 6.5, 64); r2.rotateX(-Math.PI / 2); b.add('paintW', r2, { pos: [cx, H + 0.41, cz] }, { uv: false });
-      const em = emblem(4.0, M.goldBright, M.navy); em.rotation.x = -Math.PI / 2; em.position.set(cx, H + 0.43, cz); zone.add(em);
+      if (!R3.helipad_roof) { const em = emblem(4.0, M.goldBright, M.navy); em.rotation.x = -Math.PI / 2; em.position.set(cx, H + 0.43, cz); zone.add(em); } /* 批次24：屋顶改标准 H 起降区，局徽移出 TLOF（盖住 H） */
       for (let k = 0; k < 16; k++) { const a = k / 16 * Math.PI * 2; b.add('dz_glow', new THREE.CylinderGeometry(0.12, 0.14, 0.12, 8), { pos: [cx + Math.cos(a) * 9.4, H + 0.46, cz + Math.sin(a) * 9.4] }, { uv: false }); } }
     { b.add('steel', new THREE.CylinderGeometry(0.05, 0.05, 4, 6), { pos: [X1 - 1.5, H + 2.4, Z1 + 1.5] }, { uv: 1 }); b.add('m5_orange', new THREE.ConeGeometry(0.35, 1.8, 10, 1, true), { pos: [X1 - 2.3, H + 4.1, Z1 + 1.5], rot: [0, 0, Math.PI / 2 + 0.25] }, { uv: false }); }
     // 外挂钢楼梯（南立面外侧，自西向东上屋顶）
@@ -233,7 +233,7 @@ export async function buildSurface(scene, world, ctx) {
       for (const [px, pz] of [[-0.8, -1.8], [0.8, -1.8], [-0.8, 2], [0.8, 2]]) add(new THREE.CylinderGeometry(0.05, 0.05, 0.8, 6), M.steel, px, 0.4, pz); for (const sx of [-1, 1]) add(new THREE.BoxGeometry(0.12, 0.08, 4.6), M.steel, sx * 0.8, 0.04, 0.1);
       const em = emblem(0.42, M.goldBright, M.navy); em.position.set(1.13, 1.9, 0.6); em.rotation.y = Math.PI / 2; g.add(em);
       g.position.set(x, y, z); g.rotation.y = yaw; zone.add(g); world.box(x, y + 1.6, z, 3.2, 3.2, 7.4, yaw); return g; };
-    if (!R3.hangar) { vtol(84, 0, -63.5, Math.PI / 2 + 0.1); vtol(86, 0, -78, Math.PI / 2 - 0.15); } vtol(R3.helipad_roof ? 78.5 : cx, H + 0.4, R3.helipad_roof ? -59.1 : cz, R3.helipad_roof ? Math.PI / 2 : 0.7); // 批次23：屋顶飞行器挪到西南停机位，H 标识露出； 批次6：机库内两架胶囊体飞行器 → r3plan 直升机 + 勤务车
+    if (!R3.hangar) { vtol(84, 0, -63.5, Math.PI / 2 + 0.1); vtol(86, 0, -78, Math.PI / 2 - 0.15); } if (!R3.helipad_roof) vtol(cx, H + 0.4, cz, 0.7); /* 批次24：屋顶胶囊玩具飞行器移除——资产库 3 架真直升机均不合格（Lynx 舱门内有人物模型、Huey 为美国海岸警卫队涂装、EC135 33 MB 包围盒异常），只留空停机位 */ // 批次23：屋顶飞行器挪到西南停机位，H 标识露出； 批次6：机库内两架胶囊体飞行器 → r3plan 直升机 + 勤务车
     // 机库内：维修吊臂、充电桩、调度台（起降日志）、防爆运输箱（证物标签）、行李箱、工具车
     b.box('paintY', 0.4, 0.4, 32, [93, 9.6, -70], { uv: false }); b.box('paintY', 0.4, 0.4, 32, [79, 9.6, -70], { uv: false }); b.box('paintY', 14.4, 0.5, 0.5, [86, 9.2, -71], { uv: false }); b.add('steel', new THREE.CylinderGeometry(0.02, 0.02, 4, 4), { pos: [86, 7.0, -71] }, { uv: 1 });
     for (const z of [-58, -82]) { b.box('paintW', 0.5, 1.6, 0.4, [97.8, 0.8, z], { uv: false, collide: true }); plane(zone, new THREE.MeshStandardMaterial({ color: 0, emissive: 0x40d080, emissiveIntensity: 1 }), 0.3, 0.2, 97.53, 1.2, z, -Math.PI / 2); }
