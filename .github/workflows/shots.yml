@@ -1,6 +1,7 @@
 # 托管 runner 出截图（本机 8GB 拍 1600×900 high 必 OOM）。只手动触发，不影响 pages.yml。
 # shots 输入：分号分隔，每项 "组:机位[:额外参数]"，如 "after:cs_r3;before:cs_r3:&r3off=citizen_service"
-# 每项一个矩阵任务（各自独立 runner、新开浏览器），产物 artifact 名 shot-<组>-<机位>，内含 <组>/<机位>.png + 日志
+# 每项一个矩阵任务（各自独立 runner 4 vCPU/16 GB、新开浏览器），产物 artifact 名 shot-<组>-<机位>，内含 <组>/<机位>.png + .log
+# 取图：GET /repos/<repo>/actions/runs/<run>/artifacts → /actions/artifacts/<id>/zip（见 tools/gh_shots_fetch.sh；docs/HANDOFF.md「Actions 截图」）
 name: Screenshots
 on:
   workflow_dispatch:
@@ -26,7 +27,8 @@ on:
         required: false
         default: '8'
 permissions:
-  contents: write   # 仅用于把 png 推到 shots-out 分支（不触发 Pages：pages.yml 只监听 main）
+  contents: read
+  actions: read
 concurrency:
   group: shots-${{ github.run_id }}
 jobs:
@@ -88,23 +90,3 @@ jobs:
           path: out
           if-no-files-found: warn
           retention-days: 14
-      - name: 同时推到 shots-out 分支（便于 git fetch 取图）
-        if: always()
-        env:
-          GRP: ${{ matrix.grp }}
-          SHOT: ${{ matrix.shot }}
-          RUN: ${{ github.run_id }}
-        run: |
-          [ -d out ] || exit 0
-          git config user.name github-actions; git config user.email github-actions@users.noreply.github.com
-          D=$(mktemp -d); cp -r out "$D/"
-          for i in 1 2 3 4 5 6; do
-            rm -rf /tmp/so; git init -q /tmp/so; cd /tmp/so
-            git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
-            if git fetch -q --depth 1 origin shots-out; then git checkout -q -B shots-out FETCH_HEAD; else git checkout -q --orphan shots-out; fi
-            mkdir -p "run_$RUN"; cp -r "$D/out/." "run_$RUN/"
-            git add -A; git commit -qm "shots $RUN $GRP/$SHOT" || exit 0
-            git push -q origin shots-out && exit 0
-            cd /; sleep $((RANDOM % 10 + 3))
-          done
-          exit 1

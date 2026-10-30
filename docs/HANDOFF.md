@@ -171,6 +171,40 @@
 3. plaza / facade 高画质截图贴着内存上限：可考虑截图模式上传后释放贴图 CPU 端图片，或先拍低一档画质。
 4. tristat.mjs 拆 pass 会让 plaza 崩，测 plaza 时只用截图会话的整帧统计。
 
+## R3 批次12 验收（2026-10-30 21:00 CST 接手；截图改用 GitHub Actions 托管 runner）
+### Actions 截图（本机 8 GB 拍不了 1600×900 high → 已解决）
+- `.github/workflows/shots.yml`「Screenshots」：**只有 workflow_dispatch**（无 schedule、无 push 触发，不影响 pages.yml）。输入 `shots`（分号分隔，每项 `组:机位[:额外参数]`，如 `after:cs_r3;before:cs_r3:&r3off=citizen_service`）、`quality`（默认 high）、`width`/`height`（默认 1600×900）、`frames`（默认 8）。
+- 每项一个矩阵任务（各自一台 ubuntu-latest：4 vCPU / 16 GB，max-parallel 20）：checkout → npm ci → vite build → `npx playwright-core install --with-deps chromium-headless-shell`（与 playwright-core 同版本，SwiftShader）→ `node tools/shot.mjs out/<组> <机位> --fresh 1 --stimeout 3000000` → upload-artifact `shot-<组>-<机位>`（png + log，保留 14 天）。
+- 触发：`apicall github workflow_dispatch owner=DisenthrallClaude repo=Narrative-Bureau-3D workflow_id=shots.yml ref=main inputs='{"shots":"after:cs_r3"}'`（本机没有 gh CLI；返回 run id）。取图：`bash tools/gh_shots_fetch.sh <run_id> <目标目录>`（GET runs/<id>/artifacts → artifacts/<id>/zip，凭据 provider github；可重复跑，只下新完成的）。作业日志只有在作业结束后才能取（进行中 404 BlobNotFound）。
+- 实测：runner 上内存峰值远低于 16 GB，不再 OOM；单张 165–535 s（首帧着色器编译 100–320 s，之后 `page.screenshot` 要等 SwiftShader GPU 进程把排队的 16 帧画完，cs_r3 约 330 s——**原 300 s 截图超时就是第一次试跑失败的原因**，现 `--stimeout` 可配）。29 张一批约 25 分钟全部完成。
+- 第一次试跑 run 41059933188 失败（截图超时 300 s）→ 修 `--stimeout` 后 run 41062263114 / 41062342434 成功。曾试「推到 shots-out 分支」取图，因 /tmp 仓库没设 git 身份没推成，已删掉该步骤，统一用 artifact。
+### 本批出图（1600×900 high，全部 Actions）
+- run 41062342434（29 张，提交 6e585e9）：改后 cs_r3/cs_r3_b/cs_top、ec_r3/ec_r3_b/ec_corner、ec_vit_a/ec_vit_b（新机位：东廊展柜特写）、lobby_r3/lobby_r3_b/lobby_4f、es_land/es_land_b、lib_r3/lib_r3_b、pub_r3、floor3_legal、dorm_lounge、director_r3；改前（`&r3off=`）cs ×3、lib ×2、lobby ×3、es ×2。原图 work/r3/b12/gh1/{before,after}/。
+- 看图修完重拍：run 41065950500（cs ×3、ec ×5，提交 e68d53b）、41066136485（lobby ×3，b2b7976）、41066327512（lib ×2，1936a35）→ work/r3/b12/gh2/after/。
+- 定稿截图已拷入 screenshots/r3/（同名覆盖；ec_vit_a / ec_vit_b 为新增）。
+### 看图检查与修复
+1. **吊牌金字远处消失**：确认（cs_r3 远处「候号区」「填单区」、cs_r3_b 西墙大标题缺笔画）。根因 = alphaTest 0.5 + mipmap 把细笔画平均到 0.5 以下被裁；另外字面离底板只 2 mm，远处深度精度也不够。修（gothic.js goldText，全局 42 处）：改 alpha 混合（transparent、depthWrite false、alphaTest 0.02）+ polygonOffset −2/−4；吊牌字贴图 96→192、描边 0.022→0.03。重拍后远处吊牌笔画连续、可辨，但 15 m 外的小吊牌仍偏淡（字本身只有 0.26 m 高）。
+2. **大理石 z-fighting**：cs_r3 / cs_r3_b / cs_top 三张都没看到闪烁条纹或交错斑块（与上批数值检查一致），不用改。
+3. **东廊线脚对墙裙**：确认没对齐——large_sandstone_blocks 贴图的线脚带在 v 0.88–0.97，不在接缝处；原 UV 偏移 2.84 把接缝放在墙裙顶，墙裙顶上露出的是贴图底边暗带，线脚飘在上方。修（surface.js）：upOff 2.84→2.48，线脚带下沿正压墙裙顶 y+1.36（第二道 y+4.36）。重拍 ec_r3_b 右墙线脚已贴墙裙顶。
+4. **屏风磨砂玻璃排序**：没有看到排序穿插，真正的问题是「像灯箱板」——不透明度 0.55 + 近白色在球吊灯下发白，后面什么都透不出来。修（dress.js r3_frosted）：0xc4ccc8、opacity 0.3、roughness 0.4。重拍后能透出后面的座椅和人。
+5. **展柜旧相机 / 摊开的书**：书确认转了 90°（模型书脊沿本地 x，原摆法跨页沿柜深、书脊平行柜面）→ yaw +90°（b919bf8）；旧相机看特写朝向正常（镜头朝外、背带摊开），没改。**另发现**高罩展柜（glassH>0.22）整块铜顶板 + 整块端板把玻璃罩盖成了不透明木盒 → 改四角铜立柱 + 顶面铜边框（r3plan.js vitrine）；怀表原来立着 → 平放（rx −90°）。
+6. **4 位排队市民**：原在候号座椅排间站着（cs_top 看像在长椅间罚站）→ 改到 1/3/4 号窗台前办理（两只圆凳之间）+ 3 号窗一米线内侧一位等候（eastwing.js + r3plan 固定锚点同步；r3plan_draw citizen_service 297 件 0 错误）。
+7. **地毯颜色**：法务处长室花边地毯边框蓝黑→深牛血红、发布厅签到红绳道地毯更红、局长室/宿舍棋牌区红毯正常偏红；东廊红毯读得出红色。发布厅左侧大片深蓝是 `r3_carpet`（设计如此，没动）。**更正上批**：`r3_carpetRed` 的「阅览环」在定稿厅书环（abyss_core / planAbyss），不在藏书阁；本批没拍定稿厅。
+8. 顺带：电梯厅水磨石心 r3_corr（顶灯下近白）→ 新材质 r3_terrLobby 暖灰；藏书阁中心环同换；去掉藏书阁入口木地板上的白色磨损贴花（像口香糖渍）。
+### 对比图（work/r3/，cmp12.py：每行改前 ↔ 改后，标平均亮度）
+- cmp12_citizen_service.jpg、cmp12_east_cloister.jpg、cmp12_lobby.jpg、cmp12_east_stair.jpg、cmp12_library.jpg、cmp12_carpet.jpg（地毯的「改前」是 screenshots/r3 里批次7 之前的旧图，墙布等其它改动也混在里面，只能看地毯本身）。
+### 诚实评估（每区）
+- **市民服务大厅**：结构（引导台 / 窗口分流栏杆 / 屏风围合候号区 / 填单岛 / 5 号窗等候）立起来了，比批次11 中部空地明显充实；收尾后屏风透得出后面、市民站到窗口前、远处吊牌笔画可辨。**仍有问题**：① 西墙大标题「市民服务大厅 · 污染举报」被墙垛切成两截、远看仍缺笔画；② 5 号窗等候区两排长椅间地面有几块黑色弧形（cs_r3_b 左下，疑似长椅铸铁腿在正上方球灯下的投影，也可能是模型件，未查清）；③ 顶棚格栅 + 大面黑墙仍偏「机关食堂」而非庄重大厅；④ 人物是低模（白脸）。按 R3 标准：**基本合格，细节未达 3A**。
+- **东廊**：红毯终于读得出红、方石墙 + 线脚贴墙裙顶后墙面层次对了、展柜成了真正的玻璃罩（书/怀表/墨水瓶/相机/印章看得清）。平均亮度比批次11 低（43→37、36→30，因为方石墙比原石灰墙暗），走廊整体偏暗。拐角食堂门洞上半挂着一块黑色板（ec_corner，未查）。**合格**。
+- **电梯厅（3F/4F）**：只有长凳、铜壁灯、花钵、导览牌，四壁和顶棚是原来的粗毛石（像山洞），水磨石心压暗后（底部亮度 136→109）好一些但仍偏亮。**不合格**——需要换墙面（护墙板 + 石材）和顶棚，才谈得上庄重。
+- **东楼梯**：平台铜牌、扶手、壁灯到位，改前改后差别中等；**基本合格**。
+- **藏书阁**：圆形书墙 + 中心讲经台 + 外环阅览桌，收尾后中心环不再刺白、入口白斑去掉，是本批最好的区。**合格**。
+- **地毯换色**：法务处长室边框不再蓝黑、东廊/局长室/棋牌区红毯偏红正常；发布厅签到道变红但大面深蓝 r3_carpet 未动。**合格**（对比的「改前」图较旧，只能看地毯）。
+### 未做
+- 定稿厅（r3_carpetRed 书环）没拍；阅卷中心 exam_center 未开工；电梯厅墙面/顶棚重做；西墙大标题位置；5 号窗等候区黑色弧形；东廊拐角黑板。
+- 走查 walk.mjs 本批没重跑（改动只涉及陈设/材质/锚点位置；市民位置变了，走查若有「市民」热点需复核）。
+- InstaBox：本批**没用**（Actions 跑通），没有签发任何 ssh-token；work/r3/.ibtok_*.json 不存在。
+
 ## R3 批次12 收尾（2026-10-30 19:20 CST 接手；批次12 主体见提交 66c8004 / 68a0b27 / 6c7dc1f / 9e73c28 / e0aa764 / f9445e7）
 ### 完成
 1. **窗光 404 修复**（3dc9f9b）：r3plan.js floor3_office / floor2_liaison / floor2_pub 的「窗光」条目补 `light: true`（原来只有 `win: true`，r3build 把它当模型加载 `assets/models/undefined.glb`）。
