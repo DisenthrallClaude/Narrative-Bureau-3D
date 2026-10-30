@@ -683,10 +683,10 @@ export function planPlaza(y) {
   for (const sx of [-1, 1]) out.push({ m: 'r2/hedge_green_fence', x: sx * 17.8, y, z: 79.7, yaw: Math.PI / 2, d: 6.0, size: [0.7, 1.6, 6.0], tag: '绿篱铁栏', on: 'floor' }); // 批次25 plaza_top 看图修：模型长轴是 z，原 w:6 按 x 缩放 → 竖成 8 m 长墙
   // 岗亭（南口两侧对称，面向中轴）+ 岗亭前黄线 + 门牌
   for (const sx of [-1, 1]) {
-    out.push({ m: 'r2/simple_90_s_kiosk', x: sx * 13.0, y, z: 74.6, yaw: sx > 0 ? ROT.W : ROT.E, h: 2.6, size: [3.4, 2.6, 3.6], col: [3.4, 2.6, 3.6], tag: '岗亭', on: 'floor' });
-    out.push({ box: 'r3_paintYellow', x: sx * 11.0, y: y + 0.11, z: 74.6, w: 0.1, h: 0.01, d: 3.6, tag: '岗亭', on: 'partv' });
-    out.push({ sign: sx > 0 ? '东岗亭' : '西岗亭', sub: '来访人员请出示证件', x: sx * 11.28, y: y + 1.5, z: 74.6, yaw: sx > 0 ? ROT.W : ROT.E, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
-    light(out, sx * 11.6, y + 2.9, 74.6, 0xffd8a8, 1.6, 6);
+    out.push({ m: 'r2/guard_booth_6080', x: sx * 13.0, y, z: 74.6, yaw: sx > 0 ? ROT.W : ROT.E, h: 3.3, size: [3.3, 3.3, 3.5], col: [3.3, 3.3, 3.5], tag: '岗亭', on: 'floor' }); // 批次27 E5：报刊亭 → Blender 精建 60–80 年代门卫岗亭（tools/blender/guard_booth.py）
+    out.push({ box: 'r3_paintYellow', x: sx * 10.7, y: y + 0.11, z: 74.6, w: 0.1, h: 0.01, d: 3.6, tag: '岗亭', on: 'partv' });
+    out.push({ sign: sx > 0 ? '东岗亭' : '西岗亭', sub: '来访人员请出示证件', x: sx * 11.2, y: y + 0.9, z: 74.6, yaw: sx > 0 ? ROT.W : ROT.E, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
+    light(out, sx * 10.9, y + 2.9, 74.6, 0xffd8a8, 1.6, 6);
   }
   // 自行车棚（西南，x −20.5…−15.9）：钢柱 ×4 + 单坡顶 + 车架；5 辆旧自行车成排，车头朝西
   { const cx = -18.2, z0 = 72.6, z1 = 77.6, cz = (z0 + z1) / 2;

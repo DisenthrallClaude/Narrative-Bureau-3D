@@ -137,7 +137,7 @@ export async function buildExterior(scene, world, ctx) {
   // ================= 远景巨城 =================
   buildCity(g, M, ctx);
 
-  T('ext city'); b.build(g, M); T('ext merged');
+  T('ext city'); b.build(g, M); jobs.push(flushTopiary(b, g, M)); T('ext merged');
   for (const geo of b.colliders) world.addGeo(geo);
   await Promise.all(jobs); T('ext models');
   return g;
@@ -148,10 +148,20 @@ export function blob(r, seed) {
   for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); const n = Math.sin(v.x * 3.1 + seed) * Math.sin(v.y * 2.7 + seed * 2) * Math.sin(v.z * 3.3 + seed * 3); v.multiplyScalar(1 + n * 0.18 + (Math.random() - 0.5) * 0.06); p.setXYZ(i, v.x, v.y, v.z); }
   g.computeVertexNormals(); return g;
 }
-export function cypress(b, x, z) {
-  const H = 8 + Math.random() * 2.5;
-  for (let k = 0; k < 6; k++) { const t = k / 5; const r = 1.45 * (1 - t * 0.78); b.add('foliage', blob(r, x + z + k), { pos: [x + (Math.random() - 0.5) * 0.2, 1.2 + t * H, z + (Math.random() - 0.5) * 0.2], scale: [1, 1.5, 1] }, { uv: 0.8 }); }
-  b.add('wood', new THREE.CylinderGeometry(0.2, 0.25, 1, 6), { pos: [x, 0.5, z] }, { uv: 1 });
+// 批次27 E1：原 cypress() = 6 个噪声 icosa 球叠成的低模“绿团”→ 改为 Blender 精建「花岗岩花箱 + 修剪圆锥侧柏」（tools/blender/topiary_planter.py → r2/topiary_planter），
+// 先记点、b.build 之后由 flushTopiary 一次性实例化（每材质 1 个 InstancedMesh）；叶面换 M.hedge（叶片贴图 + 法线）。
+export function cypress(b, x, z, h = 3.4, y = 0) { (b._topi ??= []).push([x, z, h, y]); }
+export async function flushTopiary(b, parent, M) {
+  const pts = b._topi ?? []; b._topi = []; if (!pts.length) return;
+  const src = await loadModel('r2/topiary_planter'); src.updateMatrixWorld(true);
+  const bb = new THREE.Box3().setFromObject(src); const H0 = bb.max.y - bb.min.y || 1; const mm = new THREE.Matrix4(), sm = new THREE.Matrix4();
+  src.traverse((o) => { if (!o.isMesh) return;
+    const geo = o.geometry.clone().applyMatrix4(o.matrixWorld); geo.translate(0, -bb.min.y, 0);
+    const leaf = /hedge/.test(o.material?.name ?? ''); const mat = leaf ? M.hedge : o.material;
+    if (leaf && geo.attributes.uv) { const uv = geo.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 4, uv.getY(i) * 3); }
+    const im = new THREE.InstancedMesh(geo, mat, pts.length); im.castShadow = true; im.receiveShadow = true;
+    pts.forEach(([x, z, h, y], i) => { const s = h / H0; im.setMatrixAt(i, mm.makeTranslation(x, y, z).multiply(sm.makeRotationY((i * 1.7) % 6.283)).multiply(new THREE.Matrix4().makeScale(s, s, s))); });
+    im.instanceMatrix.needsUpdate = true; im.computeBoundingSphere(); im.name = 'topiary'; parent.add(im); });
 }
 
 function groundEmblem(M, pos, r) {
@@ -407,6 +417,17 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
   // 门楼台阶两侧狮首
   for (const sx of [-1, 1]) { b.box('stone', 1.6, 2.2, 6.5, [sx * 17.8, 1.1, -1.6], { uv: 0.4, collide: true }); b.box('gold', 1.7, 0.12, 6.6, [sx * 17.8, 2.2, -1.6], { uv: 1 }); add(placeModel('lion_head', { height: 0.9, pos: [sx * 17.8, 2.26, 1.0] })); }
   // 门洞内碰撞补充（门扇不阻挡）
+  // 批次27 E4/E8：立面洗墙灯 / 投光（黄昏）——广场前沿地埋灯 ×6 上照立面，双塔各 1 盏远投光打尖塔；暖白 3000K，不投影
+  { const fix = new THREE.MeshStandardMaterial({ color: 0x2a2620, metalness: 0.8, roughness: 0.4 }), lens = new THREE.MeshStandardMaterial({ color: 0xffe2b8, emissive: 0xffd49a, emissiveIntensity: 2.5 });
+    const dusk = TOD.label !== '白昼', k = dusk ? 1 : 0.25;
+    const spot = (p, t, i, ang) => { const l = new THREE.SpotLight(0xffd7a8, i * k, 90, ang, 0.65, 1.6); l.position.set(...p); l.target.position.set(...t); l.castShadow = false; g.add(l, l.target); };
+    for (const x of [-27, -15.5, -6.2, 6.2, 15.5, 27]) { // 地埋灯：石框 + 铜面 + 发光透镜，前沿 z 4.2（台阶外），对准立面 30 m 高处
+      const f = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 0.5), fix); f.position.set(x, 0.04, 4.2); g.add(f);
+      const ln = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.02, 0.3), lens); ln.position.set(x, 0.09, 4.2); g.add(ln);
+      spot([x, 0.3, 4.2], [x * 0.92, Y + 26, -8], 1400, 0.42); }
+    for (const sx of [-1, 1]) spot([sx * 30, 0.4, 36], [sx * 22, Y + 52, -13], 2600, 0.16); // 尖塔投光（广场两侧路灯列外的灯座处）
+    spot([0, 0.4, 24], [0, Y + 36, -5], 1200, 0.13); // 玫瑰窗 / 局徽
+  }
   ctx.doorZ = -5;
 }
 

@@ -12,7 +12,7 @@ import { wallX, wallZ, point, spot, person, signMaterial, brassPlaqueMaterial, p
 import { vaultMats, tagMaterial } from './vault.js';
 import { dressMats, Props, wallDress, wallSeg, rug, hangingSign, plantPot, bin, paperStack, folderStack, telephone, greenLamp } from './dress.js';
 import { m5Mats } from './dress_m5.js';
-import { RING, FLOOR, cypress, blob } from './exterior.js';
+import { RING, FLOOR, cypress, blob, flushTopiary } from './exterior.js';
 import { R3, DORM3, dorm3Rooms, dorm3Furn } from './r3plan.js';
 import { dormMats, bunkBed, singleBed, desk, wardrobe, thermos, mug, washstand, windowCurtain, noticeBoard, thermosRack, tubeLamp } from './dorm.js';
 
@@ -66,7 +66,7 @@ export async function buildSurface(scene, world, ctx) {
     const ring2 = new THREE.RingGeometry(92, 99, 128, 1, THREE.MathUtils.degToRad(28), THREE.MathUtils.degToRad(124)); ring2.rotateX(-Math.PI / 2); b.add('concrete', ring2, { pos: [RING.cx, 0.02, RING.cz] }, { uv: 0.2 });
     for (const r of [91.9, 99.1]) for (const [a0, a1] of [[208, 332], [28, 152]]) { const g = new THREE.RingGeometry(r - 0.15, r + 0.15, 128, 1, THREE.MathUtils.degToRad(a0), THREE.MathUtils.degToRad(a1 - a0)); g.rotateX(-Math.PI / 2); b.add('stoneDark', g, { pos: [RING.cx, 0.05, RING.cz] }, { uv: 0.5 }); } }
   for (const [x, z] of [[-60, -48], [-62, -95], [60, -48], [62, -95], [-95, -40], [96, -40], [-50, -120], [50, -120]]) P.add('street_lamp_02', [x, 0, z], { h: 5.5 });
-  for (const [x, z, w, d] of [[-60, -118, 24, 14], [60, -118, 24, 14], [-96, 4, 10, 24], [100, 0, 8, 20]]) { b.box('grass', w, 0.1, d, [x, 0.05, z], { uv: 0.3 }); for (let k = 0; k < 4; k++) b.add('hedge', blob(1.0, x + k), { pos: [x - w / 2 + 2 + k * (w - 4) / 3, 0.8, z], scale: [1, 0.8, 1] }, { uv: 0.8 }); }
+  for (const [x, z, w, d] of [[-60, -118, 24, 14], [60, -118, 24, 14], [-96, 4, 10, 24], [100, 0, 8, 20]]) { b.box('grass', w, 0.1, d, [x, 0.05, z], { uv: 0.3 }); for (let k = 0; k < 4; k++) cypress(b, x - w / 2 + 2 + k * (w - 4) / 3, z, 2.4); } // 批次27 E1：绿团 blob → 花箱修剪侧柏
 
   // ======================= 宿舍附楼 dorm (52…80, 0…40) =======================
   {
@@ -430,13 +430,13 @@ export async function buildSurface(scene, world, ctx) {
     for (const [x, z, yaw] of [[8, 146, 0.4], [9.5, 147, 0.2]]) { const g = new THREE.Group(); const body = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.5, 1.4), new THREE.MeshStandardMaterial({ color: 0xe8c020, roughness: 0.5 })); body.position.y = 0.55; g.add(body); const box = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 0.5), new THREE.MeshStandardMaterial({ color: 0x2a6ab0, roughness: 0.6 })); box.position.set(0, 1.05, -0.45); g.add(box); for (const dz of [-0.55, 0.55]) { const w = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.07, 6, 16), M.rubber); w.position.set(0, 0.25, dz); w.rotation.y = Math.PI / 2; g.add(w); } g.position.set(x, Y, z); g.rotation.y = yaw; zone.add(g); }
     const rider = person(M, { coat: 0xe8c020, cap: true }); rider.position.set(10.6, Y, 146.2); rider.rotation.y = 2.2; zone.add(rider);
     for (let x = -18; x <= 18; x += 3) if (Math.abs(x) > 6) P.add('bollard', [x, Y, 118], { h: 0.95 });
-    for (const sx of [-1, 1]) for (let z = 104; z <= 160; z += 12) { b.box('stoneDark', 1.6, 0.6, 1.6, [sx * 24, Y + 0.3, z], { uv: 0.5, collide: true }); b.box('dz_soil', 1.4, 0.02, 1.4, [sx * 24, Y + 0.61, z], { uv: false }); b.add('wood', new THREE.CylinderGeometry(0.12, 0.16, 3, 6), { pos: [sx * 24, Y + 2.1, z] }, { uv: 1 }); b.add('foliage', blob(1.7, z + sx), { pos: [sx * 24, Y + 4.6, z], scale: [1, 0.9, 1] }, { uv: 0.8 }); P.add('street_lamp_02', [sx * 20, Y, z + 6], { h: 5.5 }); }
+    for (const sx of [-1, 1]) for (let z = 104; z <= 160; z += 12) { world.box(sx * 24, Y + 0.38, z, 1.42, 0.76, 1.42); cypress(b, sx * 24, z, 3.6, Y); /* 批次27 E1：棒棒糖绿团树 → 花箱修剪侧柏 */ P.add('street_lamp_02', [sx * 20, Y, z + 6], { h: 5.5 }); }
     for (const z of [110, 152]) for (const sx of [-1, 1]) P.add('park_bench', [sx * 21.5, Y, z], { w: 2.0, yaw: sx > 0 ? -Math.PI / 2 : Math.PI / 2 });
     b.box('plazaTile', 30, 0.05, 70, [0, Y + 0.02, 135], { uv: 0.5 }); for (let z = 102; z < 170; z += 6) b.box('gold', 30, 0.06, 0.06, [0, Y + 0.03, z], { uv: 1 });
     for (const sx of [-1, 1]) for (let k = 0; k < 3; k++) { const p = person(M, { coat: [0x2a3040, 0x40302a, 0x30402a][k] }); p.position.set(sx * (5 + k * 3.2), Y, 120 + k * 7); p.rotation.y = sx > 0 ? -2.8 : 2.8; zone.add(p); }
   }
 
-  b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); jobs.push(P.build(zone));
+  b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); jobs.push(P.build(zone)); jobs.push(flushTopiary(b, zone, MAT));
 
   // ======================= 东翼 — 后楼连续走廊（东廊） east_cloister =======================
   {
