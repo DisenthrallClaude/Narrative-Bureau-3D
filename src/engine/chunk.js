@@ -25,7 +25,9 @@ function cloneProps(src, dst) {
 /** 切块：root 下所有足够大的网格。cell 格宽（米）；minTris 小于此面数不切；minR 包围球半径小于此不切 */
 const _sp = new THREE.Sphere();
 function cellKeyOf(o, cell) { o.updateMatrixWorld(true); const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere(); _sp.copy(o.isInstancedMesh && o.boundingSphere ? o.boundingSphere : g.boundingSphere).applyMatrix4(o.matrixWorld); return Math.floor(_sp.center.x / cell) + ',' + Math.floor(_sp.center.z / cell); }
-export function chunkGroup(root, { cell = 32, minTris = 1500, minR = 30, skip = null } = {}) {
+// 远处（离城心 > far 米）的城景只按 512 m 大格分，避免远景城区被切成上千块（批次8：plaza 首版 6671 块 → OOM）
+const keyOf = (x, z, cell, far) => { const c = Math.hypot(x, z + 35) > far ? 512 : cell; return Math.floor(x / c) + ',' + Math.floor(z / c) + (c === cell ? '' : 'F'); };
+export function chunkGroup(root, { cell = 32, minTris = 1500, minR = 30, skip = null, far = 170, instCell = 64 } = {}) {
   root.updateMatrixWorld(true);
   const list = []; root.traverse((o) => { if (o.isMesh && !o.isSkinnedMesh && o.geometry && !(skip && skip(o))) list.push(o); });
   let split = 0, made = 0;
@@ -33,14 +35,14 @@ export function chunkGroup(root, { cell = 32, minTris = 1500, minR = 30, skip = 
     const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere();
     const rW = g.boundingSphere.radius * o.matrixWorld.getMaxScaleOnAxis();
     if (o.isInstancedMesh) {
-      if (o.count < 4) continue;
+      if (o.count < 8 || rW < minR) continue;
       const cells = new Map();
-      for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, _m); _v.setFromMatrixPosition(_m).applyMatrix4(o.matrixWorld); const k = Math.floor(_v.x / cell) + ',' + Math.floor(_v.z / cell); if (!cells.has(k)) cells.set(k, []); cells.get(k).push(i); }
+      for (let i = 0; i < o.count; i++) { o.getMatrixAt(i, _m); _v.setFromMatrixPosition(_m).applyMatrix4(o.matrixWorld); const k = keyOf(_v.x, _v.z, instCell, far); if (!cells.has(k)) cells.set(k, []); cells.get(k).push(i); }
       if (cells.size < 2) continue;
       for (const ids of cells.values()) {
         const im = new THREE.InstancedMesh(g, o.material, ids.length);
         ids.forEach((id, j) => { o.getMatrixAt(id, _m); im.setMatrixAt(j, _m); });
-        im.instanceMatrix.needsUpdate = true; cloneProps(o, im); im.computeBoundingSphere(); im.userData.cell = cellKeyOf(im, cell); o.parent.add(im); made++;
+        im.instanceMatrix.needsUpdate = true; cloneProps(o, im); im.computeBoundingSphere(); im.userData.cell = cellKeyOf(im, cell); im.userData.inst = true; o.parent.add(im); made++;
       }
       o.parent.remove(o); split++; continue;
     }
@@ -51,7 +53,7 @@ export function chunkGroup(root, { cell = 32, minTris = 1500, minR = 30, skip = 
     for (let t = 0; t < triN; t++) {
       const i0 = ix ? ix[t * 3] : t * 3, i1 = ix ? ix[t * 3 + 1] : t * 3 + 1, i2 = ix ? ix[t * 3 + 2] : t * 3 + 2;
       _a.fromBufferAttribute(pos, i0); _b.fromBufferAttribute(pos, i1); _c.fromBufferAttribute(pos, i2); _v.copy(_a).add(_b).add(_c).multiplyScalar(1 / 3).applyMatrix4(mw);
-      const k = Math.floor(_v.x / cell) + ',' + Math.floor(_v.z / cell); let c = cells.get(k); if (!c) cells.set(k, c = []); c.push(i0, i1, i2);
+      const k = keyOf(_v.x, _v.z, cell, far); let c = cells.get(k); if (!c) cells.set(k, c = []); c.push(i0, i1, i2);
     }
     if (cells.size < 2) continue;
     const big = pos.count > 65535;
