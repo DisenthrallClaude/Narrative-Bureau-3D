@@ -80,6 +80,8 @@ jobs:
           CHROME=$(find ~/.cache/ms-playwright -type f \( -name headless_shell -o -name chrome-headless-shell \) | head -1)
           echo "CHROME=$CHROME"
           mkdir -p out/$GRP
+          if [ "$GRP" = "walk" ]; then # 批次16：剧情走查前台跑完（本机 120 s 前台上限 + 后台会被回收）
+            CHROME="$CHROME" timeout 2400 node tools/walk.mjs --out out/walk/WALKTHROUGH.md 2>&1 | tee out/walk/walk.log; exit 0; fi
           if [ "$GRP" = "pick" ]; then # 批次16：拾取探针（EXTRA = 空格分隔的 NDC 坐标对）
             CHROME="$CHROME" node tools/_pick.mjs "$SHOT" $EXTRA 2>&1 | tee out/pick/$SHOT.log; exit 0; fi
           CHROME="$CHROME" node tools/shot.mjs out/$GRP "$SHOT" --q ${{ inputs.quality }} --w ${{ inputs.width }} --h ${{ inputs.height }} --frames ${{ inputs.frames }} --fresh 1 --stimeout 3000000 --extra "$EXTRA" 2>&1 | tee out/$GRP/$SHOT.log
