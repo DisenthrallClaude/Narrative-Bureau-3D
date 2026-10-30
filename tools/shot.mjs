@@ -32,6 +32,13 @@ for (let i = 0; i < shots.length; i++) {
   const s = shots[i]; const ts = Date.now();
   if (i > 0) await page.evaluate((n) => window.__setShot(n), s);
   try { await page.waitForFunction(() => window.__READY__ === true, null, { timeout: +arg('timeout', 900000), polling: 1000 }); } catch (e) { console.log('TIMEOUT', s); }
+  if (i === 0) { // R3 批次6：首张等资源全部加载完（manager 无挂起、贴图/模型回调结束）再整套重拍一次——首张曾在资源未齐时出「空世界」
+    let calm = 0; const tw = Date.now();
+    while (calm < 3 && Date.now() - tw < 600000) { const st = await page.evaluate(() => window.__LOADSTATE__?.() ?? { pending: 0, timeouts: [] }).catch(() => ({ pending: 0, timeouts: [] })); calm = st.pending <= 0 ? calm + 1 : 0; if (st.timeouts.length) console.log('  model timeouts', st.timeouts.join(',')); await new Promise((r) => setTimeout(r, 1000)); }
+    console.log('  loaded, warm re-shot', ((Date.now() - tw) / 1000).toFixed(0) + 's');
+    await page.evaluate((n) => window.__setShot(n), s);
+    try { await page.waitForFunction(() => window.__READY__ === true, null, { timeout: +arg('timeout', 900000), polling: 1000 }); } catch (e) { console.log('TIMEOUT(warm)', s); }
+  }
   const info = await page.evaluate(() => window.__SHOT_INFO__?.()).catch(() => null);
   if (process.env.DIAG) console.log('DRAWN', await page.evaluate(() => [...(window.__DRAWN__ ?? [])].join(',')).catch(() => '?'));
   try { await page.screenshot({ path: path.join(out, `${s}.png`), timeout: 300000 }); } catch (e) { console.log('shot fail', e.message.slice(0, 80)); continue; }

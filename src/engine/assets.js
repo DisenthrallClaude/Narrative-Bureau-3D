@@ -6,6 +6,12 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 
 export const BASE = './';
 export const manager = new THREE.LoadingManager();
+// R3 批次6：截图模式要知道还有多少资源在加载（shot.mjs 首张等它归零），并记下超时用空组顶上的模型
+const _ld = { pending: 0, timeouts: [] };
+{ const s0 = manager.itemStart.bind(manager), e0 = manager.itemEnd.bind(manager), r0 = manager.itemError.bind(manager);
+  manager.itemStart = (u) => { _ld.pending++; s0(u); }; manager.itemEnd = (u) => { _ld.pending--; e0(u); }; manager.itemError = (u) => { r0(u); }; }
+if (typeof window !== 'undefined') window.__LOADSTATE__ = () => ({ pending: _ld.pending, timeouts: _ld.timeouts.slice() });
+const SHOT_MODE = typeof location !== 'undefined' && /[?&]shot=/.test(location.search);
 const gltfLoader = new GLTFLoader(manager).setMeshoptDecoder(MeshoptDecoder);
 const texLoader = new THREE.TextureLoader(manager);
 const rgbeLoader = new RGBELoader(manager);
@@ -22,7 +28,7 @@ export function loadModel(name) {
   if (!modelCache.has(name)) {
     modelCache.set(name, new Promise((resIn) => { let res = resIn;
       // 超时保护：单个模型 60 秒没加载完就用空组顶上，不让整个场景卡在加载
-      const to = setTimeout(() => { console.warn('[NB] 模型加载超时', name); res(new THREE.Group()); }, 60000);
+      const to = setTimeout(() => { console.warn('[NB] 模型加载超时', name); _ld.timeouts.push(name); res(new THREE.Group()); }, SHOT_MODE ? 900000 : 60000); // 截图模式（SwiftShader 慢机）放宽到 15 分钟，避免首张把大 GLB 当超时换成空组
       res = (v) => { clearTimeout(to); resIn(v); };
       gltfLoader.load(`${BASE}assets/models/${name}.glb`, (g) => {
         g.scene.traverse((o) => {
