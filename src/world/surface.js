@@ -13,7 +13,7 @@ import { vaultMats, tagMaterial } from './vault.js';
 import { dressMats, Props, wallDress, wallSeg, rug, hangingSign, plantPot, bin, paperStack, folderStack, telephone, greenLamp } from './dress.js';
 import { m5Mats } from './dress_m5.js';
 import { RING, FLOOR, cypress, blob } from './exterior.js';
-import { R3 } from './r3plan.js';
+import { R3, DORM3, dorm3Rooms, dorm3Furn } from './r3plan.js';
 import { dormMats, bunkBed, singleBed, desk, wardrobe, thermos, mug, washstand, windowCurtain, noticeBoard, thermosRack, tubeLamp } from './dorm.js';
 
 const rnd = (() => { let s = 11; return () => ((s = (s * 16807) % 2147483647) / 2147483647); })();
@@ -81,14 +81,15 @@ export async function buildSurface(scene, world, ctx) {
     const hole = { x0: 54, x1: 61.6, z0: 28, z1: 26 };
     for (const [a, c, d, e] of [[53.2, hole.x0, 38.8, 1.2], [hole.x1, 78.8, 38.8, 1.2], [hole.x0, hole.x1, 38.8, hole.z0], [hole.x0, hole.x1, hole.z1, 1.2]]) b.box('dz_ceil', c - a, 0.3, d - e, [(a + c) / 2, F2 - 0.15, (d + e) / 2], { uv: 0.3, collide: true });
     b.box('dm_wood', 78.8 - 53.2, 0.04, 37.6, [cx, F2 + 0.02, cz], { uv: 0.8 });
-    b.box('dz_ceil', 25.6, 0.3, 37.6, [cx, 9.2 - 0.15, cz], { uv: 0.3 });
+    if (!R3.dorm3) b.box('dz_ceil', 25.6, 0.3, 37.6, [cx, 9.2 - 0.15, cz], { uv: 0.3 });
+    else { const S = DORM3.stair; for (const [a, c, d, e] of [[53.2, S.x0, 38.8, 1.2], [S.x1, 78.8, 38.8, 1.2], [S.x0, S.x1, S.z0, 1.2], [S.x0, S.x1, 38.8, S.z1]]) { b.box('dz_ceil', c - a, 0.3, d - e, [(a + c) / 2, 9.2 - 0.15, (d + e) / 2], { uv: 0.3 }); b.box('dm_wood', c - a, 0.04, d - e, [(a + c) / 2, 9.22, (d + e) / 2], { uv: 0.8, collide: true }); } }
     // 楼梯（大厅北侧，向东上 2F）
     { const n = 26, run = 7.4 / n, rise = F2 / n; for (let i = 0; i < n; i++) b.box('dz_beam', run + 0.02, 0.18, 1.6, [54.2 + run * (i + 0.5), rise * (i + 1) - 0.09, 27], { uv: 0.6 }); world.ramp([53.8, 0, 27], [61.6, F2, 27], 1.6); b.box('brass', 7.8, 0.05, 0.05, [57.9, F2 / 2 + 1.0, 26.15], { uv: 1, rot: [0, 0, Math.atan2(F2, 7.4)] }); world.box(57.9, F2 / 2 + 0.6, 26.1, 7.6, F2 + 1.2, 0.1); }
     // 一层隔墙：小卖部/宿管室（南）、洗衣房（北）、走廊西墙、客房隔墙
     for (const [y0, hh] of [[0, F2 - 0.3], [F2, 4.3]]) {
       wallZ(b, 'dm_plaster', 12, 53.2, 62, y0, hh, 0.2, y0 ? [] : [{ x0: 55, x1: 60, h: 1.1 }], true);
       wallZ(b, 'dm_plaster', 28.2, 53.2, 62, y0, hh, 0.2, y0 ? [{ x0: 55.5, x1: 57, h: 2.2 }] : [{ x0: 55.5, x1: 58, h: 2.4 }], true);
-      wallX(b, 'dm_plaster', 62, 12, 1.2, y0, hh, 0.2, [{ z0: 7.2, z1: 6.0, h: 2.2 }], true); wallX(b, 'dm_plaster', 62, 38.8, 28.2, y0, hh, 0.2, [{ z0: 34.2, z1: 33.0, h: 2.2 }], true);
+      wallX(b, 'dm_plaster', 62, 12, 1.2, y0, hh, 0.2, [{ z0: 7.2, z1: 6.0, h: 2.2 }], true); wallX(b, 'dm_plaster', 62, 38.8, 28.2, y0, hh, 0.2, [y0 && R3.dorm3 ? { z0: 29.9, z1: 28.7, h: 2.2 } : { z0: 34.2, z1: 33.0, h: 2.2 }], true); // 批次21：2F 这樘门让给 3F 楼梯（z 30.8 起跑）
       const doors = y0 ? [{ z0: 26.4, z1: 25.2, h: 2.2 }] : [{ z0: 6.5, z1: 5.3, h: 2.2 }, { z0: 15.9, z1: 14.7, h: 2.2 }];
       wallX(b, 'dm_plaster', 65, 38.8, 1.2, y0, hh, 0.2, doors, true);
       for (const z of [10.6, 20, 29.4]) wallZ(b, 'dm_plaster', z, 65, 78.8, y0, hh, 0.2, [], true);
@@ -155,6 +156,36 @@ export async function buildSurface(scene, world, ctx) {
       const env = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.006, 0.12), M.kraft); env.position.set(x + 0.3, F2 + 0.83, 28.75); env.rotation.y = 0.2; zone.add(env); anchor('doc_dorm_letter', env, 2.4); point(zone, 0xffd0a0, 3, [x, F2 + 3, 25], 7); void z0; }
     point(zone, 0xffe4c0, 6, [57.5, 3.6, 20], 12); point(zone, 0xffe4c0, 5, [57.5, F2 + 3.4, 20], 10); point(zone, 0xdfe8ff, 3, [63.5, 3.5, 30], 9);
     for (const [x, z] of [[53.8, 21.9], [61.4, 19]]) plantPot(b, x, 0, z, 1.0);
+    // ===== 批次21：3F 单身职工单间层（平面见 r3plan planDorm3 / DORM3）=====
+    if (R3.dorm3) { const D = DORM3, Y3 = 9.24, H3 = D.H, S = D.stair, Wsh = D.wash;
+      // 2F 走廊西侧 → 3F 直跑楼梯（北上）+ 扶手 + 洞口栏杆
+      { const n = 26, run = (S.z1 - S.z0) / n, rise = (Y3 - F2) / n; for (let i = 0; i < n; i++) b.box('dz_beam', S.x1 - S.x0, 0.18, run + 0.02, [(S.x0 + S.x1) / 2, F2 + rise * (i + 1) - 0.09, S.z0 + run * (i + 0.5)], { uv: 0.6 }); world.ramp([(S.x0 + S.x1) / 2, F2, S.z0 - 0.2], [(S.x0 + S.x1) / 2, Y3, S.z1], S.x1 - S.x0);
+        b.box('brass', 0.05, 0.05, 7.8, [S.x1 + 0.03, F2 + (Y3 - F2) / 2 + 0.95, (S.z0 + S.z1) / 2], { uv: 1, rot: [Math.atan2(Y3 - F2, S.z1 - S.z0), 0, 0] });
+        for (let z = S.z0 + 0.3; z < S.z1; z += 0.6) b.box('dm_frame', 0.025, 0.95, 0.025, [S.x1 + 0.05, Y3 + 0.48, z], { uv: false }); b.box('dz_beam', 0.06, 0.06, S.z1 - S.z0, [S.x1 + 0.05, Y3 + 0.97, (S.z0 + S.z1) / 2], { uv: 0.6 }); world.box(S.x1 + 0.05, Y3 + 0.5, (S.z0 + S.z1) / 2 + 0.6, 0.08, 1.0, S.z1 - S.z0 - 1.2); }
+      // 走廊两侧隔墙（每间一樘门洞）+ 开间隔墙 + 后墙（坡屋顶下矮储藏隔墙）+ 北端盥洗间 / 开水房隔墙
+      const rooms = dorm3Rooms();
+      for (const [x, side] of [[D.cx0, 'W'], [D.cx1, 'E']]) { const holes = rooms.filter((r) => r.side === side).map((r) => { const f = dorm3Furn(r); return { z0: f.door.z1, z1: f.door.z0, h: 2.1 }; }); holes.push(side === 'E' ? { z0: 32.2, z1: 31.0, h: 2.1 } : { z0: 29.6, z1: 28.4, h: 2.1 }); wallX(b, 'dm_plaster', x, 38.8, 1.2, Y3, H3, 0.16, holes, true); b.box('dz_paintLow', 0.18, 1.2, 37.6, [x, Y3 + 0.6, 20], { uv: 0.6 }); }
+      for (const x of [D.wx0, D.ex1]) wallX(b, 'dm_plaster', x, 38.8, 1.2, Y3, H3, 0.2, [], true);
+      for (let k = 0; k <= D.n; k++) { const z = D.rz0 + D.rw * k; wallZ(b, 'dm_plaster', z, D.wx0, D.cx0, Y3, H3, 0.12, [], true); wallZ(b, 'dm_plaster', z, D.cx1, D.ex1, Y3, H3, 0.12, [], true); }
+      wallZ(b, 'dm_plaster', Wsh.z0, D.cx1, D.ex1, Y3, H3, 0.12, [], true); wallZ(b, 'dm_plaster', 1.2, D.wx0, D.ex1, Y3, H3, 0.2, [], true); wallZ(b, 'dm_plaster', 38.8, D.wx0, D.ex1, Y3, H3, 0.2, [], true);
+      b.box('dz_ceil', D.ex1 - D.wx0, 0.12, 37.6, [(D.wx0 + D.ex1) / 2, Y3 + H3 + 0.06, 20], { uv: 0.3 });
+      b.box('dm_terrazzo', Wsh.x1 - Wsh.x0 - 0.1, 0.012, Wsh.z1 - Wsh.z0 - 0.1, [(Wsh.x0 + Wsh.x1) / 2, Y3 + 0.006, (Wsh.z0 + Wsh.z1) / 2], { uv: 0.5 });
+      for (let z = 4; z < 36; z += 7) tubeLamp(b, 63.3, Y3 + H3 - 0.02, z, 0);
+      for (const z of [30.5, 35.5]) tubeLamp(b, 67.0, Y3 + H3 - 0.02, z, 0);
+      // 走廊端：开水房暖瓶架 + 公告栏
+      thermosRack(b, world, 58.0, Y3, 30.6, Math.PI / 2, 10);
+      noticeBoard(zone, b, D.cx0 + 0.1, Y3 + 1.6, 20.0, Math.PI / 2, 1.6, 0.9, '三楼公告', [['作息', ['6:30 起床', '22:30 熄灯'], '#efe8d6'], ['卫生', ['周六大扫除'], '#e8eef4'], ['寻物', ['306 室的信', '请交宿管'], '#f4e8c8']]);
+      for (const r of rooms) { const f = dorm3Furn(r), anchorRoom = r.num === '306';
+        singleBed(b, world, f.bed.x, Y3, f.bed.z, f.bed.yaw, anchorRoom ? { made: false } : { olive: true });
+        desk(b, world, f.desk.x, Y3, f.desk.z, f.desk.yaw, 1.1); wardrobe(b, world, f.wardrobe.x, Y3, f.wardrobe.z, 0, { suitcase: !anchorRoom }); washstand(b, world, f.wash.x, Y3, f.wash.z, f.wash.yaw);
+        thermos(b, f.X(0.25), Y3 + 0.8, f.desk.z + 0.35); if (!anchorRoom) mug(b, f.X(0.45), Y3 + 0.8, f.desk.z + 0.15);
+        // 后墙高窗（借老虎窗光：磨砂玻璃 + 木窗框）
+        const gx = r.back + r.s * 0.11; b.box('dm_frameCream', 0.08, 0.9, 1.5, [gx, Y3 + 2.25, r.zc - 0.2], { uv: false }); const gl = new THREE.Mesh(new THREE.PlaneGeometry(1.34, 0.76), new THREE.MeshStandardMaterial({ color: 0x9aa39c, emissive: 0xd8dccf, emissiveIntensity: 0.35, roughness: 0.5 })); gl.position.set(gx + r.s * 0.045, Y3 + 2.25, r.zc - 0.2); gl.rotation.y = r.s > 0 ? Math.PI / 2 : -Math.PI / 2; zone.add(gl);
+        tubeLamp(b, f.X(2.4), Y3 + H3 - 0.02, r.zc, Math.PI / 2);
+        plane(zone, tagMaterial(r.num), 0.3, 0.12, r.door + r.s * 0.1, Y3 + 2.3, f.door.z0 - 0.35, r.s > 0 ? Math.PI / 2 : -Math.PI / 2); }
+      // 306：留下的信（可读）
+      { const r = rooms.find((q) => q.num === '306'), f = dorm3Furn(r); const lm = plane(zone, docMat('doc_dorm3_letter', signMaterial('留给下一位住户', ['这间屋子的床', '我已经叠好了', '如果夜里听见走廊有人念名字', '不要应', '　　　　——306 前住户'], 512, 680)), 0.22, 0.29, f.X(0.42), Y3 + 0.815, f.desk.z + 0.1, 0); lm.rotation.x = -Math.PI / 2 }
+    }
     // M7：外墙内侧刷漆衬层（原外立面石材直接作室内墙面，映出金色大厅环境图）
     for (const [y0, hh] of [[0, F2 - 0.3], [F2, 4.3]]) {
       for (const [z0, z1] of [[1.2, 18.35], [21.65, 38.8]]) { if (y0 && z0 > 20) continue; b.box('dm_plaster', 0.04, hh, z1 - z0, [53.24, y0 + hh / 2, (z0 + z1) / 2], { uv: 0.6 }); }

@@ -224,7 +224,7 @@ function zoneAt(p) {
   }
   if (p.x > 18.3 && p.x < 28.6 && p.z < -76.3 && p.z > -115.6 && p.y > -2 && p.y < 8) return 'east_cloister';
   if (Math.abs(p.x) < 18.5 && p.z < -76.3 && p.z > -141 && p.y > -2) return 'canteen';
-  if (p.x > 52 && p.x < 80 && p.z > 0 && p.z < 40 && p.y < 9) return 'dorm';
+  if (p.x > 52 && p.x < 80 && p.z > 0 && p.z < 40 && p.y < 13.5) return 'dorm';
   if (p.x > 73.6 && p.x < 98.8 && p.z < -53.4 && p.z > -86.6 && p.y < 11) return 'hangar'; // 批次7：机库内部单独分区（室内环境图，不再反射天空）
   if (p.x > 72 && p.x < 100 && p.z < -52 && p.z > -88) return 'helipad';
   if (p.x < -49 && p.x > -77 && p.z > 1 && p.z < 49) return 'memorial';
@@ -292,7 +292,7 @@ function setZone(z, force = false) {
   scene.getObjectByName('exterior').visible = !!vis.exterior;
   for (const [k, g] of Object.entries(ctx.zones)) g.visible = !!vis[k] || GROUP_OF[z] === k || k === z;
   for (const f of FILLS) f.visible = f.userData.fillOf === (GROUP_OF[z] ?? z);
-  { const R3V = { dorm: ['dorm', 'dorm2'], hangar: ['hangar'], helipad: ['hangar'], memorial: ['memorial'], metro_exit: ['metro'], plaza: ['memorial', 'metro'], wall_posts: ['memorial'] }; const on = R3V[z] ?? []; for (const [id, g] of Object.entries(ctx.r3groups ?? {})) g.visible = on.includes(id); }
+  { const R3V = { dorm: ['dorm', 'dorm2', 'dorm3'], hangar: ['hangar'], helipad: ['hangar'], memorial: ['memorial'], metro_exit: ['metro'], plaza: ['memorial', 'metro'], wall_posts: ['memorial'] }; const on = R3V[z] ?? []; for (const [id, g] of Object.entries(ctx.r3groups ?? {})) g.visible = on.includes(id); }
   const L = ZONE_LOOK[z] ?? ZONE_LOOK.spine_b3;
   scene.environment = L.env === 'sky' ? envSky : envHall;
   scene.environmentIntensity = L.envI;

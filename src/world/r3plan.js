@@ -4,7 +4,7 @@
 // 每个条目：{ m: 模型路径(相对 assets/models), x, y, z, yaw, h|w|d: 目标尺寸, tag: 功能分组, on: 'floor'|'desk'|'wall'|'ceil', col: [w,h,d] 碰撞盒 }
 // 每个区的「平面规划说明」同时写进 docs/HANDOFF.md「R3 每区布局说明」。
 
-export const R3 = { floor3_office: true, floor2_liaison: true, floor2_pub: true, director: true, gate: true, archive: true, command_center: true, canteen: true, b1: true, b2: true, archive_b1: true, b4: true, b5: true, b6: true, b7: true, medical: true, dorm: true, dorm2: true, interrogation: true, hangar: true };
+export const R3 = { floor3_office: true, floor2_liaison: true, floor2_pub: true, director: true, gate: true, archive: true, command_center: true, canteen: true, b1: true, b2: true, archive_b1: true, b4: true, b5: true, b6: true, b7: true, medical: true, dorm: true, dorm2: true, dorm3: true, interrogation: true, hangar: true };
 
 const rot = (yaw, lx, lz) => [lx * Math.cos(yaw) + lz * Math.sin(yaw), -lx * Math.sin(yaw) + lz * Math.cos(yaw)];
 const at = (o, yaw, lx, lz) => { const [dx, dz] = rot(yaw, lx, lz); return [o[0] + dx, o[1] + dz]; };
@@ -1365,7 +1365,64 @@ const X6 = {
     for (const z of [-59.0, -63.5]) light(out, -12.8, y + 3.2, z, 0xffc070, 1.6, 7); },
 };
 const withX6 = (id, f) => (Y) => { const p = f(Y); const n0 = p.items.length; if (X6[id]) X6[id](p.items, Y); fixYaw({ items: p.items.slice(n0) }); return p; };
-export const PLANS = { floor3_office: (Y) => fixYaw(planFloor3Office(Y)), floor2_liaison: (Y) => fixYaw(planFloor2Liaison(Y)), floor2_pub: (Y) => fixYaw(planFloor2Pub(Y)), director: (Y) => fixYaw(planDirector(Y)), gate: (Y) => fixYaw(planGate(Y)), archive: (Y) => fixYaw(planArchive(Y)), command_center: withX6('command_center', (Y) => fixYaw(planCommand(Y))), canteen: (Y) => fixYaw(planCanteen(Y)), b1: (Y) => fixYaw(planB1(Y)), b2: (Y) => fixYaw(planB2(Y)), archive_b1: (Y) => fixYaw(planArchiveB1(Y)), b4: withX6('b4', (Y) => fixYaw(planB4(Y))), b5: withX6('b5', (Y) => fixYaw(planB5(Y))), b6: withX6('b6', (Y) => fixYaw(planB6(Y))), b7: withX6('b7', (Y) => fixYaw(planB7(Y))), medical: withX6('medical', (Y) => fixYaw(planMedical(Y))), dorm: (Y) => fixYaw(planDorm(Y)), dorm2: (Y) => fixYaw(planDorm2(Y)), interrogation: (Y) => fixYaw(planInterrogation(Y)), hangar: (Y) => fixYaw(planHangar(Y)) };
+// ======================= 批次21：宿舍三号楼 3F 单身职工单间层 dorm3（y 9.2） =======================
+// 平面：中走廊 x 62.0…64.6（2.6 m，正对 2F 走廊）沿 z；西侧单间 x 57.2…62.0、东侧 x 64.6…69.4（进深 4.8 m），每间开间 3.4 m，z 2.0…25.8 各 7 间（301–307 西，308–314 东）；
+// 北端：东侧公共盥洗间 x 64.6…69.4，z 27.2…38.8（后墙一排 12 个水龙头的水泥长槽）；西侧开水房 / 储藏 z 25.8…38.8；楼梯 2F→3F 在走廊西半 x 62.1…63.3，z 30.8→38.2（北上）。
+// 两侧坡屋顶下 x 53.2…57.2 / 69.4…78.8 为屋架储藏，矮墙封闭（单间后墙开高窗借老虎窗光）。剧情锚点：306（空床 + 留下的信 + 合影）、311（照片墙 + 未拆的家信）。
+export const DORM3 = { Y: 9.2, H: 3.2, cx0: 62.0, cx1: 64.6, wx0: 57.2, ex1: 69.4, rz0: 2.0, rw: 3.4, n: 7, wash: { x0: 64.6, x1: 69.4, z0: 27.2, z1: 38.8 }, stair: { x0: 62.1, x1: 63.3, z0: 30.8, z1: 38.2 } };
+export function dorm3Rooms() {
+  const D = DORM3, out = [];
+  for (let k = 0; k < D.n; k++) { const zc = D.rz0 + D.rw * (k + 0.5); out.push({ num: String(301 + k), side: 'W', zc, back: D.wx0, door: D.cx0, s: 1 }); out.push({ num: String(308 + k), side: 'E', zc, back: D.ex1, door: D.cx1, s: -1 }); }
+  return out; // s：从后墙指向走廊的 x 方向
+}
+// 单间内陈设坐标（局部：u = 离后墙距离，v = 相对开间中心 z）
+export function dorm3Furn(r) {
+  const X = (u) => r.back + r.s * u, yawIn = r.s > 0 ? Math.PI / 2 : -Math.PI / 2; // yawIn：朝走廊方向
+  return { bed: { x: X(1.1), z: r.zc + 1.12, yaw: yawIn }, desk: { x: X(0.32), z: r.zc - 0.75, yaw: yawIn }, wardrobe: { x: X(3.75), z: r.zc - 1.42, yaw: 0 }, wash: { x: X(3.1), z: r.zc + 1.35, yaw: Math.PI }, door: { z0: r.zc + 0.6, z1: r.zc + 1.5 }, X };
+}
+export function planDorm3(y0) {
+  const D = DORM3, y = y0, out = [];
+  const room = { name: '宿舍三号楼 · 3F 单身职工单间层（批次21）', x0: D.wx0, x1: D.ex1, z0: 1.2, z1: 38.8, y, H: D.H,
+    doors: [{ wall: 'N', a: 62.1, b: 63.3, label: '楼梯 ↓ 2F' }], windows: [],
+    keep: [{ label: '楼梯洞口', x: 62.7, z: 34.5, w: 1.2, d: 7.4 }],
+    rooms: [['西侧单间 301–307', 59.6, 14], ['东侧单间 308–314', 67.0, 14], ['公共盥洗间', 67.0, 33], ['开水房 / 储藏', 59.6, 32], ['中走廊', 63.3, 20]],
+    aisles: [{ label: '中走廊', x0: 63.35, x1: 64.55, z0: 1.3, z1: 38.7 }, { label: '中走廊（南段全宽）', x0: 62.05, x1: 64.55, z0: 1.3, z1: 30.6 }] };
+  for (const r of dorm3Rooms()) {
+    const f = dorm3Furn(r), anchor = r.num === '306' || r.num === '311';
+    out.push({ fixed: true, m: '单人铁架床', x: f.bed.x, y, z: f.bed.z, yaw: 0, size: [2.0, 0.95, 1.0], tag: r.num, on: 'floor' });
+    out.push({ fixed: true, m: 'desk 书桌+椅', x: f.desk.x + r.s * 0.22, y, z: f.desk.z, yaw: 0, size: [1.05, 0.8, 1.1], tag: r.num, on: 'floor' });
+    out.push({ fixed: true, m: '木衣柜', x: f.wardrobe.x, y, z: f.wardrobe.z, yaw: 0, size: [1.0, 2.0, 0.56], tag: r.num, on: 'floor' });
+    out.push({ fixed: true, m: '脸盆架', x: f.wash.x, y, z: f.wash.z, yaw: 0, size: [0.45, 1.9, 0.45], tag: r.num, on: 'floor' });
+    out.push({ m: 'r2/bankers_lamp', x: f.X(0.3), y: y + 0.8, z: f.desk.z - 0.35, yaw: f.desk.yaw, h: 0.4, tag: r.num, on: 'desk' });
+    // 作息表（南墙 = 开间 −z 墙，书桌上方）+ 私人物件
+    out.push({ box: 'r3_kraftBox', x: f.X(1.25), y: y + 1.65, z: r.zc - 1.69, w: 0.5, h: 0.7, d: 0.01, tag: r.num, on: 'partv' });
+    out.push({ box: 'dz_paper', x: f.X(1.25), y: y + 1.65, z: r.zc - 1.684, w: 0.44, h: 0.62, d: 0.006, tag: r.num, on: 'partv' });
+    for (let i = 0; i < 6; i++) out.push({ box: 'navy', x: f.X(1.25), y: y + 1.88 - i * 0.09, z: r.zc - 1.68, w: 0.36 - (i % 2) * 0.1, h: 0.012, d: 0.004, tag: r.num, on: 'partv' });
+    out.push({ box: 'wood', x: f.X(1.1), y: y + 0.1, z: r.zc + 0.42, w: 0.6, h: 0.2, d: 0.4, tag: r.num, on: 'floor' }); // 床下箱
+    light(out, f.X(2.3), y + 2.7, r.zc, anchor ? 0xffd2a0 : 0xffe2c0, anchor ? 2.4 : 1.7, 5.5);
+    if (r.num === '306') { // 空床：被褥卷起、桌上留下的信 + 合影 + 钥匙
+      out.push({ box: 'kraft', x: f.X(0.4), y: y + 0.805, z: f.desk.z + 0.05, w: 0.12, h: 0.006, d: 0.22, tag: '306 锚点', on: 'desk' });
+      out.push({ box: 'dz_paper', x: f.X(0.42), y: y + 0.81, z: f.desk.z + 0.1, w: 0.2, h: 0.003, d: 0.28, tag: '306 锚点', on: 'desk' });
+      out.push({ m: 'r2/standing_picture_frame_01', x: f.X(0.25), y: y + 0.8, z: f.desk.z - 0.05, yaw: f.desk.yaw, h: 0.2, tag: '306 锚点', on: 'desk' });
+      light(out, f.X(0.6), y + 1.4, f.desk.z, 0xffcf96, 0.9, 2.5);
+    }
+    if (r.num === '311') for (let i = 0; i < 6; i++) out.push({ box: i % 2 ? 'dz_paper' : 'r3_kraftBox', x: f.X(1.2 + (i % 3) * 0.32), y: y + 1.35 + Math.floor(i / 3) * 0.32, z: r.zc + 1.69, w: 0.22, h: 0.28, d: 0.006, tag: '311 照片墙', on: 'partv' });
+  }
+  // 走廊：吸顶灯 + 防火水桶 / 暖瓶架 + 公告栏
+  for (const z of [4, 11, 18, 25, 32]) light(out, 63.3, y + 2.9, z, 0xfff0d8, 2.0, 7);
+  // 公共盥洗间：后墙水泥长槽 + 12 龙头 + 镜条 + 白瓷砖墙裙 + 地漏
+  const W = D.wash, tx = W.x1 - 0.35;
+  out.push({ box: 'r3_bunkerConc', x: tx, y: y + 0.4, z: (W.z0 + W.z1) / 2, w: 0.6, h: 0.8, d: W.z1 - W.z0 - 1.2, tag: '盥洗槽', on: 'floor' });
+  out.push({ box: 'dz_glassDark', x: tx, y: y + 0.805, z: (W.z0 + W.z1) / 2, w: 0.44, h: 0.01, d: W.z1 - W.z0 - 1.4, tag: '盥洗槽', on: 'partv' });
+  out.push({ box: 'whitePad', x: W.x1 - 0.01, y: y + 0.9, z: (W.z0 + W.z1) / 2, w: 0.01, h: 1.8, d: W.z1 - W.z0, tag: '瓷砖墙裙', on: 'partv' });
+  out.push({ box: 'glassClear', x: W.x1 - 0.02, y: y + 1.65, z: (W.z0 + W.z1) / 2, w: 0.01, h: 0.5, d: W.z1 - W.z0 - 1.4, tag: '镜条', on: 'partv' });
+  for (let k = 0; k < 12; k++) { const z = W.z0 + 1.0 + k * 0.85; out.push({ box: 'steel', x: W.x1 - 0.1, y: y + 1.08, z, w: 0.2, h: 0.03, d: 0.03, tag: '龙头', on: 'partv' }); out.push({ box: 'steel', x: W.x1 - 0.19, y: y + 1.03, z, w: 0.03, h: 0.1, d: 0.03, tag: '龙头', on: 'partv' }); out.push({ box: 'whiteMarble', x: W.x1 - 0.05, y: y + 1.2, z, w: 0.03, h: 0.04, d: 0.07, tag: '龙头', on: 'partv' }); }
+  out.push({ box: 'steel', x: W.x1 - 0.05, y: y + 1.12, z: (W.z0 + W.z1) / 2, w: 0.04, h: 0.04, d: W.z1 - W.z0 - 1.2, tag: '水管', on: 'partv' });
+  for (const z of [30.5, 35.5]) light(out, 67.0, y + 2.9, z, 0xe8f0ff, 2.2, 7);
+  return { room, items: out };
+}
+
+export const PLANS = { floor3_office: (Y) => fixYaw(planFloor3Office(Y)), floor2_liaison: (Y) => fixYaw(planFloor2Liaison(Y)), floor2_pub: (Y) => fixYaw(planFloor2Pub(Y)), director: (Y) => fixYaw(planDirector(Y)), gate: (Y) => fixYaw(planGate(Y)), archive: (Y) => fixYaw(planArchive(Y)), command_center: withX6('command_center', (Y) => fixYaw(planCommand(Y))), canteen: (Y) => fixYaw(planCanteen(Y)), b1: (Y) => fixYaw(planB1(Y)), b2: (Y) => fixYaw(planB2(Y)), archive_b1: (Y) => fixYaw(planArchiveB1(Y)), b4: withX6('b4', (Y) => fixYaw(planB4(Y))), b5: withX6('b5', (Y) => fixYaw(planB5(Y))), b6: withX6('b6', (Y) => fixYaw(planB6(Y))), b7: withX6('b7', (Y) => fixYaw(planB7(Y))), medical: withX6('medical', (Y) => fixYaw(planMedical(Y))), dorm: (Y) => fixYaw(planDorm(Y)), dorm2: (Y) => fixYaw(planDorm2(Y)), dorm3: (Y) => fixYaw(planDorm3(Y)), interrogation: (Y) => fixYaw(planInterrogation(Y)), hangar: (Y) => fixYaw(planHangar(Y)) };
 
 // ================= 批次7 · 新做区：训练场 / 地铁口 / 无字碑廊 / 第七局（作战室·杀青室）/ 墨渊（倒悬书城·考场母本） =================
 const F7 = (out, label, x, z, w, d, y, yaw = 0, h = 1) => out.push({ fixed: true, m: '固定:' + label, x, y, z, yaw, size: [w, h, d], col: [w, h, d], tag: label, on: 'floor' });

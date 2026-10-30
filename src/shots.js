@@ -157,6 +157,9 @@ export const SHOTS = {
   dorm_lobby_b: { pos: [54.4, 1.65, 18.6], look: [60, 1.2, 25], fov: 76, zone: 'dorm' },
   dorm_lounge: { pos: [61.2, 4.6 + 1.65, 25.0], look: [55, 4.6 + 1.0, 15.5], fov: 76, zone: 'dorm' },
   dorm_top: { pos: [57.6, 26, 20.01], look: [57.6, 0, 20], fov: 50, clipY: 3.9, zone: 'dorm' },
+  dorm_r3: { pos: [64.0, 9.24 + 1.65, 29.0], look: [63.0, 9.24 + 1.1, 4.0], fov: 72, zone: 'dorm' }, // 批次21：3F 单间层中走廊（北 → 南）
+  dorm_r3_b: { pos: [61.5, 9.24 + 1.6, 20.3], look: [57.4, 9.24 + 0.8, 21.0], fov: 76, zone: 'dorm' }, // 306 剧情锚点间：空床 + 信 + 合影
+  dorm3_top: { pos: [63.3, 9.24 + 30, 20.01], look: [63.3, 9.24, 20], fov: 54, clipY: 9.24 + 3.0, zone: 'dorm' },
   dorm2_top: { pos: [57.6, 30, 20.01], look: [57.6, 4.6, 20], fov: 50, clipY: 4.6 + 3.6, zone: 'dorm' },
   dorm_room: { pos: [66, 1.65, 9.6], look: [76, 1.0, 3], fov: 75 },
   dorm_207: { pos: [66.6, 4.6 + 1.65, 27.8], look: [77, 4.6 + 0.9, 22.5], fov: 75 },
