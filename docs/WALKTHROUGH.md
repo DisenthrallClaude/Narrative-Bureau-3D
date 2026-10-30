@@ -1,46 +1,46 @@
 # 剧情自动化走查（tools/walk.mjs）
 
-运行时间：2026-10-30T20:03:42.143Z　通过 31 / 失败 0 / 控制台错误 0（已屏蔽无头 Pointer Lock 环境报错 1 条）
+运行时间：2026-10-30T20:06:18.908Z　通过 31 / 失败 0 / 控制台错误 0（已屏蔽无头 Pointer Lock 环境报错 1 条）
 
-- `38s` 游戏加载完成（test 模式）
-- `38s` —— 第一章「报到」——
-- `38s` 目标栏：前往管理局正门报到
-- `39s` ✅ 出生在广场 zone=plaza
-- `41s` ✅ 进入正门 zone=gate
-- `41s` ✅ 服务台领临时入职证 q1_badge + item_badge
-- `41s` 目标栏：通过安检大厅第 7 号闸机的文本完整性扫描
-- `42s` 站上 7 号扫描门（x=7.50），等待扫描事件与殷泽对话……
-- `54s` ✅ 7 号扫描门异常 → 殷泽放行 q2_scan
-- `54s` 目标栏：前往西翼人事档案馆，向管理员领取本人入职档案
-- `56s` ✅ 进入人事档案馆 zone=archive
-- `63s` ✅ 叶寻领档案 q3_file
-- `63s` ✅ 读完档案三页 q4_read_1..3
-- `63s` 登记簿已签字；目标栏：前往东翼二层监测指挥中心报到实习
-- `64s` B1 密集库 zone=archive_b1
-- `64s` ✅ 拨错档号（A）→ 密集架合拢，不推进
-- `88s` ✅ 拨对 07-0-0000 → 第 7 排缝隙打开 q5_b1（第一章完）
-- `88s` ✅ 缝隙可见
-- `88s` —— B1 第 7 排缝隙 → 装订线 ——
-- `88s` ✅ 缝隙热点已启用
-- `93s` ✅ 进入装订线入口 zone=seventh_entry
-- `95s` ✅ 走到 seventh_gutter（zone=seventh_gutter，脚底 y=-500.02 未掉出地面）
-- `96s` ✅ 走到 seventh_ops（zone=seventh_ops，脚底 y=-500.02 未掉出地面）
-- `97s` ✅ 走到 seventh_wrap（zone=seventh_wrap，脚底 y=-500.02 未掉出地面）
-- `98s` ✅ 走到 seventh_rewrite（zone=seventh_rewrite，脚底 y=-500.02 未掉出地面）
-- `113s` ✅ 结局 A（end_a_name）：旗标 已置，回到 plaza (0.0, -0.0, 72.0)
-- `128s` ✅ 结局 B（end_b_seal）：旗标 已置，回到 plaza (0.0, -0.0, 72.0)
-- `146s` ✅ 结局 C（end_c_close）：旗标 已置，回到 plaza (0.0, -0.0, 72.0)
-- `146s` ✅ 结局 C 后重新弹出开场手机消息（回到开场）：章节卡 结局 C：留白。 / 下一轮报到开始。 | 阅读 1 页：【叙事管理局人事处】报到通知
-- `146s` —— 入口抽查 ——
-- `146s` ✅ 热点存在：depth_b6_door
-- `146s` ✅ 热点存在：depth_b5_door
-- `146s` ✅ 热点存在：depth_director_book
-- `146s` ✅ 热点存在：depth_core_seam
-- `146s` ✅ 热点存在：depth_seventh_exit
-- `146s` ✅ 热点存在：depth_return
-- `153s` ✅ 局长室无名书 → 装订线入口 zone=seventh_entry
-- `158s` ✅ 装订线白缝 → 回 B1 zone=archive_b1
-- `164s` ✅ B5 后门 → 墨渊 zone=abyss_gate
-- `169s` ✅ 定稿厅红缝 → 装订线 zone=seventh_gutter
-- `175s` ✅ 墨渊金门 → 回 B6 zone=training
-- `175s` —— 结果：通过 31，失败 0；控制台错误 0（已屏蔽无头 Pointer Lock 环境报错 1 条）——
+- `62s` 游戏加载完成（test 模式）
+- `62s` —— 第一章「报到」——
+- `62s` 目标栏：前往管理局正门报到
+- `64s` ✅ 出生在广场 zone=plaza
+- `65s` ✅ 进入正门 zone=gate
+- `65s` ✅ 服务台领临时入职证 q1_badge + item_badge
+- `65s` 目标栏：通过安检大厅第 7 号闸机的文本完整性扫描
+- `67s` 站上 7 号扫描门（x=7.50），等待扫描事件与殷泽对话……
+- `79s` ✅ 7 号扫描门异常 → 殷泽放行 q2_scan
+- `79s` 目标栏：前往西翼人事档案馆，向管理员领取本人入职档案
+- `80s` ✅ 进入人事档案馆 zone=archive
+- `87s` ✅ 叶寻领档案 q3_file
+- `87s` ✅ 读完档案三页 q4_read_1..3
+- `87s` 登记簿已签字；目标栏：前往东翼二层监测指挥中心报到实习
+- `89s` B1 密集库 zone=archive_b1
+- `89s` ✅ 拨错档号（A）→ 密集架合拢，不推进
+- `113s` ✅ 拨对 07-0-0000 → 第 7 排缝隙打开 q5_b1（第一章完）
+- `113s` ✅ 缝隙可见
+- `113s` —— B1 第 7 排缝隙 → 装订线 ——
+- `113s` ✅ 缝隙热点已启用
+- `118s` ✅ 进入装订线入口 zone=seventh_entry
+- `119s` ✅ 走到 seventh_gutter（zone=seventh_gutter，脚底 y=-500.02 未掉出地面）
+- `120s` ✅ 走到 seventh_ops（zone=seventh_ops，脚底 y=-500.02 未掉出地面）
+- `122s` ✅ 走到 seventh_wrap（zone=seventh_wrap，脚底 y=-500.02 未掉出地面）
+- `123s` ✅ 走到 seventh_rewrite（zone=seventh_rewrite，脚底 y=-500.02 未掉出地面）
+- `138s` ✅ 结局 A（end_a_name）：旗标 已置，回到 plaza (0.0, -0.0, 72.0)
+- `152s` ✅ 结局 B（end_b_seal）：旗标 已置，回到 plaza (0.0, -0.0, 72.0)
+- `170s` ✅ 结局 C（end_c_close）：旗标 已置，回到 plaza (0.0, -0.0, 72.0)
+- `170s` ✅ 结局 C 后重新弹出开场手机消息（回到开场）：章节卡 结局 C：留白。 / 下一轮报到开始。 | 阅读 1 页：【叙事管理局人事处】报到通知
+- `170s` —— 入口抽查 ——
+- `170s` ✅ 热点存在：depth_b6_door
+- `170s` ✅ 热点存在：depth_b5_door
+- `170s` ✅ 热点存在：depth_director_book
+- `170s` ✅ 热点存在：depth_core_seam
+- `170s` ✅ 热点存在：depth_seventh_exit
+- `170s` ✅ 热点存在：depth_return
+- `177s` ✅ 局长室无名书 → 装订线入口 zone=seventh_entry
+- `183s` ✅ 装订线白缝 → 回 B1 zone=archive_b1
+- `188s` ✅ B5 后门 → 墨渊 zone=abyss_gate
+- `194s` ✅ 定稿厅红缝 → 装订线 zone=seventh_gutter
+- `199s` ✅ 墨渊金门 → 回 B6 zone=training
+- `199s` —— 结果：通过 31，失败 0；控制台错误 0（已屏蔽无头 Pointer Lock 环境报错 1 条）——

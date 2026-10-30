@@ -3048,8 +3048,8 @@ function planHelipadRoof(y) {
     aisles: [{ label: '步行线', x0: 78.6, x1: 84.2, z0: -84.0, z1: -82.6 }, { label: 'FATO 东侧净空', x0: 90.0, x1: 96.0, z0: -78.0, z1: -62.0 }] };
   const B = (box, x, yy, z, w, h, d, tag, uv = 1) => out.push({ box, x, y: yy, z, w, h, d, uv, tag, on: 'partv' });
   // ① H 标识 + FATO 虚线框
-  for (const dx of [-1.8, 1.8]) B('r3_stencil', cx + dx, y + 0.012, cz, 0.9, 0.01, 6.0, '① H 竖笔');
-  B('r3_stencil', cx, y + 0.012, cz, 2.7, 0.01, 0.9, '① H 横笔');
+  for (const dx of [-1.8, 1.8]) B('r3_stencil', cx + dx, y + 0.075, cz, 0.9, 0.01, 6.0, '① H 竖笔'); // 看图（heli_r3）：y+0.012 被 y+0.43 的局徽盖住 → 抬到局徽之上
+  B('r3_stencil', cx, y + 0.075, cz, 2.7, 0.01, 0.9, '① H 横笔');
   for (let t = -10.5; t <= 10.5; t += 3) { for (const zz of [cz - 11, cz + 11]) B('r3_stencil', cx + t, y + 0.011, zz, 1.5, 0.008, 0.3, '① FATO 虚线');
     for (const xx of [cx - 11, cx + 11]) B('r3_stencil', xx, y + 0.011, cz + t, 0.3, 0.008, 1.5, '① FATO 虚线'); }
   // ② 停机位黄框 + 步行线
