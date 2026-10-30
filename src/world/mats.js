@@ -23,7 +23,7 @@ export function mats() {
   M.gold = pbr('Metal048A', { color: 0xffe2a0, metalness: 1, roughness: 0.32, env: 1.3 });
   M.goldBright = new THREE.MeshStandardMaterial({ color: 0xf0c66e, metalness: 1, roughness: 0.18, envMapIntensity: 1.5 });
   M.goldEmis = new THREE.MeshStandardMaterial({ color: 0xf6d27e, metalness: 1, roughness: 0.25, emissive: 0xc8902e, emissiveIntensity: 0.8, envMapIntensity: 1.4 });
-  M.roofSlate = phm('roof_slates_02', { color: 0x8a8a90, env: 0.35 }); M.roofSlate.side = THREE.DoubleSide; // 批次30 E2：附楼屋面（Poly Haven CC0）
+  M.roofSlate = phm('roof_slates_02', { color: 0x7a7c84, env: 0.35 }); M.roofSlate.normalScale = new THREE.Vector2(1.6, 1.6); M.roofSlate.side = THREE.DoubleSide; // 批次30 E2：附楼屋面（Poly Haven CC0）
   M.slate = pbr('Metal027', { color: 0x2a2d36, metalness: 0.6, roughness: 0.45, env: 1.0 });
   M.iron = pbr('Metal046A', { color: 0x2b2d33, metalness: 1, roughness: 0.42 });
   // M6：深蓝铅条菱格玻璃（canvas 自产，ShapeGeometry UV 为米制 → 每 0.9 m 一组菱格）
@@ -64,7 +64,7 @@ export function mats() {
   M.wallPlaster = phm('grey_plaster_02', { color: 0x6a7a72, env: 0.35 }); // 批次7：Poly Haven 实拍石膏（原 ambientCG Concrete034）
   M.onyx = pbr('Onyx013', { color: 0x8a8a90, roughness: 0.22, env: 1.2 });
   M.wood = pbr('Wood051', { color: 0x4a3020, roughness: 0.55, env: 0.3 }); // M4：深胡桃
-  M.bronzeDoor = pbr('Metal048A', { color: 0x4e3824, metalness: 1, roughness: 0.5, repeat: [1, 3] }); M.bronzePanel = pbr('Metal048A', { color: 0x6a4c2e, metalness: 1, roughness: 0.42 }); M.brassNosing = pbr('Metal048A', { color: 0x8c6c3e, metalness: 1, roughness: 0.55 }); // 批次30：正门铜门（暗古铜门扇 + 浅一档芯板 + 哑光铜框）/ 台阶铜防滑条
+  M.bronzeDoor = pbr('Metal048A', { color: 0x2e2620, metalness: 0.9, roughness: 0.62, repeat: [1, 3] }); M.bronzePanel = pbr('Metal048A', { color: 0x3a2c20, metalness: 0.9, roughness: 0.55 }); M.bronzeFrame = pbr('Metal048A', { color: 0x4a3c2c, metalness: 0.9, roughness: 0.7 }); /* 批次31：ext_door_mid 看图门扇仍橙红、框反光亮 → 压到深古铜 0x2e2620 / 0x3a2c20，门框单独哑光 bronzeFrame（不再借踏步防滑条材质） */ M.brassNosing = pbr('Metal048A', { color: 0x8c6c3e, metalness: 1, roughness: 0.55 }); // 批次30：正门铜门（暗古铜门扇 + 浅一档芯板 + 哑光铜框）/ 台阶铜防滑条
   M.doorWood = pbr('Wood051', { color: 0x6a4e3a, roughness: 0.55, repeat: [1.5, 4] });
   M.woodFloor = pbr('WoodFloor064', { rn: true, color: 0x6e5a4a, roughness: 0.72, env: 0.2 }); // M4：掠射角环境反射是档案馆「白光溢出」的主因
   M.carpet = pbr('Carpet012', { color: 0x6a2228, roughness: 1 });

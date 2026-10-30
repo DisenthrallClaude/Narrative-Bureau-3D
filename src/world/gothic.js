@@ -213,7 +213,7 @@ export function tower(b, x, z, w, h, o = {}) {
  *  + 檐口出挑 0.45 m + 封檐板 + 半圆铸铁天沟 + 每坡两只铸铁通风帽（与老虎窗错开半跨）。原挤出体留作屋架 / 山花。 */
 function roofSkin(b, f, w, len, rh) {
   const hw = w / 2 + 0.4, sl = Math.hypot(hw, rh), dx = -hw / sl, dy = -rh / sl; // 屋脊 → 檐（左坡，x 取负）
-  const OV = 0.45, OFF = 0.05, EZ = len / 2 + 0.3, T = 1 / 2.2;
+  const OV = 0.45, OFF = 0.05, EZ = len / 2 + 0.3, T = 1 / 6.5; // 批次31：roof_slates_02 一张约 30 排瓦，2.2 m/张 → 每排 7 cm 在 20 m 外糊成颗粒噪点（ext_side 看图）；改 6.5 m/张 ≈ 每排 22 cm（真实石板瓦露出长度）
   for (const sx of [-1, 1]) {
     const nx = sx * rh / sl, ny = hw / sl; // 坡面外法线
     const R = [nx * OFF, rh + ny * OFF], E = [sx * (hw + OV * -dx) + nx * OFF, -OV * -dy + ny * OFF];

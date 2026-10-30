@@ -38,6 +38,10 @@ function frontWallX(b, at, z0, z1, h, holes, n, outward) {
   wallX(b, 'stone', at, z0, z1, 0, h, 1.2, holes, true);
   b.box('gold', 0.14, 0.14, z0 - z1, [at + outward * 0.62, h * 0.44, (z0 + z1) / 2], { uv: 1 });
   b.box('stone', 0.8, 0.6, z0 - z1 + 0.4, [at + outward * 0.4, h - 0.3, (z0 + z1) / 2], { uv: 0.5 });
+  // 批次31 ext_side：入口立面檐下只有一条平石带 → 加挑檐冠板 + 檐下石牛腿（1.1 m 等距成列）+ 滴水线
+  b.box('stone', 1.25, 0.22, z0 - z1 + 0.8, [at + outward * 0.62, h + 0.08, (z0 + z1) / 2], { uv: 0.5 });
+  b.box('stoneDark', 0.1, 0.08, z0 - z1 + 0.8, [at + outward * 1.2, h - 0.06, (z0 + z1) / 2], { uv: 1 });
+  for (let zz = z1 + 0.55; zz <= z0 - 0.5; zz += 1.1) { b.box('stone', 0.42, 0.42, 0.26, [at + outward * 0.95, h - 0.72, zz], { uv: 0.6 }); b.box('stone', 0.24, 0.22, 0.26, [at + outward * 0.86, h - 1.03, zz], { uv: 0.6 }); }
   const f = new Frame([at + outward * 0.6, 0, (z0 + z1) / 2], outward > 0 ? Math.PI / 2 : -Math.PI / 2);
   const len = z0 - z1; for (let i = 0; i < n; i++) { const t = -len / 2 + (i + 0.5) * len / n; const lx = outward > 0 ? -t : t; const zz = (z0 + z1) / 2 - t; if (holes.some((ho) => zz < ho.z0 + 1 && zz > ho.z1 - 1)) continue; lancetWindow(b, f, lx, h * 0.5, 0.05, 1.6, h * 0.36); lancetWindow(b, f, lx, 1.4, 0.05, 1.3, h * 0.28); }
 }
