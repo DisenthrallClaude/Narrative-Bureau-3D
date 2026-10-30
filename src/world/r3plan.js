@@ -1249,7 +1249,10 @@ export function planHangar(y) {
   F('更衣柜排', 98.2, -70, 0.6, 18.5, 2); F('调度台', 96.6, -85, 2.5, 1.0, 0.95); F('证物箱', 76, -84.5, 2.2, 1.2, 1.1);
   F('加注车（程序化）', 92.0, -82.5, 2.7, 1.6, 1.4, -0.3);
   // —— 批次6 ⓪ 停机位：A = 山猫直升机（替换胶囊体，旋翼盘包围盒 13×13）；B = 勤务车位（厢式勤务车 + 罩布轿车，桥式吊车吊钩在其上方）——
-  out.push({ m: 'r2/lynx_helicopter', x: 84.2, y, z: -62.4, yaw: Math.PI / 2 + 0.08, h: 3.3, tag: '停机位 A', on: 'floor', col: [3.0, 3.3, 9.0] });
+  // 批次25：Lynx 模型舱门内焊有人物网格（与机身同一网格，无法按节点删）→ 按“禁人物 3D 模型”规则移除；停机位 A 留空：黄色停机框 + 系留环 ×4 + 收存轮挡
+  for (const [x0, x1, z0, z1] of [[79.4, 89.0, -67.85, -67.75], [79.4, 89.0, -57.65, -57.55], [79.4, 79.5, -67.85, -57.55], [88.9, 89.0, -67.85, -57.55]]) floorZ(out, 'r3_paintYellow', x0, x1, z0, z1, y, { lift: 0.001 });
+  for (const [x, z] of [[81.4, -65.6], [87.0, -65.6], [81.4, -59.7], [87.0, -59.7]]) out.push({ box: 'r3_steelOld', x, y: y + 0.03, z, w: 0.22, h: 0.06, d: 0.22, tag: '停机位 A', on: 'partv' }); // 系留环座
+  for (const [x, z] of [[88.4, -66.9], [88.4, -66.4]]) out.push({ box: 'r3_paintYellow', x, y: y + 0.08, z, w: 0.35, h: 0.15, d: 0.25, tag: '停机位 A', on: 'partv' }); // 收存轮挡
   out.push({ m: 'r2/international_harvester_van_nelson_nv', x: 83.6, y, z: -78.4, yaw: 0, w: 5.0, tag: '停机位 B', on: 'floor', col: [5.0, 3.0, 2.7] });
   out.push({ m: 'r2/sedan_car_covered_with_a_gray_car_cloth', x: 89.6, y, z: -79.0, yaw: 0.04, d: 4.8, tag: '停机位 B', on: 'floor', col: [2.2, 1.45, 4.8] });
   for (const [x, z] of [[80.6, -77.0], [80.6, -79.8], [86.6, -77.0], [86.6, -79.8]]) out.push({ box: 'r3_paintYellow', x, y: y + 0.08, z, w: 0.25, h: 0.15, d: 0.35, tag: '停机位 B', on: 'partv' }); // 轮挡
