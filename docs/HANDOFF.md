@@ -175,6 +175,38 @@
 - **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
 - 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
 
+## R3 批次30（2026-10-31 06:27 CST 接手，约 35 分钟）
+### 提交
+bc0da69 安检大厅三件 Blender 精建；ad89053 附楼屋面；32f34eb 正门铜门 + 踏步铜防滑条；9124f32 街屋 DistCull 修；文档提交见 git log。每次提交前本机 `npx vite build` 返回 0；r3plan security_hall **118 件 0 错 0 警**（work/r3/b30/plan/plan_hall.png；件数从 150 降是因为柜台 8 个方块并成 1 个模型）。
+### 1 取图（批次29 的五个 run 全部取回）
+- 走查 41137882135（4960d61）**31 / 0 / 0**。
+- hall_r3（41137808953）：**局徽已出现在北墙黑石面板正中 ✔**，铜字「叙事管理局」在下方读得出；束柱正面石纹已读得出，但柱身仍有纵向黑条（hall_r3_b 前景柱更明显，近乎整块纯黑）——**未解决**。查过：hero_hall.glb 里 pier / trim / wallDark 都在，`H.pier` 自发光已生效，黑块很可能不是 pier 材质（wallDark 0.6 色黑大理石或烘焙光照贴图 0 区），下批用 pick 定位那一块的材质名再动手。
+- **canvas 取图失败**：日志 `canvas grab fail hall_r3 grab timeout` → 回退 page.screenshot 成功（811 s）。即 toDataURL 在 SwiftShader 下同样等不到 GPU flush，canvas 路径无效但无害。
+- hall_wanted（41137837641，4960d61，不含 82b7cf6 铜字牌前移）：铜字牌「通缉」仍被细柱挡 → 改后图 41140233131（9124f32）未回。
+- ext_sky（41137852161）：**三圈街屋一栋都没出现**。查明真因：buildStreetRows 的 InstancedMesh 没调 computeBoundingSphere，main.js DistCull 按单位方块半径 0.87 m 判成小件 → 60 m 外全部隐藏（与批次9 局徽被剔同一机制）。**9124f32 补 computeBoundingSphere + userData.noCull**；改后 ext_sky / ext_bird = run 41140194048，未回。
+- plaza_top：expMul 1.45 后亮度正常（中）。
+### 2 安检大厅 Blender 精建（bc0da69，tools/blender/hall_props.py，预览 work/r3/b30/prev/*.png）
+- sec_counter_6080：胡桃木框芯板（前 3 列 × 上下两块凸起芯板 + 立梃冒头）、黑石台面 + 前 / 侧铜包边、铜立柱圆头 + 玻璃挡板 + 递件槽、编号牌铜框、职员侧抽屉柜 + 铜拉手。第一版立梃 / 冒头共面出黑块，冒头退 6 mm 后预览合格。r3plan 柜台 8 个 box → 1 个模型（固定锚点不变），门牌 z 外移到 BZ+0.385。
+- scan_gate_6080：黑漆立柱 + 四角铜线条 + 铜踢脚 + 外侧铜框嵌板 + 内侧百叶感应格栅 + 正面 5 灯指示列 + 顶梁上下铜线脚 + 前后铭牌框。interiors.js 换掉 8 樘的黑方柱 / 金带 / 顶梁方块，碰撞体、符文条、符文环、车道号、指示灯不动。
+- wait_bench_6080：6 条座板 + 4 条后倾靠背条（胡桃木）+ 三副铸铁侧架（两端带扶手木垫）。替换 interiors.js 两张 street_seating（±8, −68）。
+- 贴图：ambientCG CC0 Wood051 / Marble006 / Metal048A / Metal027 / Metal046A 调色缩 512（tools/blender/tex/），CREDITS 已补。
+- **游戏内改后图未回**：hall_r3 41139199467、hall_r3_b 41139215556（bc0da69，low 2 帧）。
+### 3 E2 附楼（ad89053）
+- surface.js annex() → gableRoof 新 `realRoof`：两坡 Poly Haven roof_slates_02 石板瓦皮（自建 UV：u 沿屋脊、v 沿坡，2.2 m 一张）+ 檐口出挑 0.45 m + 封檐板 + 半圆铸铁天沟 + 每坡两只通风帽。影响西北车库 / 西档案附楼 / 东外勤附楼 / 宿舍三号楼。
+- **ext_side 改后（41139448664）看不出变化**：右下素灰体块屋面仍是平涂。有两种可能：① 那块不是 annex 而是 hero_facade.glb 东翼（facade.py 两翼 x 40–62，roof(...) 'slate'），② 贴图在这个距离 / 光照下读不出。下批先在 ext_side 机位 pick 那块网格名再决定改 surface.js 还是 facade.py。**本项不合格**。墙面线脚 / 雨渍未做。
+### 4 正门近景（32f34eb）
+- 问题清单（ext_door_near / ext_door_mid 看图）：① 低机位仰视 10 级踏步糊成一整块石墙；② 门扇「棕木板 + 亮铜框」读成霓虹描边；③ 门洞两侧石雕群（暂留）；④ 平台前沿大块石材纹理斑驳；⑤ 灯柱 / 旗杆底座本机位看不到，未查。
+- 修了 ①②：每级踏面前沿嵌铜防滑条；hero 路径门扇改暗古铜 bronzeDoor + 芯板 bronzePanel + 哑光铜框 brassNosing + 铁箍上铜泡钉。
+- 改后 ext_door_mid（41139625933）：踏步已经一级一级读得出 ✔；门扇仍偏橙红铜色、铜框反光仍亮（中下）——下批把门扇颜色压到 0x3a2c20、框 roughness 0.7。ext_door_near 改后图未回。
+### 收尾
+- 走查 **41140251209（9124f32 = 最终代码）通过 31 / 失败 0 / 控制台错误 0**。
+- Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删批次29 四卷，再传 v02 1dUqF0Wyc0Afr7Y0e3chbgihAVCRukjoX、v03 1Twz8SzaT8GBIib_qw1XqQceotwh_41Hm、v04 1EezZ4BeH4J9P4PmPksYDkHBJ8bowDmTA（含三个新 glb）；v01 见 PROGRESS-LOG（含本节文档）。
+- 对比图 work/r3/cmp30_*.jpg（hall_r3 / hall_r3_b / ext_door_near 右栏缺图；改后取回到 work/r3/b30/r<run>/ 后 `python3 work/r3/b30/cmp30.py` 重出）。
+### 下批先做
+1. 取 41139199467 / 41139215556（hall 新模型）、41140233131（hall_wanted）、41140194048（ext_sky / ext_bird 街屋）。
+2. 束柱黑块、ext_side 右下体块：先 pick 出网格 / 材质名再修。
+3. 正门门扇颜色再压暗；灯柱 / 旗杆底座近景检查。
+
 ## R3 批次29（2026-10-31 06:16 CST 接手，约 35 分钟，实际到约 06:58）
 ### 提交
 4960d61 安检大厅看图修 + shot.mjs canvas 取图 + plaza_top 提曝光 + 街屋三圈；第二个提交（通缉栏铜字牌前移）+ 本节见 git log。每次提交前本机 `npx vite build` 返回 0；r3plan security_hall **150 件 0 错 0 警**（work/r3/b29/plan/plan_hall.png）。
