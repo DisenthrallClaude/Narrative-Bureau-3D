@@ -175,6 +175,44 @@
 - **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
 - 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
 
+## R3 批次18（2026-10-31 01:38 CST 接手，约 35 分钟）
+### 提交
+b439244 **修构建**：1aa76a7 把行尾注释写进 `pinMats = colors.map(...)` 的右括号前（`}) // 注释);`），整行括号被注释吞掉 → vite PARSE_ERROR，Pages 部署和 run 41099382001 都失败（批次17 收尾 a18a968 之后 main 一直是坏的）。**教训：行尾 `//` 注释后面不要再有代码；改完必须本机 `npx vite build`。**
+cea4e7f 区域管控室补陈设 / 东门 / 钢框窗；9c024d5 3F 实验室质感升级 + R4 器皿 + 周闻机位；收尾见 git log。
+### 1 批次17 遗留图
+- 41097061436 / 41096597022 已结束部分取回（work/r3/b17/f_<run>/）：exam_top、zone_r3、id_zhouwen、zone_top、zone_r3_b（旧沙盘）、三条 pick 日志——批次17 已看过，结论不变。41097945807 取到 lab_r3 / lab_r3_b / lab_top（与 b17/l1 同版）+ ec_corner（c3f00d7，**早于** c2e362b 的公告栏南移，不能用于验收）。
+- 卡住的 41098191899（ec_corner）/ 41098425766（hall_wanted）/ 41097061436 的 exam_r3 / 41098757709（exam_r3_b）/ 41096597022 的 cs_top：force-cancel（202；之后部分返回 409 = 已在取消中），重拍合并成 run 41100719680（b439244：ec_corner、hall_wanted、exam_r3、exam_r3_b、cs_top）。41099382001 zone_r3_b 是构建失败，不重拍旧版，直接拍新版（见 2）。
+- **Actions 排队严重**：被强制取消的 SwiftShader 作业要几分钟才真正释放 runner，期间新 run 的 plan 作业都在 queued。截止汇报时 41100719680 / 41101040921 / 41101548885 / 41101715978 仍排队或刚开始 → **本批没有一张新图完成验收**（见「未验收」）。
+- cmp17.py 已重跑（work/r3/cmp17_*.jpg），无新图入格。
+### 2 区域管控室（cea4e7f，r3plan zone_control 237 件 **0 错误 0 警告**，work/r3/b18/plan_zone.png = screenshots/r3/plan_zone_control.png）
+- ⑥ 南侧 6 m 空地成组：西组「联合会商」长桌（conference_table_rectangular_6m fit 6.0×1.2，x 24…30，z −38）两侧各 4 把 r4/exam_chair 实木椅 + 东端主位、摊开区域图（r3_mapPaper）、文件夹 / 文件盘 / 两只烟灰缸 / 台灯 / 4 只茶杯 / 4 份记录、铜牌 + 吊牌「联合会商」+ 补光；东组「资料台」两张 woodentable_01（2.6×1.0×0.9）并排（x 40.6 / 44.4），台面册子 / 书堆 / 文件盘 / 摊开图纸 + 各一把转椅，南墙一排 6 只铁皮资料柜 + 铜牌「分片资料」。中段 x 31.6…38.4 定义为「值班台—沙盘通道」，沙盘南环道收窄为 z −41.85…−39.6（仍 2.25 m）。
+- ⑦ 东门（楼梯井门洞 z −44…−47.5，就是 zone_r3_b 里那块「纯黑门洞」；批次17 HANDOFF 写成「北墙」是方向记错）：钢门套（两立框 + 门楣）+ 两扇胡桃木门扇向室内开到 180° 贴墙（各 1.72 m，上下两块芯板 + 铜拉手 + 铜踢板）+ 门楣铜牌「楼梯间」+ 门后楼梯间吸顶补光（eastwing.js point 53, F3+2.9, −45.75）。灭火器从 z −43.4 移到 −50.3 让门扇。
+- 哥特彩窗：东外墙 x 56（楼梯井列）的 3F 五樘尖拱彩窗 → **钢框磨砂窗**（磨砂面 1.6×2.6 弱自发光 0.32 + 4×3 黑钢棂 + 黑石窗台），只改 3F（R3.zone_control 时）；1F / 2F 仍是尖拱彩窗，未动。
+- 机位重拍 run 41101040921（zone_r3_b / zone_top / zone_r3）**截止未出图，未验收**。
+### 3 3F 理化实验室质感升级（9c024d5，r3plan lab3 916 件 **0 错误 0 警告**，work/r3/b18/plan_lab3.png = screenshots/r3/plan_lab3.png）
+- 吊顶：dressing.js 的白色 T 形网格 tGrid 在 R3.lab3 下关闭 → r3plan 深色木格藻井（dz_ceil 底板 + 1.5 m 间距 dz_beam 胡桃木格梁 0.14×0.16），日光灯管仍吊在梁下。
+- 地面：r3_corr 浅水磨石 → 新材质 **r3_terrDark**（Terrazzo005 压到 0x55524a）+ 黑石收边 0.25 m。
+- 墙面：新墙面样式 `lab`（dress.js）：**浅灰绿油漆墙裙 r3_labWain（0x7d8f80，高 1.4 m）+ 白抹灰上墙 r3_labUpper + 深绿漆护角 / 踢脚**，lab3 的北 / 南 / 西 / 东四面原 'stone'（黑石墙裙 + 土黄抹灰）全部换掉。
+- 实验台：柜身两侧各 4 扇凸出门板 + 黑色门缝 + 铜拉手（上移到门板上沿）+ 内凹踢脚 + 西端编号牌「第一台…第八台 / 理化一组·二组」；台面（实验台 / 通风橱 / 水槽台）换新材质 **r3_epoxyBlack**（0x121315，粗糙 0.3），不再用会渲成棕木纹的 onyx / stoneDark。
+- R4 资产转换（原 GLB 本身就是 meshopt 压缩，直接拷入 public/assets/models/r4/；Blender 预览需先解压 meshopt，脚本思路：gltf-transform NodeIO + MeshoptDecoder 读入、dispose EXT_meshopt_compression 后写出）。**逐个 Blender 预览 work/r3/b18/prev/*.png、拼图 prev/sheet.jpg**：
+  - lab_beakers_set（三只刻度烧杯）✔、lab_round_bottom_flasks（圆底烧瓶 + 软木圈）✔、misc_bottle_corked_a01（软木塞玻璃瓶）✔、container_jar_glass_silver_a01（白色广口瓶 + 金属旋盖，偏现代，当白瓷试剂瓶用）△ 收、safety_eyewashStation_combo_shower_a01（立管 + 淋浴盘 + 拉环 + 洗眼盆）✔；lab_condensers_vigreux（冷凝管）✔ 模型合格但需铁架台，本批不放。
+  - 摆法：每张实验台北侧台面成组：烧杯组 + 烧瓶组 + 1 广口瓶 + 2 软木塞瓶（定点，无随机）；东北角程序化黄管洗眼站 → R4 洗眼 / 淋浴站（x 27.35，z −119.58，yaw π）。
+  - **没有天平**：R4 lab / medical 里没有天平模型，未做；显微镜沿用已验收的 microscope。
+- 黑板：加专门补光（light 11.2, y+2.9, −108.5, 1.6, 4.5）；板书贴图沿用批次17 `chalk` Canvas（滴定反应式、读数、注意事项、值日栏）。
+- 机位重拍 run 41101548885（lab_r3 / lab_r3_b / lab_top / id_zhouwen）**截止未出图，未验收**。质感是否到位必须看图再判，不要据代码改动认定合格。
+### 4 周闻机位
+- shots.js id_zhouwen：[35.1, 12.1, −58.95]→[35.12, 11.9, −59.3]，看向 [35.12, 11.2, −59.95]，fov 55→40（拉近、收窄）；eastwing.js 周闻空椅前加暖光点灯（2.2 / 2.6 m）。批次17 图（f_41097061436/a/id_zhouwen.png）：大衣 + 证件卡头像可见但证件卡只占画面 ~2%，下半屏是值班台蓝色石纹。新图在 run 41101548885，未验收。
+### 5 B3 收容库 vault_b3 —— 未开工（时间不够）
+- 只做了资产预检：assets/sourced/R4/containment_storage 逐个 Blender 预览（work/r3/b18/prev_b3/*.png、sheet.jpg）：case_a01 / case_c02 / case_d01 黑色铝合金证物箱 ✔；wire_securityRoom_b01 钢网隔离间面板带门 ✔（适合「隔离收容格」成排）；specimen_octopus_jar 浸制标本罐 ✔；rack_long_empty_a01 蓝橙仓储货架 ✘（现代仓库配色，与 70 年代不符，除非重新上色）。均未拷入 public。
+- B3 在 vault.js（LEVELS.B3 = −26，名称「证物收容库 · 开架区 · 1–3 级」，南端电梯厅金门 z −84）。下批：先读 vault.js B3 段画平面（防爆门 / 收容格成排 / 观察窗 / 警示灯 / 登记台），再写 PLANS.vault_b3。
+### 6 收尾
+- 走查 run 41101715978（walk:walk，9c024d5）已派，截止排队中，**结果未知**——docs/WALKTHROUGH.md 仍是批次17 的 88abf88 31/31 控制台 0。
+- 对比图脚本 work/r3/b18/cmp18.py（取图目录 b18/z1 = 41101040921、b18/l1 = 41101548885、b18/r1 = 41100719680）：`rm -rf /tmp/afz; bash tools/gh_shots_fetch.sh <run> work/r3/b18/<z1|l1|r1>; cd work/r3 && python3 b18/cmp18.py` → work/r3/cmp18_zone_control.jpg / cmp18_lab3.jpg / cmp18_misc.jpg（缺图格子标「缺图」）。
+### 下批先做
+1. 取图并看：41101040921（zone ×3）、41101548885（lab ×3 + id_zhouwen）、41100719680（ec_corner / hall_wanted / exam_r3 / exam_r3_b / cs_top）、41101715978（walk）。卡死超 20 分钟的就 cancel。
+2. 根据 lab 图判定质感；不合格就继续（墙裙高度 / 灯色 / 台面反光）。
+3. B3 收容库 vault_b3。
+
 ## R3 批次17（2026-10-31 01:09 CST 接手，约 35 分钟）
 ### 提交
 b76677b _pick 等待上限 600→3000 s（批次16 两次拾取都是 waitForFunction 600 s 超时，SwiftShader 首帧 >10 分钟）；612f37b 试卷 0.870 + 沙盘重做；174cf37 walk 屏蔽 Pointer Lock；c3f00d7 3F 理化实验室 lab3；c2e362b ec_corner 修 + WALKTHROUGH；88abf88 hall_wanted 修；62b9c1a 高窗再压暗；收尾见 git log。
