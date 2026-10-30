@@ -190,7 +190,7 @@ bc0da69 安检大厅三件 Blender 精建；ad89053 附楼屋面；32f34eb 正�
 - scan_gate_6080：黑漆立柱 + 四角铜线条 + 铜踢脚 + 外侧铜框嵌板 + 内侧百叶感应格栅 + 正面 5 灯指示列 + 顶梁上下铜线脚 + 前后铭牌框。interiors.js 换掉 8 樘的黑方柱 / 金带 / 顶梁方块，碰撞体、符文条、符文环、车道号、指示灯不动。
 - wait_bench_6080：6 条座板 + 4 条后倾靠背条（胡桃木）+ 三副铸铁侧架（两端带扶手木垫）。替换 interiors.js 两张 street_seating（±8, −68）。
 - 贴图：ambientCG CC0 Wood051 / Marble006 / Metal048A / Metal027 / Metal046A 调色缩 512（tools/blender/tex/），CREDITS 已补。
-- **游戏内改后图未回**：hall_r3 41139199467、hall_r3_b 41139215556（bc0da69，low 2 帧）。
+- 游戏内改后：hall_r3 41139199467 已回（work/r3/b30/r41139199467/b30h/hall_r3.png，cmp30_hall_r3.jpg）——无穿模 / 无回退，局徽面板正常；但这个机位里新柜台只在画框左右下角露边、长椅在 22 m 外很小，**还不能算亲眼验收了新模型**；束柱黑条仍在。hall_r3_b 41139215556（正对柜台一排）未回，下批以它为准。
 ### 3 E2 附楼（ad89053）
 - surface.js annex() → gableRoof 新 `realRoof`：两坡 Poly Haven roof_slates_02 石板瓦皮（自建 UV：u 沿屋脊、v 沿坡，2.2 m 一张）+ 檐口出挑 0.45 m + 封檐板 + 半圆铸铁天沟 + 每坡两只通风帽。影响西北车库 / 西档案附楼 / 东外勤附楼 / 宿舍三号楼。
 - **ext_side 改后（41139448664）看不出变化**：右下素灰体块屋面仍是平涂。有两种可能：① 那块不是 annex 而是 hero_facade.glb 东翼（facade.py 两翼 x 40–62，roof(...) 'slate'），② 贴图在这个距离 / 光照下读不出。下批先在 ext_side 机位 pick 那块网格名再决定改 surface.js 还是 facade.py。**本项不合格**。墙面线脚 / 雨渍未做。
@@ -200,7 +200,7 @@ bc0da69 安检大厅三件 Blender 精建；ad89053 附楼屋面；32f34eb 正�
 - 改后 ext_door_mid（41139625933）：踏步已经一级一级读得出 ✔；门扇仍偏橙红铜色、铜框反光仍亮（中下）——下批把门扇颜色压到 0x3a2c20、框 roughness 0.7。ext_door_near 改后图未回。
 ### 收尾
 - 走查 **41140251209（9124f32 = 最终代码）通过 31 / 失败 0 / 控制台错误 0**。
-- Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删批次29 四卷，再传 v02 1dUqF0Wyc0Afr7Y0e3chbgihAVCRukjoX、v03 1Twz8SzaT8GBIib_qw1XqQceotwh_41Hm、v04 1EezZ4BeH4J9P4PmPksYDkHBJ8bowDmTA（含三个新 glb）；v01 见 PROGRESS-LOG（含本节文档）。
+- Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删批次29 四卷，再传 v01 1g3aeYNJoTc77jAYFjEmflmmuuCAr8GRx（2.57 MB，含本节初版）、v02 1LDuRe0tW9ohmEd9SEm2bfmX8lUudjDlF（22.9 MB）、v03 1Twz8SzaT8GBIib_qw1XqQceotwh_41Hm、v04 1EezZ4BeH4J9P4PmPksYDkHBJ8bowDmTA（281 MB，含三个新 glb）。
 - 对比图 work/r3/cmp30_*.jpg（hall_r3 / hall_r3_b / ext_door_near 右栏缺图；改后取回到 work/r3/b30/r<run>/ 后 `python3 work/r3/b30/cmp30.py` 重出）。
 ### 下批先做
 1. 取 41139199467 / 41139215556（hall 新模型）、41140233131（hall_wanted）、41140194048（ext_sky / ext_bird 街屋）。
