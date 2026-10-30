@@ -6,7 +6,7 @@ const exe = process.env.CHROME || '/workspace/work/tools/pw-browsers/chromium_he
 const b = await chromium.launch({ executablePath: exe, args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--no-sandbox'] });
 const page = await b.newPage({ viewport: { width: 320, height: 180 } });
 await page.goto(`http://localhost:${srv.address().port}/?shot=${shot}&q=low&frames=1`);
-await page.waitForFunction(() => window.__READY__ === true, null, { timeout: 600000, polling: 1000 });
+await page.waitForFunction(() => window.__READY__ === true, null, { timeout: 3000000, polling: 2000 });
 const r = await page.evaluate((pts) => { const T = window.__THREE__, G = window.G, rc = new T.Raycaster(), out = [];
   for (let i = 0; i < pts.length; i += 2) { rc.setFromCamera(new T.Vector2(pts[i], pts[i + 1]), G.camera); const hs = rc.intersectObjects(G.scene.children, true).filter((h) => h.object.visible && h.object.isMesh).slice(0, 4);
     out.push([pts[i], pts[i + 1], hs.map((h) => { let p = h.object, chain = []; while (p && chain.length < 4) { chain.push(p.name || p.type); p = p.parent; } const m = Array.isArray(h.object.material) ? h.object.material[0] : h.object.material;
