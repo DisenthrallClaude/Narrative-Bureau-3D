@@ -53,7 +53,7 @@ jobs:
   shot:
     needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       max-parallel: 8
@@ -78,7 +78,7 @@ jobs:
           CHROME=$(find ~/.cache/ms-playwright -type f \( -name headless_shell -o -name chrome-headless-shell \) | head -1)
           echo "CHROME=$CHROME"
           mkdir -p out/$GRP
-          CHROME="$CHROME" node tools/shot.mjs out/$GRP "$SHOT" --q ${{ inputs.quality }} --w ${{ inputs.width }} --h ${{ inputs.height }} --frames ${{ inputs.frames }} --fresh 1 --extra "$EXTRA" 2>&1 | tee out/$GRP/$SHOT.log
+          CHROME="$CHROME" node tools/shot.mjs out/$GRP "$SHOT" --q ${{ inputs.quality }} --w ${{ inputs.width }} --h ${{ inputs.height }} --frames ${{ inputs.frames }} --fresh 1 --stimeout 3000000 --extra "$EXTRA" 2>&1 | tee out/$GRP/$SHOT.log
           free -m
           test -f out/$GRP/$SHOT.png
       - uses: actions/upload-artifact@v4

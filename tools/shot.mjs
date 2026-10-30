@@ -52,7 +52,7 @@ for (let i = 0, first = 0; i < shots.length; i++) {
   }
   const info = await page.evaluate(() => window.__SHOT_INFO__?.()).catch(() => null);
   if (process.env.DIAG) console.log('DRAWN', await page.evaluate(() => [...(window.__DRAWN__ ?? [])].join(',')).catch(() => '?'));
-  try { await page.screenshot({ path: path.join(out, `${s}.png`), timeout: 300000 }); } catch (e) { console.log('shot fail', e.message.slice(0, 80)); continue; }
+  try { await page.screenshot({ path: path.join(out, `${s}.png`), timeout: +arg('stimeout', 300000) }); } catch (e) { console.log('shot fail', e.message.slice(0, 80)); continue; }
   console.log(s, ((Date.now() - ts) / 1000).toFixed(0) + 's', JSON.stringify(info));
   } catch (e) { console.log('SHOT ERROR', s, String(e.message).slice(0, 120)); needFresh = true; } // 页面崩溃（OOM）不终止整批，下一机位新开页面
 }

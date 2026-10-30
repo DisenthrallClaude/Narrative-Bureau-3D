@@ -78,6 +78,8 @@ export const SHOTS = {
   cs_top: { pos: [35, 1.8 + 40, -42.49], look: [35, 1.8, -42.5], fov: 50, clipY: 1.8 + 4.8, zone: 'citizen_service' },
   ec_r3: { pos: [26.3, 1.8 + 1.65, -79.6], look: [25.0, 1.8 + 1.2, -100], fov: 70, zone: 'east_cloister' }, // 批次11：东廊（南口看陈列面）
   ec_r3_b: { pos: [25.2, 1.8 + 1.65, -110.2], look: [27.4, 1.8 + 1.0, -88], fov: 70, zone: 'east_cloister' }, // 拐角回看长凳面
+  ec_vit_a: { pos: [25.75, 1.8 + 1.5, -86.9], look: [24.56, 1.8 + 0.88, -86.1], fov: 50, zone: 'east_cloister' }, // 批次12 收尾：展柜 1 特写（摊开的书/怀表/墨水瓶）
+  ec_vit_b: { pos: [25.75, 1.8 + 1.5, -92.9], look: [24.56, 1.8 + 0.88, -92.1], fov: 50, zone: 'east_cloister' }, // 展柜 2 特写（档案盒/印章/旧相机）
   ec_corner: { pos: [26.6, 1.8 + 1.6, -112.0], look: [19.0, 1.8 + 1.4, -114.2], fov: 70, zone: 'east_cloister' }, // 东西段公告栏 → 食堂口
   ec_top: { pos: [23.2, 1.8 + 46, -95.79], look: [23.2, 1.8, -95.8], fov: 50, clipY: 1.8 + 4.4, zone: 'east_cloister' },
   cc_top: { pos: [35, 8.8 + 34, -46.49], look: [35, 8.8, -46.5], fov: 50, clipY: 8.8 + 4.6, zone: 'command_center' },
