@@ -102,6 +102,15 @@ export const SHOTS = {
   plaza_r3: { pos: [0, 1.7, 79.2], look: [0, 4.0, 36], fov: 72, zone: 'plaza' }, // 批次25 广场 R3：南口 → 岗亭 / 罗盘地徽 / 行道树列 / 泉
   plaza_r3_b: { pos: [15.6, 1.7, 70.5], look: [18.5, 2.6, 34], fov: 68, zone: 'plaza' }, // 批次26 原机位贴着东岗亭被挡 → 移到岗亭北侧；东侧带：告示栏 / 行道树 / 长椅 / 旗杆
   plaza_top: { pos: [0, 78, 40.01], look: [0, 0, 40], fov: 62, zone: 'plaza' },
+  wall_r3: { pos: [-46.37, 1.65, 56.2], look: [-44.37, 1.1, 60.3], fov: 74, zone: 'wall_posts' }, // 批次26 岗亭 R3：门内东侧 → 值班桌 / 执勤表 / 钥匙板 / 取暖炉
+  wall_r3_b: { pos: [-44.46, 1.7, 59.58], look: [-47.45, 1.0, 55.45], fov: 74, zone: 'wall_posts' }, // 西北角 → 行军床 / 空步枪架 / 门窗（窗外探照灯光）
+  wall_top: { pos: [-45.59, 30, 58.48], look: [-45.59, 0, 58.47], fov: 20, clipY: 3.9, zone: 'wall_posts' },
+  ext_door_near: { pos: [0, 1.7, 9], look: [0, 6, -2], fov: 70, zone: 'plaza' }, // 批次26 外观诊断 ×6
+  ext_door_mid: { pos: [0, 3, 34], look: [0, 14, -5], fov: 66, zone: 'plaza' },
+  ext_bird: { pos: [55, 60, 95], look: [0, 0, 20], fov: 55, zone: 'plaza' },
+  ext_street: { pos: [0, 1.7, 96], look: [0, 3, 135], fov: 75, zone: 'plaza' },
+  ext_side: { pos: [70, 10, 20], look: [30, 15, -40], fov: 66, zone: 'plaza' },
+  ext_sky: { pos: [0, 40, 200], look: [0, 20, -40], fov: 50, zone: 'plaza' },
   heli_r3: { pos: [96.5, 12.4 + 1.8, -56.0], look: [80, 12.4 + 0.6, -80], fov: 70, zone: 'helipad' }, // 批次23 屋顶停机坪：东南角 → H / 楼梯间 / 设备房
   heli_r3_b: { pos: [84.5, 12.4 + 1.7, -71.0], look: [84.0, 12.4 + 1.4, -84.0], fov: 78, zone: 'helipad' }, // 批次24：楼梯间 / 设备房南立面近景（檐口 / 雨渍 / 管线 / 百叶）
   heli_top: { pos: [86, 12.4 + 45, -69.99], look: [86, 12.4, -70], fov: 50, zone: 'helipad' },

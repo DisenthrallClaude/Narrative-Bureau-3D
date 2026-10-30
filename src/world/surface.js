@@ -330,6 +330,32 @@ export async function buildSurface(scene, world, ctx) {
         const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffd9a0 })); bulb.position.set(...wp(sx * 2.9, 2.95, Dp / 2 + 2.6)); zone.add(bulb); // 灯罩里的灯泡（灯柱模型无自发光，夜里像没开）
         P.add('r2/concrete_road_barrier', wp(sx * 3.2, 0, Dp / 2 + 4.4), { w: 1.8, yaw }); }
       { const l = new THREE.PointLight(0xdfe6ff, 3.5, 14, 2); l.position.set(...wp(0, H + 1.2, Dp / 2 + 1.6)); l.userData.isFill = true; zone.add(l); }
+      // R3 批次26：岗亭功能平面补全（check-only 平面 = r3plan.js planWallPosts，局部坐标，数字与此处一一对应；r3plan 0 错误）
+      // 功能：后墙 = 值班桌（监控 / 电话 / 登记簿 / 暖瓶）+ 上方执勤表；西墙 = 文件柜 → 钥匙板 → 塔楼附图 → 取暖炉（离墙 0.75 m，烟囱直上出屋面）→ 衣帽架 → 灭火器；
+      // 东墙 = 储物柜 → 行军床 → 步枪架（空，门东侧角落）；屋面西前角 = 探照灯（窗外可见，光束照向门前坪外）
+      // 取暖炉（铁桶炉）+ 烟囱 + 炉前铁皮护板 + 煤斗；炉口暗红余火 + 小暖光
+      P.add('r2/barrel_stove', wp(-2.55, 0.06, 0.75), { h: 0.9, yaw: yaw + Math.PI / 2 });
+      b.add('iron', new THREE.CylinderGeometry(0.075, 0.075, H - 0.95, 12), f.at(-2.55, 0.95 + (H - 0.95) / 2 + 0.06, 0.75), { uv: 1 });
+      b.add('iron', new THREE.CylinderGeometry(0.11, 0.11, 0.06, 12), f.at(-2.55, H - 0.03, 0.75), { uv: 1 }); // 穿顶棚护圈
+      b.add('iron', new THREE.CylinderGeometry(0.075, 0.075, 0.9, 12), f.at(-2.55, H + 0.8, 0.75), { uv: 1 }); b.add('iron', new THREE.ConeGeometry(0.16, 0.14, 12), f.at(-2.55, H + 1.32, 0.75), { uv: 1 }); // 出屋面烟囱 + 防雨帽
+      box('steel', 0.9, 0.012, 0.9, -2.55, 0.066, 0.75); // 炉下铁皮护板
+      box('blackMetal', 0.32, 0.22, 0.26, -1.85, 0.17, 1.15, { collide: true }); // 煤斗
+      { const em = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.1), new THREE.MeshBasicMaterial({ color: 0xff5a1c })); em.applyMatrix4(f.at(-2.25, 0.32, 0.75, [0, Math.PI / 2, 0])); zone.add(em); }
+      pl(0xff8a3a, 1.1, 3.2, -2.1, 0.5, 0.75); // 炉火
+      // 钥匙板（西墙，文件柜与附图之间）：木板 + 铜框 + 3×4 挂钩，挂 9 把（3 个空位按固定位留空）
+      box('dz_wain2', 0.04, 0.6, 0.5, -W / 2 + 0.27, 1.65, -1.05); box('gold', 0.045, 0.62, 0.02, -W / 2 + 0.27, 1.65, -1.31); box('gold', 0.045, 0.62, 0.02, -W / 2 + 0.27, 1.65, -0.79);
+      for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) { const zz = -1.22 + c * 0.17, yy = 1.86 - r * 0.14; box('brass', 0.04, 0.01, 0.01, -W / 2 + 0.31, yy, zz); if ((r * 3 + c) % 4 !== 2) { box('brass', 0.008, 0.07, 0.025, -W / 2 + 0.33, yy - 0.045, zz); box('dz_rugRed', 0.006, 0.03, 0.02, -W / 2 + 0.33, yy - 0.1, zz); } }
+      // 执勤表（后墙监控屏上方）
+      { const dm = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.5), signMaterial('十二号塔　执勤表', ['20:00–24:00　北二哨 / 东一哨', '00:00–04:00　西三哨 / 本塔', '04:00–08:00　（空）'], 600, 200)); dm.applyMatrix4(f.at(0.2, 2.72, -Dp / 2 + 0.27)); zone.add(dm); box('dz_wain2', 1.56, 0.56, 0.02, 0.2, 2.72, -Dp / 2 + 0.26); }
+      // 步枪架（空）：门东侧角落、靠东墙，三格木托 + 上部锁杆，全空
+      box('dz_wain2', 0.32, 0.08, 0.8, W / 2 - 0.41, 0.32, 1.85, { collide: true }); box('dz_wain2', 0.06, 1.3, 0.8, W / 2 - 0.28, 0.95, 1.85);
+      for (let k = 0; k < 3; k++) { box('dz_wain2', 0.22, 0.05, 0.05, W / 2 - 0.4, 1.35, 1.6 + k * 0.25); box('dz_wain2', 0.16, 0.12, 0.2, W / 2 - 0.4, 0.42, 1.6 + k * 0.25); }
+      box('iron', 0.03, 0.03, 0.82, W / 2 - 0.5, 1.5, 1.85); box('brass', 0.06, 0.08, 0.04, W / 2 - 0.5, 1.5, 2.28); // 锁杆 + 挂锁
+      // 屋面探照灯（西前角，窗外可见）：底座 + 灯具 + 冷白聚光照向门前坪外
+      box('steel', 0.5, 0.3, 0.5, -2.8, H + 0.55, 1.8);
+      P.add('r2/portable_searchlight', wp(-2.8, H + 0.7, 1.8), { h: 0.6, yaw: yaw + 0.35 });
+      { const sl = new THREE.SpotLight(0xe6eeff, 40, 40, 0.22, 0.5, 2); sl.position.set(...wp(-2.8, H + 1.0, 2.0)); sl.target.position.set(...wp(-6.0, 0, 18.0)); zone.add(sl); zone.add(sl.target); }
+      pl(0xffe6c4, 1.2, 5.5, 0, 1.2, 0.2); // 室内低位暖补光（顶灯管之外，保留夜岗暗角）
     }
     const sg = goldText('城墙岗哨　十二号塔', 3.2, 0.36, M.goldBright, { res: 96 }); sg.applyMatrix4(f.at(0, 3.3, Dp / 2 + 0.27)); zone.add(sg);
     // 岗亭顶部瞭望台：外挂铁梯 + 黄铜望远镜
