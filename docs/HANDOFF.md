@@ -175,6 +175,34 @@
 - **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
 - 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
 
+## R3 批次28（2026-10-31 06:00 CST 接手，约 35 分钟，实际超到约 06:50）
+### 提交
+9d5e0dd 黄昏光 / 草坪 / 便利店背立面 / 近排街屋 + 环路；文档提交见 git log。提交前本机 `npx vite build` 返回 0。
+### 1 取图
+- 批次27 外观 run 41133662803 回 5 张（ext_street / plaza_top / plaza_r3 / ext_sky / ext_side 旧机位），41133825400 三张全回（ext_booth / ext_door_mid / ext_side 新机位）。cmp27.py 已重跑 → work/r3/cmp27_*.jpg。
+- **看图结论**：黄昏立面已读得出石材线脚与尖塔层次（ext_door_mid、ext_side 新机位），**洗墙灯 / 尖塔投光 / 玫瑰窗强度不过曝、不死黑，本批不改数值**；ext_booth 岗亭近景合格（中上）；plaza_top 俯视偏暗、草坪方格发黑。
+- **安检大厅仍没拿到图（连续第 4 批）**。已查明卡点：canceled run 41133746086 的日志显示 **8 帧在 556 s 全部渲完，之后 `page.screenshot` 一直挂到超时**（首帧前有 515 s 空档）——不是机位或资源加载问题，是 SwiftShader 下大厅每帧 GPU 实际工作量太大，截图要等排队的 GPU 命令全部 flush。按要求改 **low 画质 1280×720、frames=2、单机位逐个派**：41135265908（hall_r3）/ 41135277015（hall_r3_b）/ 41135288620（hall_wanted），截止本节写完仍在「拍」步骤。**局徽主墙 / 柜台仍未亲眼验收**。下批建议：shot.mjs 在 READY 后加 `gl.finish()` 或改用同一任务内渲一帧再 `canvas.toDataURL` 取图（绕开合成器），或 hall 机位加 `&r3off` 关掉反射 / AO 再拍。
+### 2 黄昏打光 + 草坪（9d5e0dd）
+- tod.js dusk：hemiMul 1.0→**1.45**、plazaExp 1.05→**1.15**、新 fogMul **1.35**（main.js 只作用于 env:'sky' 外景区）。
+- 草坪 M.grass：程序化竖线草 → **ambientCG Grass001**（CC0，1K color/normal/rough → public/assets/tex/Grass001_*.webp，CREDITS 已署名）。
+- 改后 plaza_top（41135916901）：四块草坪方格**已读成绿色修剪草坪 ✔**；整体仍偏暗（中下）——下批可给 plaza_top 机位单独提曝光。
+### 3 大道西侧素黑方盒 + E2
+- **查明**：ext_street 镜头朝 +z，画面左侧 = +x —— 黑方盒是 surface.js 地铁 B 口的**便利店报亭（x 15, z 128）背立面**，原四面墙 stoneDark 平涂。
+- 9d5e0dd：墙改 wallPlaster（带 weather() 雨渍 / 污迹）+ 水刷石勒脚 + 腰线 + 两道檐口 + 背面两樘铁栅高窗 + 雨水管。改后 ext_street：已看得到窗栅和墙面层次，不再是纯黑块 ✔（中；墙色在黄昏下仍偏深灰）。
+- **E2 附楼素灰墙未做**（ext_side 新机位右下仍是素灰体块）。
+### 4 外观 P1 街屋（9d5e0dd，部分）
+- exterior.js 新 `buildStreetRows()`：**两圈环路（R 212 / 300，中心 z −35）**，每圈 12 m 车行道 + 两侧 4 m 人行道（M.paving）+ 路沿石；路灯每 30 m 两侧对位、行道树在灯间居中（等距成列）；环路内外各一排**连续临街街屋**（面宽 12/15/18/21 m、进深 14–18 m、4–7 层，每 6 栋留 10 m 支路口；避开河道和南大道走廊）。立面全在着色器里按楼内米制坐标画：底层商铺橱窗 + 红 / 蓝 / 绿招牌带（部分亮）+ 水刷石勒脚，上层分格木窗（窗套 / 中梃 / 窗台雨渍）+ 楼板腰线 + 檐口，面砖 / 红砖 / 灰水泥 / 浅绿四种外墙；平屋面 + 女儿墙 + 每 3 栋一个屋顶水箱间；亮窗 12%（黄昏）。原程序方块 + 尖塔楼退到 **470 / 520 m 以外**只当远景剪影，加大气雾。
+- 改后 ext_street：远景天际线已退成雾中剪影 + 稀疏亮窗，比批次27 的硬灰方块好 ✔；**但近排街屋在这个机位里认不出来**（与雾中远景混在一起），未亲眼确认街屋立面效果 → 待 ext_bird / ext_sky（41135916901 未回）验收。**本条只能算“已实现、未验收”**。城市不在 r3plan 里，无俯视图。
+### 5 对比图
+work/r3/cmp28_ext_street.jpg、cmp28_plaza_top.jpg、cmp28_ext_booth.jpg 两侧都有图；其余 7 张改后缺图（run 41135916901 仍在跑：ext_door_near / ext_door_mid / ext_bird / ext_side / ext_sky / plaza_r3 / plaza_r3_b），重跑 `python3 work/r3/b28/cmp28.py`。
+### 收尾
+- 走查 **41135998534（9d5e0dd）通过 31 / 失败 0 / 控制台错误 0**（work/r3/b28/r41135998534/walk/WALKTHROUGH.md）。
+- **Drive 分卷快照（成功）**：项目根 Drive 文件夹下新建「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq，四卷各自 tar + gws drive +upload，每卷 <115 s：v01_game_code.tar（2 MB，game 去 .git/node_modules/dist/public/screenshots）1l_noSGnkE6Ahw0qEF-mzo0r_EqjtLS4s；v02_docs_files_review_tools.tar（23 MB）1uJd8dodTGU9sR1LHTPTsMmgZzncpSHCh；v03_game_public_small.tar（bake/hdri/tex/hero，136 MB）1suHYiORzlLgihfPCeGmGgU9ZkQXrLD4Y；v04_game_public_models.tar（279 MB，tar 72 s）1IkLO_C64sef8NlUX6cVgGcmxQCSmHkw3。**未打包**：content（935 MB）、work（4.9 GB，主要是截图）、assets（4 GB，Drive 已有 assets_sourced / assets_R* 备份）、game/.git（代码在 GitHub）。旧整包 1AxRm2Q4BurQh9HDT9l1fZEO4y1T9hdC2 保留未删。下批再跑时同名卷需先删旧卷再传（gws drive +upload 不覆盖同名）。
+- Pages：pages.yml 9d5e0dd 部署 success，站点 200。
+### 下批先做
+1. 取 41135916901 剩余 7 张 + 三个 hall run；hall 若仍卡，按上面截图卡点改 shot.mjs。
+2. 验收近排街屋（ext_bird / ext_sky）；E2 附楼线脚 / 窗 / 雨渍；plaza_top 曝光。
+
 ## R3 批次27（2026-10-31 05:31 CST 接手，约 35 分钟）
 ### 提交
 fc37cd0 P0 外观（E1 绿团→花箱修剪侧柏、E5 门卫岗亭、E8/E4 黄昏 + 立面投光）；ba8fbb0 ext_door_mid / ext_side 机位修 + 新 ext_booth；文档提交见 git log。每次提交前本机 `npx vite build` 返回 0。
