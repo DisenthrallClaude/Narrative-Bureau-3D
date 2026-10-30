@@ -34,7 +34,7 @@ export function setupStory(G) {
   }
   if (ctx.countdownScreen) objRead('doc_plaza_screen_countdown', ctx.countdownScreen, '按 E 查看公告屏', 14);
   spotRead('doc_plaza_flagpole', [-14.5, 0.8, 44, 1.2, 1.6, 1.2], '按 E 阅读旗杆铭文', 2.6);
-  inter.add({ id: 'int_plaza_old_painter', box: [ctx.painterPos.x, 1.0, ctx.painterPos.z, 1.4, 2, 1.4], range: 3, prompt: prompt('int_plaza_old_painter', '按 E 交谈'), use: () => dialog(lines('int_plaza_old_painter')) });
+  inter.add({ id: 'int_plaza_old_painter', box: [ctx.painterPos.x, 1.0, ctx.painterPos.z, 1.4, 2, 1.4], range: 3, prompt: prompt('int_plaza_old_painter', '按 E 查看'), use: () => dialog(lines('int_plaza_old_painter')) });
 
   // ———————— 正门 ————————
   objRead('doc_gate_visitor_rules', ctx.visitorStele, '按 E 阅读访客须知');
