@@ -1400,6 +1400,14 @@ export function planDorm3(y0) {
     for (let i = 0; i < 6; i++) out.push({ box: 'navy', x: f.X(1.25), y: y + 1.88 - i * 0.09, z: r.zc - 1.68, w: 0.36 - (i % 2) * 0.1, h: 0.012, d: 0.004, tag: r.num, on: 'partv' });
     out.push({ box: 'wood', x: f.X(1.1), y: y + 0.1, z: r.zc + 0.42, w: 0.6, h: 0.2, d: 0.4, tag: r.num, on: 'floor' }); // 床下箱
     light(out, f.X(2.3), y + 2.7, r.zc, anchor ? 0xffd2a0 : 0xffe2c0, anchor ? 2.4 : 1.7, 5.5);
+    // 批次22：dorm_r3_b 看图墙面素平 → 三面墙（后墙 + 两道开间隔墙）浅灰绿油漆墙裙 1.2 m + 深色踢脚线；走廊墙门两侧同做
+    { const bf = r.back + r.s * 0.1, ff = r.door - r.s * 0.08, zS = r.zc - D.rw / 2 + 0.06, zN = r.zc + D.rw / 2 - 0.06, xm = (bf + ff) / 2, L = Math.abs(ff - bf);
+      out.push({ box: 'r3_labWain', x: bf + r.s * 0.006, y: y + 0.6, z: r.zc, w: 0.012, h: 1.2, d: D.rw - 0.12, tag: r.num + ' 墙裙', on: 'partv' });
+      out.push({ box: 'dz_beam', x: bf + r.s * 0.016, y: y + 0.06, z: r.zc, w: 0.02, h: 0.12, d: D.rw - 0.12, tag: r.num + ' 踢脚', on: 'partv' });
+      for (const [zz, sg] of [[zS, 1], [zN, -1]]) { out.push({ box: 'r3_labWain', x: xm, y: y + 0.6, z: zz + sg * 0.006, w: L, h: 1.2, d: 0.012, tag: r.num + ' 墙裙', on: 'partv' });
+        out.push({ box: 'dz_beam', x: xm, y: y + 0.06, z: zz + sg * 0.016, w: L, h: 0.12, d: 0.02, tag: r.num + ' 踢脚', on: 'partv' }); }
+      const dz0 = r.zc + 0.6, dz1 = r.zc + 1.5; for (const [a, c] of [[zS, dz0], [dz1, zN]]) if (c - a > 0.1) { out.push({ box: 'r3_labWain', x: ff - r.s * 0.017, y: y + 0.6, z: (a + c) / 2, w: 0.012, h: 1.2, d: c - a, tag: r.num + ' 墙裙', on: 'partv' }); out.push({ box: 'dz_beam', x: ff - r.s * 0.028, y: y + 0.06, z: (a + c) / 2, w: 0.02, h: 0.12, d: c - a, tag: r.num + ' 踢脚', on: 'partv' }); }
+      out.push({ box: 'dz_beam', x: bf + r.s * 0.01, y: y + 1.21, z: r.zc, w: 0.03, h: 0.025, d: D.rw - 0.12, tag: r.num + ' 墙裙压线', on: 'partv' }); }
     if (r.num === '306') { // 空床：被褥卷起、桌上留下的信 + 合影 + 钥匙
       out.push({ box: 'kraft', x: f.X(0.4), y: y + 0.805, z: f.desk.z + 0.05, w: 0.12, h: 0.006, d: 0.22, tag: '306 锚点', on: 'desk' });
       out.push({ box: 'dz_paper', x: f.X(0.42), y: y + 0.81, z: f.desk.z + 0.1, w: 0.2, h: 0.003, d: 0.28, tag: '306 锚点', on: 'desk', anchor: 'doc_dorm3_letter' });
@@ -1412,8 +1420,11 @@ export function planDorm3(y0) {
   for (const z of [4, 11, 18, 25, 32]) light(out, 63.3, y + 2.9, z, 0xfff0d8, 2.0, 7);
   // 公共盥洗间：后墙水泥长槽 + 12 龙头 + 镜条 + 白瓷砖墙裙 + 地漏
   const W = D.wash, tx = W.x1 - 0.35;
-  out.push({ box: 'r3_bunkerConc', x: tx, y: y + 0.4, z: (W.z0 + W.z1) / 2, w: 0.6, h: 0.8, d: W.z1 - W.z0 - 1.2, tag: '盥洗槽', on: 'floor' });
-  out.push({ box: 'dz_glassDark', x: tx, y: y + 0.805, z: (W.z0 + W.z1) / 2, w: 0.44, h: 0.01, d: W.z1 - W.z0 - 1.4, tag: '盥洗槽', on: 'partv' });
+  out.push({ box: 'r3_terrTrough', x: tx, y: y + 0.39, z: (W.z0 + W.z1) / 2, w: 0.6, h: 0.78, d: W.z1 - W.z0 - 1.2, tag: '盥洗槽', on: 'floor' }); // 批次22：素混凝土盒 → 浅灰水磨石槽 + 前沿圆口压边 + 两端挡板 + 槽下踢脚凹线
+  out.push({ box: 'r3_terrTrough', x: tx - 0.29, y: y + 0.82, z: (W.z0 + W.z1) / 2, w: 0.08, h: 0.08, d: W.z1 - W.z0 - 1.16, tag: '盥洗槽压边', on: 'partv' });
+  for (const z of [W.z0 + 0.6, W.z1 - 0.6]) out.push({ box: 'r3_terrTrough', x: tx, y: y + 0.84, z, w: 0.6, h: 0.12, d: 0.06, tag: '盥洗槽端板', on: 'partv' });
+  out.push({ box: 'dz_beam', x: tx - 0.305, y: y + 0.05, z: (W.z0 + W.z1) / 2, w: 0.012, h: 0.1, d: W.z1 - W.z0 - 1.2, tag: '盥洗槽踢脚', on: 'partv' });
+  out.push({ box: 'dz_glassDark', x: tx, y: y + 0.785, z: (W.z0 + W.z1) / 2, w: 0.44, h: 0.01, d: W.z1 - W.z0 - 1.4, tag: '盥洗槽', on: 'partv' });
   out.push({ box: 'whitePad', x: W.x1 - 0.01, y: y + 0.9, z: (W.z0 + W.z1) / 2, w: 0.01, h: 1.8, d: W.z1 - W.z0, tag: '瓷砖墙裙', on: 'partv' });
   out.push({ box: 'glassClear', x: W.x1 - 0.02, y: y + 1.65, z: (W.z0 + W.z1) / 2, w: 0.01, h: 0.5, d: W.z1 - W.z0 - 1.4, tag: '镜条', on: 'partv' });
   for (let k = 0; k < 12; k++) { const z = W.z0 + 1.0 + k * 0.85; out.push({ box: 'steel', x: W.x1 - 0.1, y: y + 1.08, z, w: 0.2, h: 0.03, d: 0.03, tag: '龙头', on: 'partv' }); out.push({ box: 'steel', x: W.x1 - 0.19, y: y + 1.03, z, w: 0.03, h: 0.1, d: 0.03, tag: '龙头', on: 'partv' }); out.push({ box: 'whiteMarble', x: W.x1 - 0.05, y: y + 1.2, z, w: 0.03, h: 0.04, d: 0.07, tag: '龙头', on: 'partv' }); }

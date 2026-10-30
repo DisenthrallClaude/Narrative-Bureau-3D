@@ -170,8 +170,8 @@ export async function buildSurface(scene, world, ctx) {
       wallZ(b, 'dm_plaster', Wsh.z0, D.cx1, D.ex1, Y3, H3, 0.12, [], true); wallZ(b, 'dm_plaster', 1.2, D.wx0, D.ex1, Y3, H3, 0.2, [], true); wallZ(b, 'dm_plaster', 38.8, D.wx0, D.ex1, Y3, H3, 0.2, [], true);
       b.box('dz_ceil', D.ex1 - D.wx0, 0.12, 37.6, [(D.wx0 + D.ex1) / 2, Y3 + H3 + 0.06, 20], { uv: 0.3 });
       b.box('dm_terrazzo', Wsh.x1 - Wsh.x0 - 0.1, 0.012, Wsh.z1 - Wsh.z0 - 0.1, [(Wsh.x0 + Wsh.x1) / 2, Y3 + 0.006, (Wsh.z0 + Wsh.z1) / 2], { uv: 0.5 });
-      for (let z = 4; z < 36; z += 7) tubeLamp(b, 63.3, Y3 + H3 - 0.02, z, 0);
-      for (const z of [30.5, 35.5]) tubeLamp(b, 67.0, Y3 + H3 - 0.02, z, 0);
+      for (let z = 4; z < 36; z += 7) tubeLamp(b, 63.3, Y3 + H3 - 0.02, z, 0, true);
+      for (const z of [30.5, 35.5]) tubeLamp(b, 67.0, Y3 + H3 - 0.02, z, 0, true);
       // 走廊端：开水房暖瓶架 + 公告栏
       thermosRack(b, world, 58.0, Y3, 30.6, Math.PI / 2, 10);
       noticeBoard(zone, b, D.cx0 + 0.1, Y3 + 1.6, 20.0, Math.PI / 2, 1.6, 0.9, '三楼公告', [['作息', ['6:30 起床', '22:30 熄灯'], '#efe8d6'], ['卫生', ['周六大扫除'], '#e8eef4'], ['寻物', ['306 室的信', '请交宿管'], '#f4e8c8']]);
@@ -181,10 +181,10 @@ export async function buildSurface(scene, world, ctx) {
         thermos(b, f.X(0.25), Y3 + 0.8, f.desk.z + 0.35); if (!anchorRoom) mug(b, f.X(0.45), Y3 + 0.8, f.desk.z + 0.15);
         // 后墙高窗（借老虎窗光：磨砂玻璃 + 木窗框）
         const gx = r.back + r.s * 0.11; b.box('dm_frameCream', 0.08, 0.9, 1.5, [gx, Y3 + 2.25, r.zc - 0.2], { uv: false }); const gl = new THREE.Mesh(new THREE.PlaneGeometry(1.34, 0.76), new THREE.MeshStandardMaterial({ color: 0x9aa39c, emissive: 0xd8dccf, emissiveIntensity: 0.35, roughness: 0.5 })); gl.position.set(gx + r.s * 0.045, Y3 + 2.25, r.zc - 0.2); gl.rotation.y = r.s > 0 ? Math.PI / 2 : -Math.PI / 2; zone.add(gl);
-        tubeLamp(b, f.X(2.4), Y3 + H3 - 0.02, r.zc, Math.PI / 2);
+        tubeLamp(b, f.X(2.4), Y3 + H3 - 0.02, r.zc, Math.PI / 2, true);
         plane(zone, tagMaterial(r.num), 0.3, 0.12, r.door + r.s * 0.1, Y3 + 2.3, f.door.z0 - 0.35, r.s > 0 ? Math.PI / 2 : -Math.PI / 2); }
       // 306：留下的信（可读）
-      { const r = rooms.find((q) => q.num === '306'), f = dorm3Furn(r); const lm = plane(zone, docMat('doc_dorm3_letter', signMaterial('留给下一位住户', ['这间屋子的床', '我已经叠好了', '如果夜里听见走廊有人念名字', '不要应', '　　　　——306 前住户'], 512, 680)), 0.22, 0.29, f.X(0.42), Y3 + 0.815, f.desk.z + 0.1, 0); lm.rotation.x = -Math.PI / 2 }
+      { const r = rooms.find((q) => q.num === '306'), f = dorm3Furn(r); const lm = plane(zone, docMat('doc_dorm3_letter', signMaterial('留给下一位住户', ['夜里听见走廊有人', '一间一间念名字——', '不要应。', '念到 306 也不要应。', '　　——前住户 留'], 512, 680)), 0.22, 0.29, f.X(0.42), Y3 + 0.815, f.desk.z + 0.1, 0); lm.rotation.x = -Math.PI / 2 }
     }
     // M7：外墙内侧刷漆衬层（原外立面石材直接作室内墙面，映出金色大厅环境图）
     for (const [y0, hh] of [[0, F2 - 0.3], [F2, 4.3]]) {

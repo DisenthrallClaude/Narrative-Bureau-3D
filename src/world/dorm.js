@@ -208,4 +208,7 @@ export function thermosRack(b, world, x, y, z, yaw = 0, n = 10) {
 }
 
 /** 吸顶日光灯（灯箱 + 自发光灯管） */
-export function tubeLamp(b, x, y, z, yaw = 0) { b.add('dm_sillWhite', new THREE.BoxGeometry(1.25, 0.06, 0.22), { pos: [x, y - 0.03, z], rot: [0, yaw, 0] }, { uv: false }); b.add('dz_glowCold', new THREE.CylinderGeometry(0.018, 0.018, 1.18, 8), { pos: [x, y - 0.075, z], rot: [0, yaw, Math.PI / 2] }, { uv: false }); }
+export function tubeLamp(b, x, y, z, yaw = 0, shade = false) { b.add('dm_sillWhite', new THREE.BoxGeometry(1.25, 0.06, 0.22), { pos: [x, y - 0.03, z], rot: [0, yaw, 0] }, { uv: false }); b.add('dz_glowCold', new THREE.CylinderGeometry(0.018, 0.018, 1.18, 8), { pos: [x, y - 0.075, z], rot: [0, yaw, Math.PI / 2] }, { uv: false });
+  if (shade) { // 批次22：搪瓷灯罩（两片外撇反光板 + 端板），宿舍 3F 用
+    for (const sd of [-1, 1]) { const g = new THREE.BoxGeometry(1.3, 0.01, 0.15); g.rotateX(sd * 0.75); b.add('dm_sillWhite', g, { pos: [x + Math.sin(yaw) * sd * 0.155, y - 0.11, z + Math.cos(yaw) * sd * 0.155], rot: [0, yaw, 0] }, { uv: false }); }
+    for (const sd of [-1, 1]) b.add('dm_sillWhite', new THREE.BoxGeometry(0.01, 0.11, 0.24), { pos: [x + Math.cos(yaw) * sd * 0.65, y - 0.1, z - Math.sin(yaw) * sd * 0.65], rot: [0, yaw, 0] }, { uv: false }); } }
