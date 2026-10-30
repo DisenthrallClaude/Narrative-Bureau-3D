@@ -118,6 +118,8 @@ export function hallMats() {
   // 墙/柱：暖灰米色石灰岩方石（实拍砌块），柱身更光洁；线脚为细腻石灰岩
   H.wall = weather(phMat('sandstone_blocks_08', { color: c(0.8, 0.76, 0.7), roughness: 1, env: 0.5, normalScale: 1.2 }), { macro: 0.18, streak: 0.12, grime: 0.3, ground: 1.8, rough: 0.1 });
   H.pier = weather(phMat('sandstone_blocks_08', { color: c(0.78, 0.74, 0.68), roughness: 0.9, env: 0.55 }), { macro: 0.15, grime: 0.35, ground: 1.8, rough: 0.1 });
+  // 批次29 看图修：hall_r3 / hall_r3_b 里中殿束柱柱身几乎纯黑（光照贴图在柱身细柱间几乎为 0）→ 用石材自身贴图做一层弱自发光当作地面反弹光，保证柱身石纹读得出
+  H.pier.emissive = c(0.34, 0.30, 0.25); H.pier.emissiveMap = H.pier.map ?? null; H.pier.emissiveIntensity = 0.42;
   H.trim = weather(pbr('Concrete034', { color: c(0.78, 0.72, 0.62), roughness: 0.8, env: 0.55, normalScale: 0.8 }), { macro: 0.15, grime: 0.3, ground: 1.8 });
   H.vault = weather(pbr('Concrete036', { color: c(0.9, 0.82, 0.68), roughness: 1, env: 0.4, normalScale: 0.6 }), { macro: 0.2, rough: 0.1 });
   H.wallDark = pbr('Marble006', { rn: true, color: c(0.6, 0.6, 0.62), roughness: 0.35, env: 0.6 });
@@ -132,8 +134,8 @@ export function hallMats() {
   H.gold = weather(new THREE.MeshStandardMaterial({ color: c(1.0, 0.74, 0.36), metalness: 1, roughness: 0.24, envMapIntensity: 1.2 }), { macro: 0.12, tarnish: 0.2, rough: 0.12, scale: 2.0 });
   H.brass = weather(pbr('Metal048A', { color: c(0.86, 0.62, 0.34), metalness: 1, roughness: 0.32, env: 1.1 }), { macro: 0.18, tarnish: 0.35, rough: 0.14, scale: 2.0 });
   H.steel = pbr('Metal009', { color: c(0.92, 0.92, 0.93), metalness: 1, roughness: 0.8, env: 1.0 });
-  H.blackMetal = weather(pbr('Metal027', { color: c(0.35, 0.35, 0.37), metalness: 0.6, roughness: 0.9, env: 0.8 }), { macro: 0.08, rough: 0.1 });
-  H.paintMetal = weather(new THREE.MeshStandardMaterial({ color: c(0.32, 0.34, 0.37), roughness: 0.42, metalness: 0, envMapIntensity: 0.8 }), { macro: 0.06, grime: 0.15, ground: 1.8, rough: 0.1 });
+  H.blackMetal = weather(pbr('Metal027', { color: c(0.5, 0.5, 0.52), metalness: 0.6, roughness: 0.9, env: 0.8 }), { macro: 0.08, rough: 0.1 });
+  H.paintMetal = weather(new THREE.MeshStandardMaterial({ color: c(0.42, 0.44, 0.47), roughness: 0.42, metalness: 0, envMapIntensity: 0.8 }), { macro: 0.06, grime: 0.15, ground: 1.8, rough: 0.1 });
   H.blackGlass = new THREE.MeshPhysicalMaterial({ color: c(0.004, 0.004, 0.005), roughness: 0.04, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 1.2 });
   H.rubber = new THREE.MeshStandardMaterial({ color: c(0.018, 0.018, 0.02), roughness: 0.85 });
   H.navyBelt = pbr('Fabric023', { color: c(0.12, 0.18, 0.42), roughness: 1 });

@@ -635,7 +635,7 @@ export function planSecurityHall(y) {
     out.push({ m: i % 2 ? 'r2/wooden_flat_filing_tray' : 'r2/document_letter_tray_documents_organizer', x: x + 0.55, y: y + 1.09, z: BZ - 0.15, yaw: 0, w: 0.32, tag: '证件查验', on: 'desk' });
     out.push({ m: ['r2/rotary_telephone', 'r2/phone_vef_ta_68'][i % 2], x: x + 0.05, y: y + 1.09, z: BZ - 0.25, yaw: 0.25, w: 0.22, tag: '证件查验', on: 'desk' });
     out.push({ box: 'brass', x, y: y + 0.006, z: BZ + 1.25, w: 1.6, h: 0.012, d: 0.04, tag: '一米线', on: 'partv' });
-    light(out, x, y + 2.4, BZ + 0.2, 0xffe0b8, 2.0, 5);
+    light(out, x, y + 2.4, BZ + 0.2, 0xffe0b8, 3.2, 6); light(out, x, y + 1.6, BZ + 1.6, 0xffe6c8, 1.4, 3.5); // 批次29：柜身南面（玩家正对面）补一盏低位光，防发黑
   }
   // ⑤ 等候区：原 street_seating 两张（z −68）前后各加一排胡桃木长椅，每排每侧两张，面向南（LED 大屏）
   for (const z of [-65.4, -70.6]) for (const sx of [-1, 1]) for (const x of [6.9, 9.1]) out.push({ m: 'r2/18th_century_bench_from_hungarian_opera', x: sx * x, y, z, yaw: ROT.S, w: 1.9, tag: '等候区', on: 'floor' });
@@ -645,9 +645,11 @@ export function planSecurityHall(y) {
   out.push({ wtext: '通 缉 公 告', x: X1 - 0.12, y: y + 3.9, z: -64, yaw: ROT.W, w: 2.4, h: 0.42, size: [0.1, 0.6, 2.6], tag: '通缉栏', on: 'pic' });
   light(out, 15.6, y + 3.4, -64, 0xffe6c8, 2.6, 6);
   // ⑥ 局徽主墙（北墙中庭门上方）：大局徽 + 铜字
-  pic(out, 'textures/emblems/N01.jpg', 0, y + 11.0, Z0 + 0.7, 0, 2.8, 2.8, 'gold', { tag: '局徽主墙' });
-  out.push({ wtext: '叙 事 管 理 局', x: 0, y: y + 9.05, z: Z0 + 0.7, yaw: 0, w: 4.2, h: 0.6, size: [4.6, 0.8, 0.1], tag: '局徽主墙', on: 'pic' });
-  light(out, 0, y + 8.0, Z0 + 4.0, 0xffe0b0, 3.0, 9);
+  // 批次29 看图修：hero_hall 北墙上部本有 9×4.2 m 黑石局徽面板（hall.py end_wall，中心离地 12.0，面板前脸 z≈−75.15），
+  // 原局徽（y+11, z Z0+0.7=−75.3）整个埋在面板后 → hall_r3 只见一块空黑板。局徽移到面板正中、贴面板前脸，铜字放面板下金线下方。
+  pic(out, 'textures/emblems/N01.jpg', 0, y + 12.0, Z0 + 0.92, 0, 3.4, 3.4, 'gold', { tag: '局徽主墙' });
+  out.push({ wtext: '叙 事 管 理 局', x: 0, y: y + 9.1, z: Z0 + 0.92, yaw: 0, w: 5.0, h: 0.7, size: [5.4, 0.9, 0.1], tag: '局徽主墙', on: 'pic' });
+  light(out, 0, y + 7.2, Z0 + 5.0, 0xffe0b0, 4.5, 12);
   // 导向：吊牌（查验后横向动线上方）+ 两侧门牌
   hang(out, '← 西翼　人事档案馆', -7.0, y + 4.6, -52.6, 0, 3.2, 0.5, y + 9.0);
   hang(out, '东翼　市民服务 · 高考 · 指挥 →', 7.0, y + 4.6, -52.6, 0, 3.2, 0.5, y + 9.0);

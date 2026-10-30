@@ -722,7 +722,7 @@ function buildStreetRows(g, M, place, rnd) {
   const roadMat = new THREE.MeshStandardMaterial({ color: 0x1e1f22, roughness: 0.82 });
   const walkMat = M.paving; const curbMat = new THREE.MeshStandardMaterial({ color: 0x77767a, roughness: 0.8 });
   const leafMat = M.hedge; const trunkMat = M.iron;
-  const NH = 420, NSEG = 900;
+  const NH = 760, NSEG = 1000;
   const houses = new THREE.InstancedMesh(boxG, houseMat, NH), pars = new THREE.InstancedMesh(boxG, parMat, NH * 2);
   const roads = new THREE.InstancedMesh(boxG, roadMat, NSEG), walks = new THREE.InstancedMesh(boxG, walkMat, NSEG * 2), curbs = new THREE.InstancedMesh(boxG, curbMat, NSEG * 2);
   const poleG = new THREE.CylinderGeometry(0.12, 0.16, 7, 6); poleG.translate(0, 3.5, 0); const armG = new THREE.BoxGeometry(0.1, 0.1, 1.6); armG.translate(0, 7, -0.7); const headG = new THREE.BoxGeometry(0.4, 0.18, 0.7); headG.translate(0, 6.9, -1.4);
@@ -734,7 +734,7 @@ function buildStreetRows(g, M, place, rnd) {
   let nh = 0, np = 0, nr = 0, nw = 0, nc = 0, nl = 0, nt = 0;
   const at = (R, th) => [Math.sin(th) * R, -35 + Math.cos(th) * R];
   // 两圈环路：R 为车行道中心线；内侧、外侧各一排临街街屋
-  for (const R of [212, 300]) {
+  for (const R of [160, 245, 305]) { // 批次29：ext_sky 看图——R212 / 300 两圈都在城墙到画框之外，墙外 120–200 m 一片空地 → 改三圈 160 / 245 / 305（相邻圈街屋背靠背留 ≥4 m 后巷）
     const C = 2 * Math.PI * R, roadW = 12, walkW = 4;
     for (let s = 0; s < C; s += 6) { const th = s / R; const [x, z] = at(R, th); if (!place(x, z)) continue; q.setFromAxisAngle(up, th);
       if (nr < NSEG) { m4.compose(new THREE.Vector3(x, Y0, z), q, new THREE.Vector3(6.3, 0.06, roadW)); roads.setMatrixAt(nr++, m4); }

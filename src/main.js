@@ -428,6 +428,7 @@ function applyShot(name) {
   if (s.fov) { camera.fov = s.fov; camera.updateProjectionMatrix(); }
   R.gl.clippingPlanes = s.clipY != null ? [new THREE.Plane(new THREE.Vector3(0, -1, 0), s.clipY)] : []; // R3 俯视图：裁掉顶棚
   setZone(s.zone ?? zoneAt(new THREE.Vector3(s.pos[0], s.pos[1] - 1.6, s.pos[2])), true);
+  if (s.expMul) targetExp *= s.expMul; // 批次29：个别机位单独提曝光（plaza_top 黄昏俯视偏暗）
   curExp = targetExp; time.value = s.t ?? 12;
   if (/^b5(?!_door)/.test(name) && ctx.vault?.door) { ctx.vault.door.opened = true; for (const ac of ctx.vault.door.acts) ac.play(); ctx.vault.door.mixer.setTime(10); }
   shotFrames = Number(params.get('frames') || 8);

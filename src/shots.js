@@ -101,7 +101,7 @@ export const SHOTS = {
   hall_top: { pos: [0, 1.8 + 44, -52.99], look: [0, 1.8, -53], fov: 58, clipY: 1.8 + 5.0, zone: 'security_hall' },
   plaza_r3: { pos: [0, 1.7, 79.2], look: [0, 4.0, 36], fov: 72, zone: 'plaza' }, // 批次25 广场 R3：南口 → 岗亭 / 罗盘地徽 / 行道树列 / 泉
   plaza_r3_b: { pos: [15.6, 1.7, 70.5], look: [18.5, 2.6, 34], fov: 68, zone: 'plaza' }, // 批次26 原机位贴着东岗亭被挡 → 移到岗亭北侧；东侧带：告示栏 / 行道树 / 长椅 / 旗杆
-  plaza_top: { pos: [0, 78, 40.01], look: [0, 0, 40], fov: 62, zone: 'plaza' },
+  plaza_top: { pos: [0, 78, 40.01], look: [0, 0, 40], fov: 62, zone: 'plaza', expMul: 1.45 },
   wall_r3: { pos: [-46.37, 1.65, 56.2], look: [-44.37, 1.1, 60.3], fov: 74, zone: 'wall_posts' }, // 批次26 岗亭 R3：门内东侧 → 值班桌 / 执勤表 / 钥匙板 / 取暖炉
   wall_r3_b: { pos: [-44.46, 1.7, 59.58], look: [-47.45, 1.0, 55.45], fov: 74, zone: 'wall_posts' }, // 西北角 → 行军床 / 空步枪架 / 门窗（窗外探照灯光）
   wall_top: { pos: [-45.59, 30, 58.48], look: [-45.59, 0, 58.47], fov: 20, clipY: 3.9, zone: 'wall_posts' },

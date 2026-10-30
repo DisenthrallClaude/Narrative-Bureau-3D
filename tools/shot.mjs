@@ -52,7 +52,21 @@ for (let i = 0, first = 0; i < shots.length; i++) {
   }
   const info = await page.evaluate(() => window.__SHOT_INFO__?.()).catch(() => null);
   if (process.env.DIAG) console.log('DRAWN', await page.evaluate(() => [...(window.__DRAWN__ ?? [])].join(',')).catch(() => '?'));
-  try { await page.screenshot({ path: path.join(out, `${s}.png`), timeout: +arg('stimeout', 300000) }); } catch (e) { console.log('shot fail', e.message.slice(0, 80)); continue; }
+  // 批次29：安检大厅 page.screenshot 在 SwiftShader 下等合成器 flush 卡死（8 帧 556 s 渲完后挂到超时）。
+  // 默认改为 READY 后 gl.finish() + 直接从 canvas toDataURL 取图（shot 模式 renderer 已开 preserveDrawingBuffer），不经合成器；
+  // --hud 1（需要 HTML 叠层）或取图失败时才回退 page.screenshot。
+  let grabbed = false;
+  if (!arg('hud', '') && arg('grab', 'canvas') === 'canvas') {
+    try {
+      const durl = await Promise.race([
+        page.evaluate(() => { const c = document.getElementById('c'); const gl = c.getContext('webgl2') || c.getContext('webgl'); gl?.finish(); return c.toDataURL('image/png'); }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('grab timeout')), +arg('gtimeout', 240000))),
+      ]);
+      if (typeof durl === 'string' && durl.startsWith('data:image/png;base64,') && durl.length > 5000) { fs.writeFileSync(path.join(out, `${s}.png`), Buffer.from(durl.slice(22), 'base64')); grabbed = true; console.log('  canvas grab ok', s); }
+      else console.log('  canvas grab empty', s);
+    } catch (e) { console.log('  canvas grab fail', s, String(e.message).slice(0, 80)); }
+  }
+  if (!grabbed) { try { await page.screenshot({ path: path.join(out, `${s}.png`), timeout: +arg('stimeout', 300000) }); } catch (e) { console.log('shot fail', e.message.slice(0, 80)); continue; } }
   console.log(s, ((Date.now() - ts) / 1000).toFixed(0) + 's', JSON.stringify(info));
   } catch (e) { console.log('SHOT ERROR', s, String(e.message).slice(0, 120)); needFresh = true; } // 页面崩溃（OOM）不终止整批，下一机位新开页面
 }
