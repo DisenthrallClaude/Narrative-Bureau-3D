@@ -97,7 +97,7 @@ export function loadTex(path, { srgb = false, repeat = [1, 1] } = {}) {
   if (repeat[0] === 1 && repeat[1] === 1) return base;
   const t = base.clone();
   t.repeat.set(repeat[0], repeat[1]);
-  t.needsUpdate = true;
+  if (base.source.data?.nbFreed) t.version++; else t.needsUpdate = true; // 批次12 freecpu：源图已上传并丢掉 CPU 副本时不能 source.version++（会重传空图），只让 clone 复用已上传的 GPU 贴图
   // clone 共享 source，图片加载完成后自动可用
   return t;
 }

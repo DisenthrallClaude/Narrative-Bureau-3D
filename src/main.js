@@ -35,6 +35,12 @@ const SHOT = params.get('shot');
 const TEST = !!params.get('test'); // M7：走查模式不预编译、不渲染（SwiftShader 下整场景编译+渲染要十几分钟）
 const LOG = (...a) => { if (SHOT) console.log('[NB]', ...a); };
 window.__SHOT__ = !!SHOT;
+// 批次12：截图模式省内存（?freecpu=1，tools/shot.mjs 在 8 GB 本机用）。实测渲染进程里 GLB 贴图 ImageBitmap 解码副本 1299 张 ≈ 2.6 GB，
+// 而 SwiftShader 的「显存」本身也在内存里 → 1600×900 high 峰值超 7.9 GB 被 OOM。贴图上传 GPU 后 close() 掉 CPU 端位图（GLB 贴图不被 clone、不会重传），画面不变。
+if (SHOT && params.get('freecpu') === '1') {
+  const IB = globalThis.ImageBitmap, free = (t) => { const im = t.source?.data; if (IB && im instanceof IB) { t.source.data = { width: im.width, height: im.height, nbFreed: true }; im.close(); } else if (im instanceof HTMLImageElement && im.complete && im.naturalWidth) { t.source.data = { width: im.width, height: im.height, nbFreed: true }; } }; // HTMLImage：丢引用让解码图被回收；loadTex 之后再 clone 只 version++ 复用已上传的 GPU 贴图（assets.js）
+  Object.defineProperty(THREE.Texture.prototype, 'onUpdate', { configurable: true, get() { return this._nbOU ?? free; }, set(v) { this._nbOU = v ?? undefined; } });
+}
 RectAreaLightUniformsLib.init();
 
 const scene = new THREE.Scene();
@@ -157,6 +163,7 @@ async function boot() {
     top.sort((a, b) => b[0] - a[0]); return { bins, top: top.slice(0, 40) }; };
   setZone('plaza', true);
   UI.updateObjective();
+  window.__NB_G__ = G; // 调试：内存探针（work/b12/memprobe.mjs）
   if (SHOT) return startShot();
   if (params.get('test')) { // M6：自动化走查接口（tools/walk.mjs）——不锁鼠标，直接进入游戏态
     window.__NB_AUTO__ = { choices: [], log: [] };

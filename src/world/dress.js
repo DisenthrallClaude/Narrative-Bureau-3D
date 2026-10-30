@@ -52,7 +52,7 @@ export function dressMats(M) {
     dz_paintLow: W(new THREE.MeshStandardMaterial({ color: 0x2c3a34, roughness: 0.55, metalness: 0.1 }), { macro: 0.2, grime: 0.5, ground: 1.2, streak: 0.2 }),
     dz_paintUp: W(phm('concrete_wall_008', { color: 0x9a9c96, env: 0.3 }), { macro: 0.25, grime: 0.3, streak: 0.25 }),
     dz_parquet: W(new THREE.MeshStandardMaterial({ map: parquet(), roughness: 0.42, envMapIntensity: 0.5 }), { macro: 0.15, dust: 0.15 }),
-    dz_rugRed: new THREE.MeshStandardMaterial({ map: rugTex('#4a1418', '#1a1a2a', '#b08a40'), roughness: 1 }),
+    dz_rugRed: new THREE.MeshStandardMaterial({ map: rugTex('#6a1c1f', '#2e0e11', '#b08a40'), normalMap: loadTex('assets/tex/Carpet012g_normal.webp', { repeat: [7, 7] }), normalScale: new THREE.Vector2(0.6, 0.6), roughness: 1 }), // 批次12：原底 #4a1418 + 边 #1a1a2a（蓝黑）在暖光下发黑 → 提亮酒红、边改深牛血红，加 Carpet012g 绒面法线
     dz_rugNavy: new THREE.MeshStandardMaterial({ map: rugTex('#14203e', '#3a1014', '#b08a40'), roughness: 1 }),
     dz_rugGreen: new THREE.MeshStandardMaterial({ map: rugTex('#163024', '#121418', '#a08040'), roughness: 1 }),
     dz_paper: new THREE.MeshStandardMaterial({ color: 0xe6dfcc, roughness: 0.85 }),
@@ -77,7 +77,7 @@ export function dressMats(M) {
     r3_stoneBorder: W(pbr('Marble016', { rn: true, color: 0x3a3632, roughness: 0.4, env: 0.5 }), { macro: 0.1 }),
     r3_carpet: W(pbr('Carpet012', { color: 0x5c6c7c, roughness: 1 }), { macro: 0.22, dust: 0.1 }),
     r3_carpetGreen: W(pbr('Carpet012', { color: 0x46564a, roughness: 1 }), { macro: 0.22, dust: 0.1 }),
-    r3_carpetRed: W(pbr('Carpet012', { color: 0x6a2a2a, roughness: 1 }), { macro: 0.2, dust: 0.1 }),
+    r3_carpetRed: W(pbr('Carpet012g', { color: 0x8e2420, roughness: 1, env: 0.3 }), { macro: 0.2, dust: 0.1 }), // 批次12：同东廊根因（Carpet012 彩色贴图偏蓝黑 × 暗红 ≈ 黑）→ 去色 Carpet012g 染红（比东廊 crimson 略深，用于整间铺地）
     r3_carpetBrown: W(pbr('Carpet012', { color: 0x6a5440, roughness: 1 }), { macro: 0.22, dust: 0.1 }),
     r3_tile: W(new THREE.MeshStandardMaterial({ map: tile('#9a9484', '#6a6456', 8), roughness: 0.45, envMapIntensity: 0.4 }), { macro: 0.14, dust: 0.1 }),
     r3_lino: W(pbr('Concrete036', { color: 0x6e7a70, roughness: 0.55, env: 0.35 }), { macro: 0.25, dust: 0.15, rough: 0.3 }),
