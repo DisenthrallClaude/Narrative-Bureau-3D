@@ -109,6 +109,9 @@ export function dressMats(M) {
     r3_frosted: new THREE.MeshPhysicalMaterial({ color: 0xc4ccc8, roughness: 0.4, metalness: 0, transparent: true, opacity: 0.3, envMapIntensity: 0.35, depthWrite: false }), // 批次12 收尾：原 0.55 不透明度 + 近白色在球吊灯下发白，像灯箱板、透不出后面（cs_r3 / cs_r3_b）
     r3_consoleSteel: W(new THREE.MeshStandardMaterial({ color: 0x5a6356, roughness: 0.55, metalness: 0.35, envMapIntensity: 0.5 }), { macro: 0.18, grime: 0.3, tarnish: 0.2 }), // 批次16：监控台灰绿喷漆钢
     r3_clerestory: new THREE.MeshStandardMaterial({ color: 0x7a817f, emissive: 0xb4bec2, emissiveIntensity: 0.1, roughness: 0.55 }), // 批次17：exam_top 看图 0.22 仍像白灯箱 → 底色压到中灰、自发光 0.1。批次16：阅卷中心北墙高窗磨砂天光
+    r3_warnRed: new THREE.MeshStandardMaterial({ color: 0x5a0a08, emissive: 0xff2a18, emissiveIntensity: 2.2, roughness: 0.4 }), // 批次19 B3：收容格警示灯
+    r3_rackGreen: W(new THREE.MeshStandardMaterial({ color: 0x3b463f, roughness: 0.55, metalness: 0.45, envMapIntensity: 0.45 }), { macro: 0.2, grime: 0.35, tarnish: 0.3, ground: 1.0 }), // 批次19 B3：深灰绿钢架（替代蓝橙仓储货架）
+    r3_bunkerConc: W(phm('concrete_wall_008', { color: 0x8a8a84, env: 0.25 }), { macro: 0.3, grime: 0.45, streak: 0.35, ground: 1.2 }), // 批次19 B3：收容格隔墙混凝土
     r3_paintYellow: W(new THREE.MeshStandardMaterial({ color: 0xc8a020, roughness: 0.7 }), { macro: 0.3, dust: 0.2 }),
   };
   for (const m of [DM.dz_glow, DM.dz_glowCold, DM.dz_shade, DM.dz_glassDark, DM.r3_globe, DM.r3_globeDim, DM.r3_clerestory, DM.r3_wear, DM.r3_glassCase, DM.r3_screen, DM.r3_screenAmber, DM.r3_frosted]) m.userData.noShadow = true;

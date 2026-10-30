@@ -2624,3 +2624,85 @@ export function planLab3(y) {
   return { room, items: out };
 }
 PLANS.lab3 = (Y) => fixYaw(planLab3(Y)); R3.lab3 = true;
+
+// ======== 批次19：B3 证物收容库 · 开架区（vault.js 房间 x −20…20，z −128…−92，H 6.2，入口气闸在南墙 z −92 x 0，北为 −z）========
+//  功能平面：① 入口——气闸两侧加铆钉钢板防爆门扇（开启贴南墙内侧）+ 混凝土门垛 + 门楣「证物收容库 B3」；② 登记台（入口西侧，面向入口）；
+//  ③ 东西两侧各 6 间收容格（混凝土隔墙 + 前脸 R4 钢网隔离门 + 钢门楣 + 编号铜牌 + 红色警示灯 + 格内证物箱）；
+//  ④ 中央通道（原黄黑警示线 x ±2.4 + 原中轴展示台/电饭锅剧情件保留）；⑤ 两侧中区沿 z 交替：深灰绿钢架（证物箱）/ 标本罐柜；
+//  ⑥ 北墙（z −128）铆钉钢板 + 观察窗（向转运缓冲间）。全部成排定点，无随机。
+export function planVaultB3(y) {
+  const out = []; const H = 6.2, X0 = -20, X1 = 20, Z0 = -128, Z1 = -92;
+  const room = { name: 'B3 证物收容库 · 开架区（批次19）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H,
+    doors: [{ wall: 'S', a: -2.3, b: 2.3, label: '气闸 ↓ 电梯厅' }], windows: [],
+    rooms: [['① 防爆门', 0, -92.8], ['② 登记台', -5.5, -93.9], ['③ 收容格 西', -17.7, -111], ['③ 收容格 东', 17.7, -111], ['④ 中央通道', 0, -111], ['⑤ 钢架/标本柜 西', -9.5, -111], ['⑤ 钢架/标本柜 东', 9.5, -111], ['⑥ 观察窗', 0, -127.6]],
+    aisles: [{ label: '中央通道（东半）', x0: 0.6, x1: 2.3, z0: -126.5, z1: -96.0 }, { label: '入口横道', x0: -14.8, x1: 14.8, z0: -97.2, z1: -95.6 },
+      { label: '西收容格前道', x0: -15.1, x1: -12.2, z0: -126.5, z1: -96.0 }, { label: '东收容格前道', x0: 12.2, x1: 15.1, z0: -126.5, z1: -96.0 },
+      { label: '西中道', x0: -6.9, x1: -3.0, z0: -126.5, z1: -96.0 }, { label: '东中道', x0: 3.0, x1: 6.9, z0: -126.5, z1: -96.0 }, { label: '南横道', x0: -14.8, x1: 14.8, z0: -127.2, z1: -125.8 }] };
+  const F = (lab, x, z, w, d, h = 1) => out.push({ fixed: true, m: '固定:' + lab, x, y, z, yaw: 0, size: [w, h, d], col: [w, h, d], tag: '原锚点', on: 'floor' });
+  for (let i = 0; i < 6; i++) F('展示台' + (i + 1), 0, -99.5 - i * 4.6, 1.0, 1.0);
+  F('电饭锅台', -1.6, -104.1, 0.8, 0.8); F('气闸门框', 0, -92.3, 5.0, 0.5, 3.6);
+  // ① 防爆门：门垛（混凝土）+ 两扇铆钉钢板厚门扇开启贴南墙内侧 + 门楣铭牌
+  for (const s of [-1, 1]) { const x = s * 5.6;
+    out.push({ box: 'r3_bunkerConc', x: s * 2.95, y: y + 1.9, z: -92.45, w: 0.7, h: 3.8, d: 0.5, uv: 0.5, tag: '① 门垛', on: 'partv' });
+    out.push({ box: 'r3_steelOld', x, y: y + 1.6, z: -92.38, w: 2.2, h: 3.2, d: 0.3, uv: 0.6, tag: '① 防爆门扇', on: 'partv' });
+    for (const dy of [0.3, 1.6, 2.9]) out.push({ box: 'r3_rackGreen', x, y: y + dy, z: -92.55, w: 2.2, h: 0.14, d: 0.04, tag: '① 门扇横筋', on: 'partv' });
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 6; c++) out.push({ box: 'dz_pipe', x: x - 0.95 + c * 0.38, y: y + 0.2 + r * 0.95, z: -92.55, w: 0.04, h: 0.04, d: 0.03, tag: '① 铆钉', on: 'partv' });
+    out.push({ box: 'dz_pipe', x: x - s * 0.8, y: y + 1.5, z: -92.62, w: 0.08, h: 0.5, d: 0.08, tag: '① 闩杆把手', on: 'partv' }); }
+  out.push({ box: 'r3_bunkerConc', x: 0, y: y + 3.95, z: -92.45, w: 6.6, h: 0.5, d: 0.5, uv: 0.5, tag: '① 门楣', on: 'partv' });
+  out.push({ sign: '证 物 收 容 库  B3', sub: '开架区 · 1–3 级 · 进出登记', x: 0, y: y + 3.95, z: -92.71, yaw: 0, size: [0.34, 0.12, 0.01], tag: '① 铜牌', on: 'sign' });
+  // ② 登记台（入口西侧，台面朝入口，人员背门而坐、面朝库内——注：r3plan ROT.N 朝 −z）
+  { const x = -5.5, z = -93.9, top = y + 0.9;
+    out.push({ fixed: true, m: '固定:登记台', x, y, z, yaw: 0, size: [2.5, 0.9, 0.86], col: [2.5, 0.9, 0.86], tag: '② 登记台', on: 'floor' });
+    out.push({ box: 'r3_rackGreen', x, y: y + 0.45, z, w: 2.4, h: 0.88, d: 0.8, uv: 0.6, tag: '② 登记台', on: 'partv' });
+    out.push({ box: 'dz_beam', x, y: top - 0.015, z, w: 2.5, h: 0.04, d: 0.86, uv: 0.5, tag: '② 台面', on: 'partv' });
+    out.push({ m: 'r4/book_open_a01', x: x - 0.3, y: top, z: z + 0.05, yaw: ROT.N, w: 0.4, tag: '② 登记簿', on: 'desk' });
+    out.push({ m: 'r2/bankers_lamp', x: x + 0.85, y: top, z: z + 0.15, yaw: ROT.N, h: 0.36, tag: '② 台灯', on: 'desk' });
+    out.push({ m: 'r2/rotary_telephone', x: x + 0.35, y: top, z: z + 0.1, yaw: ROT.N, w: 0.22, tag: '② 电话', on: 'desk' });
+    out.push({ m: 'r4/exam_chair', x, y, z: z - 0.85, yaw: ROT.N, h: 0.9, tag: '② 值守椅', on: 'floor' });
+    out.push({ sign: '登 记 台', sub: '证物出入库 · 双人签字', x, y: y + 0.6, z: z + 0.41, yaw: 0, size: [0.34, 0.12, 0.01], tag: '② 铜牌', on: 'sign' });
+    light(out, x + 0.6, y + 1.6, z, 0xffe0b0, 0.8, 3); }
+  // ③ 收容格：两侧各 6 间（z 中心 −98.5 … −123.5，每间 5 m），进深 4.3 m
+  const cases = [['r4/case_a01', 0.62], ['r4/case_c02', 0.78], ['r4/case_d01', 0.48]];
+  for (const s of [-1, 1]) { const xf = s * 15.5, xw = s * 19.8, xm = (xf + xw) / 2;
+    for (let k = 0; k <= 6; k++) out.push({ box: 'r3_bunkerConc', x: xm, y: y + 1.5, z: -96 - k * 5, w: 4.3, h: 3.0, d: 0.24, uv: 0.5, tag: '③ 隔墙', on: 'partv' });
+    for (let k = 0; k < 6; k++) { const zc = -98.5 - k * 5, n = String((s < 0 ? 1 : 7) + k).padStart(2, '0');
+      for (const dz of [-1.13, 1.13]) out.push({ m: 'r4/wire_securityRoom_b01', x: xf, y, z: zc + dz, yaw: ROT.E, h: 2.6, tag: '③ 钢网隔离门', on: 'floor' });
+      out.push({ box: 'r3_steelOld', x: xf, y: y + 2.8, z: zc, w: 0.24, h: 0.4, d: 4.76, uv: 0.6, tag: '③ 钢门楣', on: 'partv' });
+      out.push({ sign: 'B3-收-' + n, sub: (k % 3) + 1 + ' 级 · 开架', x: xf - s * 0.13, y: y + 2.8, z: zc + 1.4, yaw: s < 0 ? ROT.E : ROT.W, size: [0.34, 0.12, 0.01], tag: '③ 编号铜牌', on: 'sign' });
+      out.push({ box: 'r3_warnRed', x: xf - s * 0.16, y: y + 2.82, z: zc - 1.4, w: 0.1, h: 0.14, d: 0.14, tag: '③ 警示灯', on: 'partv' });
+      out.push({ box: 'blackMetal', x: xf - s * 0.13, y: y + 2.82, z: zc - 1.4, w: 0.04, h: 0.2, d: 0.2, tag: '③ 警示灯座', on: 'partv' });
+      light(out, xf - s * 0.5, y + 2.6, zc - 1.4, 0xff3020, 0.5, 2.2);
+      const [m, w] = cases[k % 3]; out.push({ m, x: s * 18.2, y, z: zc + (k % 2 ? 0.8 : -0.8), yaw: ROT.N, w, tag: '③ 格内证物箱', on: 'floor' });
+      light(out, s * 17.7, y + 2.7, zc, 0xdfe8ff, 0.7, 4); } }
+  // ⑤ 两侧中区：沿 z 交替 深灰绿钢架（z −99 / −111 / −123）与 标本罐柜（z −105 / −117）
+  for (const s of [-1, 1]) { const cx = s * 9.5;
+    for (const z of [-99, -111, -123]) {
+      out.push({ fixed: true, m: '固定:钢架', x: cx, y, z, yaw: 0, size: [4.0, 2.1, 0.7], col: [4.0, 2.1, 0.7], tag: '⑤ 钢架', on: 'floor' });
+      for (const dx of [-1.97, 0, 1.97]) for (const dz of [-0.33, 0.33]) out.push({ box: 'r3_rackGreen', x: cx + dx, y: y + 1.05, z: z + dz, w: 0.05, h: 2.1, d: 0.05, tag: '⑤ 立柱', on: 'partv' });
+      for (const [lv, hy] of [0.12, 0.72, 1.32, 1.92].entries()) { out.push({ box: 'r3_rackGreen', x: cx, y: y + hy, z, w: 4.0, h: 0.04, d: 0.7, tag: '⑤ 层板', on: 'partv' });
+        if (lv === 3) continue;
+        for (let i = 0; i < 4; i++) { const [m, w] = cases[(i + lv + (z === -111 ? 1 : 0)) % 3]; out.push({ m, x: cx - 1.45 + i * 0.97, y: y + hy + 0.02, z, yaw: 0, w: Math.min(w, 0.75), tag: '⑤ 证物箱', on: 'partv' });
+          out.push({ box: 'dz_paper', x: cx - 1.45 + i * 0.97, y: y + hy + 0.14, z: z + 0.36, w: 0.16, h: 0.08, d: 0.004, tag: '⑤ 编号签', on: 'partv' }); } } }
+    for (const z of [-105, -117]) {
+      out.push({ fixed: true, m: '固定:标本罐柜', x: cx, y, z, yaw: 0, size: [3.0, 2.0, 0.6], col: [3.0, 2.0, 0.6], tag: '⑤ 标本罐柜', on: 'floor' });
+      out.push({ box: 'r3_rackGreen', x: cx, y: y + 0.15, z, w: 3.0, h: 0.3, d: 0.6, tag: '⑤ 柜座', on: 'partv' });
+      out.push({ box: 'r3_rackGreen', x: cx, y: y + 1.97, z, w: 3.0, h: 0.06, d: 0.6, tag: '⑤ 柜顶', on: 'partv' });
+      for (const dx of [-1.48, 1.48]) out.push({ box: 'r3_rackGreen', x: cx + dx, y: y + 1.0, z, w: 0.04, h: 1.94, d: 0.6, tag: '⑤ 柜侧板', on: 'partv' });
+      for (const sz of [-1, 1]) out.push({ box: 'glassClear', x: cx, y: y + 1.12, z: z + sz * 0.29, w: 2.9, h: 1.6, d: 0.01, tag: '⑤ 玻璃门', on: 'partv' });
+      for (const hy of [0.32, 0.86, 1.4]) { out.push({ box: 'r3_steelGrey', x: cx, y: y + hy, z, w: 2.9, h: 0.02, d: 0.54, tag: '⑤ 隔板', on: 'partv' });
+        for (let i = 0; i < 5; i++) out.push({ m: 'r4/specimen_octopus_jar', x: cx - 1.16 + i * 0.58, y: y + hy + 0.01, z, yaw: (i % 2) * Math.PI, h: 0.36, tag: '⑤ 标本罐', on: 'partv' }); }
+      out.push({ sign: '浸 制 标 本', sub: '勿开盖 · 勿对视', x: cx, y: y + 2.15, z: z + 0.31, yaw: 0, size: [0.34, 0.12, 0.01], tag: '⑤ 铜牌', on: 'sign' });
+      light(out, cx, y + 2.6, z, 0xdfe8ff, 0.7, 3.5); } }
+  // ⑥ 北墙（z −128）：铆钉钢板护墙 + 观察窗（钢框 + 深色玻璃 + 内侧冷光）
+  out.push({ box: 'r3_steelOld', x: 0, y: y + 1.5, z: -127.85, w: 30, h: 3.0, d: 0.06, uv: 0.4, tag: '⑥ 钢板护墙', on: 'partv' });
+  for (let x = -14.5; x <= 14.5; x += 1.5) out.push({ box: 'r3_rackGreen', x, y: y + 1.5, z: -127.8, w: 0.08, h: 3.0, d: 0.04, tag: '⑥ 钢板接缝', on: 'partv' });
+  for (let x = -14.75; x <= 14.75; x += 0.5) for (const hy of [0.15, 2.85]) out.push({ box: 'dz_pipe', x, y: y + hy, z: -127.79, w: 0.04, h: 0.04, d: 0.03, tag: '⑥ 铆钉', on: 'partv' });
+  out.push({ box: 'dz_glassDark', x: 0, y: y + 1.75, z: -127.76, w: 3.0, h: 1.1, d: 0.02, tag: '⑥ 观察窗', on: 'partv' });
+  out.push({ box: 'r3_bunkerConc', x: 0, y: y + 1.75, z: -127.62, w: 3.5, h: 0.22, d: 0.3, uv: 0.5, tag: '⑥ 窗台', on: 'partv' });
+  for (const dx of [-1.6, 1.6]) out.push({ box: 'blackMetal', x: dx, y: y + 1.75, z: -127.7, w: 0.16, h: 1.4, d: 0.12, tag: '⑥ 窗框', on: 'partv' });
+  out.push({ box: 'blackMetal', x: 0, y: y + 2.38, z: -127.7, w: 3.36, h: 0.16, d: 0.12, tag: '⑥ 窗框', on: 'partv' });
+  out.push({ sign: '观 察 窗', sub: '转运缓冲间 · 4 级以上候检', x: 0, y: y + 2.65, z: -127.72, yaw: 0, size: [0.34, 0.12, 0.01], tag: '⑥ 铜牌', on: 'sign' });
+  light(out, 0, y + 2.2, -126.8, 0xcfe0ff, 1.0, 4);
+  return { room, items: out };
+}
+PLANS.vault_b3 = (Y) => fixYaw(planVaultB3(Y)); R3.vault_b3 = true;

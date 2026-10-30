@@ -61,7 +61,8 @@ export function buildVault(scene, world, ctx) {
     // 货架：两侧各 6 排，垂直于中轴
     const shelfZ = []; for (let k = 0; k < 6; k++) shelfZ.push(Z0 - 5 - k * 5);
     let label = null;
-    shelfZ.forEach((z, k) => {
+    if (R3.vault_b3) label = [9.5 - 1.5, y + 1.35, -99 + 0.42]; // 批次19：开架货架由 r3plan vault_b3 的收容格 + 深灰绿钢架取代，清单标签挂到第一组钢架
+    else shelfZ.forEach((z, k) => {
       for (const sx of [-1, 1]) {
         const cx = sx * 11.5;
         steelShelf(b, world, cx, y, z, 14, 0.9, 3.6, 4);
