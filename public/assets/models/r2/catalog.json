@@ -3835,20 +3835,6 @@
   "legacy": false,
   "url": "./assets/models/r2/chinese_banyan_ficus_microcarpa.glb"
  },
- "ec_135": {
-  "id": "ec_135",
-  "src": "08_city_vehicles_nature/sf_ec_135_ec30f8",
-  "zone": "08_city_vehicles_nature",
-  "tris": 80128,
-  "size": [
-   113030.463,
-   170905.276,
-   172145.129
-  ],
-  "kb": 2210,
-  "legacy": false,
-  "url": "./assets/models/r2/ec_135.glb"
- },
  "generic_civil_service_vehicles_pack": {
   "id": "generic_civil_service_vehicles_pack",
   "src": "08_city_vehicles_nature/sf_generic_civil_service_vehicles_pack_8ff2a1",
@@ -3932,20 +3918,6 @@
   "kb": 704,
   "legacy": false,
   "url": "./assets/models/r2/los_angeles_police_department_car.glb"
- },
- "lynx_helicopter": {
-  "id": "lynx_helicopter",
-  "src": "08_city_vehicles_nature/sf_lynx_helicopter_9028fe",
-  "zone": "08_city_vehicles_nature",
-  "tris": 89873,
-  "size": [
-   17063.33,
-   4272.603,
-   16688.173
-  ],
-  "kb": 840,
-  "legacy": false,
-  "url": "./assets/models/r2/lynx_helicopter.glb"
  },
  "md_84_armored_low_poly_model": {
   "id": "md_84_armored_low_poly_model",
