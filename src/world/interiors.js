@@ -403,11 +403,12 @@ function buildHall(zone, world, ctx, M, add) {
     // 批次16：两张「A 级通缉」卡中间的灰色空照片框 → 填秦骁 / 江戾档案海报头像裁切（做旧灰调）
     { rect: [223 / 1536, 504 / 1152, 155 / 1536, 176 / 1152], img: content.texUrl('tex_archive_portrait_qinxiao'), crop: [300, 330, 360, 410], filter: 'grayscale(1) sepia(0.3) contrast(1.08)' },
     { rect: [537 / 1536, 504 / 1152, 154 / 1536, 176 / 1152], img: content.texUrl('tex_archive_portrait_jiangli'), crop: [400, 300, 360, 410], filter: 'grayscale(1) sepia(0.3) contrast(1.08)' }]); // 生图底部「敘事管理局」改简体
-  b.box('wood', 0.2, 2.6, 5.6, [X - 0.23, Y + 2.2, -64], { uv: 0.5 }); // 批次17：通缉栏整组前移 0.13 m——hall_wanted 前景「半透明横杆」= 墙面 H_trim 线脚（x≈17.13，离地 2.64–2.84）凸出在栏面（原 X−0.21）前，隔着玻璃看像横杆（pick 实测）
-  b.box('gold', 0.22, 2.7, 0.08, [X - 0.23, Y + 2.2, -61.2], { uv: 1 }); b.box('gold', 0.22, 2.7, 0.08, [X - 0.23, Y + 2.2, -66.8], { uv: 1 });
+  const WO = 0.3; // 批次21：hall_wanted 栏面正中竖缝 = 背后墙柱（z −64）凸出穿过栏面 → 整组再前移 0.3 m，木背板加厚到墙
+  b.box('wood', 0.2 + WO, 2.6, 5.6, [X - 0.23 - WO / 2, Y + 2.2, -64], { uv: 0.5 }); // 批次17：通缉栏整组前移 0.13 m——hall_wanted 前景「半透明横杆」= 墙面 H_trim 线脚（x≈17.13，离地 2.64–2.84）凸出在栏面（原 X−0.21）前，隔着玻璃看像横杆（pick 实测）
+  b.box('gold', 0.22 + WO, 2.7, 0.08, [X - 0.23 - WO / 2, Y + 2.2, -61.2], { uv: 1 }); b.box('gold', 0.22 + WO, 2.7, 0.08, [X - 0.23 - WO / 2, Y + 2.2, -66.8], { uv: 1 });
   const wbm = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 2.4), wb ? new THREE.MeshStandardMaterial({ map: wb, roughness: 0.6 }) : wantedBoardMaterial());
-  wbm.position.set(X - 0.34, Y + 2.2, -64); wbm.rotation.y = -Math.PI / 2; zone.add(wbm);
-  const wbg = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 2.5), M.glassClear); wbg.position.set(X - 0.43, Y + 2.2, -64); wbg.rotation.y = -Math.PI / 2; zone.add(wbg);
+  wbm.position.set(X - 0.34 - WO, Y + 2.2, -64); wbm.rotation.y = -Math.PI / 2; zone.add(wbm);
+  const wbg = new THREE.Mesh(new THREE.PlaneGeometry(5.5, 2.5), M.glassClear); wbg.position.set(X - 0.43 - WO, Y + 2.2, -64); wbg.rotation.y = -Math.PI / 2; zone.add(wbg);
   ctx.wantedBoard = wbm;
   // 批次13：通缉栏两侧加挂江戾 / 秦骁整张档案海报（IMAGE-PLAN「未用」→ F2 安检大厅通缉栏；栏内原生图保持不动），金框 + 玻璃 + 铜签
   for (const [id, z, nm] of [['tex_archive_portrait_qinxiao', -60.3, '秦骁'], ['tex_archive_portrait_jiangli', -67.7, '江戾']]) { const t = content.tex(id); if (!t) continue;

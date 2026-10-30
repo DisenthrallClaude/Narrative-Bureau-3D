@@ -2307,6 +2307,12 @@ export function planExamCenter(y) {
   out.push({ box: 'dz_ashlarEC', x: 20.307, y: AY, z: -68.6, w: 0.01, h: AH, d: 14.8, tag: '墙面', on: 'partv' });
   for (const [a, c] of [[20.3, 40], [43, 49.9]]) out.push({ box: 'dz_ashlarEC', x: (a + c) / 2, y: AY, z: -61.207, w: c - a, h: AH, d: 0.01, tag: '墙面', on: 'partv' });
   out.push({ box: 'dz_ashlarEC', x: 41.5, y: y + 3 + (H - 3) / 2, z: -61.207, w: 3, h: H - 3, d: 0.01, tag: '墙面', on: 'partv' });
+  // 批次21：exam_r3_b 远端（东侧开敞楼梯井列 x 50…56）外墙内面纯黑、彩窗悬浮 → 方石护面（避开 z −61.8 / −70.4 两樘彩窗）+ 南端墙护面 + 洗墙暖光
+  for (const [a, c] of [[-62.95, -69.25], [-71.55, -75.8]]) out.push({ box: 'dz_ashlarEC', x: 55.785, y: y + H / 2, z: (a + c) / 2, w: 0.01, h: H, d: a - c, tag: '墙面', on: 'partv' });
+  for (const zc of [-61.8, -70.4]) { out.push({ box: 'dz_ashlarEC', x: 55.785, y: y + 0.45, z: zc, w: 0.01, h: 0.9, d: 2.3, tag: '墙面', on: 'partv' }); out.push({ box: 'dz_ashlarEC', x: 55.785, y: y + H - 0.5, z: zc, w: 0.01, h: 1.0, d: 2.3, tag: '墙面', on: 'partv' }); }
+  out.push({ box: 'dz_ashlarEC', x: 52.9, y: y + H / 2, z: -75.795, w: 5.8, h: H, d: 0.01, tag: '墙面', on: 'partv' });
+  for (const zc of [-66.1, -73.6]) light(out, 53.6, y + 4.6, zc, 0xffdcb0, 2.6, 8);
+  light(out, 54.6, y + 2.0, -70.4, 0xffd8a8, 1.4, 5);
   // 北墙上半：黑石腰线 + 两组钢框高窗（每侧 3 樘，磨砂天光）
   out.push({ box: 'stoneDark', x: 35.1, y: y + 4.72, z: -75.95, w: 29.6, h: 0.14, d: 0.08, uv: 0.5, tag: '③ 腰线', on: 'partv' });
   for (const wx of [23.4, 26.5, 29.6, 40.4, 43.5, 46.6]) {
