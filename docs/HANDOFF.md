@@ -130,6 +130,25 @@
 - **机库内部单独分区 `hangar`**（x 73.6…98.8，z −86.6…−53.4，y<11）：室内环境图 hall、envI 0.38、曝光 1.2、雾 0x221d17；屋顶停机坪仍是 helipad（天空环境）。截图：墙面不再反射天空云纹。
 - **cc_comm 机位**改为从东往西看北墙（避开门扇）。
 - **墙面 Poly Haven PBR**（2K→1K webp，public/assets/tex/ph/）：dz_damask/Red/Green → quatrefoil_jacquard_fabric（按原色调染色）；新增 dz_panel = dark_paneled_wood（办公/红/绿墙式的墙裙 + 所有 R3 隔断护墙板）；dz_plaster、dz_paintClinic → grey_plaster_02；dz_paintUp → concrete_wall_008；M.wallPlaster（ambientCG Concrete034）→ grey_plaster_02。下载脚本：api.polyhaven.com/files/<id> → work/r2/ph → tools/process_ph.mjs。
+- 墙布：quatrefoil 原图是红色底，直接染色会把绿/蓝墙全变成褐红 → 另存去色版 `quatrefoil_gray_*`（均值归一到 180/255）再按原色调染色（蓝 0x3a4670 / 红 0x7a2a26 / 绿 0x355a44）。
+- 地铁口树池：`tree_planter_with_grate_free_low_poly` 树冠渲染成紫黑大球、`tree_planter_01` 像枯桩、`brick_planters` 是散砖 → 三个都弃用，改为黑石花池盒 + `potted_plant_04`。`bus_stop`（10.9 m 深）、`road_traffic_sign`、`guideposts`、`soft_drink_dispenser`、`fancy_bench`、`cemetary_angel`、`old_locker`（2.85 m 宽一排）、`ammo_box`（竖长）、`military_wooden_crate`（扁片）、`wooden_barrels_01`（一组 4.8 m）、`dead_tree_trunk`（35 m 横躺）包围盒异常，新模型先 dump 看 size。
+### 截图 / 对比图
+- screenshots/r3/：training_r3 / training_b / training_top / training_range、metro_r3 / metro_b / metro_top、memorial_r3 / memorial、seventh_ops / s7_ops_b / s7_ops_top / seventh_wrap、abyss_city / abyss_exam、b5_deep / b5_r3、floor3_office / floor3_office_b / liaison_r3 / director_r3 / cc_comm / med_ward、dorm_lobby / dorm_top、hangar_r3 / hangar_b / hangar_top；plan_{training,metro,memorial,s7_ops,s7_wrap,abyss_city,abyss_exam,b5_deep}.png。批次6 原图在 work/r3/before/*_b6.png。
+- 对比图 jpg：work/r3/cmp_training.jpg、cmp_metro.jpg、cmp_memorial.jpg、cmp_s7_ops.jpg、cmp_s7_wrap.jpg、cmp_abyss.jpg、cmp_b5_deep.jpg、cmp_walls7.jpg（墙面 PBR 前后，4 组同机位）。r3_cmp_all.sh 已加批次7 条目（ONLY="training metro ..." 可单跑）。
+### 诚实评估
+- 训练场：从「64×64 m 空黑场 + 门 + 射击台」变成有检录、简报、领用、待命、控制台、撤离点的分区，动线清楚；但场地仍大、整体偏暗，远看依旧空旷（大厅尺度决定），且没有烘焙。
+- 地铁口：广场有了安检亭、报亭、灯箱、候车、花池长椅带、流浪者角，比之前「空砖地 + 几辆单车」好很多；地面机位下前景仍是大片空铺装，外景建筑仍是灰盒级。
+- 第七局作战室：补了通讯台、军械补给、地图作业台、休整角，空地明显减少；整体仍是一片红褐色调、偏暗（设计如此）；杀青室只补了小件，变化小。
+- 墨渊：书城街道两侧有了「被改写的机构」组与漂浮文件柜，考场有监考台与烛台；但这两区本身是风格化纸面场景，模型件和程序化书墙的质感差距明显，离「3A 写实」最远。
+- B5 深库主室：从全黑变成能看清收容室、通道、法阵隔离带、柜列，仍偏暗。
+- 墙面 PBR：近景墙裙出现真实木镶板凹凸与木纹、墙布有织物纹理、通讯室花纹变小；远景差别不大。机库墙面不再映出天空云纹。
+- **整体仍不是 3A**：无烘焙/GI，很多区靠点光撑亮度；外景与墨渊材质仍粗。
+### 未解决 / 遗留
+1. 宿舍按楼栋拆可见性：只做了 R3 陈设分子组，宿舍大堂实测 18.3M 三角面、机库 16M、地铁口 22M，大头在 surface.js 本体 + 外立面；需要把 surface.js 按楼栋（宿舍/机库/碑廊/地铁口/岗哨）拆成独立 zone 或做距离剔除。
+2. 「其余区补地面分区与磨损」本批只做了训练场、B5 深库、地铁口盲道/磨损；指挥中心、食堂、档案馆、医务、B1/B2/B4 等未补。
+3. 墙面 PBR 只换了 dress.js 的 dz_* 墙面材质与 M.wallPlaster；外立面、vaultWall（B 层石墙）、宿舍岩壁、机库砖墙未换。
+4. 墨渊 abyss_core / abyss_tide、第七局 seventh_entry / gutter / rewrite 未加 R3 陈设（gutter/rewrite 是仪式性空间，刻意少放）。
+5. 新用的 lectern / simple_bunk_bed / portable_searchlight / locker_equipment / schooldesk 等朝向未经 Blender 接触表核对（本机无 Blender），截图看基本合理。
 
 ---
 # HANDOFF · R2 美术重建（blender-lead-2，接手 2026-10-29 19:08 CST）
