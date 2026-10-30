@@ -1729,3 +1729,68 @@ Object.assign(X8, {
   },
 });
 for (const [id, f] of Object.entries(X8)) { const base = PLANS[id]; if (!base) continue; PLANS[id] = (Y) => { const p = base(Y); const n0 = p.items.length; f(p.items, Y, p.room); fixYaw({ items: p.items.slice(n0) }); return p; }; }
+
+// ================= R3 批次8：墨渊定稿厅 / 墨潮带 / 装订线入口（回廊、回写台保持克制，不加）=================
+// —— 定稿厅（平台 y −280，镇纸巨柱 (8,−228)，环形书桌 r 5.2…6.6，巨书环 r 16 南侧留口迎阶梯，柱底红线向东南 → 页缝）——
+export function planAbyssCore(y) {
+  const out = []; const cx = 8, cz = -228;
+  const room = { name: '墨渊 · 定稿厅（批次8）', x0: cx - 23, x1: cx + 23, z0: cz - 23, z1: cz + 23, y, H: 30, doors: [{ wall: 'S', a: cx - 3, b: cx + 3, label: '上行阶梯' }], windows: [],
+    rooms: [['镇纸巨柱 · 环形书桌', cx, cz], ['校对席 ×6（外环）', cx - 11, cz - 2], ['红线 → 页缝（东南，净空）', cx + 10, cz + 7]],
+    aisles: [{ label: '阶梯 → 书桌（南）', x0: cx - 1.8, x1: cx + 1.8, z0: cz + 7.5, z1: cz + 15.5 }] };
+  F7(out, '镇纸巨柱', cx, cz, 4.8, 4.8, y, 0, 30); for (let k = 0; k < 12; k++) { const a = k / 12 * Math.PI * 2; F7(out, '环形书桌', cx + Math.sin(a) * 5.9, cz + Math.cos(a) * 5.9, 1.4, 2.6, y, -a, 1.0); }
+  for (let k = 0; k < 28; k++) { const a = k / 28 * Math.PI * 2; if (a < 0.42 || a > Math.PI * 2 - 0.42) continue; F7(out, '巨书', cx + Math.sin(a) * 16, cz + Math.cos(a) * 16, 2.0, 2.4, y, -a, 14); }
+  // ① 外环校对席：6 张古董桌（校对员坐外侧、面朝镇纸柱）+ 皮椅 + 煤油灯 + 稿件堆 + 打字机（隔席）；避开东南红线扇区 a∈[−0.5, 1.5]
+  [2.0, 2.65, 3.3, 3.95, 4.6, 5.25].forEach((a, i) => { const r = 10.6, x = cx + Math.sin(a) * r, z = cz + Math.cos(a) * r, n = [Math.sin(a), Math.cos(a)], t = [Math.cos(a), -Math.sin(a)];
+    out.push({ m: 'r2/antique_desk', x, y, z, yaw: a, w: 1.6, tag: '校对席', on: 'floor', col: [1.6, 0.78, 0.8] });
+    out.push({ m: 'r2/worn_leather_office_chair', x: x + n[0] * 0.85, y, z: z + n[1] * 0.85, yaw: a + Math.PI, h: 1.0, tag: '校对席', on: 'floor' });
+    out.push({ m: 'r2/1800s_kerosene_desk_lamps_type_b', x: x + t[0] * 0.55, y: y + 0.78, z: z + t[1] * 0.55, yaw: a, h: 0.45, tag: '校对席', on: 'shelf' });
+    if (i % 2 === 0) out.push({ m: 'r2/old_typewriter', x: x - t[0] * 0.2, y: y + 0.78, z: z - t[1] * 0.2, yaw: a + Math.PI, w: 0.4, tag: '校对席', on: 'shelf' });
+    else out.push({ m: 'r2/medieval_book_stack', x: x - t[0] * 0.3, y: y + 0.78, z: z - t[1] * 0.3, yaw: a, h: 0.3, tag: '校对席', on: 'shelf' });
+    out.push({ m: 'r2/medieval_book_stack', x: x - t[0] * 1.5 - n[0] * 0.45, y, z: z - t[1] * 1.5 - n[1] * 0.45, yaw: a * 2, h: 0.55, tag: '稿件堆', on: 'floor' });
+    light(out, x + t[0] * 0.55, y + 1.5, z + t[1] * 0.55, 0xffc890, 1.4, 6); });
+  // ② 席间落地烛台（外环，每两席之间）+ 环形书桌外沿 4 座铜烛台
+  for (const a of [2.33, 2.98, 3.63, 4.28, 4.93]) out.push({ m: 'r2/medieval_candelabra_free_download', x: cx + Math.sin(a) * 12.4, y, z: cz + Math.cos(a) * 12.4, yaw: 0, h: 1.6, tag: '烛台', on: 'floor', col: [0.5, 1.6, 0.5] });
+  for (const a of [2.4, 3.3, 4.2, 5.1]) out.push({ m: 'r2/candelabra', x: cx + Math.sin(a) * 8.0, y, z: cz + Math.cos(a) * 8.0, yaw: 0, h: 1.3, tag: '烛台', on: 'floor' });
+  // ③ 柱身上方三盏铁吊灯（中层光）+ 南口两侧石天使（迎阶梯）
+  for (const a of [2.6, 3.9, 5.2]) out.push({ m: 'r2/medieval_chandelier', x: cx + Math.sin(a) * 9, y: y + 8.0, z: cz + Math.cos(a) * 9, yaw: a, h: 1.6, tag: '烛火吊灯', on: 'ceil' });
+  for (const a of [2.6, 3.9, 5.2]) light(out, cx + Math.sin(a) * 9, y + 7.2, cz + Math.cos(a) * 9, 0xffc080, 2.2, 14);
+  // ④ 地面：校对席外环一圈深色地毯带（中断于东南红线扇区）
+  for (let k = 0; k < 18; k++) { const a = 1.75 + k * 0.215; if (a > 5.6) break; out.push({ box: 'r3_carpetRed', x: cx + Math.sin(a) * 10.9, y: y + 0.007, z: cz + Math.cos(a) * 10.9, w: 2.5, h: 0.014, d: 3.4, yaw: a, tag: '地毯', on: 'partv' }); }
+  return { room, items: out };
+}
+// —— 墨潮带岸线（东巷 x 14…44，z −162…−118；x>44 是墨潮，红桩线 x 43.6）：被墨潮冲上岸的机构残骸 + 一个封锁观察哨 ——
+export function planAbyssTide(y) {
+  const out = []; const X0 = 14, X1 = 44, Z0 = -162, Z1 = -118;
+  const room = { name: '墨渊 · 墨潮带岸线（批次8）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H: 20, doors: [{ wall: 'W', a: -146, b: -134, label: '东巷口（← 书城）' }], windows: [],
+    rooms: [['封锁观察哨', 36, -136], ['冲上岸的残骸带', 40, -150], ['岸线残骸（北）', 40, -124]], aisles: [{ label: '巷口 → 红桩', x0: 14, x1: 42.6, z0: -141.6, z1: -138.4 }] };
+  for (let k = 0; k < 9; k++) F7(out, '红桩', 43.6, -122 - k * 4.4, 0.3, 0.3, y, 0, 1.4); F7(out, '警示牌', 43.3, -139.2, 0.3, 0.8, y, 0, 1.4);
+  // ① 封锁观察哨（巷口北侧）：沙袋矮墙（木箱代）+ 讲台式记录台 + 提灯 + 探照灯指向墨潮 + 路障
+  out.push({ m: 'r2/lectern', x: 36.0, y, z: -136.4, yaw: ROT.E, h: 1.15, tag: '观察哨', on: 'floor', col: [0.6, 1.15, 0.5] });
+  out.push({ m: 'r2/portable_searchlight', x: 38.6, y, z: -135.6, yaw: ROT.E, h: 1.4, tag: '观察哨', on: 'floor' });
+  for (const z of [-133.6, -131.8]) out.push({ m: 'r2/concrete_road_barrier', x: 40.2, y, z, yaw: ROT.E, w: 1.8, tag: '观察哨', on: 'floor', col: [1.8, 0.97, 0.74] });
+  out.push({ m: 'r2/lantern_01', x: 36.0, y: y + 1.15, z: -136.1, yaw: 0, h: 0.35, tag: '观察哨', on: 'shelf' });
+  light(out, 36.6, y + 2.0, -136, 0xffb070, 1.6, 9);
+  // ② 冲上岸的残骸（南北两段，沿红桩内侧 1–3 m）：倾倒文件柜、散落档案箱、半埋的椅子、木桶、旧书堆
+  const W = [[41.2, -122.6, 'r2/rusty_filing_cabinet', { h: 1.3, rz: 1.5 }], [40.4, -126.0, 'r2/old_paper_cardboard_boxes', { w: 0.9 }], [41.6, -128.8, 'r2/barrel_01', { h: 0.9, rz: 1.4 }], [39.8, -130.6, 'r2/medieval_book_stack', { h: 0.5 }],
+    [41.0, -146.2, 'r2/rusty_filing_cabinet', { h: 1.3, rz: -1.5 }], [39.6, -149.0, 'r2/old_paper_cardboard_boxes', { w: 0.9 }], [41.8, -151.6, 'r2/worn_leather_office_chair', { h: 1.0, rz: 1.3 }], [40.2, -154.4, 'r2/barrel_02', { h: 0.9 }], [41.4, -157.6, 'r2/medieval_book_stack', { h: 0.5 }], [38.8, -158.8, 'r2/old_typewriter', { w: 0.4, rx: 0.3 }]];
+  W.forEach(([x, z, m, o], i) => out.push({ m, x, y, z, yaw: x * 1.7 + i, ...o, tag: '残骸', on: o.rz ? 'decal' : 'floor' }));
+  // ③ 岸线：被打湿的纸页带（深色薄片，沿红桩内侧）+ 两盏低位提灯
+  for (let k = 0; k < 14; k++) { const z = -120 - k * 3.0; out.push({ box: k % 3 ? 'dz_paper' : 'dz_paper2', x: 42.2 + hash(k, 3) * 0.9, y: y + 0.006, z: z + hash(k, 7), w: 0.5, h: 0.004, d: 0.4, yaw: hash(k, 9) * 3, tag: '湿纸页', on: 'partv' }); }
+  for (const z of [-126, -152]) { out.push({ m: 'r2/lantern_01', x: 38.6, y, z, yaw: 0, h: 0.35, tag: '提灯', on: 'floor' }); light(out, 38.6, y + 0.6, z, 0xff9a50, 1.2, 7); }
+  return { room, items: out };
+}
+// —— 装订线入口（页缝，x −3…3，z −53…−67，牛皮纸 9 m 高）：第七局的「收件处」——克制：只放墙边小件，中轴净空 ——
+export function planS7Entry(y) {
+  const out = []; const X0 = -3.0, X1 = 3.0, Z0 = -67, Z1 = -53.2, H = 9;
+  const room = { name: '装订线 · 页缝入口（批次8）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H, doors: [{ wall: 'N', a: -1.6, b: 1.6, label: '→ 回廊' }], windows: [],
+    rooms: [['收件台（西墙）', -2.3, -58], ['归还档案（东墙）', 2.3, -62]], aisles: [{ label: '页缝中轴', x0: -1.3, x1: 1.3, z0: -66.8, z1: -53.6 }] };
+  F7(out, '打孔卡', -2.9, -61, 0.2, 0.3, y + 1.2, 0, 0.1);
+  out.push({ m: 'r2/lectern', x: -2.3, y, z: -57.6, yaw: ROT.E, h: 1.15, tag: '收件台', on: 'floor', col: [0.6, 1.15, 0.5] });
+  out.push({ m: 'r2/1800s_kerosene_desk_lamps_type_b', x: -2.3, y: y + 1.15, z: -57.2, yaw: ROT.E, h: 0.4, tag: '收件台', on: 'shelf' });
+  for (const [z, dy] of [[-62.0, 0], [-62.05, 0.3], [-63.0, 0]]) out.push({ m: 'r2/filing_box', x: 2.4, y: y + dy, z, yaw: ROT.W + z * 0.1, w: 0.4, tag: '归还档案', on: dy ? 'shelf' : 'floor', col: [0.4, 0.3, 0.32] });
+  out.push({ m: 'r2/coat_rack_bowler_hat', x: 2.4, y, z: -56.4, yaw: ROT.W, h: 1.8, tag: '衣帽架', on: 'floor' });
+  pic(out, 'textures/emblems/N02.jpg', 0, y + 5.6, -53.45, Math.PI, 1.0, 1.0, 'black');
+  light(out, -2.0, y + 1.8, -57.6, 0xffc890, 1.2, 6); light(out, 0, y + 6.5, -60, 0xe8d0b0, 1.4, 10);
+  return { room, items: out };
+}
+Object.assign(PLANS, { abyss_core: (Y) => fixYaw(planAbyssCore(Y)), abyss_tide: (Y) => fixYaw(planAbyssTide(Y)), s7_entry: (Y) => fixYaw(planS7Entry(Y)) }); Object.assign(R3, { abyss_core: true, abyss_tide: true, s7_entry: true });

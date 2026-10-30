@@ -232,8 +232,8 @@ export function vaultMats(M) {
   const tint = (m, c, extra = {}, w = { macro: 0.25, grime: 0.5, streak: 0.3, ground: -60 }) => { const n = m.clone(); n.userData = {}; n.color = new THREE.Color(c); Object.assign(n, extra); return weather(n, w); };
   return {
     concreteFloor: tint(M.concrete, 0x6a6a6c, { roughness: 0.55 }),
-    concreteWall: tint(M.concrete, 0x50545a),
-    vaultWall: tint(M.wallStone, 0x2a2c32, { roughness: 0.45 }),
+    concreteWall: tint(M.phConcrete, 0x6a6e74), // 批次8：Poly Haven concrete_wall_008（原 ambientCG Concrete036）
+    vaultWall: tint(M.phBlocks, 0x5c5a56), // 批次8：B 层石墙 Poly Haven medieval_blocks_02（原 Marble016 深色着色，像岩壁）
     darkTile: tint(M.hallFloorDark, 0x34363c, { roughness: 0.62, clearcoat: 0.0, envMapIntensity: 0.3 }),
     blackFloor: tint(M.blackMarble, 0x2e2e34, { roughness: 0.55, clearcoat: 0.08, clearcoatRoughness: 0.4, envMapIntensity: 0.35 }),
     hazard: hazardMaterial(),

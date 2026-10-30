@@ -12,7 +12,12 @@ export function mats() {
   if (M) return M;
   M = {};
   // 外立面：黑色石材（带轻微反射）
-  M.stone = pbr('Granite003A', { color: 0x15161b, roughness: 0.55, env: 0.9, normalScale: 0.8 });
+  // 批次8：外立面（附楼/城中建筑/宿舍/岗哨）改 Poly Haven large_sandstone_blocks（与主楼 hero 外立面同石种，原 ambientCG Granite003A + 程序化砌缝）
+  const rep = (m, k) => { for (const t of [m.map, m.normalMap, m.roughnessMap]) if (t) t.repeat.set(k, k); return m; };
+  M.stone = rep(phm('large_sandstone_blocks', { color: 0x4a4744, env: 0.55 }), 1.5); M.stone.normalScale.set(1.25, 1.25);
+  // 批次8：B 层石墙 / 混凝土墙、宿舍抹灰墙、机库砖墙的 Poly Haven 底材（vault.js / surface.js 按区着色）
+  M.phBlocks = rep(phm('medieval_blocks_02', { env: 0.35 }), 1.6); M.phConcrete = phm('concrete_wall_008', { env: 0.3 });
+  M.phPlaster = phm('painted_plaster_wall', { env: 0.25 }); M.phBrick = rep(phm('brick_wall_006', { env: 0.3 }), 2.5);
   M.stoneDark = pbr('Marble016', { color: 0x1b1c22, roughness: 0.4, env: 1.0 });
   M.blackMarble = pbr('Marble016', { color: 0x9a9aa2, roughness: 0.35, env: 1.1, physical: true, clearcoat: 0.6, clearcoatRoughness: 0.12 });
   M.gold = pbr('Metal048A', { color: 0xffe2a0, metalness: 1, roughness: 0.32, env: 1.3 });
@@ -83,7 +88,7 @@ export function mats() {
   M.rubber = new THREE.MeshStandardMaterial({ color: 0x111214, roughness: 0.8 });
   M.faceScreen = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0x3aa8ff, emissiveIntensity: 1.3, roughness: 0.2 }); M.faceScreen.userData.noShadow = true;
   // —— 老化与脏污（世界空间，打破平铺与“新模型感”）——
-  weather(M.stone, { macro: 0.12, streak: 0.2, grime: 0.35, ground: 0, rough: 0.15, blocks: [1.2, 0.6] });
+  weather(M.stone, { macro: 0.14, streak: 0.4, grime: 0.38, ground: 1.8, rough: 0.12 }); // 批次8：贴图自带砌缝，去掉程序化 blocks
   weather(M.stoneDark, { macro: 0.18, streak: 0.5, grime: 0.4, ground: 0, rough: 0.16 });
   weather(M.slate, { macro: 0.2, streak: 0.4, tarnish: 0.25, dust: 0.3 });
   weather(M.gold, { macro: 0.1, tarnish: 0.32, rough: 0.12, scale: 2.0 });

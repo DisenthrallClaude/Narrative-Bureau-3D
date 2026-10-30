@@ -241,7 +241,7 @@ export function gableRoof(b, cx, y, cz, w, len, rh, o = {}) {
  */
 export function bayWall(b, f, len, h, bays, o = {}) {
   const t = o.thick ?? 1.2;
-  b.add('stone', new THREE.BoxGeometry(len, h, t), f.at(0, h / 2, -t / 2), { uv: 0.2, collide: o.collide });
+  b.add(o.mat ?? 'stone', new THREE.BoxGeometry(len, h, t), f.at(0, h / 2, -t / 2), { uv: 0.2, collide: o.collide });
   const bayW = len / bays;
   for (let i = 0; i <= bays; i++) {
     const xx = -len / 2 + i * bayW;

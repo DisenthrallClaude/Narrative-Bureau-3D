@@ -47,6 +47,7 @@ function litWindow(b, x, y, z, yaw, w = 1.2, h = 2.2) { b.add('dz_shade', new TH
 export async function buildSurface(scene, world, ctx) {
   const M = mats(); const Mx = vaultMats(M); const D = dressMats(M); const X5 = m5Mats(M);
   const MAT = { ...M, ...Mx, ...D, ...X5, ...dormMats() };
+  { const t = (m, c) => { const n = m.clone(); n.userData = {}; n.color = new THREE.Color(c); return n; }; MAT.dm_plaster = t(M.phPlaster, 0xbfb7a6); MAT.dm_brick = t(M.phBrick, 0x8a7c72); } // 批次8
   const jobs = [];
   const mk = (name) => { const g = new THREE.Group(); g.name = name; scene.add(g); ctx.zones[name] = g; return g; };
   const zone = mk('surface');
@@ -85,12 +86,12 @@ export async function buildSurface(scene, world, ctx) {
     { const n = 26, run = 7.4 / n, rise = F2 / n; for (let i = 0; i < n; i++) b.box('dz_beam', run + 0.02, 0.18, 1.6, [54.2 + run * (i + 0.5), rise * (i + 1) - 0.09, 27], { uv: 0.6 }); world.ramp([53.8, 0, 27], [61.6, F2, 27], 1.6); b.box('brass', 7.8, 0.05, 0.05, [57.9, F2 / 2 + 1.0, 26.15], { uv: 1, rot: [0, 0, Math.atan2(F2, 7.4)] }); world.box(57.9, F2 / 2 + 0.6, 26.1, 7.6, F2 + 1.2, 0.1); }
     // 一层隔墙：小卖部/宿管室（南）、洗衣房（北）、走廊西墙、客房隔墙
     for (const [y0, hh] of [[0, F2 - 0.3], [F2, 4.3]]) {
-      wallZ(b, 'dz_paintUp', 12, 53.2, 62, y0, hh, 0.2, y0 ? [] : [{ x0: 55, x1: 60, h: 1.1 }], true);
-      wallZ(b, 'dz_paintUp', 28.2, 53.2, 62, y0, hh, 0.2, y0 ? [{ x0: 55.5, x1: 57, h: 2.2 }] : [{ x0: 55.5, x1: 58, h: 2.4 }], true);
-      wallX(b, 'dz_paintUp', 62, 12, 1.2, y0, hh, 0.2, [{ z0: 7.2, z1: 6.0, h: 2.2 }], true); wallX(b, 'dz_paintUp', 62, 38.8, 28.2, y0, hh, 0.2, [{ z0: 34.2, z1: 33.0, h: 2.2 }], true);
+      wallZ(b, 'dm_plaster', 12, 53.2, 62, y0, hh, 0.2, y0 ? [] : [{ x0: 55, x1: 60, h: 1.1 }], true);
+      wallZ(b, 'dm_plaster', 28.2, 53.2, 62, y0, hh, 0.2, y0 ? [{ x0: 55.5, x1: 57, h: 2.2 }] : [{ x0: 55.5, x1: 58, h: 2.4 }], true);
+      wallX(b, 'dm_plaster', 62, 12, 1.2, y0, hh, 0.2, [{ z0: 7.2, z1: 6.0, h: 2.2 }], true); wallX(b, 'dm_plaster', 62, 38.8, 28.2, y0, hh, 0.2, [{ z0: 34.2, z1: 33.0, h: 2.2 }], true);
       const doors = y0 ? [{ z0: 26.4, z1: 25.2, h: 2.2 }] : [{ z0: 6.5, z1: 5.3, h: 2.2 }, { z0: 15.9, z1: 14.7, h: 2.2 }];
-      wallX(b, 'dz_paintUp', 65, 38.8, 1.2, y0, hh, 0.2, doors, true);
-      for (const z of [10.6, 20, 29.4]) wallZ(b, 'dz_paintUp', z, 65, 78.8, y0, hh, 0.2, [], true);
+      wallX(b, 'dm_plaster', 65, 38.8, 1.2, y0, hh, 0.2, doors, true);
+      for (const z of [10.6, 20, 29.4]) wallZ(b, 'dm_plaster', z, 65, 78.8, y0, hh, 0.2, [], true);
       for (const z of [10.6, 20, 29.4]) b.box('dz_paintLow', 13.8, 1.2, 0.22, [71.9, y0 + 0.6, z], { uv: 0.6 });
       b.box('dz_paintLow', 0.22, 1.2, 37.6, [65, y0 + 0.6, 20], { uv: 0.6 });
       // 门牌与关着的门
@@ -156,11 +157,11 @@ export async function buildSurface(scene, world, ctx) {
     for (const [x, z] of [[53.8, 21.9], [61.4, 19]]) plantPot(b, x, 0, z, 1.0);
     // M7：外墙内侧刷漆衬层（原外立面石材直接作室内墙面，映出金色大厅环境图）
     for (const [y0, hh] of [[0, F2 - 0.3], [F2, 4.3]]) {
-      for (const [z0, z1] of [[1.2, 18.35], [21.65, 38.8]]) { if (y0 && z0 > 20) continue; b.box('dz_paintUp', 0.04, hh, z1 - z0, [53.24, y0 + hh / 2, (z0 + z1) / 2], { uv: 0.6 }); }
-      if (y0) b.box('dz_paintUp', 0.04, hh, 17.15, [53.24, y0 + hh / 2, 30.225], { uv: 0.6 });
-      if (!y0) b.box('dz_paintUp', 0.04, hh - 3.65, 3.3, [53.24, 3.65 + (hh - 3.65) / 2, 20], { uv: 0.6 });
-      b.box('dz_paintUp', 0.04, hh, 37.6, [78.76, y0 + hh / 2, 20], { uv: 0.6 }); b.box('dz_paintLow', 0.05, 0.9, 37.6, [78.75, y0 + 0.45, 20], { uv: 0.6 });
-      for (const z of [1.24, 38.76]) { b.box('dz_paintUp', 25.6, hh, 0.04, [66, y0 + hh / 2, z], { uv: 0.6 }); b.box('dz_paintLow', 25.6, 1.1, 0.05, [66, y0 + 0.55, z + (z < 20 ? 0.01 : -0.01)], { uv: 0.6 }); }
+      for (const [z0, z1] of [[1.2, 18.35], [21.65, 38.8]]) { if (y0 && z0 > 20) continue; b.box('dm_plaster', 0.04, hh, z1 - z0, [53.24, y0 + hh / 2, (z0 + z1) / 2], { uv: 0.6 }); }
+      if (y0) b.box('dm_plaster', 0.04, hh, 17.15, [53.24, y0 + hh / 2, 30.225], { uv: 0.6 });
+      if (!y0) b.box('dm_plaster', 0.04, hh - 3.65, 3.3, [53.24, 3.65 + (hh - 3.65) / 2, 20], { uv: 0.6 });
+      b.box('dm_plaster', 0.04, hh, 37.6, [78.76, y0 + hh / 2, 20], { uv: 0.6 }); b.box('dz_paintLow', 0.05, 0.9, 37.6, [78.75, y0 + 0.45, 20], { uv: 0.6 });
+      for (const z of [1.24, 38.76]) { b.box('dm_plaster', 25.6, hh, 0.04, [66, y0 + hh / 2, z], { uv: 0.6 }); b.box('dz_paintLow', 25.6, 1.1, 0.05, [66, y0 + 0.55, z + (z < 20 ? 0.01 : -0.01)], { uv: 0.6 }); }
     }
     point(zone, 0xffe4c0, 4, [57.5, 3.4, 15.5], 9);
     // M7 大厅加密：暖瓶架（开水房）、公告栏、长椅、日光灯、挂钟、雨伞桶
@@ -179,8 +180,8 @@ export async function buildSurface(scene, world, ctx) {
   // ======================= 机库与停机坪 helipad (73…99, −87…−53) =======================
   {
     const X0 = 73, X1 = 99, Z0 = -53, Z1 = -87, H = 12, cx = 86, cz = -70;
-    for (const [x, z, yaw, len] of [[cx, Z0, 0, X1 - X0], [cx, Z1, Math.PI, X1 - X0], [X1, cz, Math.PI / 2, Z0 - Z1]]) bayWall(b, new Frame([x, 0, z], yaw), len, H, 4, { collide: true, buttressD: 1.2, pinnacles: false });
-    wallX(b, 'stone', X0 + 0.6, Z0, Z1, 0, H, 1.2, [{ z0: -63, z1: -77, h: 8.4 }], true);
+    for (const [x, z, yaw, len] of [[cx, Z0, 0, X1 - X0], [cx, Z1, Math.PI, X1 - X0], [X1, cz, Math.PI / 2, Z0 - Z1]]) bayWall(b, new Frame([x, 0, z], yaw), len, H, 4, { collide: true, buttressD: 1.2, pinnacles: false, mat: 'dm_brick' }); // 批次8：机库墙 Poly Haven brick_wall_006
+    wallX(b, 'dm_brick', X0 + 0.6, Z0, Z1, 0, H, 1.2, [{ z0: -63, z1: -77, h: 8.4 }], true);
     for (const z of [-62.4, -77.6]) b.box('iron', 0.5, 8.6, 0.5, [X0 - 0.1, 4.3, z], { uv: 1 }); b.box('paintY', 0.3, 0.4, 14.4, [X0 - 0.2, 8.6, -70], { uv: false });
     hangingSign(zone, M, '飞行器机库　·　停机坪', X0 - 0.5, 9.6, -70, -Math.PI / 2, 4.2);
     // 平屋顶 = 停机坪（y=12）
