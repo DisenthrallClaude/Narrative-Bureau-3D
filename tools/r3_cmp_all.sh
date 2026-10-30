@@ -29,3 +29,10 @@ c s7_ops "第七局 · 作战室（批次7）" "批次6" $B/seventh_ops_b6.png $
 c s7_wrap "第七局 · 杀青室（批次7）" "批次6" $B/seventh_wrap_b6.png $R/seventh_wrap.png $W/plan_s7_wrap.png -
 c abyss "墨渊 · 倒悬书城 / 考场母本（批次7）" "批次6" $B/abyss_city_b6.png $R/abyss_city.png $W/plan_abyss_city.png - $R/abyss_exam.png $W/plan_abyss_exam.png $B/abyss_exam_b6.png
 c b5_deep "B5 · 深库主室（批次7 补全黑空间）" "批次6（前室机位）" $B/b5_r3_b6.png $R/b5_deep.png $W/plan_b5_deep.png -
+# —— 批次8 新做区 / 中间层次 / 远景 LOD（俯视图在 work/r3/b8/）——
+c abyss_core "墨渊 · 定稿厅（批次8）" "批次7" $W/before8/abyss_core_b7.png $R/abyss_core.png $W/b8/plan_abyss_core.png $R/abyss_core_top.png $R/abyss_core_b.png
+c abyss_tide "墨渊 · 墨潮带岸线（批次8）" "批次7" $W/before8/abyss_tide_b7.png $R/abyss_tide.png $W/b8/plan_abyss_tide.png - $R/abyss_tide_b.png
+c s7_entry "第七局 · 装订线入口（批次8）" "批次7（无同机位）" - $R/seventh_entry.png $W/b8/plan_s7_entry.png - $R/seventh_gutter.png
+c plaza8 "主楼外观 / 远景 LOD（批次8）" "批次7" $W/before8/plaza_b7.png $R/plaza.png - - $R/facade.png
+c training8 "训练场中间层次（批次8）" "批次7" $W/before8/training_r3_b7.png $R/training_r3.png $W/b8/plan_training.png $R/training_top.png $R/training_mid.png
+c metro8 "地铁口中间层次（批次8）" "批次7" $W/before8/metro_r3_b7.png $R/metro_r3.png $W/b8/plan_metro.png $R/metro_top.png $R/metro_mid.png

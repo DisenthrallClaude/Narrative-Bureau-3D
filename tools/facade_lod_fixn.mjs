@@ -1,14 +1,17 @@
 // R3 批次8 收尾：修外立面远景 LOD 法线（Permissive 跨属性缝塌边后，24% 的角点法线与所在三角面夹角 > 60°，
 // 远景主楼整体发黑、玫瑰窗金线丢失）。做法：法线与面法线点积 < 0.5 的角点按「原顶点 + 面朝向簇（点积 > 0.85）」拆出新顶点，
 // 新顶点法线 = 簇内面法线面积加权平均；其余属性照抄原顶点。合格角点不动。
-// node tools/facade_lod_fixn.mjs in_lo.glb out_lo.glb
+// 另：顶点 AO（COLOR_0）塌边后只剩凹角暗顶点 → 大面插值偏暗；给出 hi.glb 时按网格把 lo 的面积加权 AO 均值拉回 hi 的均值（增益 ≤ 2）。
+// node tools/facade_lod_fixn.mjs in_lo.glb out_lo.glb [hi.glb]
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { prune, dedup, meshopt as meshoptFn } from '@gltf-transform/functions';
 import { MeshoptDecoder, MeshoptEncoder } from 'meshoptimizer';
+import { aoStats } from './_aochk.mjs';
 await MeshoptDecoder.ready; await MeshoptEncoder.ready;
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ 'meshopt.decoder': MeshoptDecoder, 'meshopt.encoder': MeshoptEncoder });
 const doc = await io.read(process.argv[2]);
+const hiAO = process.argv[4] ? await aoStats(process.argv[4]) : null; const loAO = hiAO ? await aoStats(process.argv[2]) : null;
 let added = 0, fixed = 0;
 for (const mesh of doc.getRoot().listMeshes()) for (const prim of mesh.listPrimitives()) {
   const P = prim.getAttribute('POSITION'), N = prim.getAttribute('NORMAL'); if (!N) continue;
@@ -42,6 +45,7 @@ for (const mesh of doc.getRoot().listMeshes()) for (const prim of mesh.listPrimi
   }
   const total = n0 + newV.length; prim.getIndices().setArray(total > 65535 ? new Uint32Array(I) : new Uint16Array(I));
 }
+if (hiAO) for (const mesh of doc.getRoot().listMeshes()) { const nm = mesh.getName(); const h = hiAO[nm], l = loAO[nm]; if (typeof h !== 'number' || typeof l !== 'number' || l < 0.01 || h <= l) continue; const g = Math.min(2, h / l); for (const prim of mesh.listPrimitives()) { const C = prim.getAttribute('COLOR_0'); if (!C) continue; const e = new Array(C.getElementSize()).fill(0); for (let i = 0; i < C.getCount(); i++) { C.getElement(i, e); for (let k = 0; k < 3; k++) e[k] = Math.min(1, e[k] * g); C.setElement(i, e); } } console.log('AO gain', nm, g.toFixed(2)); }
 console.log('fixed corners', fixed, 'added vertices', added);
 await doc.transform(prune(), dedup());
 await doc.transform(meshoptFn({ encoder: MeshoptEncoder, level: 'medium' }));
