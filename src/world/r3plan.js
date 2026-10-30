@@ -2154,10 +2154,10 @@ export function planLibrary(y) {
   for (const a of [-0.9, 0.9, Math.PI]) { const [x, z] = P(a, 9.6); F7(out, '阅读龛', x, z, 1.4, 0.8, y, a, 1.0); }
   for (let k = 0; k < 5; k++) { const a = 0.5 + k * 1.15, [x, z] = P(a, RI - 0.45); F7(out, '倚架书梯', x, z, 0.5, 0.6, y, a, 4.2); }
   // —— ① 地面 ——
-  ringF(out, 'r3_stoneBorder', 2.8, 3.3, cx, cz, y + 0.012); ringF(out, 'dz_brassDim', 3.3, 3.36, cx, cz, y + 0.013, 1); ringF(out, 'r3_corr', 3.36, 5.8, cx, cz, y + 0.011); ringF(out, 'dz_brassDim', 5.8, 5.86, cx, cz, y + 0.013, 1);
+  ringF(out, 'r3_stoneBorder', 2.8, 3.3, cx, cz, y + 0.012); ringF(out, 'dz_brassDim', 3.3, 3.36, cx, cz, y + 0.013, 1); ringF(out, 'r3_terrLobby', 3.36, 5.8, cx, cz, y + 0.011); ringF(out, 'dz_brassDim', 5.8, 5.86, cx, cz, y + 0.013, 1);
   ringF(out, 'r3_parquet', 5.86, 10.6, cx, cz, y + 0.011, 0.42); ringF(out, 'dz_brassDim', 10.6, 10.66, cx, cz, y + 0.013, 1); ringF(out, 'r3_stoneBorder', 10.66, RI + 0.2, cx, cz, y + 0.011);
   for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4, [x, z] = P(a, 4.58); out.push({ box: 'dz_brassDim', x, y: y + 0.0135, z, w: 0.04, h: 0.003, d: 2.4, yaw: a, tag: '地面', on: 'partv' }); }
-  wear(out, -1.0, 1.0, -102.6, -93.6, y + 0.014);
+  // 批次12 收尾：去掉入口中轴磨损贴花（白色擦痕压在深色拼花木地板上像口香糖渍，lib_r3 近景）
   // —— ② 入口：借阅台（东）/ 限阅陈列柜（西）/ 两侧落地铭牌与展板 ——
   { const x = 4.4, z = -97.4; out.push({ m: 'r2/antique_desk', x, y, z, yaw: ROT.E, fit: [1.6, 0.78, 0.66], tag: '借阅台', on: 'floor', col: [1.6, 0.78, 0.66] });
     out.push({ m: 'r2/dining_chair_02', x: x + 0.72, y, z, yaw: ROT.W, h: 0.98, tag: '借阅台', on: 'floor' });
