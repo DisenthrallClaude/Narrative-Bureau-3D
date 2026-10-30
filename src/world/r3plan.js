@@ -2049,5 +2049,44 @@ export function planCitizenService(y) {
   return { room, items: out };
 }
 PLANS.citizen_service = (Y) => fixYaw(planCitizenService(Y)); R3.citizen_service = true;
+// ================= R3 批次12 · 上层电梯厅（2F / 3F / 4F 藏书阁 / 12F，vault.js elevatorHall 同一套：x −9…9，z −84.2…−91.8，层高 5.2） =================
+// 原状：只有两樘金拱电梯门 + 中间铜牌 + 3 条琥珀灯槽，四壁石墙、深色地砖，空。剧情/机制锚点：电梯门、呼梯按钮（x ±8）、楼层铜牌、金字层名——不动。
+// 平面：南墙 = 电梯墙（两樘门 x ±6，门前 2.4 m 候梯区净空）；北墙中间 4.4 m 开口进本层（中轴通道净空）。
+//  ① 地面：深色石材收边 + 暖灰水磨石心 + 铜嵌条，每樘电梯门口黑石门槛；门前、中轴走磨损
+//  ② 东西墙对称：各一张 18 世纪包面长凳（背靠墙、面朝中轴），凳两侧铜烛台壁灯；西凳北端伞架；东墙北角灭火器
+//  ③ 南墙：楼层铜牌两侧铜壁灯；北墙开口两侧铸铁瓮式花钵；开口西侧「楼层导览」铜牌（全楼索引），开口上方出口标识
+//  ④ 顶棚：原灯槽保留；补烟感 2、监控 1
+const LOBBY_DIR = ['12F　机要室 · 局长室', '4F–11F　典籍藏书阁', '3F　办公区 · 医务室 · 实验室', '2F　国际联络处 · 宣传处', '1F　安检大厅 · 市民服务', '1F 西翼　人事档案馆', 'B1–B7　凭证件乘梯'];
+function planLobby(y, F) {
+  const out = []; const X = 9, ZS = -84.2, ZN = -91.8, H = 5.2;
+  const room = { name: `${F} · 电梯厅（批次12）`, x0: -X, x1: X, z0: ZN, z1: ZS, y, H, doors: [{ wall: 'N', a: -2.2, b: 2.2, label: '进本层' }, { wall: 'S', a: -7.8, b: -4.2, label: '电梯 A' }, { wall: 'S', a: 4.2, b: 7.8, label: '电梯 B' }], windows: [],
+    rooms: [['① 候梯区', 0, -85.6], ['② 休息长凳', -7.6, -88.4], ['② 休息长凳', 7.6, -88.4], ['③ 导览', -5.2, -91.0]],
+    aisles: [{ label: '候梯区净空', x0: -8.6, x1: 8.6, z0: -86.6, z1: -84.45 }, { label: '中轴通道', x0: -2.2, x1: 2.2, z0: -91.8, z1: -86.6 }] };
+  // 固定：电梯门（含门套）、呼梯按钮
+  for (const x of [-6, 6]) F7(out, '电梯门', x, ZS - 0.08, 3.7, 0.16, y, 0, 3.4);
+  for (const x of [-8, 8]) out.push({ fixed: true, m: '固定:呼梯按钮', x, y: y + 1.05, z: ZS - 0.03, yaw: 0, size: [0.3, 0.5, 0.05], tag: '呼梯', on: 'wall' });
+  // ① 地面
+  floorZ(out, 'r3_corr', -X, X, ZN, ZS, y, { border: 0.5, uv: 0.6 });
+  for (const [x0, x1, z0, z1] of [[-8.5, 8.5, -91.32, -91.29], [-8.5, 8.5, -84.73, -84.7], [-8.52, -8.49, -91.3, -84.7], [8.49, 8.52, -91.3, -84.7]]) out.push({ box: 'dz_brassDim', x: (x0 + x1) / 2, y: y + 0.0105, z: (z0 + z1) / 2, w: x1 - x0, h: 0.003, d: z1 - z0, tag: '地面', on: 'partv' });
+  for (const x of [-6, 6]) { out.push({ box: 'r3_stoneBorder', x, y: y + 0.012, z: ZS - 0.32, w: 2.7, h: 0.012, d: 0.5, tag: '地面', on: 'partv' }); wear(out, x - 1.3, x + 1.3, -86.4, -84.8, y + 0.006); }
+  wear(out, -1.4, 1.4, -91.6, -86.4, y + 0.006); wear(out, -6, 6, -86.6, -85.6, y + 0.006);
+  // ② 东西墙长凳 + 壁灯 + 伞架 / 灭火器
+  for (const s of [-1, 1]) { const x = s * (X - 0.36);
+    out.push({ m: 'r2/18th_century_bench_from_hungarian_opera', x, y, z: -88.6, yaw: s < 0 ? ROT.E : ROT.W, w: 1.8, tag: '休息长凳', on: 'floor' });
+    for (const z of [-86.9, -90.3]) { out.push({ m: 'r2/copper_wall_sconce', x: s * (X - 0.1), y: y + 2.1, z, yaw: s < 0 ? ROT.E : ROT.W, h: 0.6, tag: '壁灯', on: 'wall' }); light(out, s * (X - 0.5), y + 2.5, z, 0xffd8a8, 0.9, 5); } }
+  out.push({ m: 'r2/victorian_umbrella_stand', x: -8.4, y, z: -90.85, yaw: 0, h: 1.9, tag: '伞架', on: 'floor' });
+  out.push({ m: 'r4/fireExtinguisher_abc_a03', x: 8.82, y, z: -91.45, yaw: ROT.W, fit: [0.144, 0.545, 0.192], tag: '消防', on: 'floor' });
+  // ③ 南墙铜牌两侧壁灯；北墙花钵、导览铜牌、出口标识
+  for (const x of [-2.4, 2.4]) { out.push({ m: 'r2/copper_wall_sconce', x, y: y + 1.95, z: ZS - 0.1, yaw: Math.PI, h: 0.6, tag: '壁灯', on: 'wall' }); light(out, x, y + 2.4, ZS - 0.5, 0xffd8a8, 0.8, 4.5); }
+  for (const x of [-3.3, 3.3]) out.push({ m: 'r2/ornamental_urn_planter', x, y, z: ZN + 0.5, yaw: 0, h: 1.0, tag: '花钵', on: 'floor' });
+  out.push({ plaque: true, title: '楼 层 导 览', lines: LOBBY_DIR, x: -5.6, y: y + 1.7, z: ZN + 0.03, yaw: 0, w: 0.75, h: 1.0, size: [0.8, 1.05, 0.04], tag: '导览', on: 'pic' });
+  light(out, -5.6, y + 2.9, ZN + 0.9, 0xffe6c8, 0.7, 3.5);
+  out.push({ m: 'r2/exit_sign', x: 0, y: y + 3.45, z: ZN + 0.05, yaw: 0, w: 0.36, tag: '导视', on: 'wall' });
+  // ④ 顶棚
+  smoke(out, y, H, [[-4.5, -88], [4.5, -88]]);
+  out.push({ m: 'r2/security_camera_02', x: 8.6, y: y + H - 0.25, z: ZN + 0.3, yaw: -2.4, h: 0.22, tag: 'K3', on: 'ceil' });
+  return { room, items: out };
+}
+for (const F of ['2F', '3F', '4F', '12F']) { PLANS['lobby_' + F] = (Y) => fixYaw(planLobby(Y, F)); R3['lobby_' + F] = true; }
 // 对照用：?r3off=east_cloister,xxx 关掉指定区的 R3 规划（截图「改前」用，旧陈设随之恢复）
 if (typeof location !== 'undefined') { const m = /[?&]r3off=([\w,]+)/.exec(location.search); if (m) for (const id of m[1].split(',')) R3[id] = false; }
