@@ -135,8 +135,8 @@ export function buildEastWing(scene, world, ctx) {
   // 排队座椅（三排）
   for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) add(placeModel('street_seating', { width: 4.2, pos: [27 + k * 10, Y, ZA - 11 - r * 2.4], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.85); return o; }));
   // 排队市民
-  // 批次12：4 位排队市民原本站在候号长椅里（x 25/29/35/39 正落在长椅端部，穿模）→ R3 下同一 x、退到相邻两排长椅之间的过道（z 各 −1.2 m），面向窗口不变
-  const citizens = R3.citizen_service ? [[25, -44.2, 0x3a3020], [29, -46.6, 0x22324a], [39, -44.2, 0x4a2a2a], [35, -46.6, 0x2a3a2a]] : [[25, ZA - 11, 0x3a3020], [29, ZA - 13.4, 0x22324a], [39, ZA - 11, 0x4a2a2a], [35, ZA - 13.4, 0x2a3a2a]];
+  // 批次12 收尾：改为 1/3/4 号窗台前各一位正在办理（站两只圆凳之间），3 号窗一米线处一位等候（站在线内侧，不占窗口前主通道）（cs_top 看候号座椅间站人像「在长椅间罚站」）。批次12：4 位排队市民原本站在候号长椅里（x 25/29/35/39 正落在长椅端部，穿模）→ R3 下同一 x、退到相邻两排长椅之间的过道（z 各 −1.2 m），面向窗口不变
+  const citizens = R3.citizen_service ? [[23.5, -50.2, 0x3a3020], [34.3, -50.2, 0x22324a], [39.7, -50.2, 0x4a2a2a], [34.3, -49.68, 0x2a3a2a]] : [[25, ZA - 11, 0x3a3020], [29, ZA - 13.4, 0x22324a], [39, ZA - 11, 0x4a2a2a], [35, ZA - 13.4, 0x2a3a2a]];
   for (const [x, z, c] of citizens) { const p = person(M, { coat: c }); p.position.set(x, Y, z); p.rotation.y = Math.PI; p.scale.y = 0.96; zone.add(p); }
   // 电饭锅大妈
   const auntie = person(M, { coat: 0x6a3a4a }); auntie.position.set(33, Y, ZA - 13.4); auntie.rotation.y = Math.PI; zone.add(auntie);

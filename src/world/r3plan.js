@@ -141,8 +141,11 @@ function vitrine(out, x, z, y, L, yaw, tag = '展示柜', o = {}) {
   out.push({ box: 'dz_wain2', x, y: y + 0.83, z, w: L + 0.04, h: 0.03, d: 0.64, yaw, tag, on: 'partv' });
   out.push({ box: 'r3_mapPaper', x, y: y + 0.851, z, w: L - 0.1, h: 0.004, d: 0.5, yaw, tag, on: 'partv' });
   out.push({ box: 'r3_glassCase', x, y: y + 0.85 + gh / 2, z, w: L - 0.02, h: gh, d: 0.58, yaw, tag, on: 'partv' });
-  for (const k of [-1, 1]) { const [px, pz] = at([x, z], yaw, k * (L / 2 - 0.01), 0); out.push({ box: 'dz_brassDim', x: px, y: y + 0.85 + gh / 2, z: pz, w: 0.02, h: gh + 0.02, d: 0.6, yaw, tag, on: 'partv' }); }
-  if (gh > 0.22) { out.push({ box: 'dz_brassDim', x, y: y + 0.85 + gh + 0.008, z, w: L + 0.02, h: 0.016, d: 0.62, yaw, tag, on: 'partv' }); }
+  if (gh > 0.22) { // 批次12 收尾：高罩改「四角铜立柱 + 顶面铜边框」，原整块端板 + 整块顶板把玻璃罩盖成了不透明木盒（ec_vit 特写）
+    for (const kx of [-1, 1]) for (const kz of [-1, 1]) { const [px, pz] = at([x, z], yaw, kx * (L / 2 - 0.01), kz * 0.29); out.push({ box: 'dz_brassDim', x: px, y: y + 0.85 + gh / 2, z: pz, w: 0.02, h: gh + 0.02, d: 0.02, yaw, tag, on: 'partv' }); }
+    for (const kz of [-1, 1]) { const [px, pz] = at([x, z], yaw, 0, kz * 0.3); out.push({ box: 'dz_brassDim', x: px, y: y + 0.85 + gh + 0.008, z: pz, w: L + 0.02, h: 0.016, d: 0.02, yaw, tag, on: 'partv' }); }
+    for (const kx of [-1, 1]) { const [px, pz] = at([x, z], yaw, kx * (L / 2), 0); out.push({ box: 'dz_brassDim', x: px, y: y + 0.85 + gh + 0.008, z: pz, w: 0.02, h: 0.016, d: 0.62, yaw, tag, on: 'partv' }); }
+  } else for (const k of [-1, 1]) { const [px, pz] = at([x, z], yaw, k * (L / 2 - 0.01), 0); out.push({ box: 'dz_brassDim', x: px, y: y + 0.85 + gh / 2, z: pz, w: 0.02, h: gh + 0.02, d: 0.6, yaw, tag, on: 'partv' }); }
   if (o.felt) { out.push({ box: o.felt, x, y: y + 0.861, z, w: L - 0.08, h: 0.02, d: 0.5, yaw, uv: 2, tag, on: 'partv' }); return; }
   const n = Math.floor(L / 0.55); for (let i = 0; i < n; i++) { const [px, pz] = at([x, z], yaw, -L / 2 + 0.3 + i * 0.55, (i % 2 ? 0.04 : -0.05)); out.push({ box: i % 3 ? 'dz_paper' : 'dz_paper2', x: px, y: y + 0.856, z: pz, w: 0.3, h: 0.006, d: 0.38, yaw: yaw + (hash(px, pz) - 0.5) * 0.3, tag, on: 'partv' }); }
 }
@@ -1871,7 +1874,7 @@ function ecExhibit(out, i, c, top) {
   const archBox = (lx, lz, n, yaw = 0) => { for (let k = 0; k < n; k++) { const [x, z] = P(lx, lz); out.push({ box: k % 2 ? 'kraftDark' : 'kraft', x, y: top + 0.03 + k * 0.061, z, w: 0.3, h: 0.06, d: 0.23, yaw: Y + yaw + k * 0.06, tag: '展品', on: 'partv' }); const [lx2, lz2] = P(lx + 0.0, lz - 0.1); out.push({ box: 'dz_paper', x: lx2, y: top + 0.03 + k * 0.061, z: lz2, w: 0.12, h: 0.035, d: 0.004, yaw: Y + yaw + k * 0.06, tag: '展品', on: 'partv' }); } };
   const badge = (lx, lz) => { const [x, z] = P(lx, lz); out.push({ disc: true, mat: 'brass', r: 0.032, h: 0.006, x, y: top, z, size: [0.064, 0.006, 0.064], tag: '徽章', on: 'partv' }); out.push({ disc: true, mat: 'dz_redPhone', r: 0.016, h: 0.009, x, y: top, z, size: [0.032, 0.009, 0.032], tag: '徽章', on: 'partv' }); const [rx, rz] = P(lx, lz + 0.055); out.push({ box: 'dz_rugRed', x: rx, y: top + 0.002, z: rz, w: 0.035, h: 0.004, d: 0.06, yaw: Y, tag: '徽章', on: 'partv' }); };
   const card = (lx, lz) => { const [x, z] = P(lx, lz); out.push({ box: 'dz_paper', x, y: top + 0.002, z, w: 0.13, h: 0.003, d: 0.08, yaw: Y, tag: '展品', on: 'partv' }); };
-  if (i === 0) { put('r4/book_open_a01', -0.4, 0.0, { fit: [0.207, 0.037, 0.32], yaw: Math.PI / 2 + 0.08 }); put('r2/vintage_pocket_watch', 0.08, 0.08, { h: 0.06 }); put('r2/ink_bottle_with_feather_and_cork', 0.32, -0.06, { h: 0.1 }); badge(0.58, 0.06); badge(0.58, -0.1); card(0.06, -0.15); }
+  if (i === 0) { put('r4/book_open_a01', -0.4, 0.0, { fit: [0.207, 0.037, 0.32], yaw: Math.PI / 2 + 0.08 }); put('r2/vintage_pocket_watch', 0.08, 0.06, { w: 0.05, rx: -Math.PI / 2, y: top + 0.006 }); put('r2/ink_bottle_with_feather_and_cork', 0.32, -0.06, { h: 0.1 }); badge(0.58, 0.06); badge(0.58, -0.1); card(0.06, -0.15); }
   if (i === 1) { archBox(-0.45, 0.0, 2, 0.05); put('r2/old_victorian_rubber_stamp', -0.05, 0.08, { h: 0.09 }); put('r2/camera_01', 0.3, 0.0, { w: 0.16, yaw: -0.3 }); badge(0.6, 0.1); card(-0.08, -0.15); }
   if (i === 2) { put('r4/paper_stack_a05', -0.42, 0.0, { fit: [0.252, 0.043, 0.338], yaw: -0.15 }); put('r2/glass_ashtray', -0.02, 0.06, { w: 0.12 }); archBox(0.38, 0.0, 1, -0.08); badge(0.0, -0.14); card(0.62, -0.14); }
   if (i === 3) { put('bronze_gui', -0.4, 0.0, { w: 0.22 }); put('r2/medieval_book_stack', 0.08, 0.02, { h: 0.12, yaw: 0.2 }); badge(0.42, 0.08); badge(0.56, 0.08); badge(0.49, -0.08); card(-0.05, -0.17); }
@@ -1964,7 +1967,7 @@ export function planCitizenService(y) {
   for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) F7(out, '候号座椅', 27 + k * 10, ZA - 11 - r * 2.4, 4.2, 0.8, y, 0, 0.85);
   F7(out, '叫号机', 22, ZA - 3, 0.5, 0.4, y, 0, 1.4);
   F7(out, '群众来信墙', 50.2, ZA - 0.42, 9.4, 0.12, y, 0, 3.8);
-  for (const [x, z] of [[25, -44.2], [29, -46.6], [39, -44.2], [35, -46.6], [33, ZA - 13.4]]) F7(out, '市民', x, z, 0.5, 0.4, y, 0, 1.7);
+  for (const [x, z] of [[23.5, -50.2], [34.3, -50.2], [39.7, -50.2], [34.3, -49.68], [33, ZA - 13.4]]) F7(out, '市民', x, z, 0.5, 0.4, y, 0, 1.7);
   // —— 地面：哑光黑大理石薄层 + 铜嵌条网格（替换原镜面清漆 + 金线网格，eastwing.js 在 R3 下关掉原金线）——
   floorZ(out, 'r3_marbleHoned', 20.3, 55.9, -52.85, -32.4, y, { uv: 0.5 });
   for (let x = 24; x <= 52; x += 4) out.push({ box: 'dz_brassDim', x, y: y + 0.0095, z: -42.6, w: 0.03, h: 0.003, d: 20.2, tag: '地面', on: 'partv' });
