@@ -180,7 +180,21 @@ export async function buildSurface(scene, world, ctx) {
         desk(b, world, f.desk.x, Y3, f.desk.z, f.desk.yaw, 1.1); wardrobe(b, world, f.wardrobe.x, Y3, f.wardrobe.z, 0, { suitcase: !anchorRoom }); washstand(b, world, f.wash.x, Y3, f.wash.z, f.wash.yaw);
         thermos(b, f.X(0.25), Y3 + 0.8, f.desk.z + 0.35); if (!anchorRoom) mug(b, f.X(0.45), Y3 + 0.8, f.desk.z + 0.15);
         // 后墙高窗（借老虎窗光：磨砂玻璃 + 木窗框）
-        const gx = r.back + r.s * 0.11; b.box('dm_frameCream', 0.08, 0.9, 1.5, [gx, Y3 + 2.25, r.zc - 0.2], { uv: false }); const gl = new THREE.Mesh(new THREE.PlaneGeometry(1.34, 0.76), new THREE.MeshStandardMaterial({ color: 0x9aa39c, emissive: 0xd8dccf, emissiveIntensity: 0.35, roughness: 0.5 })); gl.position.set(gx + r.s * 0.045, Y3 + 2.25, r.zc - 0.2); gl.rotation.y = r.s > 0 ? Math.PI / 2 : -Math.PI / 2; zone.add(gl);
+        // 批次24：白色发光片 → 木框玻璃窗（外框 + 十字窗棂 + 窗台）+ 窗外天光（天空渐变贴图在玻璃后 0.06 m）+ 透明反射玻璃
+        { const gx = r.back + r.s * 0.11, zc = r.zc - 0.2, wy = Y3 + 2.25, ry = r.s > 0 ? Math.PI / 2 : -Math.PI / 2;
+          b.add('dm_sky', new THREE.PlaneGeometry(1.36, 0.8), { pos: [gx + r.s * 0.005, wy, zc], rot: [0, ry, 0] }, { uv: false });
+          b.add('dm_glass', new THREE.PlaneGeometry(1.36, 0.8), { pos: [gx + r.s * 0.06, wy, zc], rot: [0, ry, 0] }, { uv: false });
+          for (const e of [-1, 1]) { b.box('dm_desk', 0.09, 0.07, 1.52, [gx + r.s * 0.05, wy + e * 0.435, zc], { uv: false }); b.box('dm_desk', 0.09, 0.94, 0.07, [gx + r.s * 0.05, wy, zc + e * 0.725], { uv: false }); }
+          b.box('dm_desk', 0.05, 0.8, 0.04, [gx + r.s * 0.065, wy, zc], { uv: false }); b.box('dm_desk', 0.05, 0.04, 1.4, [gx + r.s * 0.065, wy + 0.06, zc], { uv: false });
+          b.box('dm_sillWhite', 0.2, 0.04, 1.62, [gx + r.s * 0.1, wy - 0.47, zc], { uv: false }); }
+        // 批次24：走廊门洞木门扇（门套 + 凸芯板门 + 铜把手）；306 半开 55°，其余关闭（带碰撞）
+        { const hz = f.door.z0, xd = r.door, ang = r.num === '306' ? 0.96 : 0, s = r.s, dirx = -s * Math.sin(ang), dirz = Math.cos(ang), ry = -s * ang;
+          const cxl = xd - s * 0.02 + dirx * 0.44, czl = hz + 0.01 + dirz * 0.44;
+          b.add('dm_wardrobe', new THREE.BoxGeometry(0.04, 2.06, 0.88), { pos: [cxl, Y3 + 1.03, czl], rot: [0, ry, 0] }, { uv: 1 });
+          for (const [ly, lh] of [[0.55, 0.7], [1.5, 0.9]]) b.add('dm_desk', new THREE.BoxGeometry(0.052, lh, 0.6), { pos: [cxl, Y3 + ly, czl], rot: [0, ry, 0] }, { uv: 1 });
+          const hx = xd - s * 0.02 + dirx * 0.8, hzz = hz + 0.01 + dirz * 0.8; b.add('brass', new THREE.BoxGeometry(0.1, 0.03, 0.03), { pos: [hx, Y3 + 1.0, hzz], rot: [0, ry, 0] }, { uv: false });
+          for (const e of [-1, 1]) b.box('dm_wardrobe', 0.24, 2.2, 0.06, [xd, Y3 + 1.1, (e < 0 ? f.door.z0 - 0.03 : f.door.z1 + 0.03)], { uv: 1 }); b.box('dm_wardrobe', 0.24, 0.08, 1.02, [xd, Y3 + 2.14, (f.door.z0 + f.door.z1) / 2], { uv: 1 });
+          if (!ang) world.box(cxl, Y3 + 1.03, czl, 0.06, 2.06, 0.88); }
         tubeLamp(b, f.X(2.4), Y3 + H3 - 0.02, r.zc, Math.PI / 2, true);
         plane(zone, tagMaterial(r.num), 0.3, 0.12, r.door + r.s * 0.1, Y3 + 2.3, f.door.z0 - 0.35, r.s > 0 ? Math.PI / 2 : -Math.PI / 2); }
       // 306：留下的信（可读）

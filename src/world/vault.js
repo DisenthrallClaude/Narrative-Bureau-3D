@@ -295,7 +295,7 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
   for (const x of [-6, 6]) {
     const f = new Frame([x, y, Z0 - 0.21], Math.PI);
     if (BM) { // 批次23：B 层电梯门套——金色哥特拱 → 方形门套（客梯暗铜 / 货梯钢），厚门框 + 门楣 + 底座 + 门头钢板
-      const D = dressMats(M); const fm = x < 0 ? 'dz_brassDim' : 'r3_steelGrey'; M[fm] = M[fm] ?? D[fm]; M.r3_steelOld = M.r3_steelOld ?? D.r3_steelOld; M.blackMetal = M.blackMetal ?? D.blackMetal;
+      const D = dressMats(M); const fm = x < 0 ? 'r3_brassAged' : 'r3_steelGrey'; /* 批次24：暗铜做旧 */ M[fm] = M[fm] ?? D[fm]; M.r3_steelOld = M.r3_steelOld ?? D.r3_steelOld; M.blackMetal = M.blackMetal ?? D.blackMetal;
       for (const s of [-1, 1]) { b.add(fm, new THREE.BoxGeometry(0.28, 3.6, 0.42), f.at(s * 1.36, 1.8, 0.0), { uv: 1 }); b.add('r3_steelOld', new THREE.BoxGeometry(0.36, 0.22, 0.46), f.at(s * 1.36, 0.11, 0.0), { uv: 1 }); }
       b.add(fm, new THREE.BoxGeometry(3.0, 0.3, 0.42), f.at(0, 3.45, 0.0), { uv: 1 });
       b.add(fm, new THREE.BoxGeometry(3.2, 0.06, 0.48), f.at(0, 3.63, 0.0), { uv: 1 });
@@ -326,6 +326,7 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
   const nm = goldText(name, 1.0, 0.7, M.goldBright, { res: 160 }); nm.position.set(0, y + (UP ? 3.7 : 4.1), Z0 - 0.22 - dz); nm.rotation.y = Math.PI; zone.add(nm);
   if (!UP) for (const x of (SPN ? [-6, 6] : [-6, 0, 6])) { b.box('blackMetal', 1.6, 0.06, 0.4, [x, y + H - 0.03, -88], { uv: 1 }); const l = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.03, 0.26), Mx.lampAmber); l.position.set(x, y + H - 0.07, -88); zone.add(l); }
   point(zone, UP ? 0xfff0dc : 0xffd0a0, BM ? 11 : 8, [0, y + 4, -88], 12); // 批次23：B 层整体提亮一档
+  if (BM) point(zone, 0xf2e8d6, 4.5, [0, y + 3.4, Z1 + 1.6], 10); // 批次24：北墙（远端）补光，看图北墙仍偏暗
   rectLight(zone, 0xffe8c8, 1.2, 16, 6, [0, y + H - 0.2, -88], [0, y, -88]);
 }
 const UP_TEXT = { '2F': ['国际联络处', '宣传处 · 新闻发布厅'], '3F': ['政策研究室 · 法务处', '医务室 · 观察病房'], '4F': ['典籍藏书阁', '阅览 · 借阅 · 古籍修复'], '12F': ['局长室', '机要室 · 会客厅'] };

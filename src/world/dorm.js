@@ -46,6 +46,9 @@ export function dormMats() {
     dm_brass: new THREE.MeshStandardMaterial({ color: 0xb08a48, metalness: 0.8, roughness: 0.45, envMapIntensity: 0.4 }),
     dm_pane: new THREE.MeshStandardMaterial({ color: 0x9ab0c4, emissive: 0xcfdcea, emissiveIntensity: 0.55, roughness: 0.2 }),
     dm_sillWhite: matte({ color: 0xd8d2c4 }),
+    dm_mirror: new THREE.MeshStandardMaterial({ color: 0xdfe3e2, metalness: 1.0, roughness: 0.04, envMapIntensity: 1.25 }), // 批次24：镜子改金属反射（吃场景环境图），原为白板 / 发光片
+    dm_sky: new THREE.MeshBasicMaterial({ map: cv(256, 256, (c, w, h) => { const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#8fa9c4'); g.addColorStop(0.55, '#bccbd6'); g.addColorStop(1, '#e2ddcc'); c.fillStyle = g; c.fillRect(0, 0, w, h); for (const [x, y, r] of [[60, 70, 40], [100, 60, 34], [190, 110, 46], [150, 120, 30]]) { const rg = c.createRadialGradient(x, y, 0, x, y, r); rg.addColorStop(0, 'rgba(250,248,240,0.55)'); rg.addColorStop(1, 'rgba(250,248,240,0)'); c.fillStyle = rg; c.fillRect(0, 0, w, h); } c.fillStyle = '#5a5850'; c.beginPath(); c.moveTo(0, h); c.lineTo(0, h * 0.86); c.lineTo(w * 0.3, h * 0.78); c.lineTo(w * 0.62, h * 0.88); c.lineTo(w, h * 0.82); c.lineTo(w, h); c.fill(); }), color: 0xd8d8d8 }), // 批次24：宿舍窗外天光（天空渐变 + 远处屋脊剪影），代替白色发光片
+    dm_glass: new THREE.MeshPhysicalMaterial({ color: 0xe6ece8, roughness: 0.06, metalness: 0, transparent: true, opacity: 0.16, envMapIntensity: 1.0, depthWrite: false }),
     dm_shoe: matte({ color: 0x1a1612 }),
     dm_shoe2: matte({ color: 0xd8d4cc }),
     dm_case: matte({ color: 0x6a2a20, roughness: 0.6 }),
@@ -111,9 +114,11 @@ export function singleBed(b, world, x, y, z, yaw = 0, o = {}) {
   b.add('dm_mattress', RB(W - 0.08, 0.12, L - 0.06, 0.04), { pos: P(0, 0.46, 0), rot: R }, { uv: 1.2 });
   if (o.made !== false) {
     b.add('dm_sheet', RB(W - 0.06, 0.02, L - 0.04, 0.008, 1), { pos: P(0, 0.53, 0), rot: R }, { uv: false });
-    b.add('dm_pillow', RB(0.58, 0.12, 0.35, 0.05, 3), { pos: P(0, 0.6, -L / 2 + 0.26), rot: [0.08, yaw, 0] }, { uv: false });
-    const g = new THREE.BoxGeometry(W - 0.02, 0.07, 1.3, 1, 1, 6); const p = g.attributes.position; for (let i = 0; i < p.count; i++) if (p.getY(i) > 0) p.setY(i, p.getY(i) + Math.sin((p.getZ(i) / 1.3 + 0.5) * Math.PI) * 0.035); g.computeVertexNormals();
+    { const pg = RB(0.58, 0.12, 0.35, 0.05, 3), pp = pg.attributes.position; for (let i = 0; i < pp.count; i++) { const px = pp.getX(i) / 0.29, pz = pp.getZ(i) / 0.175; if (pp.getY(i) > 0.02) pp.setY(i, pp.getY(i) - 0.035 * Math.max(0, 1 - px * px - pz * pz) + 0.006 * Math.sin(px * 9 + pz * 4)); } pg.computeVertexNormals(); b.add('dm_pillow', pg, { pos: P(0, 0.6, -L / 2 + 0.26), rot: [0.08, yaw, 0] }, { uv: false }); } // 批次24：枕头压窝 + 细褶
+    // 批次24：被褥有褶——顶面多频正弦起伏（固定公式），两侧垂边下垂 0.16 m 带竖褶；床头翻出白色被头
+    const g = new THREE.BoxGeometry(W + 0.06, 0.07, 1.3, 12, 1, 16); const p = g.attributes.position; for (let i = 0; i < p.count; i++) { const gx = p.getX(i), gz = p.getZ(i), u = gz / 1.3 + 0.5; if (p.getY(i) > 0) p.setY(i, p.getY(i) + Math.sin(u * Math.PI) * 0.03 + 0.012 * Math.sin(gx * 11 + gz * 7) + 0.008 * Math.sin(gz * 23 - gx * 5)); if (Math.abs(gx) > W / 2 - 0.02) { p.setY(i, p.getY(i) - 0.16); p.setX(i, gx + Math.sign(gx) * 0.01 * Math.sin(gz * 31)); } } g.computeVertexNormals();
     b.add(o.olive ? 'dm_olive' : 'dm_quilt', g, { pos: P(0, 0.57, 0.28), rot: R }, { uv: 1.4 });
+    { const tg = new THREE.BoxGeometry(W + 0.06, 0.03, 0.22, 12, 1, 2), tp = tg.attributes.position; for (let i = 0; i < tp.count; i++) { const gx = tp.getX(i); if (tp.getY(i) > 0) tp.setY(i, tp.getY(i) + 0.008 * Math.sin(gx * 13)); if (Math.abs(gx) > W / 2 - 0.02) tp.setY(i, tp.getY(i) - 0.12); } tg.computeVertexNormals(); b.add('dm_sheet', tg, { pos: P(0, 0.625, 0.28 - 0.58), rot: R }, { uv: false }); }
   } else b.add('dm_olive', new THREE.CylinderGeometry(0.14, 0.14, W - 0.2, 14), { pos: P(0, 0.66, -L / 2 + 0.35), rot: [0, yaw, Math.PI / 2] }, { uv: 1 });
   const w = P(0, 0, 0); world.box(w[0], y + 0.5, w[2], Math.abs(Math.cos(yaw)) * W + Math.abs(Math.sin(yaw)) * L, 1.0, Math.abs(Math.sin(yaw)) * W + Math.abs(Math.cos(yaw)) * L);
 }
@@ -139,8 +144,13 @@ export function wardrobe(b, world, x, y, z, yaw = 0, o = {}) {
   const bx = (key, w, h, d, lx, ly, lz, uv = 1) => b.add(key, new THREE.BoxGeometry(w, h, d), { pos: P(lx, ly, lz), rot: R }, { uv });
   bx('dm_wardrobe', W, H, 0.55, 0, H / 2 + 0.06, 0, 1); bx('dm_wardrobe', W + 0.04, 0.05, 0.58, 0, H + 0.085, 0, 1); bx('dm_desk', W - 0.04, 0.06, 0.5, 0, 0.03, 0, 1);
   bx('dm_shoe', 0.008, H - 0.12, 0.01, 0, H / 2 + 0.06, 0.277, false);
-  for (const sx of [-1, 1]) { bx('dm_desk', W / 2 - 0.08, H - 0.3, 0.012, sx * W / 4, H / 2 + 0.06, 0.28, 1); bx('dm_brass', 0.02, 0.14, 0.02, sx * 0.05, 1.08, 0.3, false); }
-  bx('dm_sillWhite', 0.4, 0.5, 0.012, W / 4 + 0.05, 1.45, 0.29, false); // 门上小镜
+  for (const sx of [-1, 1]) { const dx = sx * W / 4, dw = W / 2 - 0.03; bx('dm_desk', W / 2 - 0.08, H - 0.3, 0.012, dx, H / 2 + 0.06, 0.28, 1);
+    // 批次24：门板框架（立梃 / 上中下冒头）+ 凸芯板 + 铜拉手（底座 + 把）+ 锁眼
+    for (const e of [-1, 1]) bx('dm_wardrobe', 0.07, H - 0.12, 0.022, dx + e * (dw / 2 - 0.035), H / 2 + 0.06, 0.288, 1);
+    for (const yy of [0.15, 1.02, H - 0.03]) bx('dm_wardrobe', dw - 0.14, 0.07, 0.022, dx, yy, 0.288, 1);
+    for (const [yy, hh] of [[0.585, 0.8], [1.47, 0.82]]) bx('dm_desk', dw - 0.22, hh - 0.08, 0.016, dx, yy, 0.292, 1);
+    bx('dm_brass', 0.035, 0.2, 0.008, sx * 0.05, 1.08, 0.3, false); bx('dm_brass', 0.016, 0.16, 0.03, sx * 0.05, 1.08, 0.316, false); bx('dm_frame', 0.008, 0.02, 0.004, sx * 0.05, 0.96, 0.302, false); }
+  bx('dm_wardrobe', 0.34, 0.44, 0.012, W / 4 + 0.03, 1.47, 0.303, false); bx('dm_mirror', 0.3, 0.4, 0.004, W / 4 + 0.03, 1.47, 0.311, false); // 门上小镜（木框 + 反射镜面）
   if (o.suitcase !== false) { b.add('dm_case', RB(0.6, 0.2, 0.42, 0.03), { pos: P(0, H + 0.21, 0), rot: R }, { uv: false }); }
   const w = P(0, 0, 0); world.box(w[0], y + 1, w[2], Math.abs(Math.cos(yaw)) * W + Math.abs(Math.sin(yaw)) * 0.56, 2, Math.abs(Math.sin(yaw)) * W + Math.abs(Math.cos(yaw)) * 0.56);
 }
@@ -167,7 +177,7 @@ export function washstand(b, world, x, y, z, yaw = 0) {
   b.add('dm_enamel', basin, { pos: P(0, 0.79, 0) }, { uv: false }); b.add('dm_enamelRim', new THREE.TorusGeometry(0.215, 0.007, 4, 24), { pos: P(0, 0.88, 0), rot: [Math.PI / 2, 0, 0] }, { uv: false });
   b.add('dm_towel', new THREE.PlaneGeometry(0.32, 0.5), { pos: P(0, 1.22, -0.19), rot: R }, { uv: false });
   b.add('dm_sillWhite', new THREE.BoxGeometry(0.3, 0.4, 0.015), { pos: P(0, 1.75, -0.24), rot: R }, { uv: false });
-  b.add('dm_pane', new THREE.PlaneGeometry(0.26, 0.36), { pos: P(0, 1.75, -0.23), rot: R }, { uv: false });
+  b.add('dm_mirror', new THREE.PlaneGeometry(0.26, 0.36), { pos: P(0, 1.75, -0.231), rot: R }, { uv: false }); // 批次24：镜面反射
   mug(b, ...P(0.05, 0.8, 0.05));
   const w = P(0, 0, 0); world.box(w[0], y + 0.5, w[2], 0.45, 1, 0.45);
 }

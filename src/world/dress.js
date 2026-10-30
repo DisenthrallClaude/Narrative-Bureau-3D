@@ -71,6 +71,7 @@ export function dressMats(M) {
     dz_leaves: (() => { const m = M.foliage.clone(); m.color.set(0x7fa868); m.side = THREE.DoubleSide; return m; })(),
     dz_stem: new THREE.MeshStandardMaterial({ color: 0x4a5a30, roughness: 0.8 }),
     dz_soil: new THREE.MeshStandardMaterial({ color: 0x1c140e, roughness: 1 }),
+    r3_brassAged: W(new THREE.MeshStandardMaterial({ color: 0x5a4628, metalness: 0.9, roughness: 0.66, envMapIntensity: 0.4 }), { macro: 0.3, tarnish: 0.85, grime: 0.5, ground: 1.0 }), // 批次24：B 层客梯门套做旧铜（原 dz_brassDim 偏橙像塑料）
     dz_brassDim: W(new THREE.MeshStandardMaterial({ color: 0x7a5e34, metalness: 0.85, roughness: 0.55, envMapIntensity: 0.5 }), { macro: 0.15, tarnish: 0.4 }),
     dz_cork: new THREE.MeshStandardMaterial({ color: 0x8a6440, roughness: 1 }),
     // —— R3 批次3：地面分区材质（走廊石材 / 办公地毯 / 茶水间地砖 / 库房地胶）+ 磨损贴花 ——
