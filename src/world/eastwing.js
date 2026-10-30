@@ -223,7 +223,7 @@ export function buildEastWing(scene, world, ctx) {
   const ledger = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.03, 0.46), M.leather); ledger.position.set(34.6, F2 + dh + 1.075, dz); zone.add(ledger); ctx.anchors.doc_cmd_handover = ledger;
   b.box('paintedSteel', 0.6, 0.3, 0.45, [33, F2 + dh + 1.21, dz], { uv: 1 });
   const strip = new THREE.Mesh(new THREE.PlaneGeometry(0.24, 1.9), stripMaterial()); strip.position.set(33, F2 + dh + 0.2, dz + 0.62); strip.rotation.x = -0.15; zone.add(strip); ctx.anchors.doc_cmd_log_strip = strip;
-  const zw = person(M, { coat: 0x101622, clue: 'chair', name: '周闻' }); zw.position.set(35, F2 + dh, dz - 1.0); zw.rotation.y = Math.PI; zone.add(zw);
+  const zw = person(M, { coat: 0x101622, clue: 'chair', name: '周闻' }); zw.position.set(35, F2 + dh, dz - 1.0); zw.rotation.y = 0; // 空椅面朝值班长台/主屏（+Z），原 PI 是旧人形朝向 zone.add(zw);
   ctx.anchors.int_cmd_zhouwen = { box: [35, F2 + dh + 1.0, dz - 1.0, 1.2, 2, 1.2] };
   // 世界钟
   const clocks = [['京城', 0], ['阿尔卑斯 · 灰塔', -7], ['华盛顿', -13], ['雾港', -8]];
