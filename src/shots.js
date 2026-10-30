@@ -137,7 +137,7 @@ export const SHOTS = {
   abyss_tide: { pos: [36, -298.3, -130], look: [62, -300, -146], fov: 72 },
   // R3 批次8
   seventh_entry: { pos: [0.6, -500 + 1.7, -54.4], look: [-0.6, -500 + 1.3, -66], fov: 74, zone: 'seventh_entry' },
-  abyss_core_b: { pos: [-6, -280 + 1.7, -239], look: [10, -280 + 1.0, -226], fov: 76, zone: 'abyss_core' },
+  abyss_core_b: { pos: [-2, -280 + 1.7, -236], look: [14, -280 + 1.0, -222], fov: 76, zone: 'abyss_core' },  // 收尾：原机位在书环巨书内（距中心 17.8 m），移到书桌环与书环之间（12.8 m）
   abyss_core_top: { pos: [8, -280 + 42, -227.99], look: [8, -280, -228], fov: 62, clipY: -280 + 11, zone: 'abyss_core' },
   abyss_tide_b: { pos: [30, -300 + 1.7, -120.5], look: [41, -300 + 0.5, -150], fov: 72, zone: 'abyss_tide' },
   training_mid: { pos: [0, -52 + 1.7, -93.5], look: [0, -52 + 6, -130], fov: 80, zone: 'training' },
