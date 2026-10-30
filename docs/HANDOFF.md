@@ -200,7 +200,8 @@
 - 要求「一个 run 重拍全部」：因宿舍修改晚于第一次派发，实际分 3 个 run：41115725473（spine_r3 / spine_r3_b / zone_r3_b）、41116135711（dorm_r3 / dorm_r3_b + walk）、41116227361（exam_r3_b / hall_wanted / spine_top）。
 ### 5 收尾
 - 对比图 work/r3/b22/cmp22.py → work/r3/cmp22_zone_spine / spine2 / blobby / dorm3 / exam_hall_cs.jpg（缺图格子标「缺图」，含批次21 补图）。
-- Drive / Pages 见文末收尾行。
+- Drive 快照 1AxRm2Q4BurQh9HDT9l1fZEO4y1T9hdC2 已覆盖（03:41 CST，内容截至 **9158a64**，未压缩 tar 891 MB，`tar xf` 解；tar 与 gws 上传分两步；tar 第一次 115 s 超时，第二次 40 s 成功）。
+- Pages https://disenthrallclaude.github.io/Narrative-Bureau-3D/ 返回 200：36f6ebf / 234e519 / 9158a64 部署成功。
 ### 下批先做
 1. 取图：41115725473、41116135711、41116227361（超 25 分钟取消重派）。
 2. B 层电梯厅：提亮（厅中补一盏吸顶灯管 / 曝光）、墙裙加凹槽 + 锈迹贴花、铆钉加密；客梯门套考虑换钢框。
