@@ -2069,7 +2069,7 @@ function planLobby(y, F) {
   for (const x of [-6, 6]) F7(out, '电梯门', x, ZS - 0.08, 3.7, 0.16, y, 0, 3.4);
   for (const x of [-8, 8]) out.push({ fixed: true, m: '固定:呼梯按钮', x, y: y + 1.05, z: ZS - 0.03, yaw: 0, size: [0.3, 0.5, 0.05], tag: '呼梯', on: 'wall' });
   // ① 地面
-  floorZ(out, 'r3_corr', -X, X, ZN, ZS, y, { border: 0.5, uv: 0.6 });
+  floorZ(out, 'r3_terrLobby', -X, X, ZN, ZS, y, { border: 0.5, uv: 0.6 });
   for (const [x0, x1, z0, z1] of [[-8.5, 8.5, -91.32, -91.29], [-8.5, 8.5, -84.73, -84.7], [-8.52, -8.49, -91.3, -84.7], [8.49, 8.52, -91.3, -84.7]]) out.push({ box: 'dz_brassDim', x: (x0 + x1) / 2, y: y + 0.0105, z: (z0 + z1) / 2, w: x1 - x0, h: 0.003, d: z1 - z0, tag: '地面', on: 'partv' });
   for (const x of [-6, 6]) { out.push({ box: 'r3_stoneBorder', x, y: y + 0.012, z: ZS - 0.32, w: 2.7, h: 0.012, d: 0.5, tag: '地面', on: 'partv' }); wear(out, x - 1.3, x + 1.3, -86.4, -84.8, y + 0.006); }
   wear(out, -1.4, 1.4, -91.6, -86.4, y + 0.006); wear(out, -6, 6, -86.6, -85.6, y + 0.006);
