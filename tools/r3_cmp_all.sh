@@ -21,3 +21,11 @@ c b4 "B4" "旧（无同机位）" - $R/b4_r3.png $W/plan_b4.png -
 c b5 "B5" "旧（无同机位）" - $R/b5_r3.png $W/plan_b5.png -
 c b6 "B6 · 检修层" "旧（无同机位）" - $R/b6_maint.png $W/plan_b6.png -
 c b7 "B7 · 深渊门" "M5 旧" $S/m5/abyss_gate.png $R/b7_r3.png $W/plan_b7.png -
+# —— 批次7 新做区 / 补全 / 墙面 PBR ——
+c training "B6 · 驯化副本训练场（批次7）" "批次6" $B/training_b6.png $R/training_r3.png $W/plan_training.png $R/training_top.png $R/training_b.png $R/training_range.png
+c metro "地铁管理局站 B 口 · 地面广场（批次7）" "批次6（M7 机位）" $B/metro_b6.png $R/metro_r3.png $W/plan_metro.png $R/metro_top.png $R/metro_b.png
+c memorial "无字碑廊（批次7 补强）" "M5 旧" $S/m5/memorial.png $R/memorial_r3.png $W/plan_memorial.png - $R/memorial.png
+c s7_ops "第七局 · 作战室（批次7）" "批次6" $B/seventh_ops_b6.png $R/seventh_ops.png $W/plan_s7_ops.png $R/s7_ops_top.png $R/s7_ops_b.png
+c s7_wrap "第七局 · 杀青室（批次7）" "批次6" $B/seventh_wrap_b6.png $R/seventh_wrap.png $W/plan_s7_wrap.png -
+c abyss "墨渊 · 倒悬书城 / 考场母本（批次7）" "批次6" $B/abyss_city_b6.png $R/abyss_city.png $W/plan_abyss_city.png - $R/abyss_exam.png $W/plan_abyss_exam.png $B/abyss_exam_b6.png
+c b5_deep "B5 · 深库主室（批次7 补全黑空间）" "批次6（前室机位）" $B/b5_r3_b6.png $R/b5_deep.png $W/plan_b5_deep.png -

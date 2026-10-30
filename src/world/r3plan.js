@@ -1456,7 +1456,7 @@ export function planMetro(y) {
     pic(out, p, x - 0.0, y + 1.4, z, yaw, 1.0, 1.5, 'none'); light(out, x - 0.8, y + 1.6, z, 0xfff4e0, 0.9, 4); }
   pic(out, 'textures/emblems/N16.jpg', -10.0, y + 1.6, 112.6, ROT.E, 0.6, 0.4, 'cork', { cork: [0.8, 0.6] });
   // ⑥ 行道树池 + 背靠树池的长椅（南向步道两侧成排；北侧东半段）——把空旷铺装分成有尺度的步行带
-  for (const [x, z] of [[-7, 104], [-7, 110], [-7, 116], [-7, 122], [-7, 128], [7, 104], [7, 110], [7, 116], [7, 122], [7, 128], [7, 152], [7, 158]]) { out.push({ m: 'r2/tree_planter_with_grate_free_low_poly', x, y, z, yaw: x + z, h: 4.0, tag: '树池', on: 'tree' }); F7(out, '树池', x, z, 1.4, 1.4, y, 0, 0.5); }
+  for (const [x, z] of [[-7, 104], [-7, 110], [-7, 116], [-7, 122], [-7, 128], [7, 104], [7, 110], [7, 116], [7, 122], [7, 128], [7, 152], [7, 158]]) { out.push({ m: 'r2/brick_planters', x, y, z, yaw: 0, w: 1.4, tag: '花池', on: 'tree' }); out.push({ m: 'r2/potted_plant_04', x, y: y + 0.45, z, yaw: x + z, h: 1.7, tag: '花池', on: 'tree' }); F7(out, '花池', x, z, 1.4, 1.6, y, 0, 0.5); }
   for (const sx of [-1, 1]) for (const z of [107, 113, 119, 125]) out.push({ m: 'r2/park_bench', x: sx * 6.6, y, z, yaw: sx < 0 ? ROT.E : ROT.W, w: 1.8, tag: '长椅', on: 'floor', col: [0.57, 0.85, 1.8] });
   for (const z of [116, 128]) for (const sx of [-1, 1]) light(out, sx * 7, y + 3.4, z, 0xffe0b0, 1.2, 8);
   // ⑤ 流浪者角（西南角，靠墙暗处）：桶炉 + 旧自行车 + 纸箱 + 街鼠
@@ -1622,7 +1622,8 @@ export function planB5Deep(y) {
   for (const x of [-5.6, 5.6]) out.push({ m: 'r2/fire_extinguisher_5676b1', x, y, z: Z0 + 0.3, yaw: 0, h: 0.9, tag: 'K3', on: 'floor' });
   // 灯：中轴吸顶灯槽每 4 m（冷白）+ 各收容室门前补光 + 北墙柜列补光
   for (let z = -102; z > -133; z -= 4) troffer(out, 0, z, y, H, 0, 1.6, { cold: true });
-  for (const [x, z] of [[-5.4, -108], [5.4, -108], [-5.4, -118], [5.4, -118], [-5.4, -128], [5.4, -128]]) light(out, x, y + 3.2, z, 0xe8eeff, 1.6, 7);
+  for (const [x, z] of [[-5.4, -108], [5.4, -108], [-5.4, -118], [5.4, -118], [-5.4, -128], [5.4, -128]]) light(out, x, y + 3.2, z, 0xe8eeff, 3.2, 9);
+  for (const z of [-104, -112, -122, -130]) light(out, 0, y + 4.5, z, 0xfff0dc, 2.6, 11);
   light(out, 0, y + 3.0, -131.0, 0xffe2c0, 2.0, 9); light(out, 4.4, y + 2.4, -102.4, 0xfff0d8, 1.4, 5);
   floorZ(out, 'r3_epoxy', -1.6, 1.6, -112.8, -100.4, y, { border: 0.1, bmat: 'r3_paintYellow' }); floorZ(out, 'r3_epoxy', -1.6, 1.6, -133.4, -121.2, y, { border: 0.1, bmat: 'r3_paintYellow' });
   wear(out, -1.2, 1.2, -112.4, -100.6, y);

@@ -123,7 +123,7 @@ export const SHOTS = {
   hangar: { pos: [75, 1.7, -72], look: [92, 3, -64], fov: 75 },
   hangar_r3: { pos: [74.6, 1.7, -70], look: [90, 2.2, -70], fov: 78 },
   hangar_b: { pos: [97, 2.2, -55], look: [80, 1.5, -78], fov: 76 },
-  hangar_top: { pos: [86.2, 46, -69.99], look: [86.2, 0, -70], fov: 50, clipY: 11.2 },
+  hangar_top: { pos: [86.2, 46, -69.99], look: [86.2, 0, -70], fov: 50, clipY: 11.2, zone: 'hangar' },
   helipad_roof: { pos: [77.5, 14.1, -57.5], look: [86, 13, -72], fov: 75 },
   wall_post: { pos: [-43.6, 1.7, 54.6], look: [-47.3, 2.2, 62.1], fov: 70 },
   memorial: { pos: [-60.5, 1.7, 44], look: [-66, 1.0, 20], fov: 72 },
