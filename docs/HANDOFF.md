@@ -175,6 +175,36 @@
 - **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
 - 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
 
+## R3 批次29（2026-10-31 06:16 CST 接手，约 35 分钟，实际到约 06:58）
+### 提交
+4960d61 安检大厅看图修 + shot.mjs canvas 取图 + plaza_top 提曝光 + 街屋三圈；第二个提交（通缉栏铜字牌前移）+ 本节见 git log。每次提交前本机 `npx vite build` 返回 0；r3plan security_hall **150 件 0 错 0 警**（work/r3/b29/plan/plan_hall.png）。
+### 1 取图（外观 41135916901 回 7 张：ext_booth / ext_sky / plaza_r3 / ext_street / plaza_top / ext_bird / ext_door_near → work/r3/b29/r41135916901/b28x/）
+- **近排街屋不合格（不是街屋本身难看，是根本没进画面）**：ext_sky 看到城墙外到天际线之间是一大片空的平地；算了一下 R212 / R300 两圈在 ext_sky 里都落在画框左右之外（半宽约 195 m），北段又被北河 riverDist 规则全部剔除，ext_bird 机位也看不到。**→ 4960d61 改成 R 160 / 245 / 305 三圈**（相邻圈街屋背靠背留 ≥4 m 后巷，内圈内侧街屋最深到 R132，城墙塔外缘 R124，不相交），NH 420→760。**改后未看图**（run 41137852161）。
+- ext_bird：广场 / 草坪 / 喷泉 / 侧柏读得清，未见悬空穿模；仍偏暗。
+### 2 安检大厅（连续 4 批未出图，本批终于拿到 3 张 → work/r3/b29/r41135265908 / r41135277015 / r41135288620）
+- low 1280×720 frames=2 单机位三个 run 都在 12–20 分钟内成功，**page.screenshot 这次没卡死**。仍按要求改了 tools/shot.mjs：READY 后 `gl.finish()` + 直接 `canvas.toDataURL` 写 PNG（shot 模式 renderer 本就开着 preserveDrawingBuffer），失败或 `--hud 1` 才回退 page.screenshot；其它机位行为不变（同一张画布，只是不经合成器）。
+- **看图结论**：
+  - hall_r3：**局徽主墙确实被遮挡**——hero_hall 北墙上部本有 9×4.2 m 黑石面板（tools/blender/hall.py end_wall，中心离地 12.0 m，前脸 z≈−75.15），r3plan 的局徽放在 z −75.3 / 离地 11 m，整个埋在面板后，画面里只剩一块空黑板 + 下方小铜字。**→ 局徽移到面板正中（离地 12.0、z Z0+0.92、3.4 m），铜字放大到 5.0 m，洗墙光 3.0→4.5、射程 12 m。**
+  - hall_r3 / hall_r3_b：**中殿束柱柱身近乎纯黑**（光照贴图在柱身上近 0），前景柱尤其像黑洞 → hallMats pier 加石材贴图弱自发光（0.42）当反弹光；扫描门 / 黑烤漆件也是一排黑方碑 → blackMetal 0.35→0.5、paintMetal 0.32→0.42。
+  - 查验柜台：胡桃木柜身读得出但正面偏暗 → 顶光 2.0→3.2，并在柜前 1.6 m 加一盏低位补光。
+  - hall_wanted：通缉栏本身合格（中上：两张 A 级通缉 + 两侧档案海报 + 铜立柱）；**栏顶「通 缉 公 告」铜字牌左半被墙柱细柱挡住** → 前移 0.6 m、抬高 0.25 m（第二个提交）。
+  - **以上修复全部未看到改后图**：low 单机位重派 41137808953（hall_r3）/ 41137823398（hall_r3_b）/ 41137837641（hall_wanted），用的是 4960d61（含 canvas 取图，不含铜字牌前移）。
+### 3 E2 附楼 / plaza_top
+- plaza_top：shots.js 新 `expMul`，main.js applyShot 里乘到 targetExp；plaza_top 设 1.45（只影响这个机位，不动游戏内曝光）。改后图在 41137852161。
+- **E2 附楼素灰墙未做**（时间不够）。另：看 ext_side 新机位，右下那块“素灰体块”其实是一栋有尖拱窗的附楼，素的是**平屋面 / 坡屋面大平面**，下批应先确认是 surface.js annex() 还是宿舍再动手。
+### 4 正门 / 安检大厅室内精修
+- 做了：穿模 / 遮挡排查（局徽埋墙、铜字牌被柱挡 → 已修），r3plan 0 错。
+- **未做**：查验柜台 / 安检门 / 长椅 / 局徽墙的 Blender 精建替换；IMAGE-PLAN 里大厅候选图：B09_入局安检规定 / B09_回响座钟铭牌在 public 里找不到文件，jiangli / qinxiao 已在用，B01_06 扫描异常屏是事件屏（应由剧情切换，不当静态图），本批没有落新图。
+### 收尾
+- 走查 41137882135（4960d61）派出，**截止本节未回**。
+- **Drive 分卷（成功）**：「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq 先删批次28 四卷再传：v01_game_code.tar 10zxgTSzGYhn3NjFkCvTx9KaQPZHN6ATC（2.29 MB）；v02_docs_files_review_tools.tar 1OGy84e4ixkUpXBiuFFJCZqqk10A8n_ov（22.9 MB）；v03_game_public_small.tar 1EeUbXc5WUrYcEkXGu_AnrOoRD9PyCUib（136 MB）；v04_game_public_models.tar 1YubV38CO7NxPpTIlijwq0wPryEWdryJl（279 MB）。Drive 大小与本地一致。v01 不含第二个提交（铜字牌）——代码在 GitHub。
+- Pages：pages.yml 4960d61 success，站点 200。
+- 对比图 work/r3/cmp29_*.jpg（左 = 批次28 改前，右 = 缺图）；改后图取回到 work/r3/b29/r<run>/ 后 `python3 work/r3/b29/cmp29.py` 重出。
+### 下批先做
+1. 取 41137808953 / 41137823398 / 41137837641（hall）+ 41137852161（ext_sky / plaza_top / ext_bird）+ 走查 41137882135；看局徽是否出现在面板上、柱子是否还黑、canvas 取图日志是否出现 `canvas grab ok`。
+2. 街屋三圈改后验收（ext_sky 左右下方应出现临街街屋；若仍看不到再加一个低角度城墙外机位）。
+3. E2 附楼；大厅主要物件 Blender 精建（柜台 / 扫描门 / 长椅）。
+
 ## R3 批次28（2026-10-31 06:00 CST 接手，约 35 分钟，实际超到约 06:50）
 ### 提交
 9d5e0dd 黄昏光 / 草坪 / 便利店背立面 / 近排街屋 + 环路；文档提交见 git log。提交前本机 `npx vite build` 返回 0。

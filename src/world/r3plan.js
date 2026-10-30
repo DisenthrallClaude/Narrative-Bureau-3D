@@ -642,7 +642,8 @@ export function planSecurityHall(y) {
   for (const sx of [-1, 1]) led(out, '查 验 叫 号', [['请到', '3 号台'], ['等候', '12 人']], sx * 11.0, y + 2.1, -67.0, sx > 0 ? ROT.W : ROT.E, 1.2, 0.6, { stand: true, fy: y, size: [0.5, 2.5, 0.5], on: 'floor' });
   // ④ 通缉栏：前方铜立柱隔离 + 栏顶铜字 + 画框灯
   stanchions(out, [[15.7, -61.0], [15.7, -67.0]], y, '通缉栏');
-  out.push({ wtext: '通 缉 公 告', x: X1 - 0.12, y: y + 3.9, z: -64, yaw: ROT.W, w: 2.4, h: 0.42, size: [0.1, 0.6, 2.6], tag: '通缉栏', on: 'pic' });
+  out.push({ wtext: '通 缉 公 告', x: X1 - 0.6, y: y + 4.15, z: -64, // 批次29 看图修：hall_wanted 里铜字牌左半「通缉」被墙柱细柱挡住 → 前移到柱前 0.6 m、抬高 0.25 m 让开栏顶
+    yaw: ROT.W, w: 2.4, h: 0.42, size: [0.1, 0.6, 2.6], tag: '通缉栏', on: 'pic' });
   light(out, 15.6, y + 3.4, -64, 0xffe6c8, 2.6, 6);
   // ⑥ 局徽主墙（北墙中庭门上方）：大局徽 + 铜字
   // 批次29 看图修：hero_hall 北墙上部本有 9×4.2 m 黑石局徽面板（hall.py end_wall，中心离地 12.0，面板前脸 z≈−75.15），
