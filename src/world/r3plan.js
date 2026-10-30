@@ -751,6 +751,11 @@ export function planArchive(y) {
   out.push({ sign: '卡片目录', sub: '按姓氏笔画 · 按入局年份', x: -55.24, y: y + 1.7, z: -39.3, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
   out.push({ m: 'r2/antique_globe', x: -48.4, y, z: -45.2, yaw: 0.6, h: 1.0, tag: '陈列', on: 'floor' });
   globe(out, -51.4, -40.2, y, TOP - y, 3.4, { r: 0.2 });
+  // 批次32（archive_west 看图：西墙 1.4 m 以上整片纯墨绿）→ 胡桃木壁柱 4 根（3.5 m 一间）+ 护墙顶线（y+1.55）+ 檐下冠线（y+6.0）+ 每间一幅金框证物照（IMAGE-PLAN 未用 N13 涂黑机密文件 / N11 回响座钟 / N12 相框里的手）+ 画下铜壁灯
+  for (const z of [-35.0, -38.5, -42.0, -45.5]) { out.push({ box: 'wood', x: -55.92, y: y + 3.775, z, w: 0.12, h: 4.45, d: 0.32, tag: '壁柱', on: 'partv' }); out.push({ box: 'brass', x: -55.85, y: y + 5.85, z, w: 0.04, h: 0.08, d: 0.36, tag: '壁柱', on: 'partv' }); out.push({ box: 'wood', x: -55.9, y: y + 1.7, z, w: 0.16, h: 0.3, d: 0.4, tag: '壁柱', on: 'partv' }); }
+  out.push({ box: 'wood', x: -55.93, y: y + 1.55, z: -40.25, w: 0.1, h: 0.1, d: 11.0, tag: '护墙顶线', on: 'partv' });
+  out.push({ box: 'wood', x: -55.9, y: y + 6.05, z: -40.25, w: 0.16, h: 0.28, d: 11.0, tag: '冠线', on: 'partv' }); out.push({ box: 'brass', x: -55.81, y: y + 5.93, z: -40.25, w: 0.02, h: 0.03, d: 11.0, tag: '冠线', on: 'partv' });
+  for (const [z, n] of [[-36.75, 'N13'], [-40.25, 'N11'], [-43.75, 'N12']]) { pic(out, `textures/emblems/${n}.jpg`, -55.9, y + 3.6, z, ROT.E, 1.5, 1.5, 'gold', { tag: '证物照' }); sconce(out, -55.85, y + 4.75, z, ROT.E); }
   // ④ 西北：缩微胶片阅读位（靠西墙 3 席，人面朝墙）
   for (const [i, z] of [-58.0, -59.7, -61.4].entries()) {
     out.push({ m: 'r2/woodentable_01', x: -55.25, y, z, yaw: ROT.E, fit: [1.4, 0.76, 0.7], tag: '缩微阅读', on: 'floor', col: [1.4, 0.76, 0.7] });
@@ -1898,7 +1903,7 @@ Object.assign(X8, {
   archive(out, y) {
     // 开架区 A/B 实木地板 + 石材收边（东门方格石地面南北两侧）；开架区西侧通道、借阅柜台前磨损；西南卡片目录区方砖
     floorZ(out, 'r3_parquet', -27.2, -20.4, -66.4, -56.6, y, { border: 0.14 }); floorZ(out, 'r3_parquet', -27.2, -20.4, -46.4, -38.2, y, { border: 0.14 });
-    floorZ(out, 'r3_tile', -55.6, -48.4, -44.6, -36.2, y, { border: 0.14 });
+    floorZ(out, 'r3_terrDark', -55.6, -48.4, -44.6, -36.2, y, { border: 0.14 }); // 批次32：白方砖（陈列区突兀）→ 深色水磨石
     wear(out, -28.5, -27.5, -66.0, -38.5, y); wear(out, -48.4, -46.6, -53.0, -50.1, y);
   },
   canteen(out, y) {
