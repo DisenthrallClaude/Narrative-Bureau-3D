@@ -1854,3 +1854,105 @@ const X10 = {
   },
 };
 for (const [id, f] of Object.entries(X10)) { const base = PLANS[id]; if (!base) continue; PLANS[id] = (Y) => { const p = base(Y); const n0 = p.items.length; f(p.items, Y, p.room); fixYaw({ items: p.items.slice(n0) }); return p; }; }
+
+// ================= R3 批次11 · 东廊 east_cloister（1F，y=1.8，南北段 x 24.2…28 / z −111…−76.4 + 东西段 z −115…−111 / x 18.4…28，层高 5.6） =================
+// 功能：东翼 1F（南口 z −76.4）↔ 职工食堂（西口 x 18.4）的通勤长廊，兼「局史陈列廊」。
+// 平面：西墙（x 24.0 墙面）= 陈列面：展柜 4 台成排（z −86/−92/−98/−104，长边沿墙，前留 2.6 m 通行），柜上方挂势力徽记档案框 + 铜牌说明；
+//      东墙（x 28 墙面）= 休息面：盲尖窗下长凳 4 张（z −85.4/−91.4/−97.4/−103.4，与窗中心对齐），两端绿植、垃圾桶；
+//      中轴 1.4 m 红色长地毯（南口 → 拐角），拐角转入东西段；东西段北墙 = 公告栏（新人报到告示 + 规则之泉海报）+ 挂钟，西口两侧灭火器 / 衣帽架。
+//      照明三层：顶部乳白球吊灯（肋间，4 盏）→ 原西墙铜壁灯 → 展柜冷白小射灯 + 公告栏暖光。
+export function planEastCloister(y) {
+  const out = []; const XW = 24.2, XE = 28, ZS = -76.4, ZN = -115, H = 5.6;
+  const room = { name: '东廊 · 局史陈列廊（批次11）', x0: 18.4, x1: XE, z0: ZN, z1: ZS, y, H, doors: [{ wall: 'S', a: XW, b: XE, label: '东翼 1F' }, { wall: 'W', a: -115, b: -111, label: '职工食堂' }], windows: [],
+    rooms: [['① 局史陈列面', 24.9, -95], ['② 休息长凳', 27.3, -88.4], ['③ 公告栏', 21.2, -113.6]],
+    aisles: [{ label: '主通道（东翼 → 拐角）', x0: 25.0, x1: 27.0, z0: -112.6, z1: ZS }, { label: '拐角 → 食堂', x0: 18.4, x1: 27.0, z0: -113.8, z1: -112.2 }] };
+  // 非本区（南北段西侧，墙外）
+  F7(out, '墙外·非本区', (18.4 + XW - 0.2) / 2, -93.6, XW - 0.2 - 18.4, -76.4 - -110.6, y, 0, H);
+  // ① 西墙陈列面：4 台展柜（长 1.6 m，沿 z）+ 柜上方徽记档案框 + 铜牌
+  const EMB = [['emblems/势力档案-无妄城.jpg', '无妄城 · 第 3 号处置'], ['emblems/势力档案-深瞳.jpg', '深瞳 · 第 9 号处置'], ['emblems/势力档案-焚稿会.jpg', '焚稿会 · 第 14 号处置'], ['emblems/势力档案-余辉剧团.jpg', '余辉剧团 · 第 21 号处置']];
+  [-86, -92, -98, -104].forEach((z, i) => {
+    vitrine(out, XW + 0.36, z, y, 1.6, ROT.E, '局史展柜');
+    pic(out, 'textures/' + EMB[i][0], XW + 0.035, y + 2.15, z, ROT.E, 0.8, 1.0, 'gold', { tag: '局史挂框' });
+    out.push({ sign: '局史陈列', sub: EMB[i][1], x: XW + 0.035, y: y + 1.45, z: z + 0.62, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+    light(out, XW + 1.1, y + 2.0, z, 0xe8eeff, 0.7, 3.2);
+  });
+  // 南口与拐角两端：徽记小框（N01 法务 / N02 第七局）
+  pic(out, 'textures/emblems/N01.jpg', XW + 0.035, y + 2.1, -80.2, ROT.E, 0.6, 0.6, 'gold', { tag: '局史挂框' });
+  pic(out, 'textures/emblems/N02.jpg', XW + 0.035, y + 2.1, -109.4, ROT.E, 0.6, 0.6, 'gold', { tag: '局史挂框' });
+  // ② 东墙休息面：长凳 ×4（对齐盲尖窗），两端绿植，凳间垃圾桶
+  for (const z of [-85.4, -91.4, -97.4, -103.4]) out.push({ m: 'r2/hallway_bench', x: XE - 0.32, y, z, yaw: ROT.W, h: 0.5, tag: '长凳', on: 'floor' });
+  for (const z of [-79.6, -108.6]) out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x: XE - 0.5, y, z, yaw: 0, h: 0.65, tag: '绿植', on: 'floor' });
+  for (const z of [-88.4, -100.4]) out.push({ m: 'r2/garbage_bin', x: XE - 0.25, y, z, yaw: ROT.W, h: 0.75, tag: '垃圾桶', on: 'floor' });
+  out.push({ m: 'r2/fire_extinguisher_5676b1', x: XE - 0.18, y, z: -77.4, yaw: ROT.W, h: 0.9, tag: '消防', on: 'floor' });
+  out.push({ m: 'r2/exit_sign', x: (XW + XE) / 2, y: y + 3.0, z: ZS - 0.15, yaw: Math.PI, w: 0.36, tag: '导视', on: 'wall' });
+  // 中轴长地毯 + 磨损
+  // 长地毯：原地面每 2 m 一道石带（顶面 y+0.015）→ 地毯抬到 y+0.016…0.028 盖在石带上；两侧铜压条
+  for (const [x, z, w, d] of [[26.0, -94.0, 1.4, 33.2], [22.3, -113.0, 6.8, 1.4]]) { out.push({ box: 'r3_carpetRed', x, y: y + 0.022, z, w, h: 0.012, d, tag: '地毯', on: 'partv' });
+    const alongZ = d > w; for (const s of [-1, 1]) out.push({ box: 'dz_brassDim', x: alongZ ? x + s * (w / 2 + 0.02) : x, y: y + 0.021, z: alongZ ? z : z + s * (d / 2 + 0.02), w: alongZ ? 0.04 : w, h: 0.014, d: alongZ ? d : 0.04, tag: '地毯', on: 'partv' }); }
+  // 地毯两侧石地面走磨损（地毯上不压磨损贴花：白色擦痕在红毯上像口香糖渍）
+  wear(out, 24.95, 25.25, -110.4, -78.0, y + 0.0055); wear(out, 26.75, 27.05, -110.4, -78.0, y + 0.0055);
+  // 顶部乳白球吊灯（肋间）
+  for (const z of [-82.4, -91.4, -100.4, -109.4]) { globe(out, 26.1, z, y, H, 3.9, { r: 0.22 }); light(out, 26.1, y + 3.7, z, 0xffe2b8, 1.6, 9); }
+  // ③ 东西段北墙：公告栏（软木）+ 规则之泉海报 + 挂钟；西口灭火器 / 衣帽架
+  pic(out, 'textures/b01/B01_04_新人报到告示.png', 21.6, y + 1.65, ZN + 0.01, 0, 0.75, 1.0, 'wood', { tag: '公告栏', cork: [1.9, 1.25] });
+  pic(out, 'textures/b01/B01_08_海报_规则之泉.png', 24.6, y + 1.75, ZN + 0.01, 0, 0.66, 1.0, 'black', { tag: '海报' });
+  out.push({ m: 'r2/1950s_wall_clock', x: 26.6, y: y + 2.6, z: ZN + 0.06, yaw: 0, h: 0.4, tag: '挂钟', on: 'wall' });
+  light(out, 22.6, y + 2.8, -113.4, 0xffe6c8, 1.2, 5);
+  out.push({ m: 'r2/fire_extinguisher_5676b1', x: 18.9, y, z: -114.7, yaw: 0, h: 0.9, tag: '消防', on: 'floor' });
+  out.push({ m: 'r2/coat_rack', x: 19.0, y, z: -111.4, yaw: Math.PI, h: 1.85, tag: '衣帽架', on: 'floor' });
+  out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x: 27.5, y, z: -114.5, yaw: 0, h: 0.65, tag: '绿植', on: 'floor' });
+  return { room, items: out };
+}
+PLANS.east_cloister = (Y) => fixYaw(planEastCloister(Y)); R3.east_cloister = true;
+// ================= R3 批次11 · 东翼 1F 市民服务大厅 citizen_service（y=1.8，x 20…50，z −53…−32，层高 6.7） =================
+// 原有 5 个服务窗口（北墙 z −51.4）、2 张填单台（z −39）、3 排×2 组候号座椅、叫号机、群众来信墙、排队市民与电饭锅大妈都是剧情锚点，一律登记为固定不动。
+// 平面：西门（x 20，z −45…−51）进 → 窗口前「一米线」横向通道（z −50.9…−48.6）→ 候号区（座椅 z −43…−48）→ 填单区（南墙下 z −39）；
+//  ① 窗口：每窗市民侧一把圆凳 + 地面黄色一米线；职员侧台灯 / 电话 / 文件夹（玻璃后）
+//  ② 填单台：台面笔筒、表格托盘；南墙对应位置挂「污染举报登记表」「附表七」填写样张（IMAGE-PLAN：F3 市民服务）
+//  ③ 候号区：两组座椅之间放报刊架（饮水机模型包围盒异常 1.5 m 立方，未用）；四角绿植、垃圾桶；西墙挂钟、出口标识
+//  ④ 照明：候号区上方 4 盏乳白球吊灯（暖），每个窗口上方 1 盏冷白补光，填单台上方暖光
+export function planCitizenService(y) {
+  const out = []; const X0 = 20, X1 = 50, ZA = -32, ZM = -53, H = 6.7;
+  const room = { name: '东翼 1F · 市民服务大厅（批次11）', x0: X0, x1: X1, z0: ZM, z1: ZA, y, H, doors: [{ wall: 'W', a: -51, b: -45, label: '安检大厅连廊' }], windows: [],
+    rooms: [['① 服务窗口', 34, -52.2], ['② 填单区', 35, -37.6], ['③ 候号区', 32, -45.5]],
+    aisles: [{ label: '窗口前一米线通道', x0: 20.2, x1: 49.6, z0: -50.3, z1: -48.6 }, { label: '候号区中通道', x0: 29.4, x1: 32.4, z0: -48.6, z1: -40.4 }] };
+  for (let k = 0; k < 5; k++) F7(out, '服务窗口', 23.5 + k * 5.4, ZM + 1.6, 4.6, 1.0, y, 0, 1.1); // 台身 4.6×1.0（台面 1.2 深出挑在 1.08 m 高，凳子可进）
+  F7(out, '畸变物投放口', 31.6, ZM + 1.4, 0.5, 0.5, y, 0, 1.2);
+  for (const x of [30, 40]) F7(out, '填单台', x, ZA - 7, 3.4, 1.4, y, 0, 1.06);
+  for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) F7(out, '候号座椅', 27 + k * 10, ZA - 11 - r * 2.4, 4.2, 0.8, y, 0, 0.85);
+  F7(out, '叫号机', 22, ZA - 3, 0.5, 0.4, y, 0, 1.4);
+  F7(out, '群众来信墙', 47.8, ZA - 0.2, 4.4, 0.3, y, 0, 3.8);
+  for (const [x, z] of [[25, ZA - 11.6], [29, ZA - 14.0], [39, ZA - 11.6], [35, ZA - 14.0], [33, ZA - 14.0]]) F7(out, '市民', x, z, 0.5, 0.4, y, 0, 1.7);
+  // ① 窗口：市民侧圆凳 + 一米线；职员侧台灯/电话/文件
+  for (let k = 0; k < 5; k++) { const x = 23.5 + k * 5.4;
+    for (const dx of k === 1 ? [-1.2] : [-1.0, 1.0]) out.push({ m: 'r2/metal_stool_01', x: x + dx, y, z: ZM + 2.4, yaw: Math.PI, h: 0.62, tag: '窗口', on: 'floor' });
+    floorZ(out, 'r3_paintYellow', x - 2.0, x + 2.0, ZM + 3.55, ZM + 3.65, y);
+    out.push({ m: 'r2/bankers_lamp', x: x - 1.7, y: y + 1.11, z: ZM + 1.3, yaw: 0, h: 0.4, tag: '窗口', on: 'desk' });
+    out.push({ m: 'r2/office_phone', x: x + 1.6, y: y + 1.11, z: ZM + 1.3, yaw: 0, w: 0.22, tag: '窗口', on: 'desk' });
+    out.push({ m: 'r2/several_folders', x: x + 0.9, y: y + 1.11, z: ZM + 1.25, yaw: 0.1, h: 0.28, tag: '窗口', on: 'desk' });
+    light(out, x, y + 3.9, ZM + 2.4, 0xeef2ff, 1.4, 6); }
+  // ② 填单台：笔 + 表格托盘；南墙样张
+  for (const x of [30, 40]) {
+    for (const dx of [-1.1, 0.3]) out.push({ m: 'r2/fountain_pens', x: x + dx, y: y + 1.06, z: ZA - 7.2, yaw: 0.3, w: 0.16, tag: '填单台', on: 'desk' });
+    out.push({ m: 'r2/several_folders', x: x + 1.2, y: y + 1.06, z: ZA - 6.9, yaw: -0.2, h: 0.22, tag: '填单台', on: 'desk' });
+    light(out, x, y + 3.2, ZA - 7, 0xffe6c8, 1.4, 6);
+  }
+  pic(out, 'textures/b07/B07_污染举报登记表.png', 30, y + 1.95, ZA - 0.42, Math.PI, 0.66, 0.88, 'wood', { tag: '填写样张' });
+  pic(out, 'textures/b04/B04_空白附表七.png', 40, y + 1.95, ZA - 0.42, Math.PI, 0.66, 0.88, 'wood', { tag: '填写样张' });
+  out.push({ sign: '填写样张', sub: '污染举报登记表', x: 30, y: y + 1.35, z: ZA - 0.42, yaw: Math.PI, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+  out.push({ sign: '填写样张', sub: '附表七（归档人员查询）', x: 40, y: y + 1.35, z: ZA - 0.42, yaw: Math.PI, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+  // ③ 候号区：两组座椅之间报刊架 + 饮水机；四角绿植/垃圾桶；挂钟/出口
+  out.push({ m: 'r2/44_pocket_rotating_newspaper_stand', x: 33.7, y, z: ZA - 9.4, yaw: 0, h: 1.6, tag: '报刊架', on: 'floor' });
+  for (const [x, z] of [[20.6, ZA - 0.6], [49.4, ZA - 5.0], [20.6, ZM + 0.6], [49.4, ZM + 0.6]]) out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x, y, z, yaw: 0, h: 0.75, tag: '绿植', on: 'floor' });
+  for (const [x, z] of [[20.5, ZA - 9.0], [49.5, ZA - 12.4]]) out.push({ m: 'r2/garbage_bin', x, y, z, yaw: 0, h: 0.75, tag: '垃圾桶', on: 'floor' });
+  out.push({ m: 'r2/1950s_wall_clock', x: X0 + 0.08, y: y + 3.0, z: -40.0, yaw: ROT.E, h: 0.5, tag: '挂钟', on: 'wall' });
+  out.push({ m: 'r2/exit_sign', x: X0 + 0.06, y: y + 3.4, z: -48.0, yaw: ROT.E, w: 0.36, tag: '导视', on: 'wall' });
+  out.push({ m: 'r2/fire_extinguisher_5676b1', x: 20.4, y, z: -44.4, yaw: ROT.E, h: 0.9, tag: '消防', on: 'floor' });
+  // ④ 候号区吊灯 + 西门入口磨损
+  for (const x of [27, 37]) for (const z of [-42.6, -47.4]) { globe(out, x, z, y, H, 4.2, { r: 0.24 }); light(out, x, y + 4.0, z, 0xffe2b8, 1.8, 10); }
+  wear(out, 20.3, 46.0, -50.0, -49.0, y);
+  return { room, items: out };
+}
+PLANS.citizen_service = (Y) => fixYaw(planCitizenService(Y)); R3.citizen_service = true;
+// 对照用：?r3off=east_cloister,xxx 关掉指定区的 R3 规划（截图「改前」用，旧陈设随之恢复）
+if (typeof location !== 'undefined') { const m = /[?&]r3off=([\w,]+)/.exec(location.search); if (m) for (const id of m[1].split(',')) R3[id] = false; }

@@ -171,6 +171,27 @@
 3. plaza / facade 高画质截图贴着内存上限：可考虑截图模式上传后释放贴图 CPU 端图片，或先拍低一档画质。
 4. tristat.mjs 拆 pass 会让 plaza 崩，测 plaza 时只用截图会话的整帧统计。
 
+## R3 批次11（2026-10-30 16:56 CST 接手；先收尾批次10，再按顺序做未 R3 的区）
+### 完成
+1. **批次10 收尾**（commit 766ce5a）：取回 bb/dd/zz 批次10 截图入库；AO 整体压暗验收与修正（见批次10「收尾验收」）；HANDOFF 批次10 补完；云电脑任务停掉、令牌全部吊销（见下）。
+2. **东廊 east_cloister**（r3plan.js `planEastCloister`，surface.js 旧长凳/展柜/绿植用 `if (!R3.east_cloister)` 关掉）：定位为「东翼 1F ↔ 职工食堂」通勤长廊兼局史陈列廊。
+   - 平面：西墙陈列面（展柜 ×4 成排 z −86/−92/−98/−104，柜上方势力档案金框 + 铜牌，柜前冷白小补光；南口 N01、拐角 N02 小徽框）；东墙休息面（长凳 ×4 对齐盲尖窗、两端绿植、凳间垃圾桶、南口灭火器、出口标识）；中轴 1.4 m 红长地毯（抬到原地面石带之上 y+0.016…0.028，两侧铜压条）+ 两侧石地面磨损；东西段北墙公告栏（B01_04 新人报到告示，软木）+ B01_08 规则之泉海报 + 挂钟、西口灭火器 / 衣帽架 / 绿植。
+   - 灯光三层：肋间乳白球吊灯 ×4（暖）→ 原西墙铜壁灯 → 展柜冷白小补光 + 公告栏暖光。
+   - r3plan_draw：84 件 0 错误 0 警告（screenshots/r3/plan_east_cloister.png）。截图 ec_r3 / ec_r3_b / ec_corner / ec_top（shots.js 新机位）；平均亮度 38→43、32→36、21→26。
+   - 坑：挂画贴墙要 +0.035（wallDress 上段墙板 0.022 厚，+0.005 会被盖住）；磨损贴花压在红毯上像口香糖渍 → 只铺在地毯两侧。
+3. **市民服务大厅 citizen_service**（`planCitizenService`，r3build ZONE_OF 挂 east_wing 组）：5 个窗口 / 填单台 / 候号座椅 / 叫号机 / 来信墙 / 排队市民全部登记为固定锚点不动。补：每窗市民侧圆凳（2 号窗投放口一侧只 1 把）+ 黄色一米线、职员侧台灯/电话/文件夹、每窗上方冷白补光；填单台笔与表格托盘 + 暖光，南墙对应位置挂 IMAGE-PLAN 指定的「B07 污染举报登记表」「B04 空白附表七」填写样张 + 铜牌；候号区报刊架、四角绿植、垃圾桶、西墙挂钟/出口标识/灭火器；候号区上方 4 盏乳白球吊灯；窗口前通道磨损。r3plan_draw 86 件 0 错误。截图 cs_r3 / cs_r3_b / cs_top。
+   - 未用：soft_drink_dispenser 模型包围盒 1.5 m 立方（异常），饮水机没放。
+4. 新调试参数 `?r3off=<区,...>`（r3plan.js 末尾）：关掉指定区 R3 规划、恢复旧陈设，用于拍「改前」。
+### 对比图
+- `work/r3/cmp11_east_cloister.jpg`（改前 ↔ 改后，3 机位）
+- `work/r3/cmp11_citizen_service.jpg`（改前 ↔ 改后）
+### 诚实评估
+- 东廊：从「两张木凳 + 两个黑盒展柜」变成有陈列面 / 休息面 / 公告栏的完整长廊，灯光有了吊灯—壁灯—补光三层；但红地毯在暖光下偏黑、读不出红色，墙面仍是原来的程序化石墙，展柜里只有纸片。
+- 市民服务大厅：只做了「补件 + 补灯」，没有改结构；30×21 m 大厅中部（窗口前与填单台之间）仍偏空，地面反光很强。下一步可在窗口前加分流栏杆 + 引导台、候号区加隔断屏风。
+- 第十一批剩余未做：电梯厅、阅卷中心 exam_center、区域管控室 zone_control、3F 实验室、图书室、B3 收容库、中央竖井 spine_b3–b5、东侧楼梯、屋顶停机坪、宿舍房间。
+### InstaBox
+- 接手时 bb/dd/zz 仍在跑批次10 截图、5 台令牌未吊销；本批取回截图后用 aa/bb/cc/dd/zz 拍批次11，**结束前已停全部 shot.mjs/chromium、逐台 `tools/instabox ssh-token <机> --revoke`，删除 work/r3/.ibtok_*.json**。
+
 ## R3 批次10（2026-10-30 15:52 CST 接手）
 ### 完成
 1. **GitHub Pages**：https://disenthrallclaude.github.io/Narrative-Bureau-3D/ 可访问（HTTP 200）；Actions「Deploy to GitHub Pages」最新一次 = fb3a228 success（7c2f889/8ad920d 两次是 concurrency 被后一次 cancel，正常）；线上 index 引用的 `index-DEP6LX8f.js` 与本地 fb3a228 构建一致。workflow 无需修改。本批推送后会自动重新部署（见文末 Pages 状态）。

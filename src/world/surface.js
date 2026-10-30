@@ -386,9 +386,11 @@ export async function buildSurface(scene, world, ctx) {
     for (let z = ZS - 6; z > ZN; z -= 6) { bc.add('brass', new THREE.BoxGeometry(0.06, 0.4, 0.16), { pos: [XW + 0.02, Y + 2.8, z] }, { uv: 1 }); bc.add('dz_shade', new THREE.CylinderGeometry(0.1, 0.16, 0.3, 12, 1, true), { pos: [XW + 0.25, Y + 3.05, z] }, { uv: false }); point(zc, 0xffd8a8, 3.5, [XW + 0.6, Y + 3, z], 7); }
     WXd(bc, XW, ZS, -110.8, 1, Y, H); WXd(bc, XE, ZS, ZN, -1, Y, H);
     // 陈设：长椅、展柜（局史老照片）、绿植、导视
+    if (!R3.east_cloister) { // 批次11：东廊 R3 规划（r3plan.js planEastCloister）接管长凳/展柜/绿植
     for (const z of [-86, -98]) { bc.box('wood', 0.5, 0.45, 2.2, [XE - 0.6, Y + 0.23, z], { uv: 0.6, collide: true }); bc.box('wood', 0.08, 0.5, 2.2, [XE - 0.35, Y + 0.7, z], { uv: 0.6 }); }
     for (const z of [-92, -104]) { bc.box('blackMetal', 0.6, 0.9, 1.4, [XW + 0.5, Y + 0.45, z], { uv: 1, collide: true }); const gc = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.5, 1.35), M.glassClear); gc.position.set(XW + 0.5, Y + 1.15, z); zc.add(gc); bc.add('kraft', new THREE.BoxGeometry(0.3, 0.01, 0.4), { pos: [XW + 0.5, Y + 0.92, z], rot: [0, 0.2, 0] }, { uv: false }); }
     for (const z of [-80, -108]) plantPot(bc, XE - 0.5, Y, z, 1.0);
+    }
     hangingSign(zc, mats(), '东廊　·　通往职工食堂', (XW + XE) / 2, Y + 3.9, -79, 0, 2.6);
     hangingSign(zc, mats(), '← 食堂　东翼 →', 21.5, Y + 3.6, -113, Math.PI / 2, 2.2);
     rectLight(zc, 0xffe6c8, 0.8, 4, 40, [(XW + XE) / 2, Y + H - 0.3, -95], [(XW + XE) / 2, Y, -95]);
