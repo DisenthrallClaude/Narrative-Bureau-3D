@@ -206,7 +206,9 @@ cea4e7f 区域管控室补陈设 / 东门 / 钢框窗；9c024d5 3F 实验室质�
 - 只做了资产预检：assets/sourced/R4/containment_storage 逐个 Blender 预览（work/r3/b18/prev_b3/*.png、sheet.jpg）：case_a01 / case_c02 / case_d01 黑色铝合金证物箱 ✔；wire_securityRoom_b01 钢网隔离间面板带门 ✔（适合「隔离收容格」成排）；specimen_octopus_jar 浸制标本罐 ✔；rack_long_empty_a01 蓝橙仓储货架 ✘（现代仓库配色，与 70 年代不符，除非重新上色）。均未拷入 public。
 - B3 在 vault.js（LEVELS.B3 = −26，名称「证物收容库 · 开架区 · 1–3 级」，南端电梯厅金门 z −84）。下批：先读 vault.js B3 段画平面（防爆门 / 收容格成排 / 观察窗 / 警示灯 / 登记台），再写 PLANS.vault_b3。
 ### 6 收尾
-- 走查 run 41101715978（walk:walk，9c024d5）已派，截止排队中，**结果未知**——docs/WALKTHROUGH.md 仍是批次17 的 88abf88 31/31 控制台 0。
+- 走查 run 41101715978（walk:walk，9c024d5，含本批全部代码）：**通过 31 / 失败 0 / 控制台错误 0**（205 s；仍只屏蔽无头 Pointer Lock 那 1 条）→ docs/WALKTHROUGH.md 已更新。
+- run 41100719680（ec_corner / hall_wanted / exam_r3 / exam_r3_b / cs_top）里 cs_top 又一次占着 runner 不出图，为了让 zone / lab 先拍，**整 run 已取消**，这五个机位下批重拍（cs_top 单独派，历来最容易卡死）。
+- Drive 快照 1AxRm2Q4BurQh9HDT9l1fZEO4y1T9hdC2 已覆盖（01:55 CST，内容截至 7b0a199，未压缩 tar，`tar xf` 解）；Pages 返回 200（部署队列在跑，最新提交部署完成前线上可能还是旧版）。
 - 对比图脚本 work/r3/b18/cmp18.py（取图目录 b18/z1 = 41101040921、b18/l1 = 41101548885、b18/r1 = 41100719680）：`rm -rf /tmp/afz; bash tools/gh_shots_fetch.sh <run> work/r3/b18/<z1|l1|r1>; cd work/r3 && python3 b18/cmp18.py` → work/r3/cmp18_zone_control.jpg / cmp18_lab3.jpg / cmp18_misc.jpg（缺图格子标「缺图」）。
 ### 下批先做
 1. 取图并看：41101040921（zone ×3）、41101548885（lab ×3 + id_zhouwen）、41100719680（ec_corner / hall_wanted / exam_r3 / exam_r3_b / cs_top）、41101715978（walk）。卡死超 20 分钟的就 cancel。
