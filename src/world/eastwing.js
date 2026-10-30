@@ -71,7 +71,15 @@ export function buildEastWing(scene, world, ctx) {
   }
   // 窗（外墙内侧发光）
   for (const fy of [Y, F2, F3]) for (let k = 0; k < 5; k++) {
-    const z = -36 - k * 8.6; const f = new Frame([X1 - 0.01, fy, z], -Math.PI / 2);
+    const z = -36 - k * 8.6;
+    if (fy === F3 && R3.zone_control) { // 批次18：3F 哥特彩窗（zone_r3_b 里与 70 年代管控室冲突）→ 钢框磨砂窗：磨砂玻璃 + 4×3 钢棂 + 水泥窗台
+      const gl = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 2.6), new THREE.MeshStandardMaterial({ color: 0x8a918d, emissive: 0xc8d0cc, emissiveIntensity: 0.32, roughness: 0.5 })); gl.position.set(X1 - 0.03, fy + 2.4, z); gl.rotation.y = -Math.PI / 2; zone.add(gl);
+      for (const dz of [-0.82, -0.41, 0, 0.41, 0.82]) b.box('blackMetal', 0.06, 2.68, dz === -0.82 || dz === 0.82 ? 0.08 : 0.035, [X1 - 0.05, fy + 2.4, z + dz], { uv: 1 });
+      for (const dy of [-1.32, -0.65, 0, 0.65, 1.32]) b.box('blackMetal', 0.06, Math.abs(dy) > 1.3 ? 0.08 : 0.035, 1.72, [X1 - 0.05, fy + 2.4 + dy, z], { uv: 1 });
+      b.box('stoneDark', 0.22, 0.08, 1.9, [X1 - 0.11, fy + 1.06, z], { uv: 0.5 });
+      if (k === 1) point(zone, 0xfff0dc, 6, [53, fy + 2.9, -45.75], 9); // 东门后楼梯间吸顶灯（门洞不再是纯黑）
+      continue; }
+    const f = new Frame([X1 - 0.01, fy, z], -Math.PI / 2);
     b.add('glassIn', new THREE.ShapeGeometry(archShape(1.6, 2.6)), f.at(0, 2.0, 0), { uv: false });
     b.add('gold', archRingGeo(1.8, 2.6, 1.6, 2.6, 0.2), f.at(0, 2.0, 0.05), { uv: 1 });
   }

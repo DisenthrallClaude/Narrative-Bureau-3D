@@ -2384,9 +2384,9 @@ export function planZoneControl(y) {
   const room = { name: '东翼 3F · 区域管控室（批次16）', x0: 20.2, x1: 49.86, z0: -60.86, z1: -32.0, y, H,
     doors: [{ wall: 'E', a: -47.5, b: -44, label: '楼梯井' }, { wall: 'E', a: -61, b: -54, label: '楼梯井列（开敞）' }, { wall: 'N', a: 40, b: 43, label: '副本投放调度室' }],
     windows: [],
-    rooms: [['① 地图墙', 35, -60.2], ['② 监控台', 35, -56.2], ['③ 电话台', 48.6, -39.0], ['④ 档案架', 21.2, -57.4], ['⑤ 值班台', 35, -33.6], ['沙盘（原有）', 35, -46.5]],
+    rooms: [['① 地图墙', 35, -60.2], ['② 监控台', 35, -56.2], ['③ 电话台', 48.6, -39.0], ['④ 档案架', 21.2, -57.4], ['⑤ 值班台', 35, -33.6], ['沙盘（原有）', 35, -46.5], ['⑥ 会商长桌', 27, -36.2], ['⑥ 资料台', 42.5, -36.6]],
     aisles: [{ label: '地图墙前通道', x0: 21.4, x1: 49.6, z0: -60.5, z1: -58.2 }, { label: '中轴主通道', x0: 32.8, x1: 37.2, z0: -60.5, z1: -51.2 },
-      { label: '沙盘北环道', x0: 22.2, x1: 47.8, z0: -53.2, z1: -51.15 }, { label: '沙盘南环道', x0: 22.2, x1: 47.8, z0: -41.85, z1: -35.4 },
+      { label: '沙盘北环道', x0: 22.2, x1: 47.8, z0: -53.2, z1: -51.15 }, { label: '沙盘南环道', x0: 22.2, x1: 47.8, z0: -41.85, z1: -39.6 }, { label: '值班台—沙盘通道', x0: 31.6, x1: 38.4, z0: -39.6, z1: -35.4 },
       { label: '沙盘西环道', x0: 22.0, x1: 23.9, z0: -53.2, z1: -35.4 }, { label: '沙盘东环道', x0: 46.1, x1: 47.6, z0: -53.2, z1: -42.2 },
       { label: '东门净空', x0: 47.7, x1: 49.8, z0: -47.5, z1: -44 }] };
   floorZ(out, 'r3_marbleHoned', 20.3, 49.84, -60.6, -32.4, y, { border: 0.3, bmat: 'r3_stoneBorder', uv: 0.5 });
@@ -2449,7 +2449,45 @@ export function planZoneControl(y) {
     out.push({ sign: '值 班 台', sub: '交接班须签字登记', x: 35, y: y + 0.7, z: cz - 0.61, yaw: ROT.N, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
     hang(out, '值 班 台', 35, y + 3.6, cz, 0, 1.9, 0.42, y + H);
     light(out, 35, y + 3.0, cz + 0.4, 0xfff0dc, 1.2, 6); }
-  out.push({ m: 'r2/fire_extinguisher', x: 49.55, y, z: -43.4, yaw: ROT.W, h: 0.6, tag: '消防', on: 'floor' });
+  out.push({ m: 'r2/fire_extinguisher', x: 49.55, y, z: -50.3, yaw: ROT.W, h: 0.6, tag: '消防', on: 'floor' }); // 批次18：原 −43.4 让位给东门南门扇
+  // ⑥ 批次18：南侧环道外 6 m 空地补成组陈设（zone_r3_b 看图：沙盘与值班台之间大片空地）。
+  //   西组 会商长桌（x 23.6…30.4，z −38.6…−37.4）：长桌垂直于沙盘、两侧各 4 把实木椅 + 东端主位；桌上摊开区域图、文件夹、茶杯、烟灰缸、台灯。
+  //   东组 资料台（x 39…46.2）：两张斜面资料台并排（台面放分片册子 / 图纸）+ 南墙一排 6 只铁皮资料柜 + 铜牌。中段 x 31.5…38.5 留给值班台 ↔ 沙盘通道。
+  { const cx = 27.0, cz = -38.0, top = y + 0.76;
+    out.push({ m: 'r2/conference_table_rectangular_6m', x: cx, y, z: cz, yaw: 0, fit: [6.0, 0.76, 1.2], tag: '⑥ 会商长桌', on: 'floor', col: [6.0, 0.78, 1.2] });
+    for (let i = 0; i < 4; i++) { const x = cx - 2.1 + i * 1.4;
+      out.push({ m: 'r4/exam_chair', x, y, z: cz - 0.95, yaw: 0, h: 0.84, tag: '⑥ 会商长桌', on: 'floor' });
+      out.push({ m: 'r4/exam_chair', x, y, z: cz + 0.95, yaw: Math.PI, h: 0.84, tag: '⑥ 会商长桌', on: 'floor' });
+      out.push({ m: 'r2/coffee_mug', x: x + 0.3, y: top, z: cz + (i % 2 ? -0.38 : 0.38), yaw: i, h: 0.095, tag: '⑥ 茶杯', on: 'desk' }); }
+    out.push({ m: 'r4/exam_chair', x: cx + 3.55, y, z: cz, yaw: ROT.W, h: 0.84, tag: '⑥ 会商主位', on: 'floor' });
+    out.push({ box: 'r3_mapPaper', x: cx, y: top + 0.003, z: cz, w: 1.6, h: 0.004, d: 0.9, yaw: 0.04, tag: '⑥ 摊开区域图', on: 'desk' });
+    for (const [dx, dz, m, o] of [[-2.4, 0.15, 'r2/several_folders', { h: 0.3 }], [2.2, -0.2, 'r2/document_letter_tray_documents_organizer', { w: 0.3 }], [1.2, 0.3, 'r2/ptish_exceptionally_full_ashtray', { w: 0.16 }], [-1.3, -0.3, 'r2/ptish_exceptionally_full_ashtray', { w: 0.16 }], [2.6, 0.32, 'r2/bankers_lamp', { h: 0.36 }]])
+      out.push({ m, x: cx + dx, y: top, z: cz + dz, yaw: Math.PI, ...o, tag: '⑥ 会商长桌', on: 'desk' });
+    for (const dx of [-1.8, -0.4, 0.9, 2.0]) out.push({ box: 'dz_paper', x: cx + dx, y: top + 0.003, z: cz + (dx > 0 ? -0.25 : 0.25), w: 0.21, h: 0.004, d: 0.297, yaw: dx * 0.05, tag: '⑥ 会商记录', on: 'desk' });
+    out.push({ sign: '会 商 桌', sub: '跨片区联合研判', x: cx - 3.02, y: y + 0.55, z: cz, yaw: ROT.W, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+    hang(out, '联 合 会 商', cx, y + 3.6, cz, 0, 1.9, 0.42, y + H);
+    light(out, cx, y + 2.8, cz, 0xfff0dc, 1.3, 6); }
+  { const cz = -38.2, top = y + 0.9;
+    for (const cx of [40.6, 44.4]) {
+      out.push({ m: 'r2/woodentable_01', x: cx, y, z: cz, yaw: 0, fit: [2.6, 0.9, 1.0], tag: '⑥ 资料台', on: 'floor', col: [2.6, 0.92, 1.0] });
+      for (const [dx, m, o] of [[-0.8, 'r2/several_folders', { h: 0.3 }], [0.1, 'r2/medieval_book_stack', { w: 0.34 }], [0.85, 'r2/document_letter_tray_documents_organizer', { w: 0.3 }]]) out.push({ m, x: cx + dx, y: top, z: cz - 0.15, yaw: Math.PI, ...o, tag: '⑥ 资料台', on: 'desk' });
+      out.push({ box: 'r3_mapPaper', x: cx - 0.2, y: top + 0.003, z: cz + 0.22, w: 1.1, h: 0.004, d: 0.5, yaw: -0.03, tag: '⑥ 图纸', on: 'desk' });
+      out.push({ m: 'r2/old_computer_chair', x: cx, y, z: cz + 0.85, yaw: Math.PI, h: 0.92, tag: '⑥ 资料台', on: 'floor' }); }
+    out.push({ sign: '资 料 台', sub: '分片册 · 图纸 · 阅后归位', x: 42.5, y: y + 0.6, z: cz - 0.51, yaw: 0, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+    for (let i = 0; i < 6; i++) { const x = 40.2 + i * 0.95;
+      out.push({ m: 'file_cabinet', x, y, z: -32.4, yaw: ROT.N, h: 1.32, tag: '⑥ 资料柜', on: 'floor', col: [0.7, 1.32, 0.5] }); }
+    out.push({ sign: '分 片 资 料', sub: '甲—己 六片 · 按号取阅', x: 42.6, y: y + 1.75, z: -32.06, yaw: Math.PI, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+    light(out, 42.5, y + 2.8, cz, 0xfff0dc, 1.2, 6); }
+  // ⑦ 批次18：东门（楼梯井门洞 z −44…−47.5）原是一块纯黑洞 → 钢门套 + 两扇木门扇向室内开到 180° 贴墙 + 门后走廊吸顶灯
+  { const X = 49.8, a = -44, b = -47.5;
+    for (const z of [a + 0.04, b - 0.04]) out.push({ box: 'r3_steelOld', x: X, y: y + 1.52, z, w: 0.16, h: 3.04, d: 0.08, tag: '⑦ 门套', on: 'partv' });
+    out.push({ box: 'r3_steelOld', x: X, y: y + 3.0, z: (a + b) / 2, w: 0.16, h: 0.08, d: 3.6, tag: '⑦ 门套', on: 'partv' });
+    for (const [z0, sg] of [[a, 1], [b, -1]]) { const zc = z0 + sg * 0.875;
+      out.push({ box: 'dz_wain2', x: 49.72, y: y + 1.45, z: zc, w: 0.05, h: 2.9, d: 1.72, uv: 0.6, tag: '⑦ 门扇', on: 'partv' });
+      for (const yy of [0.8, 2.1]) out.push({ box: 'dz_wain', x: 49.685, y: y + yy, z: zc, w: 0.02, h: 0.95, d: 1.3, uv: 0.6, tag: '⑦ 门扇芯板', on: 'partv' });
+      out.push({ box: 'dz_brassDim', x: 49.67, y: y + 1.05, z: zc + sg * 0.7, w: 0.04, h: 0.24, d: 0.03, tag: '⑦ 拉手', on: 'partv' });
+      out.push({ box: 'dz_brassDim', x: 49.69, y: y + 0.08, z: zc, w: 0.02, h: 0.16, d: 1.72, tag: '⑦ 踢板', on: 'partv' }); }
+    out.push({ sign: '楼 梯 间', sub: '通往东侧楼梯 · 随手关门', x: 49.83, y: y + 3.3, z: (a + b) / 2, yaw: ROT.W, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' }); }
   return { room, items: out };
 }
 PLANS.zone_control = (Y) => fixYaw(planZoneControl(Y)); R3.zone_control = true;
