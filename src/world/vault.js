@@ -305,7 +305,7 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
     b.add('stoneDark', archRingGeo(3.6, 3.4, 2.4, 3.4, 0.4), f.at(0, 0, 0.0), { uv: 0.5 });
     b.add('gold', archRingGeo(3.7, 3.4, 3.6, 3.4, 0.42), f.at(0, 0, 0.0), { uv: 1 }); }
     if (BM) { // 批次23 看图：B 层门扇仍是金色书页浮雕（上层风格）→ 客梯拉丝钢门扇 + 中缝 + 视窗条；货梯同（门框钢）
-      for (const s of [-1, 1]) { b.add('r3_consoleSteel', new THREE.BoxGeometry(1.18, 3.3, 0.08), f.at(s * 0.6, 1.65, 0.05), { uv: 1 }); // 看图 r3_steelGrey 门扇近白平板 → 灰绿喷漆钢（带污渍） b.add('r3_steelOld', new THREE.BoxGeometry(1.0, 0.04, 0.02), f.at(s * 0.6, 1.1, 0.1), { uv: 1 }); b.add('r3_steelOld', new THREE.BoxGeometry(1.0, 0.04, 0.02), f.at(s * 0.6, 2.4, 0.1), { uv: 1 }); }
+      for (const s of [-1, 1]) { b.add('r3_consoleSteel', new THREE.BoxGeometry(1.18, 3.3, 0.08), f.at(s * 0.6, 1.65, 0.05), { uv: 1 }); /* 看图 r3_steelGrey 门扇近白平板 → 灰绿喷漆钢（带污渍） */ b.add('r3_steelOld', new THREE.BoxGeometry(1.0, 0.04, 0.02), f.at(s * 0.6, 1.1, 0.1), { uv: 1 }); b.add('r3_steelOld', new THREE.BoxGeometry(1.0, 0.04, 0.02), f.at(s * 0.6, 2.4, 0.1), { uv: 1 }); }
     } else
     for (const s of [-1, 1]) b.add('elevDoor', new THREE.BoxGeometry(1.18, 3.3, 0.08), f.at(s * 0.6, 1.65, 0.05), { uv: false });
     if (UP) b.add('dz_pil', new THREE.BoxGeometry(3.9, H - 3.34, 0.01), f.at(0, 3.3 + (H - 3.34) / 2, -0.005), { uv: 0.5 }); // 批次13：门头拱内补黑石门楣板（原露出乱石）
