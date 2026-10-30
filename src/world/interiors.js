@@ -884,28 +884,56 @@ function tagMat(name) {
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.8 });
 }
 /** 边几 + 摊开档案夹 + 回形针证件照 + 打字机名签；(x, z) 为边几中心（person 局部坐标，面朝 +Z） */
-function dossierStand(g, M, name, x, z) {
+function dossierStand(g, M, name, x, z, flip = false) { // flip：相框朝 −Z（周闻：椅前是值班长台，玩家从椅后平台过来）
   const k = IDPHOTO[name]; if (!k) return;
   const wood = M.wood ?? new THREE.MeshStandardMaterial({ color: 0x4a3020, roughness: 0.6 }); const brass = M.brass ?? M.gold;
   const kraft = new THREE.MeshStandardMaterial({ color: 0xa47e4e, roughness: 0.9 });
   const add = (geo, m, px, py, pz, rx = 0, ry = 0, rz = 0) => { const me = new THREE.Mesh(geo, m); me.position.set(x + px, py, z + pz); me.rotation.set(rx, ry, rz); me.castShadow = me.receiveShadow = true; g.add(me); return me; };
-  const TOP = 0.62;
-  add(new THREE.BoxGeometry(0.56, 0.03, 0.42), wood, 0, TOP - 0.015, 0); // 几面
-  for (const sx of [-1, 1]) for (const sz of [-1, 1]) add(new THREE.CylinderGeometry(0.016, 0.012, TOP - 0.03, 10), wood, sx * 0.24, (TOP - 0.03) / 2, sz * 0.17);
-  add(new THREE.BoxGeometry(0.5, 0.02, 0.36), wood, 0, 0.2, 0); // 下层隔板
-  add(new THREE.BoxGeometry(0.565, 0.012, 0.425), brass, 0, TOP - 0.034, 0); // 几面下铜线
-  // 档案夹：两页牛皮纸封皮（各 0.22×0.3）+ 右页内衬档案纸
-  add(new THREE.BoxGeometry(0.225, 0.004, 0.3), kraft, -0.115, TOP + 0.002, 0.01, 0, 0.04, 0);
-  add(new THREE.BoxGeometry(0.225, 0.004, 0.3), kraft, 0.115, TOP + 0.002, 0.01);
-  add(new THREE.PlaneGeometry(0.21, 0.287), dossierPageMat(name), 0.115, TOP + 0.0045, 0.01, -Math.PI / 2);
-  add(new THREE.PlaneGeometry(0.2, 0.28), new THREE.MeshStandardMaterial({ color: 0xe9e2cf, roughness: 0.9 }), -0.115, TOP + 0.0045, 0.012, -Math.PI / 2, 0, 0.04);
-  // 证件照（整张证件卡图，0.12×0.16 m ≥ A6）夹在右页左上角，略斜
-  const ph = add(new THREE.PlaneGeometry(0.12, 0.16), new THREE.MeshStandardMaterial({ map: loadTex(`content/textures/idphoto/${k}.jpg`, { srgb: true }), roughness: 0.5, emissive: 0xffffff, emissiveIntensity: 0.05 }), 0.075, TOP + 0.006, -0.045, -Math.PI / 2, 0, 0.05);
+  const TOP = 0.62; // 批次32：几面放大 0.56×0.42 → 0.62×0.52，后半放立式铜框相片座，前半摊档案夹
+  add(new THREE.BoxGeometry(0.62, 0.03, 0.52), wood, 0, TOP - 0.015, 0); // 几面
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) add(new THREE.CylinderGeometry(0.016, 0.012, TOP - 0.03, 10), wood, sx * 0.27, (TOP - 0.03) / 2, sz * 0.22);
+  add(new THREE.BoxGeometry(0.56, 0.02, 0.46), wood, 0, 0.2, 0); // 下层隔板
+  add(new THREE.BoxGeometry(0.625, 0.012, 0.525), brass, 0, TOP - 0.034, 0); // 几面下铜线
+  // 档案夹：两页牛皮纸封皮（各 0.22×0.3）+ 右页内衬档案纸（前移到 z +0.08）
+  const DZ = flip ? -0.08 : 0.08;
+  add(new THREE.BoxGeometry(0.225, 0.004, 0.3), kraft, -0.115, TOP + 0.002, DZ, 0, 0.04, 0);
+  add(new THREE.BoxGeometry(0.225, 0.004, 0.3), kraft, 0.115, TOP + 0.002, DZ);
+  add(new THREE.PlaneGeometry(0.21, 0.287), dossierPageMat(name), 0.115, TOP + 0.0045, DZ, -Math.PI / 2);
+  add(new THREE.PlaneGeometry(0.2, 0.28), new THREE.MeshStandardMaterial({ color: 0xe9e2cf, roughness: 0.9 }), -0.115, TOP + 0.0045, DZ + 0.002, -Math.PI / 2, 0, 0.04);
+  const ph = add(new THREE.PlaneGeometry(0.12, 0.16), new THREE.MeshStandardMaterial({ map: loadTex(`content/textures/idphoto/${k}.jpg`, { srgb: true }), roughness: 0.5, emissive: 0xffffff, emissiveIntensity: 0.05 }), 0.075, TOP + 0.006, DZ - 0.055, -Math.PI / 2, 0, 0.05);
   ph.castShadow = false;
-  add(new THREE.TorusGeometry(0.012, 0.0015, 4, 16), brass, 0.035, TOP + 0.0075, -0.122, -Math.PI / 2, 0, 0).scale.set(0.6, 1.6, 1); // 回形针
-  // 打字机名签（帐篷形折卡）立在档案夹右前
-  const tm = tagMat(name);
-  add(new THREE.PlaneGeometry(0.09, 0.032), tm, 0.2, TOP + 0.016, 0.165, -0.38); add(new THREE.BoxGeometry(0.09, 0.034, 0.002), new THREE.MeshStandardMaterial({ color: 0xe8e2d2, roughness: 0.85 }), 0.2, TOP + 0.016, 0.1635, -0.38).castShadow = false;
+  add(new THREE.TorusGeometry(0.012, 0.0015, 4, 16), brass, 0.035, TOP + 0.0075, DZ - 0.132, -Math.PI / 2, 0, 0).scale.set(0.6, 1.6, 1); // 回形针
+  // 批次32（用户：照片太小）立式铜框相片座：照片 0.13×0.18 m，后仰 14°，面朝 +Z（玩家来向）；底框嵌打字机名签铜牌
+  const fr = new THREE.Group(); fr.name = 'pframe_' + name; fr.position.set(x, TOP, z + (flip ? 0.13 : -0.13)); fr.rotation.order = 'YXZ'; fr.rotation.set(-0.24, flip ? Math.PI : 0, 0); g.add(fr);
+  const fa = (geo, m, px, py, pz, rx = 0) => { const me = new THREE.Mesh(geo, m); me.position.set(px, py, pz); me.rotation.x = rx; me.castShadow = true; me.receiveShadow = true; fr.add(me); return me; };
+  const PW = 0.13, PH = 0.18, B = 0.014, BOT = 0.046, D = 0.016;
+  fa(new THREE.BoxGeometry(PW + 2 * B, BOT, D), brass, 0, BOT / 2, 0); // 底框（宽，嵌名签）
+  fa(new THREE.BoxGeometry(PW + 2 * B, B, D), brass, 0, BOT + PH + B / 2, 0); // 顶框
+  for (const sx of [-1, 1]) fa(new THREE.BoxGeometry(B, PH, D), brass, sx * (PW / 2 + B / 2), BOT + PH / 2, 0);
+  fa(new THREE.BoxGeometry(PW + 2 * B - 0.004, PH + BOT + B - 0.004, 0.004), new THREE.MeshStandardMaterial({ color: 0x2a1c12, roughness: 0.7 }), 0, (PH + BOT + B) / 2, -D / 2 - 0.001); // 背板
+  fa(new THREE.BoxGeometry(PW + 0.006, 0.004, 0.002), brass, 0, BOT + PH + 0.002, D / 2 - 0.002); // 内口铜线
+  const pm = fa(new THREE.PlaneGeometry(PW, PH), framePhotoMat(name), 0, BOT + PH / 2, 0.002); pm.castShadow = false;
+  const gl = fa(new THREE.PlaneGeometry(PW, PH), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.05, metalness: 0, transparent: true, opacity: 0.06, depthWrite: false }), 0, BOT + PH / 2, 0.006); gl.castShadow = false; // 玻璃
+  const nt = fa(new THREE.PlaneGeometry(PW - 0.004, 0.032), frameTagMat(name), 0, BOT / 2, D / 2 + 0.0006); nt.castShadow = false;
+  fa(new THREE.BoxGeometry(0.03, 0.2, 0.006), brass, 0, 0.115, -0.06, 0.5); // 背撑（底端落在几面上）
+  for (const sx of [-1, 1]) fa(new THREE.CylinderGeometry(0.004, 0.004, 0.003, 10), M.gold ?? brass, sx * 0.055, BOT / 2, D / 2 + 0.0012, Math.PI / 2); // 铭牌铆钉
+}
+const _fphoto = {};
+function framePhotoMat(name) { // 只裁源图头像框（48,25,289×400，比例 = 0.13/0.18），不带源图自带的小姓名 / 编号
+  const k = IDPHOTO[name]; if (_fphoto[k]) return _fphoto[k];
+  const cv = document.createElement('canvas'); cv.width = 520; cv.height = 720; const c = cv.getContext('2d');
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  const draw = (img) => { c.fillStyle = '#b8c4cc'; c.fillRect(0, 0, 520, 720); if (img) c.drawImage(img, 48, 25, 289, 400, 0, 0, 520, 720); c.strokeStyle = 'rgba(30,20,10,0.6)'; c.lineWidth = 6; c.strokeRect(3, 3, 514, 714); t.needsUpdate = true; };
+  draw(null); const img = new Image(); img.onload = () => draw(img); img.src = `./content/textures/idphoto/${k}.jpg`;
+  return (_fphoto[k] = new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.1 }));
+}
+function frameTagMat(name) { // 铜牌刻字名签：暗铜底 + 深色刻字（打字机等宽体）
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128; const c = cv.getContext('2d');
+  const gr = c.createLinearGradient(0, 0, 0, 128); gr.addColorStop(0, '#c9a463'); gr.addColorStop(0.5, '#a9844a'); gr.addColorStop(1, '#8a6a36'); c.fillStyle = gr; c.fillRect(0, 0, 512, 128);
+  c.strokeStyle = '#5a4020'; c.lineWidth = 5; c.strokeRect(8, 8, 496, 112);
+  c.fillStyle = '#21160a'; c.font = '700 84px "NB Mono","Courier New",monospace'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, 256, 68);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  return new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.6, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.06 });
 }
 function namePlateMat(name) {
   const cv = document.createElement('canvas'); cv.width = 256; cv.height = 72; const c = cv.getContext('2d');
@@ -913,7 +941,7 @@ function namePlateMat(name) {
   c.fillStyle = '#f3e2b0'; c.font = '600 40px "NB Serif","Noto Serif SC",serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, 128, 38);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.45, metalness: 0.4 });
 }
-export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue = null, name = null } = {}) {
+export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue = null, name = null, flipDossier = false } = {}) {
   const g = new THREE.Group(); g.userData.presence = clue ?? 'none';
   if (!clue) return g;
   const add = (geo, m, x, y, z, rx = 0, ry = 0, rz = 0) => { const me = new THREE.Mesh(geo, m); me.position.set(x, y, z); me.rotation.set(rx, ry, rz); me.castShadow = true; me.receiveShadow = true; g.add(me); return me; };
@@ -929,7 +957,7 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
     placeModel('r4/exam_chair', { height: 0.84 }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); g.add(o); });
     placeModel('r4/wool_coat', { height: 0.886 }).then((o) => { o.position.set(0, 0.01, -0.28); g.add(coatTint(o)); });
     if (cap) add(new THREE.CylinderGeometry(0.11, 0.12, 0.06, 16), cloth, 0.08, 0.485, 0.06);
-    if (name) dossierStand(g, M, name, 0.62, 0.05); // 批次31（用户 07:20）：证件照从椅上拿掉 → 椅旁边几上的人事档案夹
+    if (name) dossierStand(g, M, name, 0.62, 0.05, flipDossier); // 批次31（用户 07:20）：证件照从椅上拿掉 → 椅旁边几上的人事档案夹
     return g; }
   if (clue === 'coat' || clue === 'hanger') { // 衣帽架 / 制服挂架
     if (clue === 'coat') { add(new THREE.CylinderGeometry(0.02, 0.025, 1.75, 10), wood, 0, 0.875, 0); add(new THREE.CylinderGeometry(0.2, 0.22, 0.03, 20), wood, 0, 0.015, 0);
