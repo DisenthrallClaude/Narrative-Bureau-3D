@@ -10,6 +10,6 @@ await page.waitForFunction(() => window.__READY__ === true, null, { timeout: 600
 const r = await page.evaluate((pts) => { const T = window.__THREE__, G = window.G, rc = new T.Raycaster(), out = [];
   for (let i = 0; i < pts.length; i += 2) { rc.setFromCamera(new T.Vector2(pts[i], pts[i + 1]), G.camera); const hs = rc.intersectObjects(G.scene.children, true).filter((h) => h.object.visible && h.object.isMesh).slice(0, 4);
     out.push([pts[i], pts[i + 1], hs.map((h) => { let p = h.object, chain = []; while (p && chain.length < 4) { chain.push(p.name || p.type); p = p.parent; } const m = Array.isArray(h.object.material) ? h.object.material[0] : h.object.material;
-      return { d: +h.distance.toFixed(2), p: h.point.toArray().map((v) => +v.toFixed(2)), chain: chain.join('<'), mat: m?.name || '', col: m?.color?.getHexString?.(), map: m?.map?.image?.src?.slice(-50) || m?.map?.name || '', inst: h.instanceId ?? null, ud: JSON.stringify(h.object.userData).slice(0, 120) }; })]); }
+      return { d: +h.distance.toFixed(2), p: h.point.toArray().map((v) => +v.toFixed(2)), chain: chain.join('<'), mat: m?.name || '', col: m?.color?.getHexString?.(), map: m?.map?.image?.src?.slice(-50) || m?.map?.name || '', inst: h.instanceId ?? null, ud: Object.keys(h.object.userData ?? {}).join(',').slice(0, 120) }; })]); }
   return out; }, pts);
 console.log(JSON.stringify(r, null, 1)); await b.close(); srv.close();

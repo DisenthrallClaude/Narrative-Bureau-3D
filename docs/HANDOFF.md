@@ -175,6 +175,44 @@
 - **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
 - 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
 
+## R3 批次16（2026-10-31 00:33 CST 接手，约 35 分钟）
+### 提交
+db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml pick 组；fc3ec92 区域管控室 zone_control；c4aa2ff shots.yml walk 组；d4a5eec/bd252b6 _pick.mjs 修；收尾提交见 git log（试卷再抬高、高窗压暗、**周闻空椅 zone.add 被行尾注释吞掉的根因修复**、_pick 循环引用修）。
+### Actions
+- 取消：run 41087694564（exam_r3 卡 >30 分钟）发 cancel 返回 409（已结束/不可取消），未再处理。
+- 新增 shots.yml 组：`pick:<机位>:<ndcX ndcY ...>` 跑 tools/_pick.mjs；`walk:walk` 在 runner 上前台跑 walk.mjs（产物 out/walk/WALKTHROUGH.md + walk.log）。
+### 走查（Actions run 41093502205，前台跑完）
+- **通过 31 / 失败 0**，总结行拿到（204 s）。控制台错误 1：`PAGEERROR A user gesture is required to request Pointer Lock.`——无头 runner 无用户手势导致，本机此前 0；**严格说「控制台 0」未达成**，下批可在 walk.mjs 里把这条列入环境白名单或 test 模式跳过 pointer lock。docs/WALKTHROUGH.md 已更新为该次结果。
+### 1 阅卷中心（db93279 + 收尾）
+- 「东墙平板电视 222」实为**南墙**（z −61.2）B04 倒计时屏贴图 → 新 `flip` 类型机械翻牌倒计时（胡桃木箱 + 铜框 + 奶白铭牌「距高考还有」+ 3 片黑底白字翻牌 + 中缝转轴）。「东墙绿色斑驳墙」同样是南墙 wallPlaster → 北 / 西 / 南三面上墙统一铺 dz_ashlarEC 方石（墙裙原有）。
+- 试卷：新 `examPaper` 类型（Canvas：红头「一九七七年 语文试卷」、密封线、四道大题印刷字 + 作答横线；70 张共用贴图），课桌 AGE 压暗（0.6/0.5/0.42）。**看图（run 41092112548 exam_top）：桌面仍只看到黄铅笔、看不到试卷**——判断 0.861 仍低于真实台面（批次15 的「同色」结论可能也是被台面盖住）→ 收尾提交抬到 y+0.869、铅笔 0.875，**未重拍验证**。
+- 挂钟：新 `clock` 类型（铜环 + 胡桃木底座 + 象牙白表盘 + 黑罗马数字 + 分刻度 + 红秒针 + 玻璃罩），替换偏青的 1950s_wall_clock。看图：钟面已是象牙白 + 罗马数字 + 深框 → 合格。
+- 北墙上半：方石 + 黑石腰线 + 6 樘钢框高窗（磨砂天光 r3_clerestory）；局徽下移不再与「阅卷中心」金字重叠。看图：北墙不再大片黑，有石材分缝 + 窗 + 腰线 → 明显进步；**高窗偏亮像灯箱**（收尾压 0.55→0.22，未重拍）。
+- 球灯 r3_globeDim 0.95→0.5：看图近处球灯仍偏白但不再刺眼。
+- r3plan exam_center 461 件 0 错误（screenshots/r3/plan_exam_center.png）。
+- exam_r3 / exam_r3_b 新图截止汇报时未出（run 41092112548）。
+- 评估：北墙、钟、墙面统一明显进步；试卷仍未看见（第三次），**未达 3A**。
+### 2 殷泽衣帽架
+- 去掉程序化黑圆柱帽；大衣色 0x0b0d14 → 驼色 0x5a4632（乘色后约 #CCA378 量级）。看图 id_yinze（r1/a/）：帽子没了，大衣成棕驼色、能读出领口/驳头/扣子，背光下仍偏暗、看不到袖子 → 可读，合格偏下。
+### 3 hall_wanted
+- 通缉栏底图 B02 两张「A 级通缉」卡灰色照片框（像素 223,504 155×176 / 537,504 154×176）→ content.texPatched 新增图片补丁，填秦骁 / 江戾档案海报头像裁切（灰度 + 0.3 棕调）。**新图截止时未出**（run 41092112548），未验收。
+- 半透明横杆：拾取探针三次失败（缺 MIME → 行尾注释吞掉 shot 定义 → userData 循环引用），按规则跳过；_pick.mjs 已修好，下批直接 `bash work/r3/b14/disp.sh "pick:hall_wanted:-0.625 0.144 0.25 0.144 0.125 0.204 -0.0875 -0.556"`。
+### 4 周闻 / cs_top / ec_corner
+- **id_zhouwen 根因找到**：eastwing.js 批次14 把 `zone.add(zw)` 写进了行尾注释，周闻空椅从未加入场景，所以历次机位怎么调都只拍到台面 + 墙（本批 r1/a/id_zhouwen.png 同样）。收尾提交修复，机位已改 [35.1, 12.1, −58.95]→[35.1, 11.22, −59.8]，**未重拍**。
+- cs_top：截止未出图。
+- ec_corner（r1/a/ec_corner.png）：门洞上 70% 仍是一块近距、纹理很大的深色木纹面，下沿能看到食堂地面与陶罐 → 不是 46 m 外的西墙（纹理尺度不符），更像门洞内侧紧贴的一块 panelWall 面片；拾取未成功，**未修**。
+### 5 区域管控室 zone_control（fc3ec92）
+- 位置：东翼 3F 北区 x 20…50、z −32…−61（原「禁区封锁调度厅」，保留沙盘 / 分级挂牌 / 卡片墙 / 调度台四个剧情锚点）。平面（北 = −Z）：① 北墙两块整面区域地图 / 灯光标示板（新 `mapwall` 类型：Canvas 墨绿底地图 + 环路 / 河道 / 22 个区块 + 红黄绿自发光指示灯 + 图例）+ 标语「统一调度 分级管控」；② 两排 × 8 台监控台（新 `console` 类型：灰绿喷漆钢柜 + 斜面按键板（指示灯 / 拨键贴图）+ 上部屏架 2 屏 CRT（Canvas 圆角显像管：走廊监控线框 / 波形，绿 / 琥珀磷光 + 扫描线 + 机位编号）+ 胡桃木写字沿），中轴 4.6 m 主通道对分级挂牌，操作员坐南面朝北，单数台屏架顶放对讲机；③ 东墙北段电话台（胡桃木台 + 黑石台面 + 4 部 VEF/拨盘电话 + 记录本 + 墙上电话交换盘 + 铜牌）；④ 西墙北段 11 只铁皮档案柜 + 南段 2 只钢架档案盒；⑤ 原调度台补成值班台（两把椅、台灯、两部电话、文件夹、铜牌、吊牌）；地面哑光大理石 + 黑石收边 + 通道磨损；上墙方石；4 道日光灯管 + 暖白补光。
+- 没有用年代不对的 crt_computer_monitor（90 年代米色显示器）和朝向不明的 exhibit_switchboard；新增件全是 r3build 程序化（盒体 + Canvas），沿用的模型（old_computer_chair / phone_vef_ta_68 / rotary_telephone / vintage_radio / steel_frame_shelves_02 / file_cabinet / literary_club_chair_preview）均为其它区已验收件，没有新 GLB，所以没做 Blender 预览。
+- r3plan zone_control 175 件 **0 错误 0 警告**（screenshots/r3/plan_zone_control.png，work/r3/b16_plan_zone_control.json）。
+- 截图 run 41093419079（zone_r3 / zone_r3_b / zone_top）截止汇报时未出，**未验收**。
+### 存档
+- Drive 快照 1AxRm2Q4BurQh9HDT9l1fZEO4y1T9hdC2 已覆盖（00:03 UTC 前后；本次为**未压缩 tar**，文件名仍叫 .tar.gz，用 `tar xf` 解；save.sh 的 gzip 在 120 s 前台上限内跑不完，改为 tar + gws 上传两步）。
+### 下批先做
+1. 取图：run 41092112548（exam_r3 / exam_r3_b / hall_wanted / cs_top）、41093419079（zone_*）；`rm -rf /tmp/afz; bash tools/gh_shots_fetch.sh <run> <目录>`。
+2. 重拍 exam_top（试卷 0.869 是否露出、高窗亮度）、id_zhouwen（空椅终于加入场景）。
+3. pick hall_wanted 横杆、ec_corner 门洞面片并修。
+
 ## R3 批次15（2026-10-30 23:57 CST 接手，约 35 分钟）
 ### 取回批次14 遗留图
 - run 41080775966：hall_wanted / cs_r3 / ec_corner / id_yinze / id_zhouwen / plaza 取到（work/r3/b15/f_41080775966/f/）；cs_top 作业仍卡在 in_progress（>60 分钟，没出图）。run 41081730764：exam_top / id_zhouwen 取到（f_41081730764/x/），exam_r3 / exam_r3_b 卡住没出。run 41083473436（id_zhouwen a40899e 第 3 次）卡住没出。**卡住的作业（SwiftShader）不会自己结束，下批可手动 cancel。**

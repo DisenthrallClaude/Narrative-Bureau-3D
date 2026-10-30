@@ -2272,8 +2272,8 @@ export function planExamCenter(y) {
     out.push({ m: 'r2/schooldesk_01', x, y, z, yaw: 0, w: 0.7, tag: '① 考位', on: 'floor', col: [0.7, 0.75, 0.5] });
     out.push({ m: 'r4/exam_chair', x, y, z: z + 0.5, yaw: Math.PI, h: 0.84, tag: '① 考位', on: 'floor' }); // 批次15：Blender 精建实木课椅（原蓝色塑料椅）
     // 批次15：schooldesk_01 台面实测 0.882 × 缩放 0.972 = 0.857（原 0.757 埋在桌面里）
-    out.push({ examPaper: true, x: x - 0.04, y: y + 0.861, z: z + 0.02, w: 0.21, h: 0.002, d: 0.297, yaw: 0.04 * ((n % 3) - 1), tag: '① 考位', on: 'desk' }); // 批次16：印刷试卷贴图（原纯色纸块与桌面同色）
-    out.push({ box: 'r3_paintYellow', x: x + 0.2, y: y + 0.867, z: z + 0.04, w: 0.012, h: 0.008, d: 0.17, yaw: 0, tag: '① 考位', on: 'desk' });
+    out.push({ examPaper: true, x: x - 0.04, y: y + 0.869, z: z + 0.02, w: 0.21, h: 0.002, d: 0.297, yaw: 0.04 * ((n % 3) - 1), tag: '① 考位', on: 'desk' }); // 批次16：印刷试卷贴图（原纯色纸块与桌面同色）
+    out.push({ box: 'r3_paintYellow', x: x + 0.2, y: y + 0.875, z: z + 0.04, w: 0.012, h: 0.008, d: 0.17, yaw: 0, tag: '① 考位', on: 'desk' });
     n++;
   }
   // ② 监考台：台座 + 铜包边 + 两步踏步
