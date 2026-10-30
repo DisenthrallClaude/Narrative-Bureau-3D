@@ -171,6 +171,24 @@
 3. plaza / facade 高画质截图贴着内存上限：可考虑截图模式上传后释放贴图 CPU 端图片，或先拍低一档画质。
 4. tristat.mjs 拆 pass 会让 plaza 崩，测 plaza 时只用截图会话的整帧统计。
 
+## R3 批次12 收尾（2026-10-30 19:20 CST 接手；批次12 主体见提交 66c8004 / 68a0b27 / 6c7dc1f / 9e73c28 / e0aa764 / f9445e7）
+### 完成
+1. **窗光 404 修复**（3dc9f9b）：r3plan.js floor3_office / floor2_liaison / floor2_pub 的「窗光」条目补 `light: true`（原来只有 `win: true`，r3build 把它当模型加载 `assets/models/undefined.glb`）。
+2. **走查**（c4a3dd3）：`LD_LIBRARY_PATH=/workspace/work/tools/libs/usr/lib/aarch64-linux-gnu node tools/walk.mjs` → **31/31 通过，控制台错误 0**（docs/WALKTHROUGH.md）。注意走查是传送 + 触发热点，不实走路线；藏书阁桌子 / 市民大厅屏风栏杆是否挡「走路」动线没有被它覆盖（r3plan 通道检查 0 错误是唯一依据）。
+3. **地毯偏蓝黑**（4cedc20，**未截图验证**）：`r3_carpetRed`（发布厅整间地毯、法务处长室、藏书阁阅览环）同东廊根因 → 换 `Carpet012g` × 0x8e2420（比东廊 crimson 略深）；`dz_rugRed`（宿舍棋牌区、局长室、宣传处前厅等程序化花边地毯）底色 #4a1418→#6a1c1f、边框 #1a1a2a（蓝黑）→#2e0e11（深牛血红），加 Carpet012g 绒面法线 repeat 7。`M.carpet`（mats.js，东翼 2F/3F 楼板，指挥中心深蓝地面）同样是 Carpet012 彩色贴图 × 暗红，但指挥中心观感是深蓝，没动。
+4. **截图省内存 `?freecpu=1`**（4cedc20，仅截图模式）：GLB 贴图 ImageBitmap 上传后 close()、loadTex 的 HTMLImage 上传后丢引用；assets.js 里 clone 遇到已释放的源图只 `version++`（不 `source.version++`，否则重传空图）。`tools/_memprobe.mjs`：渲染进程内存构成（cs_r3 加载完：JS 堆 0.52 GB、几何 0.40 GB、贴图解码 ImageBitmap 1299 张 2.57 GB + HTMLImage 239 张 1.42 GB + Canvas 459 张 0.36 GB）。
+### 没做成：本机截图全部 OOM（批次12 截图 0 张）
+- 本机 7.9 GB，但空闲时就有 ~2.2 GB 已用（container-server 0.4 GB + 不可回收 Shmem 1.5 GB，drop_caches 无效，不在 /dev/shm，疑为 juicefs writeback 缓存）→ 截图可用 ~5.7 GB。1600×900 high 单张 cs_r3：渲染进程 3.6 GB + SwiftShader GPU 进程涨到 3.2 GB+（随着着色器编译/上传持续增长），**4 次都被 OOM killer 杀掉**（node 的 oom_score_adj=1000 先被杀）：① 原样 420 s / 615 s 无图；② `--in-process-gpu` 无效；③ 上传后丢几何数组（只省 0.3 GB 且隐藏组每帧读数组报错，已撤回）；④ freecpu 贴图释放：渲染进程降到 3.2 GB，但 GPU 进程同时涨到 3.2 GB，1191 s 仍被杀。
+- 结论：这台机器出不了 1600×900 high 截图。可选：换内存更大的机器（批次10/11 是 InstaBox 4 核 7.8 GB 且空闲占用低才勉强出图）/ 改 1280×720（只省渲染目标约 0.1 GB，大概率仍不够）/ 降画质档（违反「不降画质」）。**需要用户定**。
+- 因此第 3、4 项（截图、对比图 cmp12_*、看图修吊牌 alphaMap / 大理石 z-fighting / 线脚 / 屏风玻璃排序 / 展柜小件 / 排队市民）都没完成。只做了数值检查：
+  - 市民大厅薄层（work/b12/zf.py，plan json）：64 个薄层两两之间无「重叠且顶面差 <1.5 mm」的共面对；哑光大理石顶面高出原楼板 8 mm、铜嵌条再高 3 mm、填单岛水磨石 / 石边 / 铜线依次 +6 / +7.6 / +12 mm。相机 near 0.05 / far 6000、24 位深度在 40 m 处精度约 2 mm，理论上不会 z-fighting，但没有画面确认。
+  - 吊牌金字：goldText 用 alphaMap + alphaTest 0.5，贴图开了 mipmap → 远处小字可能被 alpha 平均到 0.5 以下而变细/消失（推断，未见画面）。
+  - 东廊展品尺度（plan_ec.json）：怀表 4.6 cm、墨水瓶 10 cm、青铜簋 22 cm、烟灰缸 12 cm 合理；**旧相机 16×5.8×19.7 cm（高度偏扁、深度大于宽度，疑朝向/轴向不对）、摊开的书 20.7 宽×32 深（像是转了 90°）**需看图确认。
+### 下一步
+1. 先解决截图环境（见上），再按原清单拍：cs_r3/cs_r3_b/cs_top（+ `&r3off=citizen_service`）、ec_r3/ec_r3_b/ec_corner（改前 = work/r3/b12/before_b11/ 里批次11 的 ec_*，已备份）、lobby_r3/lobby_r3_b/lobby_4f、es_land/es_land_b、lib_r3/lib_r3_b；队列脚本 work/b12/q.sh（每行「输出目录 机位 [&额外参数]」，自动加 `&freecpu=1`、每张单独日志 work/b12/logs/）。
+2. 看图后修第 4 项、确认第 3 项地毯颜色；阅卷中心 exam_center 未开工（东翼 1F 考务大厅 z −53…−76、2F 阅卷 z −61…−76、3F 投放调度，x 20…50）。
+3. 坑：不要 `pkill -f <含自己命令行里出现的字符串>`（本批又把自己的 shell 杀了 3 次）；本机截图前先 `free -m` 看 available。
+
 ## R3 批次11（2026-10-30 16:56 CST 接手；先收尾批次10，再按顺序做未 R3 的区）
 ### 完成
 1. **批次10 收尾**（commit 766ce5a）：取回 bb/dd/zz 批次10 截图入库；AO 整体压暗验收与修正（见批次10「收尾验收」）；HANDOFF 批次10 补完；云电脑任务停掉、令牌全部吊销（见下）。
