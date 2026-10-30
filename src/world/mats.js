@@ -64,6 +64,7 @@ export function mats() {
   M.wallPlaster = phm('grey_plaster_02', { color: 0x6a7a72, env: 0.35 }); // 批次7：Poly Haven 实拍石膏（原 ambientCG Concrete034）
   M.onyx = pbr('Onyx013', { color: 0x8a8a90, roughness: 0.22, env: 1.2 });
   M.wood = pbr('Wood051', { color: 0x4a3020, roughness: 0.55, env: 0.3 }); // M4：深胡桃
+  M.bronzeDoor = pbr('Metal048A', { color: 0x4e3824, metalness: 1, roughness: 0.5, repeat: [1, 3] }); M.bronzePanel = pbr('Metal048A', { color: 0x6a4c2e, metalness: 1, roughness: 0.42 }); M.brassNosing = pbr('Metal048A', { color: 0x8c6c3e, metalness: 1, roughness: 0.55 }); // 批次30：正门铜门（暗古铜门扇 + 浅一档芯板 + 哑光铜框）/ 台阶铜防滑条
   M.doorWood = pbr('Wood051', { color: 0x6a4e3a, roughness: 0.55, repeat: [1.5, 4] });
   M.woodFloor = pbr('WoodFloor064', { rn: true, color: 0x6e5a4a, roughness: 0.72, env: 0.2 }); // M4：掠射角环境反射是档案馆「白光溢出」的主因
   M.carpet = pbr('Carpet012', { color: 0x6a2228, roughness: 1 });

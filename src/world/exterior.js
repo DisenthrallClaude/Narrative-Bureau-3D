@@ -75,7 +75,7 @@ export async function buildExterior(scene, world, ctx) {
   buildFountain(b, g, M, world, ctx);
 
   // ================= 主楼正门台阶 =================
-  if (HERO) { for (let i = 0; i < 10; i++) world.box(0, 0.09 + i * 0.18, 0.6 - i * 0.5, 34 - i * 0.4, 0.18, 0.5); world.box(0, FLOOR / 2, -3, 34, FLOOR, 5); }
+  if (HERO) { for (let i = 0; i < 10; i++) { world.box(0, 0.09 + i * 0.18, 0.6 - i * 0.5, 34 - i * 0.4, 0.18, 0.5); b.box('brassNosing', 34 - i * 0.4 - 0.6, 0.01, 0.05, [0, 0.18 * (i + 1) + 0.004, 0.6 - i * 0.5 + 0.2], { uv: 1 }); } world.box(0, FLOOR / 2, -3, 34, FLOOR, 5); } // 批次30：ext_door_near 仰视时 10 级踏步糊成一整块石墙 → 每级踏面前沿嵌铜防滑条（hero_facade 踏步 cbox 深 0.56，前沿 z = 中心 + 0.28）
   else { for (let i = 0; i < 10; i++) b.box('blackMarble', 34 - i * 0.4, 0.18, 0.5, [0, 0.09 + i * 0.18, 0.6 - i * 0.5], { uv: 0.4, collide: true });
   b.box('blackMarble', 34, FLOOR, 5, [0, FLOOR / 2, -3], { uv: 0.4, collide: true }); }
   world.ramp([0, 0.0, 1.0], [0, FLOOR, -4.4], 30);
@@ -437,14 +437,14 @@ async function heroFacade(g, M, world, ctx, add) {
   // R3 批次8：远景 LOD（tools/facade_lod.mjs，Permissive 塌边 2.6M → 0.32M 面）；hi/lo 各自子组，main.js 切块后按格切换
   const gHi = new THREE.Group(); gHi.name = 'facade_hi'; const gLo = new THREE.Group(); gLo.name = 'facade_lo'; g.add(gHi, gLo); ctx.facadeLod = { hi: gHi, lo: gLo };
   await Promise.all([placeHero(gHi, world, './assets/hero/hero_facade.glb'), placeHero(gLo, null, './assets/hero/hero_facade_lo.glb', { col: false })]);
-  // 门洞内：敞开的大门门扇（深色木 + 铁箍 + 金色铆钉）
+  // 门洞内：敞开的大门门扇——批次30 看 ext_door_near：原深色木 + 亮铜框读成「棕木板 + 霓虹描边」→ 暗古铜门扇 + 浅一档铜芯板 + 哑光铜框 + 铁箍铜泡钉
   const DW = 7, DH = 9;
   for (const sx of [-1, 1]) {
     const leaf = new THREE.Group(); const w = DW / 2, h = DH;
-    const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), M.doorWood); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), M.bronzeDoor); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
     for (const fz of [-1, 1]) {
-      for (let c = 0; c < 2; c++) for (let r = 0; r < 4; r++) { const pw = w * 0.38, ph = r === 3 ? 1.9 : 1.55, px = sx * -(w * 0.27 + c * w * 0.46), py = 0.9 + r * 1.95 + ph / 2; const pnl = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.06), M.wood); pnl.position.set(px, py, fz * 0.16); leaf.add(pnl); const fr = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.12, ph + 0.12, 0.03), M.brass); fr.position.set(px, py, fz * 0.145); leaf.add(fr); }
-      for (const k of [0, 2, 4]) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.12, 0.05), M.iron); strap.position.set(sx * -w / 2, 0.55 + k * 1.95, fz * 0.17); leaf.add(strap); }
+      for (let c = 0; c < 2; c++) for (let r = 0; r < 4; r++) { const pw = w * 0.38, ph = r === 3 ? 1.9 : 1.55, px = sx * -(w * 0.27 + c * w * 0.46), py = 0.9 + r * 1.95 + ph / 2; const pnl = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.06), M.bronzePanel); pnl.position.set(px, py, fz * 0.16); leaf.add(pnl); const fr = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.12, ph + 0.12, 0.03), M.brassNosing); fr.position.set(px, py, fz * 0.145); leaf.add(fr); }
+      for (const k of [0, 2, 4]) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.12, 0.05), M.iron); strap.position.set(sx * -w / 2, 0.55 + k * 1.95, fz * 0.17); leaf.add(strap); for (let r = 0; r < 5; r++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 6), M.bronzePanel); st.position.set(sx * -(0.3 + r * 0.7), 0.55 + k * 1.95, fz * 0.2); leaf.add(st); } }
     }
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 8, 24), M.gold); ring.position.set(sx * -(w - 0.5), h * 0.45, 0.2); leaf.add(ring);
     leaf.position.set(sx * DW / 2, Y, -6.2); leaf.rotation.y = sx * -1.25; g.add(leaf);
