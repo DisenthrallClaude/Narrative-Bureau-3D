@@ -2067,25 +2067,32 @@ function planLobby(y, F) {
     aisles: [{ label: '候梯区净空', x0: -8.6, x1: 8.6, z0: -86.6, z1: -84.45 }, { label: '中轴通道', x0: -2.2, x1: 2.2, z0: -91.8, z1: -86.6 }] };
   // 固定：电梯门（含门套）、呼梯按钮
   for (const x of [-6, 6]) F7(out, '电梯门', x, ZS - 0.08, 3.7, 0.16, y, 0, 3.4);
-  for (const x of [-8, 8]) out.push({ fixed: true, m: '固定:呼梯按钮', x, y: y + 1.05, z: ZS - 0.03, yaw: 0, size: [0.3, 0.5, 0.05], tag: '呼梯', on: 'wall' });
+  for (const x of [-8.45, 8.45]) out.push({ fixed: true, m: '固定:呼梯按钮', x, y: y + 1.05, z: ZS - 0.13, yaw: 0, size: [0.3, 0.5, 0.05], tag: '呼梯', on: 'wall' });
   // ① 地面
   floorZ(out, 'r3_terrLobby', -X, X, ZN, ZS, y, { border: 0.5, uv: 0.6 });
   for (const [x0, x1, z0, z1] of [[-8.5, 8.5, -91.32, -91.29], [-8.5, 8.5, -84.73, -84.7], [-8.52, -8.49, -91.3, -84.7], [8.49, 8.52, -91.3, -84.7]]) out.push({ box: 'dz_brassDim', x: (x0 + x1) / 2, y: y + 0.0105, z: (z0 + z1) / 2, w: x1 - x0, h: 0.003, d: z1 - z0, tag: '地面', on: 'partv' });
   for (const x of [-6, 6]) { out.push({ box: 'r3_stoneBorder', x, y: y + 0.012, z: ZS - 0.32, w: 2.7, h: 0.012, d: 0.5, tag: '地面', on: 'partv' }); wear(out, x - 1.3, x + 1.3, -86.4, -84.8, y + 0.006); }
-  wear(out, -1.4, 1.4, -91.6, -86.4, y + 0.006); wear(out, -6, 6, -86.6, -85.6, y + 0.006);
+  wear(out, -6, 6, -86.6, -85.6, y + 0.006);
   // ② 东西墙长凳 + 壁灯 + 伞架 / 灭火器
-  for (const s of [-1, 1]) { const x = s * (X - 0.36);
-    out.push({ m: 'r2/18th_century_bench_from_hungarian_opera', x, y, z: -88.6, yaw: s < 0 ? ROT.E : ROT.W, w: 1.8, tag: '休息长凳', on: 'floor' });
-    for (const z of [-86.9, -90.3]) { out.push({ m: 'r2/copper_wall_sconce', x: s * (X - 0.1), y: y + 2.1, z, yaw: s < 0 ? ROT.E : ROT.W, h: 0.6, tag: '壁灯', on: 'wall' }); light(out, s * (X - 0.5), y + 2.5, z, 0xffd8a8, 0.9, 5); } }
-  out.push({ m: 'r2/victorian_umbrella_stand', x: -8.4, y, z: -90.85, yaw: 0, h: 1.9, tag: '伞架', on: 'floor' });
-  out.push({ m: 'r4/fireExtinguisher_abc_a03', x: 8.82, y, z: -91.45, yaw: ROT.W, fit: [0.144, 0.545, 0.192], tag: '消防', on: 'floor' });
+  // 批次12 收尾返工：每面墙两张长凳成对（中间让开壁柱 z −88），凳间铜垃圾桶；墙面改胡桃木墙裙 + 方石（vault.js elevatorHall UP），墙上件前移 0.1
+  for (const s of [-1, 1]) { const x = s * (X - 0.56);
+    for (const bz of [-87.4, -90.0]) out.push({ m: 'r2/18th_century_bench_from_hungarian_opera', x, y, z: bz, yaw: s < 0 ? ROT.E : ROT.W, w: 1.5, tag: '休息长凳', on: 'floor' });
+    out.push({ m: 'r4/furniture_trashBin_lid_a01', x: s * 4.45, y, z: -91.5, yaw: 0, fit: [0.384, 0.848, 0.364], tag: '垃圾桶', on: 'floor' });
+    out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x: s * (X - 0.6), y, z: -88.72, yaw: 0, h: 0.6, tag: '绿植', on: 'floor' });
+    for (const z of [-86.9, -90.3]) { out.push({ m: 'r2/copper_wall_sconce', x: s * (X - 0.19), y: y + 2.1, z, yaw: s < 0 ? ROT.E : ROT.W, h: 0.6, tag: '壁灯', on: 'wall' }); light(out, s * (X - 0.5), y + 2.5, z, 0xfff0dc, 0.9, 5); } }
+  out.push({ m: 'r2/victorian_umbrella_stand', x: -6.9, y, z: -91.2, yaw: 0, h: 1.9, tag: '伞架', on: 'floor' });
+  out.push({ m: 'r4/fireExtinguisher_abc_a03', x: 7.4, y, z: -91.55, yaw: ROT.W, fit: [0.144, 0.545, 0.192], tag: '消防', on: 'floor' });
   // ③ 南墙铜牌两侧壁灯；北墙花钵、导览铜牌、出口标识
-  for (const x of [-2.4, 2.4]) { out.push({ m: 'r2/copper_wall_sconce', x, y: y + 1.95, z: ZS - 0.1, yaw: Math.PI, h: 0.6, tag: '壁灯', on: 'wall' }); light(out, x, y + 2.4, ZS - 0.5, 0xffd8a8, 0.8, 4.5); }
+  for (const x of [-2.4, 2.4]) { out.push({ m: 'r2/copper_wall_sconce', x, y: y + 1.95, z: ZS - 0.2, yaw: Math.PI, h: 0.6, tag: '壁灯', on: 'wall' }); light(out, x, y + 2.4, ZS - 0.5, 0xfff0dc, 0.8, 4.5); }
   for (const x of [-3.3, 3.3]) out.push({ m: 'r2/ornamental_urn_planter', x, y, z: ZN + 0.5, yaw: 0, h: 1.0, tag: '花钵', on: 'floor' });
-  out.push({ plaque: true, title: '楼 层 导 览', lines: LOBBY_DIR, x: -5.6, y: y + 1.7, z: ZN + 0.03, yaw: 0, w: 0.75, h: 1.0, size: [0.8, 1.05, 0.04], tag: '导览', on: 'pic' });
+  out.push({ plaque: true, title: '楼 层 导 览', lines: LOBBY_DIR, x: -5.6, y: y + 1.7, z: ZN + 0.13, yaw: 0, w: 0.75, h: 1.0, size: [0.8, 1.05, 0.04], tag: '导览', on: 'pic' });
   light(out, -5.6, y + 2.9, ZN + 0.9, 0xffe6c8, 0.7, 3.5);
-  out.push({ m: 'r2/exit_sign', x: 0, y: y + 3.45, z: ZN + 0.05, yaw: 0, w: 0.36, tag: '导视', on: 'wall' });
-  if (F === '4F') { pic(out, 'textures/emblems/N24.jpg', 5.6, y + 2.3, ZN + 0.04, 0, 2.4, 1.35, 'gold', { tag: '入口壁画' }); out.push({ sign: '典籍藏书阁', sub: '宇宙图书馆 · 想象图', x: 5.6, y: y + 1.35, z: ZN + 0.04, yaw: 0, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' }); light(out, 5.6, y + 3.6, ZN + 1.2, 0xffe6c8, 0.9, 5); } // IMAGE-PLAN N24：藏书阁入口主视觉壁画
+  out.push({ m: 'r2/exit_sign', x: 0, y: y + 3.45, z: ZN + 0.15, yaw: 0, w: 0.36, tag: '导视', on: 'wall' });
+  if (F === '4F') { pic(out, 'textures/emblems/N24.jpg', 5.6, y + 2.3, ZN + 0.14, 0, 2.4, 1.35, 'gold', { tag: '入口壁画' }); out.push({ sign: '典籍藏书阁', sub: '宇宙图书馆 · 想象图', x: 5.6, y: y + 1.35, z: ZN + 0.14, yaw: 0, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' }); light(out, 5.6, y + 3.6, ZN + 1.2, 0xffe6c8, 0.9, 5); } // IMAGE-PLAN N24：藏书阁入口主视觉壁画
+  if (F !== '4F') pic(out, 'textures/b01/B01_04_新人报到告示.png', 5.6, y + 1.65, ZN + 0.14, 0, 0.75, 1.0, 'wood', { tag: '告示框', cork: [1.5, 1.15] });
+  // 中轴红地毯（北口 → 候梯区）+ 铜压条；候梯区黑石门槛已有
+  out.push({ box: 'r3_carpetCrimson', x: 0, y: y + 0.016, z: -89.1, w: 2.0, h: 0.012, d: 4.9, tag: '地毯', on: 'partv' });
+  for (const sx of [-1, 1]) out.push({ box: 'dz_brassDim', x: sx * 1.02, y: y + 0.015, z: -89.1, w: 0.04, h: 0.014, d: 4.9, tag: '地毯', on: 'partv' });
   // ④ 顶棚
   smoke(out, y, H, [[-4.5, -88], [4.5, -88]]);
   out.push({ m: 'r2/security_camera_02', x: 8.6, y: y + H - 0.25, z: ZN + 0.3, yaw: -2.4, h: 0.22, tag: 'K3', on: 'ceil' });

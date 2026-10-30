@@ -9,6 +9,8 @@ import { Frame, archRingGeo, archShape, emblem, goldText } from './gothic.js';
 import { CanvasScreen, dust, time } from '../engine/fx.js';
 import { content } from '../engine/content.js';
 import { FLOOR, T } from './exterior.js';
+import { R3 } from './r3plan.js';
+import { dressMats, roomDress, coffered } from './dress.js';
 import { wallX, wallZ, rectLight, spot, point, person, brassPlaqueMaterial, signMaterial, grandClock } from './interiors.js';
 
 export const LEVELS = { B3: -26, B4: -34, B5: -42 };
@@ -263,26 +265,42 @@ export function elevatorHall(b, zone, world, ctx, M, Mx, name, y) {
   wallX(b, 'vaultWall', -X - 0.2, Z0, Z1, y, H, 0.4, [], true); wallX(b, 'vaultWall', X + 0.2, Z0, Z1, y, H, 0.4, [], true);
   wallZ(b, 'vaultWall', Z0, -X, X, y, H, 0.4, [], true);
   if (name !== 'B3') wallZ(b, 'vaultWall', Z1, -X, X, y, H, 0.4, [{ x0: -2.2, x1: 2.2, h: 3.2 }], true);
+  // 批次12 收尾返工（用户 22:20：上层电梯厅乱石墙像洞穴、偏粉、空）：R3 上层电梯厅墙面 = 胡桃木墙裙 + 方石上墙 + 黑石壁柱，顶棚 = 藻井；门两侧铜框立柱 + 楼层指示器；暖白光
+  const UP = R3['lobby_' + name] === true; const dz = UP ? 0.1 : 0; // 墙面布景厚约 0.085 → 墙上件前移 0.1
+  if (UP) { dressMats(M);
+    roomDress(b, -X, X, Z0 - 0.2, Z1 + 0.2, y, H - 0.4, { style: 'office', over: { up: 'dz_ashlarEC' }, upOff: [0, 1.43 - y], pil: true, pitch: 3.0, sconce: false,
+      s: { skip: [[X - 6 - 1.95, X - 6 + 1.95], [X + 6 - 1.95, X + 6 + 1.95]] }, n: { skip: [[X - 2.3, X + 2.3]] } });
+    coffered(b, -X, X, Z0, Z1, y + H, { cell: 3.0, depth: 0.36, lights: true, lightEvery: 1 }); }
   // 门
   for (const x of [-6, 6]) {
     const f = new Frame([x, y, Z0 - 0.21], Math.PI);
     b.add('stoneDark', archRingGeo(3.6, 3.4, 2.4, 3.4, 0.4), f.at(0, 0, 0.0), { uv: 0.5 });
     b.add('gold', archRingGeo(3.7, 3.4, 3.6, 3.4, 0.42), f.at(0, 0, 0.0), { uv: 1 });
     for (const s of [-1, 1]) b.add('elevDoor', new THREE.BoxGeometry(1.18, 3.3, 0.08), f.at(s * 0.6, 1.65, 0.05), { uv: false });
+    if (UP) { for (const s of [-1, 1]) { b.add('brass', new THREE.BoxGeometry(0.2, 3.9, 0.16), f.at(s * 1.98, 1.95, 0.02), { uv: 1 }); b.add('dz_pil', new THREE.BoxGeometry(0.3, 0.2, 0.2), f.at(s * 1.98, 0.1, 0.02), { uv: 1 }); b.add('dz_pil', new THREE.BoxGeometry(0.3, 0.16, 0.2), f.at(s * 1.98, 3.98, 0.02), { uv: 1 }); }
+      b.add('brass', new THREE.BoxGeometry(4.2, 0.12, 0.16), f.at(0, 4.12, 0.02), { uv: 1 });
+      const ind = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.24), floorIndicatorMat(name)); ind.applyMatrix4(f.at(0, 3.72, 0.12)); zone.add(ind); b.add('brass', new THREE.BoxGeometry(0.7, 0.32, 0.03), f.at(0, 3.72, 0.1), { uv: 1 }); }
     b.add('iron', new THREE.BoxGeometry(0.03, 3.3, 0.1), f.at(0, 1.65, 0.05), { uv: 1 });
     const pnl = new THREE.Group(); const base = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.5, 0.05), M.brass); pnl.add(base);
     const bt = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.03, 20), new THREE.MeshStandardMaterial({ color: 0x201a10, emissive: 0xffc35a, emissiveIntensity: 1.6 })); bt.rotation.x = Math.PI / 2; bt.position.z = -0.035; pnl.add(bt);
-    pnl.position.set(x + (x > 0 ? 2.0 : -2.0), y + 1.3, Z0 - 0.23); zone.add(pnl);
+    if (UP) { const bp = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.62, 0.03), M.brass); bp.position.set(0, 0, 0.012); pnl.add(bp); const b2 = bt.clone(); b2.position.y = -0.12; bt.position.y = 0.12; pnl.add(b2); }
+    pnl.position.set(x + (x > 0 ? 2.0 : -2.0) + (UP ? (x > 0 ? 0.45 : -0.45) : 0), y + 1.3, Z0 - 0.23 - dz); zone.add(pnl);
     ctx.elevatorCalls.push({ obj: pnl, x, floor: name });
   }
   const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.7), brassPlaqueMaterial(name, [HALL_TEXT[name] ?? '']));
-  plate.position.set(0, y + 2.2, Z0 - 0.22); plate.rotation.y = Math.PI; zone.add(plate);
+  plate.position.set(0, y + 2.2, Z0 - 0.22 - dz); plate.rotation.y = Math.PI; zone.add(plate);
   if (name === 'B3') ctx.anchors.doc_spine_floorplate_b3 = plate;
   if (name === 'B4') { const sf = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.6), signMaterial('电梯安全须知', ['若电梯显示不存在的楼层', '请勿出梯', '', '若轿厢内多出一名乘客', '请不要数人数'], 420, 600)); sf.position.set(-3.0, y + 1.6, Z0 - 0.22); sf.rotation.y = Math.PI; zone.add(sf); ctx.anchors.doc_spine_safety = sf; }
-  const nm = goldText(name, 1.0, 0.7, M.goldBright, { res: 160 }); nm.position.set(0, y + 4.1, Z0 - 0.22); nm.rotation.y = Math.PI; zone.add(nm);
-  for (const x of [-6, 0, 6]) { b.box('blackMetal', 1.6, 0.06, 0.4, [x, y + H - 0.03, -88], { uv: 1 }); const l = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.03, 0.26), Mx.lampAmber); l.position.set(x, y + H - 0.07, -88); zone.add(l); }
-  point(zone, 0xffd0a0, 8, [0, y + 4, -88], 12);
+  const nm = goldText(name, 1.0, 0.7, M.goldBright, { res: 160 }); nm.position.set(0, y + (UP ? 3.7 : 4.1), Z0 - 0.22 - dz); nm.rotation.y = Math.PI; zone.add(nm);
+  if (!UP) for (const x of [-6, 0, 6]) { b.box('blackMetal', 1.6, 0.06, 0.4, [x, y + H - 0.03, -88], { uv: 1 }); const l = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.03, 0.26), Mx.lampAmber); l.position.set(x, y + H - 0.07, -88); zone.add(l); }
+  point(zone, UP ? 0xfff0dc : 0xffd0a0, 8, [0, y + 4, -88], 12);
   rectLight(zone, 0xffe8c8, 1.2, 16, 6, [0, y + H - 0.2, -88], [0, y, -88]);
+}
+function floorIndicatorMat(name) { // 电梯门头楼层指示器：黑底琥珀数码 + 上下箭头
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 100; const c = cv.getContext('2d'); c.fillStyle = '#0b0906'; c.fillRect(0, 0, 256, 100);
+  c.fillStyle = '#ffb648'; c.font = '700 64px "NB Serif","Noto Serif SC",monospace'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, 150, 54);
+  c.beginPath(); c.moveTo(40, 22); c.lineTo(58, 44); c.lineTo(22, 44); c.fill(); c.globalAlpha = 0.3; c.beginPath(); c.moveTo(40, 80); c.lineTo(58, 58); c.lineTo(22, 58); c.fill();
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 1.4, roughness: 0.3 });
 }
 /** 气闸门：两扇厚钢推拉门（常开），门框黄黑警示 */
 function airlock(b, zone, M, Mx, x, y, z) {
