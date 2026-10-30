@@ -677,10 +677,10 @@ export function planCommand(y) {
   // ④ 值班平台东：通讯室（玻璃隔断，平台高 1.8 m）
   const yp = y + PH2;
   partition(out, 'z', 43.6, -56.5, Z0, yp, { glass: true }); partition(out, 'x', -56.5, 43.6, X1, yp, { glass: true, doors: [{ at: 45.0, s: -1, sign: '通讯室', sub: '内线 · 电报 · 无线电' }] });
-  out.push({ m: 'r2/woodentable_01', x: 47.2, y: yp, z: -60.45, yaw: 0, fit: [2.6, 0.76, 0.8], tag: '通讯室', on: 'floor', col: [2.6, 0.76, 0.8] });
-  for (const [dx, m, sz] of [[-0.85, 'r2/ww2_german_field_telephone_equipment', { w: 0.6 }], [0.1, 'r2/vintage_radio_transceiver', { w: 0.6 }], [0.95, 'r2/vintage_radio_model_95t5', { h: 0.3 }]]) out.push({ m, x: 47.2 + dx, y: yp + 0.76, z: -60.5, yaw: 0, ...sz, tag: '通讯室', on: 'desk' });
-  for (const dx of [-0.7, 0.6]) out.push({ m: 'r2/old_computer_chair', x: 47.2 + dx, y: yp, z: -59.55, yaw: Math.PI + dx * 0.2, h: 0.92, tag: '通讯室', on: 'floor' });
-  cabRow(out, 49.6, -57.4, yp, 3, ROT.W, '通讯室', 0.52, false); for (const it of out.slice(-3)) { it.x = 49.62; it.z = -57.3 - it.i * 0.52; }
+  out.push({ m: 'r2/woodentable_01', x: 47.2, y: yp, z: -60.3, yaw: 0, fit: [2.6, 0.76, 0.8], tag: '通讯室', on: 'floor', col: [2.6, 0.76, 0.8] });
+  for (const [dx, m, sz] of [[-0.85, 'r2/ww2_german_field_telephone_equipment', { w: 0.6 }], [0.1, 'r2/vintage_radio_transceiver', { w: 0.6 }], [0.95, 'r2/vintage_radio_model_95t5', { h: 0.3 }]]) out.push({ m, x: 47.2 + dx, y: yp + 0.76, z: -60.35, yaw: 0, ...sz, tag: '通讯室', on: 'desk' });
+  for (const dx of [-0.7, 0.6]) out.push({ m: 'r2/old_computer_chair', x: 47.2 + dx, y: yp, z: -59.4, yaw: Math.PI + dx * 0.2, h: 0.92, tag: '通讯室', on: 'floor' });
+  cabRow(out, 49.6, -57.4, yp, 3, ROT.W, '通讯室', 0.52, false); for (const it of out.slice(-3)) { it.x = 49.42; it.z = -57.3 - it.i * 0.52; }
   floorZ(out, 'r3_lino', 43.6, X1, Z0, -56.5, yp, {});
   // ⑤ 值班平台西：电传 · 资料（北墙文件柜 + 两台电传打字位）+ 咖啡角
   cabRow(out, 26.0, Z0 + 0.4, yp, 9, 0, '资料柜');
@@ -1319,14 +1319,14 @@ const fixYaw = (p) => { for (const it of p.items) if (it.m && YAWFIX[it.m] !== u
 const X6 = {
   // 指挥中心：通讯室北墙/东墙护墙板 + 墙布衬里（盖住原墙粗糙怪异材质）、地面补光（席位区/平台前）
   command_center: (out, y) => { const yp = y + 1.8, X1 = 50, Z0 = -61;
-    for (const [x, z, w, d] of [[46.8, Z0 + 0.03, 6.3, 0.04], [X1 - 0.03, -58.75, 0.04, 4.4]]) {
+    for (const [x, z, w, d] of [[46.8, Z0 + 0.17, 6.3, 0.04], [X1 - 0.17, -58.75, 0.04, 4.3]]) { // 原墙 wallPlaster 厚 0.3，墙面在 z −60.85 / x 49.85
       out.push({ box: 'dz_base', x, y: yp + 0.06, z, w: w + (d > 0.1 ? 0.02 : 0), h: 0.12, d: d + 0.02, tag: '墙面', on: 'partv' });
       out.push({ box: 'dz_wain', x, y: yp + 0.6, z, w, h: 1.0, d, tag: '墙面', on: 'partv' });
       out.push({ box: 'dz_wain2', x, y: yp + 1.12, z, w, h: 0.06, d: d + 0.03, tag: '墙面', on: 'partv' });
       out.push({ box: 'dz_damaskGreen', x, y: yp + 2.6, z, w, h: 2.9, d, tag: '墙面', on: 'partv' });
       out.push({ box: 'dz_wain', x, y: yp + 4.1, z, w, h: 0.14, d: d + 0.04, tag: '墙面', on: 'partv' }); }
-    pic(out, 'textures/b07/B07_预警发布流程.png', 45.4, yp + 1.85, Z0 + 0.06, 0, 0.75, 1.0, 'black');
-    sconce(out, 44.4, yp + 2.2, Z0 + 0.05, 0); sconce(out, X1 - 0.05, yp + 2.2, -57.6, ROT.W);
+    pic(out, 'textures/b07/B07_预警发布流程.png', 45.4, yp + 1.85, Z0 + 0.2, 0, 0.75, 1.0, 'black');
+    sconce(out, 44.4, yp + 2.2, Z0 + 0.19, 0); sconce(out, X1 - 0.19, yp + 2.2, -57.6, ROT.W);
     for (const x of [25.3, 32.2, 39.1, 46.0]) for (const z of [-42.5, -49.5]) light(out, x, y + 3.8, z, 0xfff0dc, 1.6, 9);
     for (const x of [26, 35, 44]) light(out, x, y + 3.2, -55.0, 0xffe2c0, 1.4, 8); },
   // 医务观察病房：东侧再排 2 床（床头靠玻璃隔断）+ 床头柜、吸顶灯槽、理智值分级表、输液区补光
