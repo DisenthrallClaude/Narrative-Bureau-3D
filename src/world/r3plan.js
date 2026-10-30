@@ -4,7 +4,7 @@
 // 每个条目：{ m: 模型路径(相对 assets/models), x, y, z, yaw, h|w|d: 目标尺寸, tag: 功能分组, on: 'floor'|'desk'|'wall'|'ceil', col: [w,h,d] 碰撞盒 }
 // 每个区的「平面规划说明」同时写进 docs/HANDOFF.md「R3 每区布局说明」。
 
-export const R3 = { floor3_office: true, floor2_liaison: true, floor2_pub: true, director: true, gate: true, archive: true, command_center: true, canteen: true, b1: true, b2: true, archive_b1: true, b4: true, b5: true, b6: true, b7: true, medical: true, dorm: true, dorm2: true, dorm3: true, interrogation: true, hangar: true, security_hall: true };
+export const R3 = { floor3_office: true, floor2_liaison: true, floor2_pub: true, director: true, gate: true, archive: true, command_center: true, canteen: true, b1: true, b2: true, archive_b1: true, b4: true, b5: true, b6: true, b7: true, medical: true, dorm: true, dorm2: true, dorm3: true, interrogation: true, hangar: true, security_hall: true, plaza: true };
 
 const rot = (yaw, lx, lz) => [lx * Math.cos(yaw) + lz * Math.sin(yaw), -lx * Math.sin(yaw) + lz * Math.cos(yaw)];
 const at = (o, yaw, lx, lz) => { const [dx, dz] = rot(yaw, lx, lz); return [o[0] + dx, o[1] + dz]; };
@@ -656,6 +656,55 @@ export function planSecurityHall(y) {
   out.push({ sign: '东翼连廊', sub: '市民服务大厅 · 叙事高考', x: X1 - 0.3, y: y + 1.6, z: -44.4, yaw: ROT.W, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
   // 地面磨损：入口 → 各车道、查验后中轴与横向动线
   wear(out, -2.4, 2.4, -75.0, -44.2, y); wear(out, -16.6, 16.6, -53.6, -51.4, y); wear(out, -11.0, 11.0, -38.0, -31.0, y);
+  return { room, items: out };
+}
+
+// ================= 主楼前广场 plaza（批次25 R3 功能平面；铺装 / 喷泉 / 罗盘地徽 / 路灯 / 旗杆 / 长椅 / 写生老人 / LED 屏 / 系船柱 = hero_plaza 与 exterior.js 原锚点不动） =================
+// 动线（南 → 北）：南端大台阶 → 系船柱口（|x|<9）→ 两侧岗亭 → 中轴步道 x ±8 → 罗盘地徽（z 64）→ 规则之泉（z 30，绕泉环行）→ 主楼正门台阶（z 0.6）
+// 两侧带（|x| 10…21）由内到外：路灯列 x ±10 → 旗杆列 x ±14.5 → 行道树列 x ±17（树池铁箅）→ 长椅列 x ±19.6；南缘绿篱铁栏、西南自行车棚、东南告示牌
+export function planPlaza(y) {
+  const out = []; const X0 = -21, X1 = 21, Z0 = 1.0, Z1 = 80.4, H = 14;
+  const room = { name: '主楼前广场（批次25 R3）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H,
+    doors: [{ wall: 'N', a: -17, b: 17, label: '主楼正门台阶' }, { wall: 'S', a: -9, b: 9, label: '南端大台阶（系船柱口）' }], windows: [],
+    keep: [{ label: '规则之泉（锚点）', x: 0, z: 30, w: 29.2, d: 29.2 }, { label: '罗盘地徽（地面，锚点）', x: 0, z: 64, w: 18, d: 18 }],
+    rooms: [['① 正门台阶前', 0, 6], ['② 规则之泉', 0, 30], ['③ 罗盘地徽', 0, 64], ['④ 岗亭', 0, 75.5], ['⑤ 自行车棚', -18.2, 75], ['⑥ 告示牌', 17.2, 71.5]],
+    aisles: [{ label: '中轴步道（北段）', x0: -8, x1: 8, z0: 1.2, z1: 15.2 }, { label: '中轴步道（南段 · 罗盘地徽）', x0: -8, x1: 8, z0: 44.8, z1: 80.2 }, { label: '东侧步行带（路灯列 ↔ 旗杆列）', x0: 10.4, x1: 12.9, z0: 1.2, z1: 72.4 }, { label: '西侧步行带（路灯列 ↔ 旗杆列）', x0: -12.9, x1: -10.4, z0: 1.2, z1: 72.4 }] };
+  const F = (lab, x, z, w, d, h = 1) => out.push({ fixed: true, m: '固定:' + lab, x, y, z, yaw: 0, size: [w, h, d], tag: '原锚点', on: 'floor' });
+  F('规则之泉（泉池芯）', 0, 30, 19, 19, 2);
+  for (const sx of [-1, 1]) { for (let z = 6; z <= 76; z += 14) F('路灯', sx * 10, z, 0.5, 0.5, 5.4); for (let k = 0; k < 6; k++) F('旗杆基座', sx * 14.5, 8 + k * 12, 1.3, 1.3, 12); for (const z of [10, 24, 44, 52, 68]) F('长椅', sx * 19.6, z, 0.8, 2.2, 0.9); F('系船柱列', sx * 15.6, 78.5, 9.2, 0.3, 0.95); }
+  F('写生画架 + 空凳（批次25 去人）', -13.5, 15.5, 1.0, 1.0, 1.6); F('LED 倒计时屏立柱', 17, 76, 0.5, 0.5, 7);
+  // 行道树（x ±17，与旗杆列错开半跨：z 14 / 38 / 50 / 62）+ 树池铁箅 + 树池石沿
+  for (const sx of [-1, 1]) for (const z of [14, 38, 50, 62]) {
+    out.push({ m: 'r2/jacaranda_tree', x: sx * 17, y, z, yaw: (z % 7) * 0.9, h: 7.5, size: [0.9, 7.5, 0.9], col: [0.6, 3, 0.6], tag: '行道树', on: 'floor' });
+    out.push({ box: 'stoneDark', x: sx * 17, y: y + 0.06, z, w: 1.8, h: 0.12, d: 1.8, tag: '树池', on: 'partv' });
+    out.push({ box: 'iron', x: sx * 17, y: y + 0.125, z, w: 1.5, h: 0.02, d: 1.5, tag: '树池', on: 'partv' });
+  }
+  // 南缘绿篱铁栏（系船柱外侧，台阶上沿内）
+  for (const sx of [-1, 1]) out.push({ m: 'r2/hedge_green_fence', x: sx * 17.8, y, z: 79.7, yaw: 0, w: 6.0, size: [6.0, 1.6, 0.7], tag: '绿篱铁栏', on: 'floor' });
+  // 岗亭（南口两侧对称，面向中轴）+ 岗亭前黄线 + 门牌
+  for (const sx of [-1, 1]) {
+    out.push({ m: 'r2/simple_90_s_kiosk', x: sx * 13.0, y, z: 74.6, yaw: sx > 0 ? ROT.W : ROT.E, h: 2.6, size: [3.4, 2.6, 3.6], col: [3.4, 2.6, 3.6], tag: '岗亭', on: 'floor' });
+    out.push({ box: 'r3_paintYellow', x: sx * 11.0, y: y + 0.11, z: 74.6, w: 0.1, h: 0.01, d: 3.6, tag: '岗亭', on: 'partv' });
+    out.push({ sign: sx > 0 ? '东岗亭' : '西岗亭', sub: '来访人员请出示证件', x: sx * 11.28, y: y + 1.5, z: 74.6, yaw: sx > 0 ? ROT.W : ROT.E, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
+    light(out, sx * 11.6, y + 2.9, 74.6, 0xffd8a8, 1.6, 6);
+  }
+  // 自行车棚（西南，x −20.5…−15.9）：钢柱 ×4 + 单坡顶 + 车架；5 辆旧自行车成排，车头朝西
+  { const cx = -18.2, z0 = 72.6, z1 = 77.6, cz = (z0 + z1) / 2;
+    for (const [x, z] of [[-20.3, z0 + 0.1], [-20.3, z1 - 0.1], [-16.1, z0 + 0.1], [-16.1, z1 - 0.1]]) out.push({ box: 'r3_steelGrey', x, y: y + 1.2, z, w: 0.1, h: 2.4, d: 0.1, tag: '车棚', on: 'partv' });
+    out.push({ box: 'r3_consoleSteel', x: cx, y: y + 2.42, z: cz, w: 4.8, h: 0.06, d: 5.4, tag: '车棚', on: 'partv' });
+    out.push({ box: 'r3_steelGrey', x: cx, y: y + 0.35, z: cz, w: 0.06, h: 0.06, d: 4.8, tag: '车棚', on: 'partv' });
+    out.push({ fixed: true, m: '固定:车棚柱网', x: cx, y, z: cz, yaw: 0, size: [4.4, 2.4, 5.0], tag: '车棚', on: 'partv' });
+    for (let k = 0; k < 5; k++) out.push({ m: 'r2/old_bicycle', x: cx, y, z: z0 + 0.7 + k * 0.9, yaw: ROT.W, h: 1.0, tag: '车棚', on: 'partv' });
+    out.push({ sign: '自行车棚', sub: '职工车辆 · 请锁好', x: -15.95, y: y + 2.1, z: z0 + 0.12, yaw: ROT.S, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
+  }
+  // 告示牌（东南，面向西 / 进门人流）
+  { const x = 17.4, z = 71.6; // 双柱木框告示栏 + 小披檐 + 两张告示（面向西）
+    out.push({ fixed: true, m: '固定:告示栏', x, y, z, yaw: 0, size: [0.4, 2.4, 2.0], col: [0.3, 2.4, 2.0], tag: '告示牌', on: 'floor' });
+    for (const dz of [-0.95, 0.95]) out.push({ box: 'r3_walnutLt', x, y: y + 1.15, z: z + dz, w: 0.12, h: 2.3, d: 0.12, tag: '告示牌', on: 'partv' });
+    out.push({ box: 'r3_walnutLt', x, y: y + 1.55, z, w: 0.08, h: 1.2, d: 1.8, tag: '告示牌', on: 'partv' });
+    out.push({ box: 'stoneDark', x, y: y + 2.36, z, w: 0.5, h: 0.06, d: 2.1, tag: '告示牌', on: 'partv' });
+    out.push({ notice: '叙事管理局通告', lines: ['本局广场 06:00–22:00 开放', '入局人员须经安检大厅检查', '请勿在泉池旁朗读来历不明的文本'], x: x - 0.05, y: y + 1.6, z: z - 0.42, yaw: ROT.W, w: 0.6, h: 0.85, red: true, size: [0.01, 0.85, 0.6], tag: '告示牌', on: 'pic' });
+    out.push({ notice: '2027 叙事高考报名', lines: ['报名地点：东翼市民服务大厅', '截止：十一月三十日'], x: x - 0.05, y: y + 1.6, z: z + 0.45, yaw: ROT.W, w: 0.6, h: 0.85, size: [0.01, 0.85, 0.6], tag: '告示牌', on: 'pic' }); }
   return { room, items: out };
 }
 
@@ -1505,7 +1554,7 @@ export function planDorm3(y0) {
   return { room, items: out };
 }
 
-export const PLANS = { floor3_office: (Y) => fixYaw(planFloor3Office(Y)), floor2_liaison: (Y) => fixYaw(planFloor2Liaison(Y)), floor2_pub: (Y) => fixYaw(planFloor2Pub(Y)), director: (Y) => fixYaw(planDirector(Y)), gate: (Y) => fixYaw(planGate(Y)), archive: (Y) => fixYaw(planArchive(Y)), command_center: withX6('command_center', (Y) => fixYaw(planCommand(Y))), canteen: (Y) => fixYaw(planCanteen(Y)), b1: (Y) => fixYaw(planB1(Y)), b2: (Y) => fixYaw(planB2(Y)), archive_b1: (Y) => fixYaw(planArchiveB1(Y)), b4: withX6('b4', (Y) => fixYaw(planB4(Y))), b5: withX6('b5', (Y) => fixYaw(planB5(Y))), b6: withX6('b6', (Y) => fixYaw(planB6(Y))), b7: withX6('b7', (Y) => fixYaw(planB7(Y))), medical: withX6('medical', (Y) => fixYaw(planMedical(Y))), dorm: (Y) => fixYaw(planDorm(Y)), dorm2: (Y) => fixYaw(planDorm2(Y)), dorm3: (Y) => fixYaw(planDorm3(Y)), interrogation: (Y) => fixYaw(planInterrogation(Y)), hangar: (Y) => fixYaw(planHangar(Y)), security_hall: (Y) => fixYaw(planSecurityHall(Y)) };
+export const PLANS = { floor3_office: (Y) => fixYaw(planFloor3Office(Y)), floor2_liaison: (Y) => fixYaw(planFloor2Liaison(Y)), floor2_pub: (Y) => fixYaw(planFloor2Pub(Y)), director: (Y) => fixYaw(planDirector(Y)), gate: (Y) => fixYaw(planGate(Y)), archive: (Y) => fixYaw(planArchive(Y)), command_center: withX6('command_center', (Y) => fixYaw(planCommand(Y))), canteen: (Y) => fixYaw(planCanteen(Y)), b1: (Y) => fixYaw(planB1(Y)), b2: (Y) => fixYaw(planB2(Y)), archive_b1: (Y) => fixYaw(planArchiveB1(Y)), b4: withX6('b4', (Y) => fixYaw(planB4(Y))), b5: withX6('b5', (Y) => fixYaw(planB5(Y))), b6: withX6('b6', (Y) => fixYaw(planB6(Y))), b7: withX6('b7', (Y) => fixYaw(planB7(Y))), medical: withX6('medical', (Y) => fixYaw(planMedical(Y))), dorm: (Y) => fixYaw(planDorm(Y)), dorm2: (Y) => fixYaw(planDorm2(Y)), dorm3: (Y) => fixYaw(planDorm3(Y)), interrogation: (Y) => fixYaw(planInterrogation(Y)), hangar: (Y) => fixYaw(planHangar(Y)), security_hall: (Y) => fixYaw(planSecurityHall(Y)), plaza: (Y) => fixYaw(planPlaza(Y)) };
 
 // ================= 批次7 · 新做区：训练场 / 地铁口 / 无字碑廊 / 第七局（作战室·杀青室）/ 墨渊（倒悬书城·考场母本） =================
 const F7 = (out, label, x, z, w, d, y, yaw = 0, h = 1) => out.push({ fixed: true, m: '固定:' + label, x, y, z, yaw, size: [w, h, d], col: [w, h, d], tag: label, on: 'floor' });

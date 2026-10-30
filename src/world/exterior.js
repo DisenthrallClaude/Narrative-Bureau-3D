@@ -663,14 +663,8 @@ function painter(M, pos, yaw) {
   const skin = new THREE.MeshStandardMaterial({ color: 0xb08a72, roughness: 0.7 });
   const stool = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.05, 12), M.wood); stool.position.y = 0.48; g.add(stool);
   for (let i = 0; i < 3; i++) { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.5), M.iron); const a = (i / 3) * Math.PI * 2; l.position.set(Math.cos(a) * 0.15, 0.24, Math.sin(a) * 0.15); g.add(l); }
-  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.42, 4, 10), coat); torso.position.set(0, 0.88, 0); torso.rotation.x = 0.18; g.add(torso);
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), skin); head.position.set(0, 1.28, 0.06); g.add(head);
-  const hat = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.17, 0.08, 14), coat); hat.position.set(0, 1.39, 0.06); g.add(hat);
-  for (const sx of [-1, 1]) {
-    const thigh = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.32, 4, 8), coat); thigh.rotation.x = Math.PI / 2; thigh.position.set(sx * 0.1, 0.55, 0.18); g.add(thigh);
-    const shin = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.36, 4, 8), coat); shin.position.set(sx * 0.1, 0.28, 0.36); g.add(shin);
-    const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.4, 4, 8), coat); arm.position.set(sx * 0.25, 0.9, 0.16); arm.rotation.x = -0.9; g.add(arm);
-  }
+  // 批次25：按“游戏内禁止人物 3D 模型”去掉程序化写生老人（躯干 / 头 / 帽 / 四肢），只留空凳 + 画架 + 未完成的画（人已离开）
+  void coat; void skin;
   // 画架与画板
   const easel = new THREE.Group();
   for (const sx of [-1, 1]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.03, 1.6, 0.03), M.wood); leg.position.set(sx * 0.3, 0.8, 0); leg.rotation.z = sx * 0.1; easel.add(leg); }

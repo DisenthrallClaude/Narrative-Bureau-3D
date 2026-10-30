@@ -99,6 +99,9 @@ export const SHOTS = {
   hall_r3: { pos: [0, 1.8 + 1.7, -45.6], look: [0, 1.8 + 4.2, -76], fov: 74, zone: 'security_hall' }, // 批次25 安检大厅 R3：扫描门后 → 查验柜台 / 等候区 / 局徽主墙
   hall_r3_b: { pos: [-13.4, 1.8 + 1.75, -45.4], look: [8, 1.8 + 1.1, -51.0], fov: 70, zone: 'security_hall' }, // 查验柜台一排
   hall_top: { pos: [0, 1.8 + 44, -52.99], look: [0, 1.8, -53], fov: 58, clipY: 1.8 + 5.0, zone: 'security_hall' },
+  plaza_r3: { pos: [0, 1.7, 79.2], look: [0, 4.0, 36], fov: 72, zone: 'plaza' }, // 批次25 广场 R3：南口 → 岗亭 / 罗盘地徽 / 行道树列 / 泉
+  plaza_r3_b: { pos: [11.6, 1.7, 77.6], look: [18.5, 2.6, 34], fov: 68, zone: 'plaza' }, // 东侧带：告示栏 / 行道树 / 长椅 / 旗杆
+  plaza_top: { pos: [0, 78, 40.01], look: [0, 0, 40], fov: 62, zone: 'plaza' },
   heli_r3: { pos: [96.5, 12.4 + 1.8, -56.0], look: [80, 12.4 + 0.6, -80], fov: 70, zone: 'helipad' }, // 批次23 屋顶停机坪：东南角 → H / 楼梯间 / 设备房
   heli_r3_b: { pos: [84.5, 12.4 + 1.7, -71.0], look: [84.0, 12.4 + 1.4, -84.0], fov: 78, zone: 'helipad' }, // 批次24：楼梯间 / 设备房南立面近景（檐口 / 雨渍 / 管线 / 百叶）
   heli_top: { pos: [86, 12.4 + 45, -69.99], look: [86, 12.4, -70], fov: 50, zone: 'helipad' },
