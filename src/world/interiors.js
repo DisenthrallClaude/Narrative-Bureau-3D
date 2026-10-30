@@ -462,7 +462,7 @@ function buildHall(zone, world, ctx, M, add) {
 // ---------------- R2 精修安检大厅（tools/blender/hall.py → bake_lm.py：Cycles 烘焙光照贴图 + 反射探针）----------------
 function heroHall(zone, world, ctx, M) {
   const Y = FLOOR;
-  ctx.heroHallJob = placeHero(zone, world, './assets/hero/hero_hall.glb', { mats: hallMats(), lm: './assets/hero/hero_hall_lm.webp', lmInPlace: true, lmOpts: { intensity: 1.0, rgbmRange: 4.0 }, castShadow: false });
+  ctx.heroHallJob = placeHero(zone, world, './assets/hero/hero_hall.glb', { mats: hallMats(), lm: './assets/hero/hero_hall_lm.webp', lmInPlace: true, lmOpts: { intensity: 1.0, rgbmRange: 8.0 }, castShadow: false });
   ctx.hallFloorMats = [hallMats().floorNave, hallMats().marbleDark, hallMats().floorAisle];
   // 吊挂指示牌文字（牌体在 GLB 里，双面金字）
   const signs = [[0, Y + 6.2, -36.2, 7.2, 0.75, 0, '安 检 通 道　　SECURITY'], [-14.7, Y + 4.6, -50.5, 3.6, 0.6, Math.PI / 2, '← 人事档案馆'], [14.7, Y + 4.6, -46.0, 3.6, 0.6, Math.PI / 2, '东翼　市民服务 →'], [14.7, Y + 4.4, -70.5, 3.2, 0.6, Math.PI / 2, '人工复检']];
