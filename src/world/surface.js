@@ -28,7 +28,7 @@ function annex(b, cx, cz, w, d, h, o = {}) {
     if (k === o.front) continue;
     bayWall(b, new Frame([x, 0, z], yaw), len, h, Math.max(2, Math.round(len / 6)), { collide: true, twoTier: h > 11, buttressD: 1.2, pinnacles: o.pinnacles ?? true });
   }
-  gableRoof(b, cx, h + 0.5, cz, o.roofAlongX ? d : w, o.roofAlongX ? w : d, o.rh ?? 6, { yaw: o.roofAlongX ? Math.PI / 2 : 0, dormers: o.dormers ?? 0 });
+  gableRoof(b, cx, h + 0.5, cz, o.roofAlongX ? d : w, o.roofAlongX ? w : d, o.rh ?? 6, { yaw: o.roofAlongX ? Math.PI / 2 : 0, dormers: o.dormers ?? 0, realRoof: true }); // 批次30 E2：石板瓦皮 + 檐口 / 天沟 / 通风帽
   if (o.corner !== false) for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const f = new Frame([cx + sx * (w / 2 + 0.4), 0, cz + sz * (d / 2 + 0.4)], 0); pinnacle(b, f, 0, h, 0, 1.2); }
   // M7：勒脚改为沿外墙一圈（原实心 0.5 m 石台填满室内，盖住宿舍地坪，抛光大理石成了「金色镜面地面」）
   for (const [bw, bd, ox, oz] of [[w + 1.2, 0.9, 0, d / 2 + 0.15], [w + 1.2, 0.9, 0, -d / 2 - 0.15], [0.9, d + 1.2, w / 2 + 0.15, 0], [0.9, d + 1.2, -w / 2 - 0.15, 0]]) b.box('stoneDark', bw, 0.5, bd, [cx + ox, 0.25, cz + oz], { uv: 0.4 });

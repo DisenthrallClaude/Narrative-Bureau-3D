@@ -23,6 +23,7 @@ export function mats() {
   M.gold = pbr('Metal048A', { color: 0xffe2a0, metalness: 1, roughness: 0.32, env: 1.3 });
   M.goldBright = new THREE.MeshStandardMaterial({ color: 0xf0c66e, metalness: 1, roughness: 0.18, envMapIntensity: 1.5 });
   M.goldEmis = new THREE.MeshStandardMaterial({ color: 0xf6d27e, metalness: 1, roughness: 0.25, emissive: 0xc8902e, emissiveIntensity: 0.8, envMapIntensity: 1.4 });
+  M.roofSlate = phm('roof_slates_02', { color: 0x8a8a90, env: 0.35 }); M.roofSlate.side = THREE.DoubleSide; // 批次30 E2：附楼屋面（Poly Haven CC0）
   M.slate = pbr('Metal027', { color: 0x2a2d36, metalness: 0.6, roughness: 0.45, env: 1.0 });
   M.iron = pbr('Metal046A', { color: 0x2b2d33, metalness: 1, roughness: 0.42 });
   // M6：深蓝铅条菱格玻璃（canvas 自产，ShapeGeometry UV 为米制 → 每 0.9 m 一组菱格）

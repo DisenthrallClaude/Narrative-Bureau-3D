@@ -209,11 +209,39 @@ export function tower(b, x, z, w, h, o = {}) {
 }
 
 /** 坡屋顶（三角截面沿 z 方向），宽 w，长 len，高 rh；金色屋脊饰 */
+/** 批次30 E2：附楼屋面 —— 两坡真实石板瓦皮（Poly Haven roof_slates_02，UV 按米：u 沿屋脊、v 沿坡向，瓦列平行屋脊）
+ *  + 檐口出挑 0.45 m + 封檐板 + 半圆铸铁天沟 + 每坡两只铸铁通风帽（与老虎窗错开半跨）。原挤出体留作屋架 / 山花。 */
+function roofSkin(b, f, w, len, rh) {
+  const hw = w / 2 + 0.4, sl = Math.hypot(hw, rh), dx = -hw / sl, dy = -rh / sl; // 屋脊 → 檐（左坡，x 取负）
+  const OV = 0.45, OFF = 0.05, EZ = len / 2 + 0.3, T = 1 / 2.2;
+  for (const sx of [-1, 1]) {
+    const nx = sx * rh / sl, ny = hw / sl; // 坡面外法线
+    const R = [nx * OFF, rh + ny * OFF], E = [sx * (hw + OV * -dx) + nx * OFF, -OV * -dy + ny * OFF];
+    const L = sl + OV, P = [];
+    for (const [px, py, pz, u, v] of [[R[0], R[1], -EZ, -EZ * T, L * T], [R[0], R[1], EZ, EZ * T, L * T], [E[0], E[1], EZ, EZ * T, 0], [E[0], E[1], -EZ, -EZ * T, 0]]) P.push({ px, py, pz, u, v });
+    const g = new THREE.BufferGeometry(); const idx = sx < 0 ? [0, 2, 1, 0, 3, 2] : [0, 1, 2, 0, 2, 3];
+    g.setAttribute('position', new THREE.Float32BufferAttribute(P.flatMap((q) => [q.px, q.py, q.pz]), 3));
+    g.setAttribute('uv', new THREE.Float32BufferAttribute(P.flatMap((q) => [q.u, q.v]), 2)); g.setIndex(idx); g.computeVertexNormals();
+    b.add('roofSlate', g, f.at(0, 0, 0), { uv: false });
+    // 封檐板（檐口下沿，深色铸铁漆木）+ 半圆天沟
+    b.add('iron', new THREE.BoxGeometry(0.06, 0.26, EZ * 2), f.at(E[0] + sx * 0.02, E[1] - 0.12, 0), { uv: 1 });
+    const gu = new THREE.CylinderGeometry(0.11, 0.11, EZ * 2, 10, 1, true, sx > 0 ? 0 : Math.PI, Math.PI); gu.rotateX(Math.PI / 2);
+    b.add('iron', gu, f.at(E[0] + sx * 0.12, E[1] - 0.02, 0), { uv: 1 });
+    // 通风帽：坡中（离檐 55 %）、沿屋脊 1/3 与 2/3 处
+    for (const t of [-1 / 6, 1 / 6]) {
+      const k = 0.45, x = R[0] + (E[0] - R[0]) * k, y = R[1] + (E[1] - R[1]) * k, z = t * len * 2;
+      b.add('iron', new THREE.CylinderGeometry(0.16, 0.18, 0.7, 12), f.at(x, y + 0.25, z), { uv: 1 });
+      b.add('iron', new THREE.CylinderGeometry(0.2, 0.2, 0.04, 12), f.at(x, y + 0.62, z), { uv: 1 });
+      b.add('iron', new THREE.ConeGeometry(0.3, 0.26, 12), f.at(x, y + 0.82, z), { uv: 1 });
+    }
+  }
+}
 export function gableRoof(b, cx, y, cz, w, len, rh, o = {}) {
   const s = new THREE.Shape(); s.moveTo(-w / 2 - 0.4, 0); s.lineTo(0, rh); s.lineTo(w / 2 + 0.4, 0); s.lineTo(-w / 2 - 0.4, 0);
   const g = new THREE.ExtrudeGeometry(s, { depth: len, bevelEnabled: false }); g.translate(0, 0, -len / 2);
   const f = new Frame([cx, y, cz], o.yaw ?? 0);
   b.add('slate', g, f.at(0, 0, 0), { uv: 0.35 });
+  if (o.realRoof) roofSkin(b, f, w, len, rh);
   b.add('gold', new THREE.BoxGeometry(0.22, 0.22, len), f.at(0, rh + 0.05, 0), { uv: 1 });
   // 屋脊镂空饰
   const n = Math.floor(len / 2.2);
