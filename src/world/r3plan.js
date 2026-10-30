@@ -1648,7 +1648,7 @@ export function planMetro(y) {
   for (const x of [8.6, 11.4]) out.push({ m: 'r2/park_bench', x, y, z: 165.6, yaw: Math.PI, w: 1.8, tag: '公交站', on: 'floor', col: [1.8, 0.9, 0.6] });
   out.push({ m: 'r2/concrete_trash_bin', x: 13.2, y, z: 165.8, yaw: 0, h: 0.9, tag: '公交站', on: 'floor', col: [0.45, 0.9, 0.55] });
   // 北侧花坛一排（广场北缘，分隔车行道）
-  for (const x of [-14, -8, 8, 14]) { out.push({ box: 'stoneDark', x, y: y + 0.3, z: 169.6, w: 3.0, h: 0.6, d: 1.2, tag: '花坛', on: 'partv' }); out.push({ box: 'dz_soil', x, y: y + 0.605, z: 169.6, w: 2.8, h: 0.01, d: 1.0, tag: '花坛', on: 'partv' }); F7(out, '花坛', x, 169.6, 3.0, 1.2, y, 0, 0.6); for (const dx of [-0.8, 0.8]) out.push({ m: 'r2/potted_plant_04', x: x + dx, y: y + 0.6, z: 169.6, yaw: x + dx, h: 1.2, tag: '花坛', on: 'tree' }); }
+  for (const x of [-14, -8, 8, 14]) { out.push({ box: 'stone', x, y: y + 0.3, z: 169.6, w: 3.0, h: 0.6, d: 1.2, tag: '花坛', on: 'partv' }); out.push({ box: 'stoneDark', x, y: y + 0.62, z: 169.6, w: 3.12, h: 0.06, d: 1.32, tag: '花坛压顶', on: 'partv' }); out.push({ box: 'dz_soil', x, y: y + 0.605, z: 169.6, w: 2.8, h: 0.01, d: 1.0, tag: '花坛', on: 'partv' }); F7(out, '花坛', x, 169.6, 3.0, 1.2, y, 0, 0.6); out.push({ m: 'r2/hedge_green_fence', x, y: y + 0.6, z: 169.6, yaw: Math.PI / 2, d: 2.7, size: [0.9, 0.7, 2.7], tag: '花坛绿篱', on: 'tree' }); } // 批次32：白盆栽 → 修剪绿篱（长轴 z → yaw 90° 沿 x）
   // ④ 南侧：锈报亭 + 报纸堆 + 灯箱（规则之泉 / 篇幅补充剂 / 午夜地铁剪报）
   out.push({ m: 'r2/rusty_kiosk_01', x: -11.0, y, z: 111.6, yaw: ROT.E, h: 2.6, tag: '报亭', on: 'floor', col: [2.0, 2.6, 2.0] });
   out.push({ m: 'r2/cc0_newspaper_stack_ready_to_unity_hdrp', x: -9.4, y, z: 110.4, yaw: 0.3, w: 0.5, tag: '报亭', on: 'floor' });
@@ -1658,7 +1658,8 @@ export function planMetro(y) {
     pic(out, p, x - 0.0, y + 1.4, z, yaw, 1.0, 1.5, 'none'); light(out, x - 0.8, y + 1.6, z, 0xfff4e0, 0.9, 4); }
   pic(out, 'textures/emblems/N16.jpg', -10.0, y + 1.6, 112.6, ROT.E, 0.6, 0.4, 'cork', { cork: [0.8, 0.6] });
   // ⑥ 行道树池 + 背靠树池的长椅（南向步道两侧成排；北侧东半段）——把空旷铺装分成有尺度的步行带
-  for (const [x, z] of [[-7, 104], [-7, 110], [-7, 116], [-7, 122], [-7, 128], [7, 104], [7, 110], [7, 116], [7, 122], [7, 128], [7, 152], [7, 158]]) { out.push({ box: 'stoneDark', x, y: y + 0.22, z, w: 1.5, h: 0.44, d: 1.5, tag: '花池', on: 'partv' }); out.push({ box: 'dz_soil', x, y: y + 0.445, z, w: 1.3, h: 0.01, d: 1.3, tag: '花池', on: 'partv' }); out.push({ m: 'r2/potted_plant_04', x, y: y + 0.45, z, yaw: x + z, h: 1.5, tag: '花池', on: 'tree' }); F7(out, '花池', x, z, 1.5, 1.5, y, 0, 0.45); }
+  // 批次32：花池（黑台座 + 白盆栽，廉价）→ surface.js 行道树池（铸铁箅子 + 蓝花楹），此处只留占地框
+  for (const [x, z] of [[-7, 104], [-7, 110], [-7, 116], [-7, 122], [-7, 128], [7, 104], [7, 110], [7, 116], [7, 122], [7, 128], [7, 152], [7, 158]]) F7(out, '行道树池', x, z, 1.6, 1.6, y, 0, 0.1);
   for (const sx of [-1, 1]) for (const z of [107, 113, 119, 125]) out.push({ m: 'r2/park_bench', x: sx * 6.6, y, z, yaw: sx < 0 ? ROT.E : ROT.W, w: 1.8, tag: '长椅', on: 'floor', col: [0.57, 0.85, 1.8] });
   for (const z of [116, 128]) for (const sx of [-1, 1]) light(out, sx * 7, y + 3.4, z, 0xffe0b0, 1.2, 8);
   // ⑤ 流浪者角（西南角，靠墙暗处）：桶炉 + 旧自行车 + 纸箱 + 街鼠

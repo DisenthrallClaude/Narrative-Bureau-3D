@@ -686,7 +686,7 @@ function buildStreetRows(g, M, place, rnd) {
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
         { float wall = 1.0 - step(0.5, abs(vLn.y));
           float u = abs(vLn.x) > 0.5 ? vLm.z : vLm.x; float y = vLm.y; float side = abs(vLn.x) > 0.5 ? 1.0 : 0.0;
-          vec3 pal = vSd < 0.3 ? vec3(0.78, 0.71, 0.58) : vSd < 0.55 ? vec3(0.62, 0.36, 0.28) : vSd < 0.8 ? vec3(0.66, 0.66, 0.63) : vec3(0.62, 0.68, 0.60);
+          vec3 pal = vSd < 0.34 ? vec3(0.40, 0.40, 0.41) : vSd < 0.67 ? vec3(0.46, 0.27, 0.21) : vec3(0.68, 0.64, 0.57); // 批次32：三色成排——深灰抹灰 / 暗红砖 / 米灰石（去掉偏蓝绿的第四色）
           vec3 col = pal;
           // 面砖 / 砖缝
           vec2 tg = fract(vec2(u / 0.6, y / 0.3)); col *= 0.93 + 0.07 * step(0.08, tg.x) * step(0.1, tg.y);
@@ -724,6 +724,12 @@ function buildStreetRows(g, M, place, rnd) {
   const leafMat = M.hedge; const trunkMat = M.iron;
   const NH = 760, NSEG = 1000;
   const houses = new THREE.InstancedMesh(boxG, houseMat, NH), pars = new THREE.InstancedMesh(boxG, parMat, NH * 2);
+  // 批次32：两坡屋面三角棱柱（单位：x −0.5…0.5 沿街，z −0.5…0.5 进深，y 0…1 屋脊）
+  const roofG = new THREE.BufferGeometry(); { const P = [[-0.5, 0, -0.5], [0.5, 0, -0.5], [0.5, 1, 0], [-0.5, 1, 0], [-0.5, 0, 0.5], [0.5, 0, 0.5]];
+    const tri = [[0, 3, 2], [0, 2, 1], [4, 5, 2], [4, 2, 3], [0, 4, 3], [1, 2, 5], [0, 1, 5], [0, 5, 4]]; const pos = []; for (const t of tri) for (const i of t) pos.push(...P[i]);
+    roofG.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); roofG.computeVertexNormals(); }
+  const roofMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.78, side: THREE.DoubleSide, envMapIntensity: 0.4 });
+  const roofs = new THREE.InstancedMesh(roofG, roofMat, NH); const ROOFC = [new THREE.Color(0x34363a), new THREE.Color(0x5a3426), new THREE.Color(0x45474b)]; let nf = 0;
   const roads = new THREE.InstancedMesh(boxG, roadMat, NSEG), walks = new THREE.InstancedMesh(boxG, walkMat, NSEG * 2), curbs = new THREE.InstancedMesh(boxG, curbMat, NSEG * 2);
   const poleG = new THREE.CylinderGeometry(0.12, 0.16, 7, 6); poleG.translate(0, 3.5, 0); const armG = new THREE.BoxGeometry(0.1, 0.1, 1.6); armG.translate(0, 7, -0.7); const headG = new THREE.BoxGeometry(0.4, 0.18, 0.7); headG.translate(0, 6.9, -1.4);
   const lampMat = new THREE.MeshStandardMaterial({ color: 0xffe2b0, emissive: 0xffc27a, emissiveIntensity: TOD.label === '白昼' ? 0.2 : 2.6 });
@@ -753,12 +759,13 @@ function buildStreetRows(g, M, place, rnd) {
       while (s < C && nh < NH) { const w = 12 + Math.floor(hs(k + R) * 4) * 3, d = 14 + Math.floor(hs(k * 3.3 + R) * 3) * 2, fl = 4 + Math.floor(hs(k * 7.7 + R + sd) * 4);
         const h = 4.2 + (fl - 1) * 3.2 + 0.9; const th = (s + w / 2) / front; const rc = front + sd * d / 2; const [x, z] = at(rc, th);
         if (place(x, z) && place(...at(front, th))) { q.setFromAxisAngle(up, th); m4.compose(new THREE.Vector3(x, Y0, z), q, new THREE.Vector3(w, h, d)); houses.setMatrixAt(nh++, m4);
-          m4.compose(new THREE.Vector3(x, Y0 + h, z), q, new THREE.Vector3(w + 0.3, 0.7, d + 0.3)); if (np < NH * 2) pars.setMatrixAt(np++, m4);
-          if (k % 3 === 1 && np < NH * 2) { m4.compose(new THREE.Vector3(x, Y0 + h + 0.7, z), q, new THREE.Vector3(3, 2.2, 3)); pars.setMatrixAt(np++, m4); } } // 屋顶水箱间
+          // 批次32：平顶 + 水箱间方块 → 出挑檐口（0.35 m 厚、每边出 0.45 m）+ 两坡屋面（屋脊平行街道、坡比 ≈0.38、檐口再出 0.4 m）；屋面三色成排（石板灰 / 陶瓦褐 / 铅灰）
+          m4.compose(new THREE.Vector3(x, Y0 + h - 0.35, z), q, new THREE.Vector3(w + 0.9, 0.35, d + 0.9)); if (np < NH * 2) pars.setMatrixAt(np++, m4);
+          if (nf < NH) { m4.compose(new THREE.Vector3(x, Y0 + h, z), q, new THREE.Vector3(w + 1.6, d * 0.38, d + 1.7)); roofs.setMatrixAt(nf, m4); roofs.setColorAt(nf++, ROOFC[k % 3]); } }
         s += w + 0.4; k++; if (k % 6 === 0) s += 10; }
     }
   }
-  for (const [im, n] of [[houses, nh], [pars, np], [roads, nr], [walks, nw], [curbs, nc], [poles, nl], [arms, nl], [heads, nl], [stems, nt], [crowns, nt]]) { im.count = n; im.computeBoundingSphere(); im.userData.noCull = true; /* 批次30：ext_sky 看图——三圈街屋全没出现：InstancedMesh 没算 boundingSphere，DistCull 拿单位方块半径 0.87 m 当整排街屋 → 60 m 外全剔 */ im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; g.add(im); }
+  for (const [im, n] of [[houses, nh], [pars, np], [roofs, nf], [roads, nr], [walks, nw], [curbs, nc], [poles, nl], [arms, nl], [heads, nl], [stems, nt], [crowns, nt]]) { im.count = n; im.computeBoundingSphere(); im.userData.noCull = true; /* 批次30：ext_sky 看图——三圈街屋全没出现：InstancedMesh 没算 boundingSphere，DistCull 拿单位方块半径 0.87 m 当整排街屋 → 60 m 外全剔 */ im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; g.add(im); }
 }
 
 function aircraft(M, s) {

@@ -7,6 +7,7 @@ import { Batch } from '../engine/batch.js';
 import { CanvasScreen } from '../engine/fx.js';
 import { content } from '../engine/content.js';
 import { mats } from './mats.js';
+import { phMat } from './hero.js';
 import { Frame, archShape, archRingGeo, lancetWindow, gableRoof, bayWall, tower, pinnacle, emblem, goldText } from './gothic.js';
 import { wallX, wallZ, point, spot, person, signMaterial, brassPlaqueMaterial, posterMaterial, rectLight } from './interiors.js';
 import { vaultMats, tagMaterial } from './vault.js';
@@ -441,7 +442,26 @@ export async function buildSurface(scene, world, ctx) {
     for (let x = -18; x <= 18; x += 3) if (Math.abs(x) > 6) P.add('bollard', [x, Y, 118], { h: 0.95 });
     for (const sx of [-1, 1]) for (let z = 104; z <= 160; z += 12) { world.box(sx * 24, Y + 0.38, z, 1.42, 0.76, 1.42); cypress(b, sx * 24, z, 3.6, Y); /* 批次27 E1：棒棒糖绿团树 → 花箱修剪侧柏 */ P.add('street_lamp_02', [sx * 20, Y, z + 6], { h: 5.5 }); }
     for (const z of [110, 152]) for (const sx of [-1, 1]) P.add('park_bench', [sx * 21.5, Y, z], { w: 2.0, yaw: sx > 0 ? -Math.PI / 2 : Math.PI / 2 });
-    b.box('plazaTile', 30, 0.05, 70, [0, Y + 0.02, 135], { uv: 0.5 }); for (let z = 102; z < 170; z += 6) b.box('gold', 30, 0.06, 0.06, [0, Y + 0.03, z], { uv: 1 });
+    // 批次32 ext_street：原「plazaTile 黑小方砖 + 每 6 m 一道金线」远看像空柏油 → 分缝花岗岩人行道（Poly Haven granite_tile，≈50 cm 板，CC0）
+    //   + 深色花岗岩分隔带（每 6 m，代替金线）+ 两侧花岗岩路缘石（高 15 cm，带倒角顶）+ 行道树池（铸铁箅子 + 石砌池边 + 蓝花楹，成列 6 m 一株）
+    { const gr = phMat('granite_tile', { color: 0x9a968e, roughness: 0.75, env: 0.6 }); for (const t of [gr.map, gr.normalMap, gr.roughnessMap, gr.aoMap]) if (t) { t.wrapS = t.wrapT = THREE.RepeatWrapping; }
+      const sw = new THREE.Mesh(new THREE.BoxGeometry(30, 0.05, 70), gr); const uv = sw.geometry.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 15, uv.getY(i) * 35); // 2 m 一张贴图 = 4×4 板
+      sw.position.set(0, Y + 0.02, 135); sw.receiveShadow = true; zone.add(sw);
+      const band = new THREE.MeshStandardMaterial({ color: 0x3a3a3e, roughness: 0.6 }); const curbM = new THREE.MeshStandardMaterial({ color: 0x8c8a86, roughness: 0.7 });
+      for (let z = 102; z < 170; z += 6) { const m = new THREE.Mesh(new THREE.BoxGeometry(30, 0.052, 0.3), band); m.position.set(0, Y + 0.021, z); m.receiveShadow = true; zone.add(m); }
+      for (const sx of [-1, 1]) { const c = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.15, 70), curbM); c.position.set(sx * 15.15, Y + 0.075, 135); c.castShadow = c.receiveShadow = true; zone.add(c);
+        const ch = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 70), curbM); ch.position.set(sx * 15.32, Y + 0.12, 135); ch.rotation.z = Math.PI / 4; zone.add(ch);
+        for (let z = 101; z < 170; z += 1.2) { const j = new THREE.Mesh(new THREE.BoxGeometry(0.31, 0.152, 0.012), band); j.position.set(sx * 15.15, Y + 0.075, z); zone.add(j); } } // 路缘石 1.2 m 一块分缝
+      // 行道树池：1.6 m 见方石砌池边（高 8 cm）+ 铸铁箅子（放射状缝 canvas）+ 蓝花楹
+      const gcv = document.createElement('canvas'); gcv.width = gcv.height = 256; const gc = gcv.getContext('2d'); gc.fillStyle = '#1a1a1c'; gc.fillRect(0, 0, 256, 256); gc.strokeStyle = '#050505'; gc.lineWidth = 5;
+      for (let r = 40; r < 128; r += 16) { gc.beginPath(); gc.arc(128, 128, r, 0, 7); gc.stroke(); } gc.lineWidth = 4; for (let a = 0; a < 24; a++) { const t = a / 24 * Math.PI * 2; gc.beginPath(); gc.moveTo(128 + Math.cos(t) * 40, 128 + Math.sin(t) * 40); gc.lineTo(128 + Math.cos(t) * 126, 128 + Math.sin(t) * 126); gc.stroke(); }
+      gc.fillStyle = '#2a1e14'; gc.beginPath(); gc.arc(128, 128, 34, 0, 7); gc.fill(); gc.strokeStyle = '#3a3a3c'; gc.lineWidth = 6; gc.strokeRect(3, 3, 250, 250);
+      const gt = new THREE.CanvasTexture(gcv); gt.colorSpace = THREE.SRGBColorSpace; gt.anisotropy = 8; const grateM = new THREE.MeshStandardMaterial({ map: gt, color: 0xffffff, metalness: 0.7, roughness: 0.55 });
+      const pitM = new THREE.MeshStandardMaterial({ color: 0x5c5a58, roughness: 0.8 });
+      for (const [x, z] of [[-7, 104], [-7, 110], [-7, 116], [-7, 122], [-7, 128], [7, 104], [7, 110], [7, 116], [7, 122], [7, 128], [7, 152], [7, 158]]) {
+        for (const [dx, dz, w, d] of [[0, -0.74, 1.6, 0.12], [0, 0.74, 1.6, 0.12], [-0.74, 0, 0.12, 1.36], [0.74, 0, 0.12, 1.36]]) { const e = new THREE.Mesh(new THREE.BoxGeometry(w, 0.08, d), pitM); e.position.set(x + dx, Y + 0.08, z + dz); e.castShadow = e.receiveShadow = true; zone.add(e); }
+        const gm = new THREE.Mesh(new THREE.BoxGeometry(1.36, 0.03, 1.36), grateM); gm.position.set(x, Y + 0.06, z); gm.receiveShadow = true; zone.add(gm);
+        P.add('r2/jacaranda_tree', [x, Y + 0.075, z], { h: 7.5, yaw: (z % 7) * 0.9 }); world.box(x, Y + 1.5, z, 0.5, 3, 0.5); } }
     for (const sx of [-1, 1]) for (let k = 0; k < 3; k++) { const p = person(M, { coat: [0x2a3040, 0x40302a, 0x30402a][k] }); p.position.set(sx * (5 + k * 3.2), Y, 120 + k * 7); p.rotation.y = sx > 0 ? -2.8 : 2.8; zone.add(p); }
   }
 
