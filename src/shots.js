@@ -125,14 +125,15 @@ export const SHOTS = {
   hangar_b: { pos: [97, 2.2, -55], look: [80, 1.5, -78], fov: 76 },
   hangar_top: { pos: [86.2, 46, -69.99], look: [86.2, 0, -70], fov: 50, clipY: 11.2, zone: 'hangar' },
   helipad_roof: { pos: [77.5, 14.1, -57.5], look: [86, 13, -72], fov: 75 },
-  wall_post: { pos: [-43.6, 1.7, 54.6], look: [-47.3, 2.2, 62.1], fov: 70 },
+  wall_post: { pos: [-43.6, 1.7, 54.6], look: [-47.3, 2.2, 62.1], fov: 70, zone: 'wall_posts' },
+  wall_post_out: { pos: [-45.2, 2.1, 48.7], look: [-46.2, 1.9, 59.85], fov: 66, zone: 'wall_posts' }, // 批次10：门外前坪全景（正前 13 m、偏西 4 m）
   memorial: { pos: [-60.5, 1.7, 44], look: [-66, 1.0, 20], fov: 72 },
   metro: { pos: [-10, -2.3, 108], look: [2, -1, 140], fov: 72 },
   east_cloister: { pos: [26.1, 3.45, -78], look: [26.1, 3.8, -110], fov: 72 },
   courtyard_aerial: { pos: [140, 70, 70], look: [40, 0, -30], fov: 55 },
   abyss_gate: { pos: [0, -298.3, -60], look: [0, -294, -82], fov: 75 },
   abyss_city: { pos: [3, -298.3, -94], look: [0, -292, -160], fov: 75 },
-  abyss_core: { pos: [6, -278.3, -208], look: [8, -271, -228], fov: 78 },
+  abyss_core: { pos: [9.6, -278.3, -215.1], look: [3.5, -278.7, -222], fov: 76, zone: 'abyss_core' }, // 批次10：主机位移进书环南口内（r≈13，书环与书桌环之间），南口两席校对台 + 烛台在左中景，巨柱在右（原 [6,-278.3,-208] 仰拍巨柱、校对席只占画面底部一角）
   abyss_exam: { pos: [-19, -298.3, -121], look: [-45, -299, -146], fov: 72 },
   abyss_tide: { pos: [36, -298.3, -130], look: [62, -300, -146], fov: 72 },
   // R3 批次8

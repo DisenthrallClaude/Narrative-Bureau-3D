@@ -22,6 +22,7 @@ import { buildRooms, updateRooms } from './world/rooms.js';
 import { buildUpper, updateUpper } from './world/upper.js';
 import { buildDressing, updateDressing } from './world/dressing.js';
 import { buildR3 } from './world/r3build.js';
+import { applyBakes, exportBake, BAKES } from './engine/bakeao.js';
 import { installSkyFog } from './engine/skyfog.js';
 import { mats } from './world/mats.js';
 import { setupStory } from './story.js';
@@ -106,6 +107,8 @@ async function boot() {
     if (fl) { chunkGroup(fl.hi, { cell: 32, minTris: 500, minR: 10 }); chunkGroup(fl.lo, { cell: 32, minTris: 200, minR: 10 }); L.add(fl.hi, 'hi'); L.add(fl.lo, 'lo'); L.finish(); G.lod = L; }
     const DC = new DistCull(); const rule = (o, r) => (/^F_/.test(o.name) || o.userData.noCull ? Infinity : r < 1.5 ? 60 : r < 4 ? 110 : r < 10 ? 180 : Infinity);
     DC.add(ext, rule); if (ctx.zones.surface) DC.add(ctx.zones.surface, rule); G.distCull = DC;
+    // R3 批次10：地铁口（下沉广场，视线被主楼/城墙挡住）额外远距剔除：中小件（包围球 r<60 m，非外立面）离相机 >130 m 不画（含阴影）。只在 metro_exit 区生效
+    { const MC = new DistCull(); const mrule = (o, r) => (/^F_/.test(o.name) || o.userData.noCull || r >= 60 ? Infinity : 130); MC.add(ext, mrule); if (ctx.zones.surface) MC.add(ctx.zones.surface, mrule); G.metroCull = MC; }
     // 室内盒 + 门洞：宿舍三号楼（西门）、机库（西大门）、正门门廊（南正门）
     const PC = new PortalCull([
       { id: 'dorm', box: [52.6, 80, -1, 14.5, 0, 40], portals: [[[52.6, -0.2, 18.3], [52.6, -0.2, 21.7], [52.6, 3.8, 21.7], [52.6, 3.8, 18.3]]] },
@@ -143,6 +146,15 @@ async function boot() {
   for (const z of Object.values(ctx.zones)) z.visible = true;
   if (!SHOT && !TEST) { try { await R.gl.compileAsync(scene, camera); } catch { /* 旧浏览器 */ } }
   LOG('compiled');
+  await applyBakes(scene, undefined, { log: LOG }); // R3 批次10：程序化室内区 AO 烘焙
+  if (SHOT) window.__bakeExport = (id, url) => exportBake(scene, id, url);
+  if (SHOT && params.get('probe')) window.__CULLPROBE__ = () => { // 批次10：同屏网格按距离统计三角面（tools/_cullprobe.mjs）
+    camera.updateMatrixWorld(); const fr = new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)); const sp = new THREE.Sphere(); const bins = {}; const top = [];
+    const vis = (o) => { for (let a = o; a; a = a.parent) if (!a.visible) return false; return true; };
+    scene.traverse((o) => { if (!o.isMesh || !o.geometry?.attributes.position || !vis(o)) return; const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere(); sp.copy(o.isInstancedMesh && o.boundingSphere ? o.boundingSphere : g.boundingSphere).applyMatrix4(o.matrixWorld); if (!fr.intersectsSphere(sp)) return;
+      const t = (g.index ? g.index.count : g.attributes.position.count) / 3 * (o.isInstancedMesh ? o.count : 1); const d = Math.max(0, camera.position.distanceTo(sp.center) - sp.radius); let root = o; while (root.parent && root.parent !== scene) root = root.parent;
+      const bk = root.name + ':' + (d < 50 ? '0-50' : d < 100 ? '50-100' : d < 150 ? '100-150' : d < 250 ? '150-250' : d < 400 ? '250-400' : '400+'); bins[bk] = (bins[bk] ?? 0) + t; top.push([Math.round(t), Math.round(d), Math.round(sp.radius), root.name, o.name || o.material?.name || '', o.isInstancedMesh ? o.count : 0, sp.center.toArray().map(Math.round).join(',')]); });
+    top.sort((a, b) => b[0] - a[0]); return { bins, top: top.slice(0, 40) }; };
   setZone('plaza', true);
   UI.updateObjective();
   if (SHOT) return startShot();
@@ -210,7 +222,7 @@ function zoneAt(p) {
   if (p.x > 72 && p.x < 100 && p.z < -52 && p.z > -88) return 'helipad';
   if (p.x < -49 && p.x > -77 && p.z > 1 && p.z < 49) return 'memorial';
   if (p.y < -2 && p.z > 96) return 'metro_exit';
-  { const dx = p.x + 47.3, dz = p.z - 62.1; if (dx * dx + dz * dz < 30) return 'wall_posts'; }
+  { const dx = p.x + 47.3, dz = p.z - 62.1; if (dx * dx + dz * dz < 110) return 'wall_posts'; } // 批次10：半径 5.5→10.5 m，含门前坪（门外灯只在本区亮）
   if (Math.abs(p.x) < 18 && p.z < -29.9 && p.z > -77) return 'security_hall';
   if (Math.abs(p.x) < 14.5 && p.z < -5.6 && p.z > -30) return 'gate';
   return 'plaza';
@@ -248,11 +260,11 @@ const ZONE_LOOK = {
   spine_b3: { env: 'hall', envI: 0.35, sun: 0, exp: 1.15, fog: [0x15130f, 0.02], hemi: 0.06 },
   vault_b3: { env: 'hall', envI: 0.35, sun: 0, exp: 1.1, fog: [0x12161c, 0.022], hemi: 0.06 },
   vault_b4: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x1a120a, 0.03], hemi: 0.05 },
-  vault_b5: { env: 'hall', envI: 0.18, sun: 0, exp: 1.3, fog: [0x0a0806, 0.034], hemi: 0.02 },
+  vault_b5: { env: 'hall', envI: 0.3, sun: 0, exp: 1.42, fog: [0x0a0806, 0.022], hemi: 0.1 }, // 批次10：B5 偏暗 → 环境 0.18→0.3、曝光 1.3→1.42、雾 0.034→0.022、半球 0.02→0.1
   spine_b4: null, spine_b5: null,
   canteen: { env: 'sky', envI: 0.6, sun: 2.2, exp: 1.05, fog: [0x2a221a, 0.006], hemi: 0.18 },
   armory: { env: 'hall', envI: 0.35, sun: 0, exp: 1.15, fog: [0x10141a, 0.02], hemi: 0.06 },
-  interrogation: { env: 'hall', envI: 0.3, sun: 0, exp: 1.0, fog: [0x101216, 0.03], hemi: 0.06 },
+  interrogation: { env: 'hall', envI: 0.38, sun: 0, exp: 1.16, fog: [0x101216, 0.022], hemi: 0.1 }, // 批次10：保留压抑感但看得清（曝光 1.0→1.16、环境 0.3→0.38、雾减薄）
   floor2: { env: 'hall', envI: 0.75, sun: 0, exp: 1.3, fog: [0x221c16, 0.006], hemi: 0.24 },
   floor3: { env: 'hall', envI: 0.75, sun: 0, exp: 1.3, fog: [0x1c1c1e, 0.006], hemi: 0.24 },
   library: { env: 'hall', envI: 0.5, sun: 0, exp: 1.15, fog: [0x241c12, 0.008], hemi: 0.1 },
@@ -290,6 +302,7 @@ function setZone(z, force = false) {
   if (prev && AREA_NAMES[z]) UI.showArea(...AREA_NAMES[z]);
   audio.setZone(z);
   for (const f of G.onZone) f(z, prev);
+  { const ids = Object.keys(BAKES).filter((id) => ctx.zones[BAKES[id].group]?.visible); if (ids.length) applyBakes(scene, ids); } // 迟到的模型网格补匹配
   if (AREA_OF[z]) { content.set('area:' + AREA_OF[z]); UI.updateObjective(); }
 }
 
@@ -386,7 +399,7 @@ function loop() {
   R.setExposure(curExp);
   for (const s of ctx.screens) s.update(dt, t);
   updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t); updateDressing(ctx, dt, t); updateDepths(ctx, dt, t);
-  if (G.lod && !/[?&]nolod=1/.test(location.search)) G.lod.update(camera); if (G.distCull && !/[?&]nocull=1/.test(location.search)) G.distCull.update(camera); G.portal?.update(camera);
+  if (G.lod && !/[?&]nolod=1/.test(location.search)) G.lod.update(camera); if (G.distCull && !/[?&]nocull=1/.test(location.search)) G.distCull.update(camera); if (G.metroCull) G.metroCull.update(camera, G.zone === 'metro_exit' && !/[?&]nometrocull=1/.test(location.search) ? 1 : 1e9); G.portal?.update(camera);
   if (TEST) { frames++; return; }
   R.gl.info.autoReset = false; R.gl.info.reset(); // M6：统计整帧（反射 + 阴影 + 后期全部 pass）
   reflector.setY(FLOOR); reflector.update(scene, camera, R.q.reflect);

@@ -56,7 +56,7 @@ export async function buildExterior(scene, world, ctx) {
       for (let k = 0; k < Math.floor(L / 6); k++) b.add('hedge', blob(1.1, k + cx), { pos: [cx, 0.9, z0 + 3 + k * 6], scale: [1, 0.8, 1] }, { uv: 0.8 });
     }
   }
-  for (const sx of [-1, 1]) for (let z = 0; z < 64; z += 7) cypress(b, sx * 42, z); // 柏树列
+  for (const sx of [-1, 1]) for (let z = 0; z < 64; z += 7) { if (Math.hypot(sx * 42 + 47.3, z - 62.1) < 9) continue; cypress(b, sx * 42, z); } // 柏树列（批次10：十二号塔岗哨门前两株挡门 → 去掉）
   // 南端大台阶（下到迎宾大道 y=-4）
   for (let i = 0; i < 20; i++) { if (HERO) world.box(0, -0.1 - i * 0.2, 81 + i * 0.6, 44, 0.2, 0.6); else b.box('plazaTile', 44, 0.2, 0.6, [0, -0.1 - i * 0.2, 81 + i * 0.6], { uv: 0.4, collide: true }); }
   world.ramp([0, -0.05, 80.6], [0, -4.05, 93], 44);

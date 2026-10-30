@@ -1817,3 +1817,40 @@ const X9 = {
   },
 };
 for (const [id, f] of Object.entries(X9)) { const base = PLANS[id]; if (!base) continue; PLANS[id] = (Y) => { const p = base(Y); const n0 = p.items.length; f(p.items, Y, p.room); fixYaw({ items: p.items.slice(n0) }); return p; }; }
+
+// ================= R3 批次10：偏暗偏空收尾（B5 深库主室 / B5 前室 / 审讯室） =================
+const X10 = {
+  // B5 深库主室（x −14…14，z −134…−100）：中轴走廊 x ±6 两侧是 6 间单件收容室（x ±9，正面 x=±6）。
+  // 平面：每间收容室正面左右各一盏地堡壁灯 + 门牌；两间之间的墙垛（z −113 / −123）放消防栓箱 / 急救箱 / 转运推车；
+  // 走廊两侧顶部沿 z 走两根管线（冷水 / 消防），中轴两侧每 10 m 一盏冷白补光，北端柜列前加一盏暖光
+  b5_deep(out, y) {
+    const cells = [-108, -118, -128];
+    cells.forEach((z, i) => { for (const s of [-1, 1]) {
+      const x = s * 5.93, yaw = s < 0 ? ROT.E : ROT.W;
+      out.push({ sign: `单件收容室 B5-${s < 0 ? 'W' : 'E'}${i + 1}`, sub: ['一级 · 文本畸变', '二级 · 认知污染', '三级 · 禁止单人进入'][i], x, y: y + 2.4, z: z + 2.6, yaw, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
+      out.push({ m: 'r2/bunker_lamps', x: s * 5.85, y: y + 2.9, z: z - 2.9, yaw, h: 0.3, tag: '地堡灯', on: 'wall' });
+      light(out, s * 5.0, y + 2.6, z - 2.6, 0xffe2b8, 1.6, 6);
+    } });
+    for (const [s, z, m, o] of [[-1, -113, 'r2/fire_extinguisher_5676b1', { h: 0.9 }], [1, -113, 'r2/metal_toolbox', { w: 0.5 }], [-1, -123, 'r2/tool_cart', { w: 0.9, col: [0.9, 0.7, 0.7] }], [1, -123, 'r2/fire_extinguisher_5676b1', { h: 0.9 }]])
+      out.push({ m, x: s * 5.45, y, z, yaw: s < 0 ? ROT.E : ROT.W, ...o, tag: '墙垛', on: 'floor' });
+    for (const s of [-1, 1]) { pipe(out, 'dz_pipe', 'z', -133.4, -100.6, s * 5.7, y + 6.3, 0.12); pipe(out, 'dz_pipeRed', 'z', -133.4, -100.6, s * 5.45, y + 6.1, 0.08); }
+    for (const z of [-106, -116, -126]) for (const s of [-1, 1]) light(out, s * 3.2, y + 4.6, z, 0xe8eeff, 2.6, 10);
+    light(out, 0, y + 2.4, -126.5, 0xffd8b0, 1.8, 8);
+  },
+  // B5 前室（12×8 m）：东南空角补一组「入库登记 / 防护」—— 南墙东段长凳 + 鞋套箱；地面黄黑警示带标出金库门开启扫掠区；整体补光
+  b5(out, y) {
+    out.push({ m: 'r2/park_bench', x: 3.6, y, z: -92.55, yaw: Math.PI, w: 1.8, tag: '更衣候检', on: 'floor', col: [1.8, 0.8, 0.6] });
+    out.push({ m: 'r2/old_paper_cardboard_boxes', x: 5.4, y, z: -92.6, yaw: 0.2, w: 0.6, tag: '鞋套箱', on: 'floor' });
+    floorZ(out, 'r3_hazard', -2.6, 2.6, -99.95, -99.75, y, { uv: 1 });
+    // 东半区候检分流：铜柱红绳一道（x 2.0，z −93.4…−98.6）把「电梯 → 检测台」与「电梯 → 金库门」两股人流分开；红绳东侧放转运推车
+    stanchions(out, [[2.0, -93.4], [2.0, -96.0], [2.0, -98.6]], y, '候检分流');
+    out.push({ m: 'r2/tool_cart', x: 3.3, y, z: -98.9, yaw: 0.2, w: 0.9, tag: '转运车', on: 'floor', col: [0.9, 0.7, 0.7] });
+    light(out, 3.4, y + 3.4, -93.6, 0xeef2ff, 2.2, 8); light(out, -1.0, y + 4.6, -96.0, 0xeef2ff, 2.0, 10);
+  },
+  // 审讯室：保留单灯压抑感，但让墙角和人能看清——桌上方原吊灯不动，补一盏很弱的暖色顶部漫射 + 玻璃侧冷色反光
+  interrogation(out, y) {
+    light(out, -10.0, y + 3.4, -101.0, 0xffe6c8, 1.3, 7); light(out, -8.1, y + 1.6, -98.2, 0xc8d6ff, 0.8, 5); light(out, -11.6, y + 2.6, -104.6, 0xffe0c0, 0.7, 5);
+    light(out, -4.6, y + 3.2, -99.0, 0xe8eeff, 1.0, 6);
+  },
+};
+for (const [id, f] of Object.entries(X10)) { const base = PLANS[id]; if (!base) continue; PLANS[id] = (Y) => { const p = base(Y); const n0 = p.items.length; f(p.items, Y, p.room); fixYaw({ items: p.items.slice(n0) }); return p; }; }

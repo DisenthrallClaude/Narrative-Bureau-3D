@@ -171,6 +171,36 @@
 3. plaza / facade 高画质截图贴着内存上限：可考虑截图模式上传后释放贴图 CPU 端图片，或先拍低一档画质。
 4. tristat.mjs 拆 pass 会让 plaza 崩，测 plaza 时只用截图会话的整帧统计。
 
+## R3 批次10（2026-10-30 15:52 CST 接手）
+### 完成
+1. **GitHub Pages**：https://disenthrallclaude.github.io/Narrative-Bureau-3D/ 可访问（HTTP 200）；Actions「Deploy to GitHub Pages」最新一次 = fb3a228 success（7c2f889/8ad920d 两次是 concurrency 被后一次 cancel，正常）；线上 index 引用的 `index-DEP6LX8f.js` 与本地 fb3a228 构建一致。workflow 无需修改。本批推送后会自动重新部署（见文末 Pages 状态）。
+2. **程序化室内区 AO 光照贴图烘焙（训练场 / 指挥中心 / 档案馆 / 第七局作战室 / B5）**——这些区不是 Blender 精修 GLB，是 three 端程序化拼出来的，所以新做了一条「浏览器导出 → Blender 烘焙 → 运行时按键回贴」管线：
+   - `src/engine/bakeao.js`：`BAKES` 表（每区 = 场景分组 + 世界包围盒）。`exportBake()`（截图模式 `window.__bakeExport`）把区内**接收面**（非实例、单材质、最长边 >0.9 m 的墙/地/顶/隔断等网格，世界坐标三角形）+ **遮挡体**（区内全部可见网格，实例化家具按实例矩阵，几何共享）POST 出来；`applyBakes()` 启动时加载 `assets/bake/<id>.json / _uv.bin / _ao.webp`，按「顶点数 + 索引数 + 世界包围盒(cm)」键匹配网格，换成带 `uv1` 的非索引几何，材质按区克隆（保留老化/反射等 onBeforeCompile 补丁链）后打 `aoPatch`：间接漫反射 ×AO、间接镜面 ×mix(1,AO,0.85)、直射 ×mix(1,AO,0.5)（点光没有实时投影，用 AO 补家具落地/墙角/柜间接触阴影）；AO≥0.9 视为全亮（`norm`，开阔地面不整体压暗）。迟到的 GLB 网格在 setZone 时补匹配。`?noao=1` 关闭、`?aowhite=1` 换白图（排查克隆副作用用）。
+   - **跳过用到第二套 UV 的材质**（`usesUv1`：大厅精修材质 hallMats / lightmapPatch / 反射地面 / 原生 lightMap·aoMap / 贴图 channel≠0）。第一次试跑档案馆绿墙变成大厅照片、浅色地砖发暗，就是这些材质原本 uv1 缺省 (0,0) 只采一个像素，换上烘焙 uv1 后把整张大厅光照贴图铺上去了。
+   - `tools/bake_export.mjs <out> <id,...>`：截图模式加载（q=low、`&noao=1`）→ 等资源静止 → 逐区导出 `<id>.json + <id>.bin`（aa 上 5 区一次 104 s，3.7–13.7 MB）。
+   - `tools/blender/bake_ao_zone.py`（zz：`/data/workspace/blender/blender-4.2.3-linux-x64/blender -b --factory-startup --python bake_ao_zone.py -- bakein <id> out 2048 <spp> 1.8`，远端脚本 `/data/workspace/bake10/run.sh`）：接收面各建一个对象（面顺序 = three 索引顺序，退化三角形不建、输出补 0；**不 validate**，否则重合三角形被删、角点对不上），遮挡体按实例矩阵建链接副本；smart_project + pack_islands 共用一张 2048 图集；Cycles AO（距离 1.8 m）。
+     - **共面层修正**：接收面自身对 AO 射线不可见（visible_shadow 等全关），换成「沿法线内缩」的遮挡副本——第七局地面是牛皮纸地板 + 贴面文字纸页两层共面，射线一出发就打到另一层；**内缩量按连通块厚度 t 取 min(1.5 cm, 0.25 t)，零厚度面片退后 1.5 cm**（第二版统一缩 1.5 cm 时，1 cm 厚的环氧地坪漆 / 地砖块上下面翻转、底面跑到顶面上方，整块 AO≈0.1 发黑——训练场装备区、档案馆展柜地砖就是这么黑的）。金库门齿轮等动画件（SKIPRE）只当遮挡体。
+   - `tools/bake_ao_post.py <dir> <id>`（本机）：按 UV 三角形光栅化覆盖掩码 → 岛内归一化高斯去噪 → 外扩 12 px → 8bit webp。AO 是 0–1 线性值，**没有用 reenc 的范围 8 编码**（那是漫反射辐照度的编码；AO 不需要高动态范围）。
+   - 产物 `public/assets/bake/`（5 区共约 4 MB）。匹配率（截图日志 `[NB] bake <id>: +n matched`）：训练场 144/144、指挥中心 37/39、档案馆 133/138、第七局 24/25、B5 43/44（未匹配的是大厅材质/动画件，被刻意跳过）。烘焙耗时（zz 4 核，56 spp）：训练场 279 s、档案馆 ~230 s、其余 64–86 s。
+   - **没有做完整光照贴图（直射+间接）**：这些区靠几十盏实时点光，Blender 端要逐盏换算强度/衰减，且烘进直射后实时灯要关，改动面大、风险高；本批只做 AO。
+3. **偏暗偏空收尾**
+   - 岗哨门外（surface.js）：门外壁灯 4→6（射程 9→12）；门前两侧灯柱（street_lamp_02 + 灯罩内自发光灯泡 + 暖色点光 5/14 m）、前坪外缘两道混凝土隔离墩、屋顶前沿冷白泛光、门槛石；新灯标 `isFill`（只在地表分区亮，广场不多算灯）。岗哨分区半径 5.5→10.5 m（含门前坪，否则门外机位算 plaza、新灯不亮）。**两株柏树正好长在岗哨门前**（exterior.js 柏树列 x=−42，z 56/63）→ 去掉。新机位 `wall_post_out`（门前坪全景）。
+   - B5（r3plan.js `X10`）：深库主室 6 间收容室每间门牌 + 地堡壁灯 + 暖光，墙垛放消防瓶/工具箱/转运车，走廊两侧顶部双管线，中轴两侧 6 盏冷白补光；前室加候检分流铜柱红绳、转运车、南墙长凳 + 鞋套箱、金库门开启扫掠区黄黑带、两盏补光；ZONE_LOOK vault_b5 环境 0.18→0.3、曝光 1.3→1.42、雾 0.034→0.022、半球 0.02→0.1。r3plan_draw：b5_deep / b5 / interrogation 0 错误（警告 = 收容室正面的壁灯不在房间外墙上，正常）。
+   - 审讯室：保留桌上方单吊灯压抑感，补很弱的暖色顶部漫射 + 玻璃侧冷色反光 + 角落暖光、观察间一盏；ZONE_LOOK interrogation 曝光 1.0→1.16、环境 0.3→0.38、雾 0.03→0.022。
+   - 定稿厅主机位 `abyss_core`：移进书环南口内（r≈13 m，书环与书桌环之间），南口两席校对台、烛台、地毯在左中景，巨柱在右；原机位在书环外仰拍巨柱，校对席只占底部一角、左半被巨书挡住。
+4. **metro 视角外景距离剔除**（main.js `G.metroCull`）：只在 metro_exit 区生效——外景 + 地表组里包围球 r<60 m、非外立面（F_*）、非 noCull 的网格，离相机 >130 m 不画（含阴影 pass）。离开该区时全部恢复。`?nometrocull=1` 对照。依据：tools/_cullprobe.mjs（`?probe=1` 时 `window.__CULLPROBE__` 按距离分段统计同屏三角面）测得 metro_r3 主视里地表组 150–250 m 段 31.5 万面（宿舍/机库/城墙塔楼的屋顶金饰与石作，被主楼挡住大半）。
+### 截图 / 对比图
+- screenshots/r3/ 覆盖：见文末「本批截图」。工作副本 work/r3/b10/（ao/ noao/ v2/ m0/ m1/ final/）。
+- 对比图（work/r3/cmp10_*.jpg，脚本 work/r3/b10/cmp10.py）：见文末。
+### 诚实评估
+（见文末）
+### 遗留 / 待办
+1. 完整光照贴图（直射 + 间接 GI）仍未做；AO 只补了接触阴影和角落层次，不解决「靠点光撑亮度」的平。
+2. 档案馆 / 指挥中心的接收面里有一部分是大厅材质（运行时跳过），图集里白占了位置，下次重导出时在 exportBake 也加 usesUv1 过滤（代码已加，产物是加之前导出的）。
+3. 同一个合批网格横跨多层（东翼指挥中心所在的 east_wing 合批包含 1F–3F），整块进图集，指挥中心的纹素密度被摊薄；要更清晰需按楼层拆合批或 4096 图集。
+4. **用户要求：所有主体完成后再做一轮细节优化**，例如游戏里电脑屏幕显示可交互的局内网页面（本批未做，只记待办）。
+5. InstaBox：本批用了 zz（Blender 烘焙 + 截图）、aa/bb/cc/dd（导出/截图），结束已全部 `ssh-token --revoke`。截图一律 `--fresh 1`（work/r3/rs10.sh）：同会话连拍 5 张以上会 OOM（int_r3 / metro_r3 崩过），zz 在 Blender 跑烘焙时同时截图也会崩。
+
 ## R3 批次9（2026-10-30 11:16 CST 接手）
 ### 完成
 1. **远景主楼 LOD 变黑 = 根因找到并修复**（commit 12197f5）：`tools/facade_lod.mjs` 和 `facade_lod_fixn.mjs` 末尾的 `prune()`（gltf-transform 新版默认 keepAttributes=false）会删掉「材质没引用贴图」的顶点属性——hero GLB 里的材质本来就没贴图（three 端 placeHero 按材质名换成 extMats 的 PBR 材质），于是 **TEXCOORD_0 被整组删掉**，lo 的砌块 / 风化 / 金属贴图全部采样 (0,0) 单像素 → 远景发黑、砌缝消失；`dedup()` 还把 marbleDark 合并成 marble。批次8 怀疑的法线 / AO 不是主因。检查工具 `tools/_insp.mjs`（列每个网格的属性，lo 少了 TEXCOORD_0 一眼可见）。

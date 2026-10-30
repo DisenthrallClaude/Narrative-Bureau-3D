@@ -276,7 +276,15 @@ export async function buildSurface(scene, world, ctx) {
       pl(0xffd9a8, 1.6, 4, -1.75, 1.35, -Dp / 2 + 0.75);   // 台灯
       pl(0x8fe0b0, 0.9, 3.5, 0, 1.6, -Dp / 2 + 0.9);       // 屏幕墙绿光
       pl(0xe8eeff, 2.2, 6, 0, H - 0.4, 0.4);               // 灯管
-      pl(0xffc890, 4.0, 9, 0, 2.7, Dp / 2 + 0.9);          // 门外壁灯
+      pl(0xffc890, 6.0, 12, 0, 2.7, Dp / 2 + 0.9);         // 门外壁灯（批次10：4→6，射程 9→12）
+      // R3 批次10：门外偏暗 → 按「检查站前坪」补：门前深色石板坪（4×3 m）、两侧灯柱（距门面 2.6 m，照亮前坪与外墙）、
+      // 前坪外缘两道混凝土隔离墩（留 3 m 车道 / 人行口）、屋顶前沿一盏冷白泛光照外墙与门楣字。新灯标 isFill：只在地表分区（宿舍/机库/碑廊/地铁口/岗哨）亮，广场不多算灯
+      box('stone', 3.0, 0.05, 0.6, 0, 0.025, Dp / 2 + 0.3); // 门槛石（前坪沿用广场铺装）
+      for (const sx of [-1, 1]) { P.add('street_lamp_02', wp(sx * 2.9, 0, Dp / 2 + 2.6), { h: 3.4, yaw: yaw + (sx < 0 ? 0 : Math.PI) });
+        const l = new THREE.PointLight(0xffd09a, 5.0, 14, 2); l.position.set(...wp(sx * 2.9, 2.95, Dp / 2 + 2.6)); l.userData.isFill = true; zone.add(l);
+        const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffd9a0 })); bulb.position.set(...wp(sx * 2.9, 2.95, Dp / 2 + 2.6)); zone.add(bulb); // 灯罩里的灯泡（灯柱模型无自发光，夜里像没开）
+        P.add('r2/concrete_road_barrier', wp(sx * 3.2, 0, Dp / 2 + 4.4), { w: 1.8, yaw }); }
+      { const l = new THREE.PointLight(0xdfe6ff, 3.5, 14, 2); l.position.set(...wp(0, H + 1.2, Dp / 2 + 1.6)); l.userData.isFill = true; zone.add(l); }
     }
     const sg = goldText('城墙岗哨　十二号塔', 3.2, 0.36, M.goldBright, { res: 96 }); sg.applyMatrix4(f.at(0, 3.3, Dp / 2 + 0.27)); zone.add(sg);
     // 岗亭顶部瞭望台：外挂铁梯 + 黄铜望远镜
