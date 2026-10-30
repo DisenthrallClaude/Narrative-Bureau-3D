@@ -1,5 +1,6 @@
 // 《叙事管理局》入口：渲染、加载、分区、控制、交互、剧情
 import * as THREE from 'three';
+import { chunkGroup, LodCells, DistCull, PortalCull } from './engine/chunk.js';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { Renderer, QUALITY } from './engine/renderer.js';
 import { manager, loadHDR, setAnisotropy } from './engine/assets.js';
@@ -98,6 +99,21 @@ async function boot() {
   scene.environment = envSky;
   LOG('hdr ok'); UI.loadProgress(0.1, '建造主楼……');
   await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx); await buildDressing(scene, world, ctx); await buildM5(scene, world, ctx); await buildSurface(scene, world, ctx); await buildDepths(scene, world, ctx); await buildR3(ctx, world, ctx._r3mat, true);
+  // R3 批次8 性能：地表/外景合批网格按 32 m 格切块（视锥 + 阴影视锥剔除生效）；主楼外立面 hi/lo 两级按格切换；小件按距离剔除
+  { const t0 = performance.now(); const ext = scene.getObjectByName('exterior'); const L = new LodCells(+(params.get('lodNear') ?? 40));
+    const fl = ctx.facadeLod; const keep = (o) => fl && (o.parent === fl.hi || o.parent === fl.lo || fl.hi.getObjectById(o.id) || fl.lo.getObjectById(o.id));
+    const r1 = chunkGroup(ext, { cell: 32, skip: keep }); const r2 = ctx.zones.surface ? chunkGroup(ctx.zones.surface, { cell: 32 }) : {};
+    if (fl) { chunkGroup(fl.hi, { cell: 32, minTris: 500, minR: 10 }); chunkGroup(fl.lo, { cell: 32, minTris: 200, minR: 10 }); L.add(fl.hi, 'hi'); L.add(fl.lo, 'lo'); L.finish(); G.lod = L; }
+    const DC = new DistCull(); const rule = (o, r) => (/^F_/.test(o.name) || o.userData.noCull ? Infinity : r < 1.5 ? 60 : r < 4 ? 110 : r < 10 ? 180 : Infinity);
+    DC.add(ext, rule); if (ctx.zones.surface) DC.add(ctx.zones.surface, rule); G.distCull = DC;
+    // 室内盒 + 门洞：宿舍三号楼（西门）、机库（西大门）、正门门廊（南正门）
+    const PC = new PortalCull([
+      { id: 'dorm', box: [52.6, 80, -1, 14.5, 0, 40], portals: [[[52.6, -0.2, 18.3], [52.6, -0.2, 21.7], [52.6, 3.8, 21.7], [52.6, 3.8, 18.3]]] },
+      { id: 'hangar', box: [73.6, 99, -1, 11.8, -87, -53], portals: [[[73.6, -0.2, -77.1], [73.6, -0.2, -62.9], [73.6, 8.6, -62.9], [73.6, 8.6, -77.1]]] },
+      { id: 'gate', box: [-14.5, 14.5, 0, 16, -30, -5.6], portals: [[[-3.7, 1.5, -6.0], [3.7, 1.5, -6.0], [3.7, 14.8, -6.0], [-3.7, 14.8, -6.0]]] },
+    ]);
+    if (!/[?&]noportal=1/.test(location.search)) { PC.add(ext); if (ctx.zones.surface) PC.add(ctx.zones.surface); G.portal = PC; }
+    LOG(`chunk ext ${r1.split}->${r1.made} surface ${r2.split}->${r2.made} lodCells ${L.cells.size} distCull ${DC.items.length} ${(performance.now() - t0).toFixed(0)}ms`); }
   LOG('world built'); scene.add(world.build()); inter.blocker = world.collider; LOG('bvh ok');
   // 反射地面
   const M = mats();
@@ -263,7 +279,7 @@ function setZone(z, force = false) {
   // M7 性能：室外有阳光时，室内组（安检大厅/档案馆/东翼…）只是透过门洞可见，不再投进阳光阴影图（原广场多渲染 ~0.9M 阴影三角面）；室内区恢复（高画质局部阴影要用）
   { const sunOn = L.sun > 0; for (const [k, g] of Object.entries(ctx.zones)) { if (k === 'surface' || k === 'gate') continue; if (!g.userData.casters) { g.userData.casters = []; g.traverse((o) => { if (o.isMesh && o.castShadow) g.userData.casters.push(o); }); } for (const o of g.userData.casters) o.castShadow = !sunOn; } } hemi.intensity = L.env === 'sky' && L.sun > 0 ? L.hemi * TOD.hemiMul : L.hemi;
   // 批次4 性能：站在正门门廊里，外立面/广场只透过门洞可见，门廊自身墙顶已投影 → 外部组不进阳光阴影图（zonestat：gate 阴影三角面 6.08M）
-  { const off = z === 'gate' && !/[?&]extShadow=1/.test(location.search); scene.getObjectByName('exterior').traverse((o) => { if (!o.isMesh) return; if (o.userData.cs0 === undefined) o.userData.cs0 = o.castShadow; o.castShadow = o.userData.cs0 && !off; if (/^F_(trim|slate|lead)$/.test(o.name)) o.visible = !off || /[?&]facadeAll=1/.test(location.search); }); } // 门廊内看不到外立面线脚/屋面（F_trim 1.58M 面）→ 隐藏
+  { const off = z === 'gate' && !/[?&]extShadow=1/.test(location.search); scene.getObjectByName('exterior').traverse((o) => { if (!o.isMesh) return; if (o.userData.cs0 === undefined) o.userData.cs0 = o.castShadow; o.castShadow = o.userData.cs0 && !off; if (/^F_(trim|slate|lead)$/.test(o.name)) { o.userData.zoneHide = off && !/[?&]facadeAll=1/.test(location.search); if (!G.lod) o.visible = !o.userData.zoneHide; } }); G.lod?.refresh(camera); } // 门廊内看不到外立面线脚/屋面（F_trim 1.58M 面）→ 隐藏
   scene.fog = new THREE.FogExp2(L.fog[0], L.fog[1]);
   { const deep = /^(abyss|seventh)/.test(z); scene.background = deep ? new THREE.Color(L.fog[0]) : skyTex; }
   targetExp = z === 'plaza' ? TOD.plazaExp : L.exp;
@@ -316,6 +332,25 @@ G.glitch = (s) => { R.ca.offset.set(0.004 * s, 0.003 * s); setTimeout(() => R.ca
 const clock = new THREE.Clock();
 let frames = 0, fpsAcc = 0, fpsN = 0, stepAcc = 0; const perf = { max: 0, last: null };
 window.__GROUPS__ = () => scene.children.filter((g) => g.isGroup || g.isObject3D).map((g) => { let meshes = 0, tris = 0, shadow = 0; g.traverse((o) => { if (!o.isMesh || !o.geometry) return; const n = (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1); meshes++; tris += n; if (o.castShadow) shadow += n; }); return { name: g.name || g.type, visible: g.visible, meshes, tris: Math.round(tris), shadowTris: Math.round(shadow) }; }).filter((x) => x.meshes);
+// R3 批次8：同屏三角面拆解（主相机视锥 / 太阳阴影视锥内的可见网格，按顶层组 + 前 25 大网格）
+window.__TRISTAT__ = () => {
+  const fr = new THREE.Frustum(), frS = new THREE.Frustum(), m = new THREE.Matrix4(), sp = new THREE.Sphere();
+  camera.updateMatrixWorld(); m.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); fr.setFromProjectionMatrix(m);
+  const sc = sun.shadow.camera; sc.updateMatrixWorld(); m.multiplyMatrices(sc.projectionMatrix, sc.matrixWorldInverse); frS.setFromProjectionMatrix(m);
+  const groups = {}, top = []; let main = 0, shadow = 0;
+  const walk = (o, top0) => { if (!o.visible) return; if (o.isMesh && o.geometry && o.layers.test(camera.layers)) { const g = o.geometry; const n = (g.index ? g.index.count : g.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1);
+      if (!g.boundingSphere) g.computeBoundingSphere(); sp.copy(g.boundingSphere).applyMatrix4(o.matrixWorld); const inM = !o.frustumCulled || fr.intersectsSphere(sp); const inS = sun.castShadow && o.castShadow && (!o.frustumCulled || frS.intersectsSphere(sp));
+      const G0 = groups[top0] ??= { main: 0, shadow: 0 }; if (inM) { G0.main += n; main += n; top.push({ n: Math.round(n), name: o.name, grp: top0, r: +sp.radius.toFixed(1) }); } if (inS) { G0.shadow += n; shadow += n; } }
+    for (const c of o.children) walk(c, top0); };
+  for (const c of scene.children) walk(c, c.name || c.type);
+  for (const v of Object.values(groups)) { v.main = Math.round(v.main); v.shadow = Math.round(v.shadow); }
+  return { frame: perf.last, main: Math.round(main), shadow: Math.round(shadow), groups, top: top.sort((a, b) => b.n - a.n).slice(0, 25) };
+};
+// 批次8：整帧三角面按 pass 拆分（关太阳阴影 / 关局部阴影 / 关 AO 各渲一帧）
+window.__FRAME__ = () => { const f = () => { R.gl.info.autoReset = false; R.gl.info.reset(); reflector.update(scene, camera, R.q.reflect); R.render(0.016); return R.gl.info.render.triangles; };
+  const out = { all: f() }; const s0 = sun.castShadow; sun.castShadow = false; out.noSun = f(); sun.castShadow = s0;
+  const loc = []; scene.traverse((o) => { if (o.isLight && o !== sun && o.castShadow) { loc.push(o); o.castShadow = false; } }); out.noLocal = f(); out.nLocal = loc.length; for (const o of loc) o.castShadow = true;
+  if (R.ao) { const a = R.ao.enabled; R.ao.enabled = false; out.noAO = f(); R.ao.enabled = a; } return out; };
 window.__PERF__ = () => ({ ...perf.last, geometries: R.gl.info.memory.geometries, textures: R.gl.info.memory.textures, programs: R.gl.info.programs?.length ?? 0 });
 function loop() {
   if (window.__READY__) return;
@@ -349,6 +384,7 @@ function loop() {
   R.setExposure(curExp);
   for (const s of ctx.screens) s.update(dt, t);
   updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t); updateDressing(ctx, dt, t); updateDepths(ctx, dt, t);
+  if (G.lod && !/[?&]nolod=1/.test(location.search)) G.lod.update(camera); if (G.distCull && !/[?&]nocull=1/.test(location.search)) G.distCull.update(camera); G.portal?.update(camera);
   if (TEST) { frames++; return; }
   R.gl.info.autoReset = false; R.gl.info.reset(); // M6：统计整帧（反射 + 阴影 + 后期全部 pass）
   reflector.setY(FLOOR); reflector.update(scene, camera, R.q.reflect);

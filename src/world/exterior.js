@@ -411,7 +411,9 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
 // ---------------- R2 精修主楼（tools/blender/facade.py → hero_facade.glb）----------------
 async function heroFacade(g, M, world, ctx, add) {
   const Y = FLOOR;
-  await placeHero(g, world, './assets/hero/hero_facade.glb');
+  // R3 批次8：远景 LOD（tools/facade_lod.mjs，Permissive 塌边 2.6M → 0.32M 面）；hi/lo 各自子组，main.js 切块后按格切换
+  const gHi = new THREE.Group(); gHi.name = 'facade_hi'; const gLo = new THREE.Group(); gLo.name = 'facade_lo'; g.add(gHi, gLo); ctx.facadeLod = { hi: gHi, lo: gLo };
+  await Promise.all([placeHero(gHi, world, './assets/hero/hero_facade.glb'), placeHero(gLo, null, './assets/hero/hero_facade_lo.glb', { col: false })]);
   // 门洞内：敞开的大门门扇（深色木 + 铁箍 + 金色铆钉）
   const DW = 7, DH = 9;
   for (const sx of [-1, 1]) {

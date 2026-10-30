@@ -1630,3 +1630,102 @@ export function planB5Deep(y) {
   return { room, items: out };
 }
 Object.assign(PLANS, { b5_deep: (Y) => fixYaw(planB5Deep(Y)) }); Object.assign(R3, { b5_deep: true });
+
+// ================= R3 批次8：大空间中间层次（训练场 / 地铁口）=================
+// 原则：远景不空 → 结构（壁柱/桁架）+ 顶部吊挂（工矿灯/电缆桥架/局旗）+ 地面标线（安全弧线/分区框/斑马警示）+ 隔离栏 + 成组陈设（托盘/油桶/路锥）
+const X8 = {
+  training(out, y) {
+    const H = 16;
+    // ① 结构壁柱：东西墙每 8 m、南墙每 8 m（清水混凝土 + 黄色防撞护角 + 铁件柱头 + 地堡壁灯）；避让东墙器械架 z −121.5…−110.5
+    const pil = (x, z, w, d, lampYaw) => { wallBox(out, 'concrete', x, z, w, d, y, H - 0.2, '结构壁柱'); out.push({ box: 'r3_paintYellow', x, y: y + 0.45, z, w: w + 0.04, h: 0.9, d: d + 0.04, tag: '结构壁柱', on: 'partv' });
+      out.push({ box: 'blackMetal', x, y: y + H - 1.6, z, w: w + 0.2, h: 0.5, d: d + 0.2, tag: '结构壁柱', on: 'partv' });
+      if (lampYaw != null) { const n = [Math.sin(lampYaw), Math.cos(lampYaw)]; out.push({ m: 'r2/bunker_lamps', x: x + n[0] * (w / 2 + 0.04), y: y + 4.2, z: z + n[1] * (d / 2 + 0.04), yaw: lampYaw, h: 0.3, tag: '壁灯', on: 'pillar' }); } };
+    for (const z of [-100, -108, -124, -132, -140, -148]) { pil(-31.7, z, 0.6, 0.9, ROT.E); if (z !== -116) pil(31.7, z, 0.6, 0.9, ROT.W); }
+    for (const x of [-24, -16, -8, 8, 16, 24]) pil(x, -155.7, 0.9, 0.6, ROT.S);
+    // ② 顶部桁架：每 8 m 一榀东西向钢桁架（上下弦 + 腹杆），下弦挂工矿灯；两条南北向电缆桥架
+    for (const z of [-100, -108, -116, -124, -132, -140, -148]) {
+      out.push({ box: 'blackMetal', x: 0, y: y + 14.6, z, w: 63, h: 0.3, d: 0.3, tag: '桁架', on: 'ceil' }); out.push({ box: 'blackMetal', x: 0, y: y + 13.2, z, w: 63, h: 0.24, d: 0.3, tag: '桁架', on: 'ceil' });
+      for (let x = -30; x <= 30; x += 3) { out.push({ box: 'blackMetal', x, y: y + 13.9, z, w: 0.12, h: 1.2, d: 0.12, tag: '桁架', on: 'ceil' }); out.push({ box: 'blackMetal', x: x + 1.5, y: y + 13.9, z, w: 0.1, h: 1.9, d: 0.1, yaw: 0, tag: '桁架', on: 'ceil', rz: 0.8 }); }
+      for (const x of [-24, -12, 12, 24]) { out.push({ box: 'blackMetal', x, y: y + 12.6, z, w: 0.03, h: 1.2, d: 0.03, tag: '吊灯', on: 'ceil' }); out.push({ m: 'r2/hanging_industrial_lamp', x, y: y + 11.15, z, yaw: 0, h: 0.85, tag: '工矿灯', on: 'ceil' }); }
+    }
+    for (const x of [-12.5, 12.5]) { out.push({ box: 'iron', x, y: y + 12.9, z: -124, w: 0.6, h: 0.06, d: 62, tag: '电缆桥架', on: 'ceil' }); for (const s of [-1, 1]) out.push({ box: 'iron', x: x + s * 0.3, y: y + 12.98, z: -124, w: 0.03, h: 0.14, d: 62, tag: '电缆桥架', on: 'ceil' });
+      for (let k = 0; k < 6; k++) out.push({ box: 'dz_bakelite', x: x + (k - 2.5) * 0.08, y: y + 12.96, z: -124, w: 0.05, h: 0.05, d: 61.6, tag: '电缆', on: 'ceil' }); }
+    // ③ 局旗吊挂：主通道两侧（面朝电梯厅），桁架下 3.2 m 高的竖幅
+    for (const z of [-104, -112]) for (const sx of [-1, 1]) { out.push({ box: 'blackMetal', x: sx * 4.6, y: y + 12.4, z, w: 1.5, h: 0.05, d: 0.05, tag: '局旗', on: 'ceil' }); pic(out, 'textures/b01/B01_02_局旗深蓝.png', sx * 4.6, y + 10.7, z, 0, 1.4, 3.2, 'none', { side: 2, tag: '局旗', on: 'ceil' }); }
+    // ④ 地面标线：副本门区安全弧线（r = 26，黄白相间短段）、ABY 门前斜纹警示、射击线后黄线
+    for (let a = -1.08; a <= 1.08; a += 0.06) { const r = 25.6, x = Math.sin(a) * r, z = -102 - Math.cos(a) * r; if (Math.abs(x) < 2.8 && z > -128.5) continue; if (Math.round(a / 0.06) % 2) continue; out.push({ box: 'r3_paintYellow', x, y: y + 0.006, z, w: 1.4, h: 0.012, d: 0.14, yaw: -a, tag: '安全线', on: 'partv' }); }
+    { const a = -0.95 + 5 * 0.38, gx = Math.sin(a) * 30, gz = -102 - Math.cos(a) * 30, dx = -Math.sin(a), dz = Math.cos(a), tx = Math.cos(a), tz = Math.sin(a);
+      out.push({ box: 'r3_hazard', x: gx + dx * 1.4, y: y + 0.007, z: gz + dz * 1.4, w: 5.6, h: 0.012, d: 1.4, yaw: -a, tag: '警示斑马', on: 'partv' }); }
+    floorZ(out, 'r3_paintYellow', -18, 18, -137.9, -137.75, y);
+    // ⑤ 隔离栏：射击线后观察带（栏杆 3.9 m 一段，主通道处留口）+ 格斗软垫区西侧
+    for (const x of [-16.05, -12.1, -8.15, -4.2, 4.2, 8.15, 12.1, 16.05]) out.push({ m: 'r2/metal_railing', x, y, z: -137.2, yaw: 0, h: 1.0, tag: '隔离栏', on: 'floor', col: [3.9, 1.0, 0.15] });
+    for (const z of [-100.2, -104.15, -108.1]) out.push({ m: 'r2/metal_railing', x: 16.3, y, z, yaw: ROT.E, h: 1.0, tag: '隔离栏', on: 'floor', col: [3.9, 1.0, 0.15] });
+    // ⑥ 东南角后勤堆场：托盘 + 塑料桶 + 油桶 + 路锥，黄线框
+    floorZ(out, 'r3_epoxy', 19.6, 31.4, -155.2, -149.0, y, { border: 0.12, bmat: 'r3_paintYellow' });
+    for (const [x, z, yaw] of [[21.4, -153.6, 0.05], [23.0, -153.6, -0.04], [24.6, -153.7, 0.02]]) { out.push({ m: 'r2/eur_pallet_rawscan', x, y, z, yaw, w: 1.2, tag: '后勤堆场', on: 'floor', col: [1.2, 0.15, 0.8] }); out.push({ m: 'r2/eur_pallet_rawscan', x, y: y + 0.15, z, yaw: yaw + 0.03, w: 1.2, tag: '后勤堆场', on: 'stack' }); }
+    out.push({ m: 'r2/pallets_and_plastic_barrels', x: 27.6, y, z: -153.4, yaw: 0, w: 1.3, tag: '后勤堆场', on: 'floor', col: [1.3, 1.0, 1.0] });
+    out.push({ m: 'r2/oil_drums', x: 29.9, y, z: -153.6, yaw: 0.2, h: 0.95, tag: '后勤堆场', on: 'floor', col: [1.2, 0.95, 1.2] });
+    out.push({ m: 'r2/oil_drums', x: 29.7, y, z: -151.2, yaw: 1.1, h: 0.95, tag: '后勤堆场', on: 'floor', col: [1.2, 0.95, 1.2] });
+    for (const [x, z] of [[21.0, -150.2], [22.6, -150.4], [24.2, -150.1]]) out.push({ m: 'r2/traffic_cones', x, y, z, yaw: x, h: 0.5, tag: '后勤堆场', on: 'floor' });
+    for (const z of [-104, -124, -144]) light(out, 0, y + 11.0, z, 0xfff0d8, 1.8, 18);
+  },
+  metro(out, y) {
+    // ① 路灯两列（x = ±11，每 12 m 左右，避让报亭/单车/便利店/公交站）+ 灯杆竖幅（局旗 / 规则之泉）
+    const L = [[-11, 104], [-11, 116], [-11, 136], [-11, 148], [-11, 160], [11, 104], [11, 115.6], [11, 136], [11, 152], [11, 160]];
+    L.forEach(([x, z], i) => { out.push({ m: 'street_lamp_02', x, y, z, yaw: x < 0 ? ROT.E : ROT.W, h: 4.8, tag: '路灯', on: 'floor', col: [0.4, 4.8, 0.4] });
+      pic(out, i % 2 ? 'textures/b01/B01_08_海报_规则之泉.png' : 'textures/b01/B01_02_局旗深蓝.png', x, y + 3.0, z + 0.22, 0, 0.55, 1.3, 'none', { side: 2, tag: '灯杆竖幅', on: 'pic' }); });
+    for (const [x, z] of L) light(out, x * 0.85, y + 4.4, z, 0xffd8a0, 0.8, 9);
+    // ② 广场边缘护柱（x = ±18.4，每 2.4 m；便利店段让开）+ 黑石收边带
+    for (const sx of [-1, 1]) { for (let z = 101.5; z < 168.5; z += 2.4) { if (sx > 0 && z > 124.5 && z < 131.5) continue; out.push({ m: 'bollard', x: sx * 18.4, y, z, yaw: 0, h: 0.95, tag: '护柱', on: 'floor', col: [0.25, 0.95, 0.25] }); }
+      floorZ(out, 'stoneDark', sx * 18.2, sx * 19.0, 100.2, 170.8, y, { lift: 0.002 }); }
+    // ③ 横向石材分隔带（每 12 m，盲道处断开）——把大片铺装分成可读尺度
+    for (const z of [110, 122, 146, 158]) for (const [a, b] of [[-18.2, -0.5], [0.5, 18.2]]) floorZ(out, 'r3_stoneBorder', a, b, z - 0.2, z + 0.2, y, { lift: 0.001 });
+    // ④ 公交候车亭（钢柱 + 玻璃顶 + 背板广告），罩在原两张长椅上
+    { const cx = 10.0, cz = 166.4; for (const dx of [-2.4, 2.4]) for (const dz of [-0.9, 0.9]) wallBox(out, 'blackMetal', cx + dx, cz + dz, 0.1, 0.1, y, 2.6, '候车亭');
+      out.push({ box: 'blackMetal', x: cx, y: y + 2.65, z: cz, w: 5.2, h: 0.1, d: 2.2, tag: '候车亭', on: 'partv' }); out.push({ box: 'glassClear', x: cx, y: y + 2.72, z: cz, w: 5.0, h: 0.03, d: 2.0, tag: '候车亭', on: 'partv' });
+      out.push({ box: 'blackMetal', x: cx, y: y + 1.5, z: cz + 0.95, w: 5.0, h: 1.9, d: 0.06, tag: '候车亭', on: 'partv' }); pic(out, 'textures/b05/B05_海报_篇幅补充剂.png', cx + 1.2, y + 1.5, cz + 0.91, Math.PI, 1.1, 1.6, 'none', { tag: '候车亭' }); pic(out, 'textures/b01/B01_07_海报_叙事高考.png', cx - 1.2, y + 1.5, cz + 0.91, Math.PI, 1.1, 1.6, 'none', { tag: '候车亭' });
+      light(out, cx, y + 2.4, cz, 0xfff0d8, 0.8, 5); }
+    // ⑤ 单车停放架（共享单车区两侧）+ 出站口两侧导向立牌
+    for (const z of [124.6, 130.6]) out.push({ box: 'steel', x: -11.75, y: y + 0.4, z, w: 5.2, h: 0.05, d: 0.05, tag: '单车架', on: 'partv' });
+  },
+};
+
+// ================= R3 批次8：其余区地面分区与磨损（只铺在原有分区/磨损之外，避免 z 冲突；医务室在走廊地胶上 lift 0.002）=================
+Object.assign(X8, {
+  archive(out, y) {
+    // 开架区 A/B 实木地板 + 石材收边（东门方格石地面南北两侧）；开架区西侧通道、借阅柜台前磨损；西南卡片目录区方砖
+    floorZ(out, 'r3_parquet', -27.2, -20.4, -66.4, -56.6, y, { border: 0.14 }); floorZ(out, 'r3_parquet', -27.2, -20.4, -46.4, -38.2, y, { border: 0.14 });
+    floorZ(out, 'r3_tile', -55.6, -48.4, -44.6, -36.2, y, { border: 0.14 });
+    wear(out, -28.5, -27.5, -66.0, -38.5, y); wear(out, -48.4, -46.6, -53.0, -50.1, y);
+  },
+  canteen(out, y) {
+    // 取餐线前防滑方砖带 + 石材收边；就餐区石材分隔框；咖啡台 / 餐具回收 / 东侧窗边小桌各自分区
+    floorZ(out, 'r3_tile', -12.0, 12.0, -138.3, -135.5, y, { border: 0.14 });
+    for (const [x0, x1, z0, z1] of [[-13.2, 13.2, -134.6, -134.4], [-13.2, 13.2, -113.6, -113.4], [-13.2, -13.0, -134.4, -113.6], [13.0, 13.2, -134.4, -113.6]]) floorZ(out, 'r3_stoneBorder', x0, x1, z0, z1, y);
+    floorZ(out, 'r3_check', -18.0, -14.6, -124.2, -117.8, y, { border: 0.12 }); floorZ(out, 'r3_tile', 14.2, 18.0, -139.6, -135.6, y, { border: 0.12 }); floorZ(out, 'r3_parquet', 13.8, 17.8, -131.0, -119.0, y, { border: 0.12 });
+    wear(out, 13.8, 18.0, -114.6, -111.4, y); wear(out, -2.0, 2.0, -113.0, -110.4, y);
+  },
+  medical(out, y) {
+    const L = { lift: 0.002 };
+    floorZ(out, 'r3_lino', -9.2, -3.4, -111.4, -99.8, y, { ...L, border: 0.1 }); // 观察病房
+    floorZ(out, 'r3_lino', 2.7, 9.2, -110.8, -105.0, y, { ...L, border: 0.1 }); // 诊室
+    floorZ(out, 'r3_tile', -9.2, 9.2, -119.5, -112.0, y, { ...L, border: 0.12 }); // 处置 · 净化（湿区）
+    floorZ(out, 'r3_check', 2.4, 9.2, -95.6, -92.5, y, { ...L, border: 0.1 }); // 候诊
+    for (const z of [-99.35, -95.65]) floorZ(out, 'r3_stoneBorder', -9.2, 9.2, z - 0.06, z + 0.06, y, L); // 主通道收边
+    wear(out, 3.2, 6.8, -104.4, -103.0, y); // 分诊台前
+  },
+  b1(out, y) {
+    floorZ(out, 'r3_epoxy', 5.0, 15.6, -120.0, -98.0, y, { border: 0.12, bmat: 'r3_paintYellow' }); // 车辆整备区
+    floorZ(out, 'r3_lino', -15.6, -7.0, -103.2, -96.0, y, { border: 0.1 }); // 简报区
+    floorZ(out, 'r3_hazard', -9.4, 9.4, -92.6, -92.25, y); wear(out, -1.8, 1.8, -116.0, -92.8, y); // 电梯厅开口警示 + 主动线磨损
+  },
+  b2(out, y) {
+    for (const z of [-117.0, -115.0]) floorZ(out, 'r3_paintYellow', -8.6, -2.6, z - 0.05, z + 0.05, y); // 检修通道边线
+    floorZ(out, 'r3_epoxy', -11.8, -6.2, -123.6, -118.6, y, { border: 0.14, bmat: 'r3_hazard' }); // 发电机危险区
+  },
+  b4(out, y) {
+    for (const x of [-3.1, 3.1]) floorZ(out, 'r3_paintYellow', x - 0.04, x + 0.04, -134.0, -95.0, y); // 收容柜前安全线
+    wear(out, -2.8, -1.3, -133.5, -96.5, y); wear(out, 1.3, 2.8, -133.5, -96.5, y);
+  },
+});
+for (const [id, f] of Object.entries(X8)) { const base = PLANS[id]; if (!base) continue; PLANS[id] = (Y) => { const p = base(Y); const n0 = p.items.length; f(p.items, Y, p.room); fixYaw({ items: p.items.slice(n0) }); return p; }; }
