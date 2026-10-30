@@ -2764,6 +2764,7 @@ function planSpine(y, lv) {
     aisles: [{ label: '北横道（通库门）', x0: -8.5, x1: 8.5, z0: -91.8, z1: -89.8 }, { label: '西侧通道', x0: -8.0, x1: -2.6, z0: -91.8, z1: -84.6 }, { label: '东侧通道', x0: 2.6, x1: 7.6, z0: -91.8, z1: -84.6 }] };
   const B = (box, x, yy, z, w, h, d, tag, uv = 1) => out.push({ box, x, y: yy, z, w, h, d, uv, tag, on: 'partv' });
   const C = (x, yy, z, w, h, d, tag) => out.push({ part: true, x, y: yy, z, size: [w, h, d], tag: tag + '·碰撞', on: 'partv' });
+  out.push({ fixed: true, m: lv === 'B5' ? '固定:井底轿厢+栏杆闸口' : '固定:竖井洞口+铸铁栏杆', x: 0, y, z: SP.zc, yaw: 0, size: [3.9, 1.1, 3.1], tag: '① 竖井洞口', on: 'floor' }); // 平面图占位（实际碰撞见栏杆 part）
   const y0 = lv === 'B5' ? y : below, y1 = ceil, hh = y1 - y0, ym = (y0 + y1) / 2;
   // 井架：四角立柱 + 横撑 + 南北导轨
   for (const x of [SP.x0 + 0.15, SP.x1 - 0.15]) for (const z of [SP.z0 + 0.15, SP.z1 - 0.15]) B('r3_steelOld', x, ym, z, 0.16, hh, 0.16, '① 井架立柱');
