@@ -16,8 +16,10 @@ const page = await browser.newPage({ viewport: { width: 320, height: 180 } });
 const errors = [], report = []; const t0 = Date.now();
 const T = () => ((Date.now() - t0) / 1000).toFixed(0) + 's';
 const log = (s) => { console.log(T(), s); report.push(`- \`${T()}\` ${s}`); };
-page.on('console', (m) => { if (m.type() === 'error') { errors.push(m.text().slice(0, 300)); console.log('  CONSOLE ERROR', m.text().slice(0, 200)); } });
-page.on('pageerror', (e) => { errors.push('PAGEERROR ' + e.message.slice(0, 300)); console.log('  PAGEERROR', e.message.slice(0, 200)); });
+page.on('console', (m) => { if (m.type() === 'error' && !/A user gesture is required to request Pointer Lock/.test(m.text())) { errors.push(m.text().slice(0, 300)); console.log('  CONSOLE ERROR', m.text().slice(0, 200)); } });
+// 批次17：无头 runner 没有用户手势，requestPointerLock 必然抛这一条——只屏蔽这一条环境错误（记为 envSkipped，不计入控制台错误）
+const ENV_IGNORE = /A user gesture is required to request Pointer Lock/; let envSkipped = 0;
+page.on('pageerror', (e) => { if (ENV_IGNORE.test(e.message)) { envSkipped++; return; } errors.push('PAGEERROR ' + e.message.slice(0, 300)); console.log('  PAGEERROR', e.message.slice(0, 200)); });
 page.on('requestfailed', (r) => { if (!/\.(mp3|ogg|wav|m4a)$/.test(r.url())) errors.push('REQFAIL ' + r.url()); });
 await page.goto(`http://localhost:${port}/?test=1&q=low`);
 await page.waitForFunction(() => window.__NB_READY__ === true, null, { timeout: 600000, polling: 1000 });
@@ -84,9 +86,9 @@ await use('depth_b5_door'); await page.waitForTimeout(3500); z = await zone(); o
 await use('depth_core_seam'); await page.waitForTimeout(3500); z = await zone(); ok(z?.startsWith('seventh'), '定稿厅红缝 → 装订线 zone=' + z);
 await use('depth_return'); await page.waitForTimeout(3500); z = await zone(); ok(z === 'training', '墨渊金门 → 回 B6 zone=' + z);
 
-log(`—— 结果：通过 ${pass}，失败 ${fail}；控制台错误 ${errors.length} ——`);
+log(`—— 结果：通过 ${pass}，失败 ${fail}；控制台错误 ${errors.length}（已屏蔽无头 Pointer Lock 环境报错 ${envSkipped} 条）——`);
 for (const e of [...new Set(errors)].slice(0, 30)) report.push('  - ERR ' + e);
 const out = arg('out', 'docs/WALKTHROUGH.md');
-fs.writeFileSync(out, `# 剧情自动化走查（tools/walk.mjs）\n\n运行时间：${new Date().toISOString()}　通过 ${pass} / 失败 ${fail} / 控制台错误 ${errors.length}\n\n${report.join('\n')}\n`);
+fs.writeFileSync(out, `# 剧情自动化走查（tools/walk.mjs）\n\n运行时间：${new Date().toISOString()}　通过 ${pass} / 失败 ${fail} / 控制台错误 ${errors.length}（已屏蔽无头 Pointer Lock 环境报错 ${envSkipped} 条）\n\n${report.join('\n')}\n`);
 await browser.close(); srv.close();
 process.exit(fail ? 1 : 0);
