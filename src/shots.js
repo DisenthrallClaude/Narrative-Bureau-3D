@@ -106,10 +106,11 @@ export const SHOTS = {
   wall_r3_b: { pos: [-44.46, 1.7, 59.58], look: [-47.45, 1.0, 55.45], fov: 74, zone: 'wall_posts' }, // 西北角 → 行军床 / 空步枪架 / 门窗（窗外探照灯光）
   wall_top: { pos: [-45.59, 30, 58.48], look: [-45.59, 0, 58.47], fov: 20, clipY: 3.9, zone: 'wall_posts' },
   ext_door_near: { pos: [0, 1.7, 9], look: [0, 6, -2], fov: 70, zone: 'plaza' }, // 批次26 外观诊断 ×6
-  ext_door_mid: { pos: [0, 3, 34], look: [0, 14, -5], fov: 66, zone: 'plaza' },
+  ext_door_mid: { pos: [10, 2.2, 21], look: [0, 16, -5], fov: 66, zone: 'plaza' }, // 批次27：原 [0,3,34] 镜头埋进泉心雕像
   ext_bird: { pos: [55, 60, 95], look: [0, 0, 20], fov: 55, zone: 'plaza' },
   ext_street: { pos: [0, 1.7, 96], look: [0, 3, 135], fov: 75, zone: 'plaza' },
-  ext_side: { pos: [70, 10, 20], look: [30, 15, -40], fov: 66, zone: 'plaza' },
+  ext_side: { pos: [44, 26, 40], look: [10, 18, -20], fov: 66, zone: 'plaza' }, // 批次27：原 [70,10,20] 贴着附楼墙
+  ext_booth: { pos: [6.5, 1.7, 66.5], look: [13, 1.6, 75], fov: 60, zone: 'plaza' }, // 批次27 E5 东岗亭近景
   ext_sky: { pos: [0, 40, 200], look: [0, 20, -40], fov: 50, zone: 'plaza' },
   heli_r3: { pos: [96.5, 12.4 + 1.8, -56.0], look: [80, 12.4 + 0.6, -80], fov: 70, zone: 'helipad' }, // 批次23 屋顶停机坪：东南角 → H / 楼梯间 / 设备房
   heli_r3_b: { pos: [84.5, 12.4 + 1.7, -71.0], look: [84.0, 12.4 + 1.4, -84.0], fov: 78, zone: 'helipad' }, // 批次24：楼梯间 / 设备房南立面近景（檐口 / 雨渍 / 管线 / 百叶）
