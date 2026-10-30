@@ -103,7 +103,7 @@ export function dressMats(M) {
       const m = new THREE.MeshStandardMaterial({ map: loadTex(P + '_col.webp', { srgb: true, ...R }), normalMap: loadTex(P + '_nrm.webp', R), roughnessMap: loadTex(P + '_arm.webp', R), color: 0xbcb0a0, roughness: 1, envMapIntensity: 0.4 }); m.normalScale.set(1.2, 1.2); m.name = 'ph:ashlarEC'; return m; })(), { macro: 0.14, grime: 0.3, streak: 0.12 }),
     r3_terrDark: W(pbr('Terrazzo005', { rn: true, color: 0x55524a, roughness: 0.4, env: 0.38 }), { macro: 0.2, dust: 0.1, rough: 0.25 }), // 批次18 lab3：深色水磨石
     r3_labWain: W(new THREE.MeshStandardMaterial({ color: 0x7d8f80, roughness: 0.42, metalness: 0.05 }), { macro: 0.18, grime: 0.35, ground: 1.0, streak: 0.12 }), // 批次18 lab3：浅灰绿油漆墙裙
-    r3_labUpper: W(phm('grey_plaster_02', { color: 0xdcd9cf, env: 0.3 }), { macro: 0.15, grime: 0.18, streak: 0.08 }), // 批次18 lab3：白上墙
+    r3_labUpper: W(new THREE.MeshStandardMaterial({ color: 0xe2e0d8, roughness: 0.85, envMapIntensity: 0.3 }), { macro: 0.08, grime: 0.1, streak: 0.04 }), // 批次18 收尾：lab_r3_b 看图 grey_plaster_02 渲成土黄迷彩 → 纯色白漆（未重拍） // 批次18 lab3：白上墙
     r3_epoxyBlack: W(new THREE.MeshStandardMaterial({ color: 0x121315, roughness: 0.3, metalness: 0.05, envMapIntensity: 0.6 }), { macro: 0.1, dust: 0.08 }), // 批次18 lab3：黑色环氧树脂台面
     r3_marbleHoned: W(pbr('Marble016', { rn: true, color: 0x8a8a92, roughness: 0.46, env: 0.42 }), { macro: 0.12, dust: 0.05 }),
     r3_frosted: new THREE.MeshPhysicalMaterial({ color: 0xc4ccc8, roughness: 0.4, metalness: 0, transparent: true, opacity: 0.3, envMapIntensity: 0.35, depthWrite: false }), // 批次12 收尾：原 0.55 不透明度 + 近白色在球吊灯下发白，像灯箱板、透不出后面（cs_r3 / cs_r3_b）
