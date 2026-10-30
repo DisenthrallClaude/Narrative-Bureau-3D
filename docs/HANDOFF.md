@@ -150,6 +150,27 @@
 4. 墨渊 abyss_core / abyss_tide、第七局 seventh_entry / gutter / rewrite 未加 R3 陈设（gutter/rewrite 是仪式性空间，刻意少放）。
 5. 新用的 lectern / simple_bunk_bed / portable_searchlight / locker_equipment / schooldesk 等朝向未经 Blender 接触表核对（本机无 Blender），截图看基本合理。
 
+## R3 批次8 收尾（2026-10-30 10:35 CST 接手；批次8 主体见提交 3fdd2d5 / f6dadad 说明）
+### 完成
+- **plaza 远景城景切块**（chunk.js）：离城心 > 170 m 的三角面按 512 m 大格、实例网格按 64 m 格切 → ext 6671 块 → 310 块。commit 4e7f4ce。
+- **门廊 gate_r3 变暗 / 红毯消失、wall_post 全黑、hangar_top 空图 = 同一根因，是截图管线问题，不是 M.stone 或门洞剔除**：上一任二分（x1–x4）全部把 gate_r3 放在会话第一张，所以四个开关都"正常"、二分无效。实测：hangar_top 作首张正常（2013 drawcall）；但同会话里从普通机位切到 clipY 俯视机位、或从俯视切回普通机位时，SwiftShader 要一次补编译整批新着色器变体（裁剪面有/无），在 7.8 GB 机器上链接失败（THREE "Shader Error 0/1282 - VALIDATE_STATUS false"，Program Info Log 为空）→ GL 1282 连锁，之后几张机位材质整批不画（地面/红毯消失、只剩自发光）。另：plaza 加 `lodNear=200`（全用 hi 外立面）单张也出 87 条同样错误 → 本质是内存压力下链接失败。
+  - 修复：tools/shot.mjs 对 `*_top` 机位**及其下一张**、以及 `--fresh 1` 时关掉旧页、新开页面重新加载；页面崩溃（OOM）只记 `SHOT ERROR` 不终止整批，下一机位自动新开。commit 2d6ef7b、88d8541。
+  - 验证：wall_post→gate_r3、hangar_r3→gate_r3 同会话均正常（846 drawcall，亮度与批次7一致）；hangar_r3,hangar_b,hangar_top 序列 hangar_top 正常。**正式游戏里没有 clipY，这个问题只影响截图。**
+- **abyss_core_b 机位**：原位置距书环中心 17.8 m（在 R=16 m 的巨书里）→ 移到 (−2, −278.3, −236)（12.8 m，书桌环与书环之间）。
+- **plaza OOM**：新切块后 plaza 1600×900 high 单张能出图（cc，约 300 s，内存峰值 7.8/7.9 GB，贴着上限）；facade 在 zz 上 OOM（zz 空闲占用比别的机器高约 600 MB），换 cc 出图。**tristat.mjs 测 plaza 仍崩**（它为拆 pass 要多渲几帧、触发更多着色器变体），三角面用截图会话的整帧统计：plaza 整帧 **12.00M**（反射+阴影+后期全部 pass，10594 drawcall；6671 块版 12.26M，主视 4.39M / 阴影 3.41M）；metro_r3 整帧 **5.26M**（主视 2.06M、阴影 0.67M、无太阳阴影时 4.13M），仍略超 5M，未处理。
+- **远景 LOD 外立面**：目视 plaza / facade / metro_r3 / memorial 远景，**没有缺块或破洞**。但与批次7（全 hi）比，远景主楼明显更黑、砌块纹理看不清、玫瑰窗金色窗花丢失。查了两个怀疑点并都修了数据：① Permissive 塌边后 24% 角点法线与面夹角 > 60°（hi 2.4%）→ tools/facade_lod_fixn.mjs 按面朝向簇拆点重算法线（坏角点 0%）；② 顶点 AO（COLOR_0，vaoPatch 用）面积加权均值比 hi 低 10–45% → 按网格增益拉回 hi 均值。**两项修完重拍 plaza，肉眼几乎没变化——变暗的真正原因还没找到**（下一步怀疑：塌边跨 UV 缝把砌块贴图/风化层 UV 拉坏；或 lo 自投影）。原 lo 备份 work/r3/b8/lod/hero_facade_lo.pre_fixn.glb；检查工具 tools/_nchk.mjs（法线）、tools/_aochk.mjs（AO）。
+- **截图入库**：screenshots/r3/ 新增/覆盖 37 张（批次8 原 29 张，其中 gate_r3、wall_post、hangar_r3/_b/_top、abyss_core_b/_top 用修复后重拍替换；补拍 zz 未取回的 plaza、facade、metro_r3/_b/_mid/_top、memorial、memorial_r3）。工作副本 work/r3/b8/final/。
+- **对比图**：work/r3/cmp8_{fix,plaza,hangar,metro,memorial,abyss,seventh,training,interiors,bfloors,dorm}.jpg（脚本 work/r3/b8/cmp8_all.sh → cmp8.py，左批次7 work/r3/before8/*_b7.png）；r3_cmp_all.sh 加批次8 条目（abyss_core / abyss_tide / s7_entry / plaza8 / training8 / metro8 → work/r3/cmp_<k>.jpg）。
+### 诚实评估
+- 本轮主要是收尾：三张"坏图"都是截图管线问题，修好后重拍正常；plaza 截图能出了，但 7.8 GB 机器上仍贴着内存上限，换台机器就可能崩（zz 上 facade 就崩了）。
+- 批次8 本身：机库换砖墙、B 层石墙、宿舍抹灰墙之后近景材质质感比批次7好；墨渊/第七局提亮后看得清了；训练场/地铁口加了中间层次。**远景主楼走 LOD 后变黑、细节丢失，是这批真实存在的画质倒退**，法线/AO 两次修正都没解决。
+- wall_post（岗哨）现在出图正常，但本身很暗、内容少。
+### 未解决 / 下一步
+1. 远景 LOD 变暗：先试 `?lodNear=90`（plaza 主机位走 hi）对比确认是否 lo 造成；如果是，重做 lo：F_ashlar/F_trim 不用 Permissive（保留 UV 缝）只减 F_trim 的雕饰，或给 lo 烘一张整体漫反射贴图。
+2. metro_r3 整帧 5.26M（> 5M）：大头是 exterior 1.08M + surface 0.98M 主视，可以给地铁口机位方向的城景加距离剔除，或把 noSun 下的阴影 1.13M 压下来。
+3. plaza / facade 高画质截图贴着内存上限：可考虑截图模式上传后释放贴图 CPU 端图片，或先拍低一档画质。
+4. tristat.mjs 拆 pass 会让 plaza 崩，测 plaza 时只用截图会话的整帧统计。
+
 ---
 # HANDOFF · R2 美术重建（blender-lead-2，接手 2026-10-29 19:08 CST）
 崩溃后接续：从「R2 当前进度」最后一条往下做。旧 M7 交接记录保留在文末。
