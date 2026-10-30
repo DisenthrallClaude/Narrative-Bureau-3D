@@ -337,7 +337,7 @@ function sandTable(M) { // 批次17：沙盘重做——原黑大理石高光侧
   top.rotation.x = -Math.PI / 2; top.position.y = 0.865; g.add(top);
   // 分级棱柱：每区块 2–3 根、成簇定点（种子确定）
   const colors = [0xfff0b0, 0xffe080, 0xffc860, 0xffa040, 0xff8030, 0xff5a28, 0xff3a20, 0xd02020, 0xa01030];
-  const pinMats = colors.map((cl) => new THREE.MeshStandardMaterial({ color: 0x111111, emissive: cl, emissiveIntensity: 2.4, roughness: 0.4 }) // 批次17 zone_r3 看图：1.1 被曝光吃掉像米色木块);
+  const pinMats = colors.map((cl) => new THREE.MeshStandardMaterial({ color: 0x111111, emissive: cl, emissiveIntensity: 2.4, roughness: 0.4 })); // 批次17 zone_r3 看图：1.1 被曝光吃掉像米色木块
   const capMat = M.brass;
   for (const [bx, by] of blocks) { const n = 2 + Math.floor(rnd() * 2); for (let k = 0; k < n; k++) { const lvl = 1 + Math.floor(Math.pow(rnd(), 1.8) * 7), h = 0.12 + lvl * 0.07;
     const x = (bx - 1024) / 2048 * 21.86 + (k - (n - 1) / 2) * 0.32, z = (by - 410) / 820 * 8.86 + 0.15;
