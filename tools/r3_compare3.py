@@ -7,13 +7,15 @@ out, title, oldlab, old, new, plan, top = sys.argv[1:8]; extra = sys.argv[8:]
 F = ImageFont.truetype('/workspace/projects/b2c90d19-7034-43fd-aea1-521ddd72406e/work/fonts/NotoSansSC-Medium.otf', 26)
 W = 960
 def fit(p, w, h=None):
+    if p == '-':  # 无此图：灰底占位
+        im = Image.new('RGB', (w, w * 9 // 16), (48, 46, 44)); ImageDraw.Draw(im).text((w // 2 - 80, w * 9 // 32 - 16), '（无此机位）', fill=(160, 160, 160), font=F); return im
     im = Image.open(p).convert('RGB'); r = w / im.width; im = im.resize((w, int(im.height * r)))
     if h and im.height > h: r = h / im.height; im = im.resize((int(im.width * r), h))
     return im
-rows = [[(fit(old, W), oldlab), (fit(new, W), '批次3 新（同机位或相近机位）')],
+rows = [[(fit(old, W), oldlab), (fit(new, W), 'R3 新（同机位或相近机位）')],
         [(fit(plan, W, 900), '平面功能规划（r3plan_draw 检查 0 错误）'), (fit(top, W, 900), '俯视实拍（裁顶棚）')]]
 for i in range(0, len(extra), 2):
-    rows.append([(fit(e, W), '室内细节 · ' + e.split('/')[-1].rsplit('.', 1)[0]) for e in extra[i:i + 2]])
+    rows.append([(fit(e, W), ('室内细节 · ' if 'plan_' not in e else '平面规划 · ') + e.split('/')[-1].rsplit('.', 1)[0]) for e in extra[i:i + 2]])
 H = 60 + sum(max(i.height for i, _ in r) + 44 for r in rows)
 c = Image.new('RGB', (2 * W + 30, H), (24, 22, 20)); d = ImageDraw.Draw(c)
 d.text((14, 14), title, fill=(230, 210, 160), font=F); y = 60
