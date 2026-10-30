@@ -2368,3 +2368,88 @@ export function planExamCenter(y) {
   return { room, items: out };
 }
 PLANS.exam_center = (Y) => fixYaw(planExamCenter(Y)); R3.exam_center = true;
+
+// ================= R3 批次16 · 区域管控室 zone_control（东翼 3F 北区：x 20…50，z −32…−61，层高 7.1；1960–80 年代机关管控/调度室） =================
+// 平面功能规划（北 = −Z）：
+//  入口：东墙 z −44…−47.5 门洞（楼梯井列）、东南角楼梯井开敞段（z −54…−61）、北墙 x 40…43 门（副本投放调度室）。
+//  中央：原有 22 × 9 m 实体沙盘（x 24…46，z −51…−42，剧情锚点 int_zone_sandbox），四周留 ≥1.4 m 环形通道。
+//  ① 北墙：整面区域地图 / 灯光标示板两块（x 22.4…32.4、37.6…47.6），正中留原「分级挂牌」doc_zone_grading（x 35）。
+//  ② 监控台：两排 × 每排 8 台（中轴 x 32.7…37.3 主通道对着分级挂牌），操作员坐南侧面朝北（地图墙），每台 2 屏 CRT + 斜面按键板 + 写字沿。
+//  ③ 电话台：东墙北段（z −36.6…−41.4），胡桃木长台靠墙，接线员坐西侧面朝东；墙上电话交换盘 + 铜牌。
+//  ④ 档案架：西墙北段铁皮柜成排（z −54.4…−60.4，壁柱 −53.5 以北）+ 西墙南段两只钢架档案架（卡片墙以南）。
+//  ⑤ 值班台：南墙前原调度台（x 32…38，z −34.6，剧情锚点 doc_zone_dispatch）补成值班台：两把椅子坐南面朝北、台灯、电话、值班日志、铜牌「值 班 台」。
+//  墙面：胡桃木墙裙（原有）+ 方石上墙；地面：哑光深色大理石 + 黑石收边，环形通道磨损；照明：两排日光灯管（监控台上方）+ 暖白补光。
+export function planZoneControl(y) {
+  const out = []; const H = 7.1;
+  const room = { name: '东翼 3F · 区域管控室（批次16）', x0: 20.2, x1: 49.86, z0: -60.86, z1: -32.0, y, H,
+    doors: [{ wall: 'E', a: -47.5, b: -44, label: '楼梯井' }, { wall: 'E', a: -61, b: -54, label: '楼梯井列（开敞）' }, { wall: 'N', a: 40, b: 43, label: '副本投放调度室' }],
+    windows: [],
+    rooms: [['① 地图墙', 35, -60.2], ['② 监控台', 35, -56.2], ['③ 电话台', 48.6, -39.0], ['④ 档案架', 21.2, -57.4], ['⑤ 值班台', 35, -33.6], ['沙盘（原有）', 35, -46.5]],
+    aisles: [{ label: '地图墙前通道', x0: 21.4, x1: 49.6, z0: -60.5, z1: -58.2 }, { label: '中轴主通道', x0: 32.8, x1: 37.2, z0: -60.5, z1: -51.2 },
+      { label: '沙盘北环道', x0: 22.2, x1: 47.8, z0: -53.2, z1: -51.15 }, { label: '沙盘南环道', x0: 22.2, x1: 47.8, z0: -41.85, z1: -35.4 },
+      { label: '沙盘西环道', x0: 22.0, x1: 23.9, z0: -53.2, z1: -35.4 }, { label: '沙盘东环道', x0: 46.1, x1: 47.6, z0: -53.2, z1: -42.2 },
+      { label: '东门净空', x0: 47.7, x1: 49.8, z0: -47.5, z1: -44 }] };
+  floorZ(out, 'r3_marbleHoned', 20.3, 49.84, -60.6, -32.4, y, { border: 0.3, bmat: 'r3_stoneBorder', uv: 0.5 });
+  wear(out, 32.9, 37.1, -60.3, -53.4, y); wear(out, 22.4, 47.6, -52.9, -51.5, y); wear(out, 47.8, 49.6, -47.3, -44.2, y);
+  // 墙面：方石上墙（墙裙原有）
+  const AH = H - 1.25, AY = y + 1.25 + AH / 2;
+  out.push({ box: 'dz_ashlarEC', x: 35.0, y: AY, z: -60.845, w: 29.6, h: AH, d: 0.01, tag: '墙面', on: 'partv' });
+  out.push({ box: 'dz_ashlarEC', x: 35.0, y: AY, z: -32.005, w: 29.6, h: AH, d: 0.01, tag: '墙面', on: 'partv' });
+  out.push({ box: 'dz_ashlarEC', x: 20.235, y: AY, z: -46.4, w: 0.01, h: AH, d: 28.6, tag: '墙面', on: 'partv' });
+  for (const [a, c] of [[-32.2, -44], [-47.5, -54]]) out.push({ box: 'dz_ashlarEC', x: 49.845, y: y + H / 2, z: (a + c) / 2, w: 0.01, h: H, d: a - c, tag: '墙面', on: 'partv' });
+  out.push({ box: 'dz_ashlarEC', x: 49.845, y: y + 3 + (H - 3) / 2, z: -45.75, w: 0.01, h: H - 3, d: 3.5, tag: '墙面', on: 'partv' });
+  out.push({ box: 'dz_wain', x: 49.8, y: y + 0.575, z: -38.1, w: 0.06, h: 1.15, d: 11.8, tag: '墙面', on: 'partv' });
+  out.push({ box: 'dz_wain', x: 49.8, y: y + 0.575, z: -50.75, w: 0.06, h: 1.15, d: 6.5, tag: '墙面', on: 'partv' });
+  // ① 地图墙（两块）+ 顶部标语
+  for (const [cx, sd] of [[27.4, 1], [42.6, 2]]) {
+    out.push({ mapwall: sd === 1 ? '区 域 管 控 · 西 片' : '区 域 管 控 · 东 片', seed: sd, x: cx, y: y + 3.1, z: -60.8, yaw: 0, w: 9.6, h: 3.6, size: [9.8, 3.8, 0.1], tag: '① 地图墙', on: 'sign' });
+    light(out, cx, y + 5.6, -58.4, 0xfff0dc, 1.2, 7); }
+  out.push({ wtext: '统 一 调 度　分 级 管 控', x: 35, y: y + 5.75, z: -60.82, yaw: 0, w: 6.4, h: 0.56, size: [6.66, 0.78, 0.05], tag: '① 标语', on: 'sign' });
+  // ② 监控台两排
+  const CX = [23.3, 26.0, 28.7, 31.4, 38.6, 41.3, 44.0, 46.7];
+  for (const [r, z] of [[0, -57.6], [1, -54.9]]) for (const [i, x] of CX.entries()) {
+    out.push({ console: true, n: 2, seed: r * 8 + i, x, y, z, yaw: 0, w: 2.6, size: [2.6, 1.62, 0.9], col: [2.6, 1.62, 0.9], tag: '② 监控台', on: 'floor' });
+    for (const dx of [-0.65, 0.65]) out.push({ m: 'r2/old_computer_chair', x: x + dx, y, z: z + 0.95, yaw: Math.PI + (i % 3 - 1) * 0.12 * dx, h: 0.92, tag: '② 监控台', on: 'floor' });
+    out.push({ box: 'dz_paper', x: x - 0.35, y: y + 0.765, z: z + 0.5, w: 0.21, h: 0.004, d: 0.297, yaw: 0.06, tag: '② 记录纸', on: 'desk' });
+    if (i % 2 === 1) out.push({ m: 'r2/vintage_radio', x: x + 0.95, y: y + 1.62, z: z - 0.1, yaw: 0, w: 0.34, tag: '② 对讲机', on: 'desk' }); // 屏架顶
+  }
+  for (const x of [27.35, 42.65]) out.push({ sign: x < 35 ? '监 控 一 组' : '监 控 二 组', sub: '西片 · 十六路' + (x < 35 ? '' : '（东）'), x, y: y + 1.62 + 0.25, z: -55.32, yaw: Math.PI, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+  for (const x of [27.35, 42.65]) for (const z of [-57.1, -54.4]) out.push({ troffer: true, x, y: y + H - 0.25, z, len: 10.6, size: [10.6, 0.1, 0.34], tag: '日光灯', on: 'light' });
+  for (const x of [27.35, 42.65]) light(out, x, y + 3.6, -55.6, 0xf4f0e4, 2.0, 11);
+  // ③ 电话台（东墙北段）
+  { const cx = 49.3, cz = -39.0, d = 4.8;
+    out.push({ fixed: true, m: '固定:电话台', x: cx, y, z: cz, yaw: 0, size: [0.8, 0.78, d], col: [0.8, 0.78, d], tag: '③ 电话台', on: 'floor' });
+    out.push({ box: 'dz_wain', x: cx, y: y + 0.37, z: cz, w: 0.8, h: 0.74, d, uv: 0.6, tag: '③ 电话台', on: 'partv' });
+    out.push({ box: 'onyx', x: cx - 0.02, y: y + 0.76, z: cz, w: 0.86, h: 0.04, d: d + 0.06, uv: 0.5, tag: '③ 电话台', on: 'partv' });
+    out.push({ box: 'dz_brassDim', x: cx - 0.405, y: y + 0.06, z: cz, w: 0.02, h: 0.12, d, tag: '③ 电话台', on: 'partv' });
+    const top = y + 0.78;
+    for (const [k, dz] of [-1.8, -0.6, 0.6, 1.8].entries()) {
+      out.push({ m: ['r2/phone_vef_ta_68', 'r2/rotary_telephone'][k % 2], x: cx - 0.05, y: top, z: cz + dz, yaw: ROT.W, w: 0.22, tag: '③ 电话台', on: 'desk' });
+      out.push({ box: 'dz_paper2', x: cx - 0.15, y: top + 0.003, z: cz + dz + 0.3, w: 0.21, h: 0.004, d: 0.297, yaw: 0.05, tag: '③ 记录本', on: 'desk' });
+      out.push({ m: 'r2/old_computer_chair', x: cx - 0.95, y, z: cz + dz, yaw: ROT.E, h: 0.92, tag: '③ 电话台', on: 'floor' }); }
+    out.push({ m: 'r2/bankers_lamp', x: cx + 0.1, y: top, z: cz, yaw: ROT.W, h: 0.36, tag: '③ 电话台', on: 'desk' });
+    out.push({ mapwall: '电 话 交 换 · 各 区 专 线', seed: 7, x: 49.84, y: y + 2.3, z: cz, yaw: ROT.W, w: 3.6, h: 1.3, size: [3.8, 1.5, 0.1], tag: '③ 交换盘', on: 'sign' });
+    out.push({ sign: '电 话 台', sub: '各区专线 · 二十四小时值守', x: cx - 0.42, y: y + 0.55, z: cz, yaw: ROT.W, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+    light(out, 48.2, y + 3.0, cz, 0xfff0dc, 1.2, 6); }
+  // ④ 档案架：西墙北段铁皮柜 + 南段钢架
+  for (let i = 0; i < 11; i++) { const z = -54.4 - i * 0.6;
+    out.push({ m: 'file_cabinet', x: 20.86, y, z, yaw: ROT.E, h: 1.32, tag: '④ 档案柜', on: 'floor', col: [0.7, 1.32, 0.5] });
+    out.push({ box: 'dz_paper', x: 21.22, y: y + 1.1, z, w: 0.004, h: 0.06, d: 0.12, yaw: 0, tag: '④ 标签', on: 'partv' }); }
+  out.push({ sign: '区 域 档 案', sub: '按片区 · 按年份', x: 20.6, y: y + 1.75, z: -57.4, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+  for (const z of [-37.5, -39.3]) { out.push({ m: 'r2/steel_frame_shelves_02', x: 20.95, y, z, yaw: ROT.E, h: 2.0, tag: '④ 档案架', on: 'floor' });
+    for (let s = 0; s < 3; s++) for (let k = 0; k < 3; k++) out.push({ box: 'kraft', x: 20.95, y: y + 0.42 + s * 0.6, z: z - 0.4 + k * 0.4, w: 0.3, h: 0.28, d: 0.3, tag: '④ 档案盒', on: 'partv' }); }
+  // ⑤ 值班台（原调度台 6 × 1.2 盒体在 x 35，z −34.6，台面 y+1.0）：南侧两把椅子坐南面朝北
+  { const top = y + 1.06, cz = -34.6;
+    out.push({ fixed: true, m: '固定:值班台desk（eastwing 原有盒体）', x: 35, y, z: cz, yaw: 0, size: [6, 1.06, 1.2], col: [6, 1.06, 1.2], tag: '⑤ 值班台', on: 'floor' });
+    for (const dx of [-1.4, 1.4]) out.push({ m: 'r2/literary_club_chair_preview', x: 35 + dx, y, z: -33.45, yaw: ROT.N, h: 1.05, tag: '⑤ 值班台', on: 'floor' });
+    out.push({ m: 'r2/bankers_lamp', x: 33.0 - 0.5, y: top, z: cz + 0.2, yaw: ROT.N, h: 0.36, tag: '⑤ 值班台', on: 'desk' });
+    out.push({ m: 'r2/phone_vef_ta_68', x: 37.4, y: top, z: cz + 0.15, yaw: ROT.N, w: 0.22, tag: '⑤ 值班台', on: 'desk' });
+    out.push({ m: 'r2/rotary_telephone', x: 36.6, y: top, z: cz + 0.15, yaw: ROT.N, w: 0.22, tag: '⑤ 值班台', on: 'desk' });
+    out.push({ m: 'r2/several_folders', x: 33.8, y: top, z: cz + 0.1, yaw: 0.2, h: 0.3, tag: '⑤ 值班台', on: 'desk' });
+    out.push({ sign: '值 班 台', sub: '交接班须签字登记', x: 35, y: y + 0.7, z: cz - 0.61, yaw: ROT.N, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+    hang(out, '值 班 台', 35, y + 3.6, cz, 0, 1.9, 0.42, y + H);
+    light(out, 35, y + 3.0, cz + 0.4, 0xfff0dc, 1.2, 6); }
+  out.push({ m: 'r2/fire_extinguisher', x: 49.55, y, z: -43.4, yaw: ROT.W, h: 0.6, tag: '消防', on: 'floor' });
+  return { room, items: out };
+}
+PLANS.zone_control = (Y) => fixYaw(planZoneControl(Y)); R3.zone_control = true;

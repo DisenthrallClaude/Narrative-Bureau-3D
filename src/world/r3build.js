@@ -11,7 +11,7 @@ import { point, rectLight, spot, brassPlaqueMaterial } from './interiors.js';
 import { lightShaft } from '../engine/fx.js';
 import { goldText } from './gothic.js';
 
-const ZONE_OF = { library: ['library', () => UPPER['4F']], east_stair: ['east_wing', () => FLOOR], lobby_2F: ['floor2', () => UPPER['2F']], lobby_3F: ['floor3', () => UPPER['3F']], lobby_4F: ['library', () => UPPER['4F']], lobby_12F: ['director', () => UPPER['12F']], east_cloister: ['east_cloister', () => FLOOR], citizen_service: ['east_wing', () => FLOOR], floor3_office: ['floor3', () => UPPER['3F']], floor2_liaison: ['floor2', () => UPPER['2F']], floor2_pub: ['floor2', () => UPPER['2F']], director: ['director', () => UPPER['12F']], gate: ['gate', () => FLOOR], archive: ['archive', () => FLOOR], command_center: ['east_wing', () => FLOOR + 7], exam_center: ['east_wing', () => FLOOR + 7], canteen: ['canteen', () => FLOOR], b1: ['armory', () => -10], b2: ['interrogation', () => -18], archive_b1: ['archive_b1', () => FLOOR - 6], b4: ['vault_b4', () => -34], b5: ['vault_b5', () => -42], b6: ['training', () => -52], b7: ['abyss', () => -300], medical: ['floor3', () => UPPER['3F']], dorm: ['surface', () => 0.046], dorm2: ['surface', () => 4.64], interrogation: ['interrogation', () => -18], hangar: ['surface', () => 0], training: ['training', () => -52], b5_deep: ['vault_b5', () => -42], metro: ['surface', () => -3.955], memorial: ['surface', () => 0.08], s7_ops: ['seventh', () => -500], s7_wrap: ['seventh', () => -500], abyss_city: ['abyss', () => -300], abyss_exam: ['abyss', () => -300], abyss_core: ['abyss', () => -280], abyss_tide: ['abyss', () => -300], s7_entry: ['seventh', () => -500] };
+const ZONE_OF = { library: ['library', () => UPPER['4F']], east_stair: ['east_wing', () => FLOOR], lobby_2F: ['floor2', () => UPPER['2F']], lobby_3F: ['floor3', () => UPPER['3F']], lobby_4F: ['library', () => UPPER['4F']], lobby_12F: ['director', () => UPPER['12F']], east_cloister: ['east_cloister', () => FLOOR], citizen_service: ['east_wing', () => FLOOR], floor3_office: ['floor3', () => UPPER['3F']], floor2_liaison: ['floor2', () => UPPER['2F']], floor2_pub: ['floor2', () => UPPER['2F']], director: ['director', () => UPPER['12F']], gate: ['gate', () => FLOOR], archive: ['archive', () => FLOOR], command_center: ['east_wing', () => FLOOR + 7], exam_center: ['east_wing', () => FLOOR + 7], zone_control: ['east_wing', () => FLOOR + 14], canteen: ['canteen', () => FLOOR], b1: ['armory', () => -10], b2: ['interrogation', () => -18], archive_b1: ['archive_b1', () => FLOOR - 6], b4: ['vault_b4', () => -34], b5: ['vault_b5', () => -42], b6: ['training', () => -52], b7: ['abyss', () => -300], medical: ['floor3', () => UPPER['3F']], dorm: ['surface', () => 0.046], dorm2: ['surface', () => 4.64], interrogation: ['interrogation', () => -18], hangar: ['surface', () => 0], training: ['training', () => -52], b5_deep: ['vault_b5', () => -42], metro: ['surface', () => -3.955], memorial: ['surface', () => 0.08], s7_ops: ['seventh', () => -500], s7_wrap: ['seventh', () => -500], abyss_city: ['abyss', () => -300], abyss_exam: ['abyss', () => -300], abyss_core: ['abyss', () => -280], abyss_tide: ['abyss', () => -300], s7_entry: ['seventh', () => -500] };
 // 做旧：冷轧钢/喷漆钢件压暗、偏橄榄灰、提高粗糙度（「过白过新」）
 const AGE = { 'r2/schooldesk_01': [0.6, 0.5, 0.42, 0.62], office_desk: [0.62, 0.64, 0.58, 0.62], file_cabinet: [0.7, 0.7, 0.64, 0.6], 'r2/mfp_office_printer': [0.8, 0.78, 0.72, 0.55], 'r2/old_radiator': [0.75, 0.72, 0.66, 0.6], 'r2/hand_truck': [0.7, 0.68, 0.62, 0.7], 'r2/steel_frame_shelves_02': [0.7, 0.7, 0.66, 0.7], 'r2/fire_extinguisher': [0.85, 0.8, 0.78, 0.5], 'r2/electrical_panel_c': [0.75, 0.75, 0.7, 0.6], monitor: [0.8, 0.78, 0.72, 0.6] };
 const _aged = new Map();
@@ -101,6 +101,26 @@ export async function buildR3(ctx, world, MAT, late = false) {
         b.box('dz_wain', it.w + 0.16, it.h + 0.16, 0.12, [it.x + n[0] * 0.06, it.y, it.z + n[1] * 0.06], { uv: 1, rot: [0, yaw, 0] });
         b.box('dz_brassDim', it.w + 0.06, it.h + 0.06, 0.02, [it.x + n[0] * 0.125, it.y, it.z + n[1] * 0.125], { uv: 1, rot: [0, yaw, 0] });
         const m = new THREE.Mesh(new THREE.PlaneGeometry(it.w, it.h), flipMat(it.flip, it.days, it.w / it.h)); m.position.set(it.x + n[0] * 0.137, it.y, it.z + n[1] * 0.137); m.rotation.y = yaw; zone.add(m); continue; }
+      if (it.console) { // 批次16：1960–80 年代监控台（喷漆钢柜 + 斜面按键板 + 上部 CRT 屏架 + 木质写字沿），面朝 yaw 法线（操作员一侧）
+        const n = [Math.sin(yaw), Math.cos(yaw)], P = (f, up) => [it.x + n[0] * f, it.y + up, it.z + n[1] * f];
+        const G = (w, h, d, rx = 0) => { const g = new THREE.BoxGeometry(w, h, d); if (rx) g.rotateX(rx); g.rotateY(yaw); return g; };
+        b.add('r3_consoleSteel', G(it.w, 0.7, 0.8), { pos: P(0, 0.35) }, { uv: 1 });
+        b.add('dz_base', G(it.w + 0.02, 0.08, 0.82), { pos: P(0, 0.04) }, { uv: 1 });
+        b.add('r3_consoleSteel', G(it.w, 0.06, 0.5, 0.42), { pos: P(0.1, 0.8) }, { uv: 1 }); // 斜面按键板
+        const kp = new THREE.Mesh(new THREE.PlaneGeometry(it.w - 0.08, 0.44), keypadMat(it.seed ?? 0)); kp.rotation.order = 'YXZ'; kp.rotation.set(-(Math.PI / 2 - 0.42), yaw, 0); kp.position.set(...P(0.1 + 0.032 * Math.sin(0.42), 0.8 + 0.032 * Math.cos(0.42))); zone.add(kp);
+        b.add('dz_wain', G(it.w + 0.04, 0.04, 0.26), { pos: P(0.52, 0.74) }, { uv: 1 }); // 木写字沿
+        b.add('r3_consoleSteel', G(it.w, 0.72, 0.42), { pos: P(-0.2, 1.22) }, { uv: 1 }); // 屏架
+        b.add('blackMetal', G(it.w + 0.03, 0.04, 0.45), { pos: P(-0.2, 1.6) }, { uv: 1 });
+        const nS = it.n ?? 2, sw = (it.w - 0.2) / nS;
+        for (let k = 0; k < nS; k++) { const off = -it.w / 2 + 0.1 + sw * (k + 0.5), ux = n[1] * off, uz = -n[0] * off;
+          const sm = new THREE.Mesh(new THREE.PlaneGeometry(sw - 0.08, 0.56), crtMat((it.seed ?? 0) * 7 + k)); sm.position.set(it.x + ux + n[0] * 0.016, it.y + 1.22, it.z + uz + n[1] * 0.016); sm.rotation.y = yaw; zone.add(sm); }
+        if (it.col !== false) world.box(it.x, it.y + 0.8, it.z, Math.abs(n[1]) > 0.5 ? it.w : 0.9, 1.6, Math.abs(n[1]) > 0.5 ? 0.9 : it.w, 0);
+        continue; }
+      if (it.mapwall) { // 批次16：整面区域地图 / 灯光标示板（胡桃木框 + 铜边 + Canvas 地图，指示灯自发光）
+        const n = [Math.sin(yaw), Math.cos(yaw)];
+        b.box('dz_wain', it.w + 0.2, it.h + 0.2, 0.08, [it.x + n[0] * 0.04, it.y, it.z + n[1] * 0.04], { uv: 1, rot: [0, yaw, 0] });
+        b.box('dz_brassDim', it.w + 0.06, it.h + 0.06, 0.02, [it.x + n[0] * 0.085, it.y, it.z + n[1] * 0.085], { uv: 1, rot: [0, yaw, 0] });
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(it.w, it.h), mapWallMat(it.mapwall, it.w / it.h, it.seed ?? 1)); m.position.set(it.x + n[0] * 0.097, it.y, it.z + n[1] * 0.097); m.rotation.y = yaw; zone.add(m); continue; }
       if (it.notice) { // 批次15：告示纸（Canvas 印刷字 + 红头 + 公章），替代白色纸块
         const m = new THREE.Mesh(new THREE.PlaneGeometry(it.w, it.h), noticeMat(it.notice, it.lines ?? [], it.red)); m.position.set(it.x, it.y, it.z); m.rotation.y = yaw; zone.add(m); continue; }
       if (it.wtext) { // 批次15：墙面铜字（黑石底板 + 铜边 + 金字）
@@ -162,6 +182,36 @@ function ledMat(title, rows = [], aspect = 2) {
 
 // 批次15：告示纸材质（米黄纸 + 红头标题 + 正文行 + 落款 + 红色公章）
 const _notice = new Map();
+const _cv = new Map();
+function cvMat(key, W, H, draw, emi = 0) { if (_cv.has(key)) return _cv.get(key); const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d'); draw(c, W, H);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; const m = new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, emissive: emi ? 0xffffff : 0x000000, emissiveMap: emi ? t : null, emissiveIntensity: emi }); _cv.set(key, m); return m; }
+const rnd = (s) => () => ((s = (s * 16807) % 2147483647) / 2147483647);
+function keypadMat(seed) { return cvMat('kp' + (seed % 4), 512, 96, (c, W, H) => { const r = rnd(seed % 4 + 3); c.fillStyle = '#4a5246'; c.fillRect(0, 0, W, H);
+  for (let i = 0; i < 26; i++) for (let j = 0; j < 3; j++) { const x = 14 + i * 19, y = 18 + j * 26, v = r();
+    if (j === 0) { c.fillStyle = v < 0.25 ? '#e0402a' : v < 0.45 ? '#e8b030' : v < 0.6 ? '#4ec060' : '#2a2e2a'; c.beginPath(); c.arc(x, y, 5, 0, 7); c.fill(); }
+    else { c.fillStyle = j === 1 ? '#d8d2c0' : '#1a1a1a'; c.fillRect(x - 6, y - 7, 12, 14); c.fillStyle = '#000'; c.fillRect(x - 6, y + 5, 12, 2); } }
+  c.fillStyle = '#d8d2c0'; c.font = '12px "NB Serif",serif'; c.fillText('通 道 选 择', 8, H - 6); }, 0.35); }
+function crtMat(seed) { const k = seed % 6; return cvMat('crt' + k, 320, 240, (c, W, H) => { const r = rnd(k + 11); c.fillStyle = '#0c0d0c'; c.fillRect(0, 0, W, H);
+  c.save(); c.beginPath(); const R = 34; c.moveTo(18 + R, 14); c.arcTo(W - 18, 14, W - 18, H - 14, R); c.arcTo(W - 18, H - 14, 18, H - 14, R); c.arcTo(18, H - 14, 18, 14, R); c.arcTo(18, 14, W - 18, 14, R); c.clip();
+  const amber = k % 3 === 2, base = amber ? [255, 170, 60] : [150, 235, 170]; const g = c.createRadialGradient(W / 2, H / 2, 20, W / 2, H / 2, W * 0.62); g.addColorStop(0, `rgba(${base.map((v) => v * 0.28 | 0)},1)`); g.addColorStop(1, '#030503'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  c.strokeStyle = `rgba(${base},0.55)`; c.lineWidth = 2; // 走廊监控画面（透视线框）
+  if (k % 2 === 0) { const vx = W / 2 + (r() - 0.5) * 60, vy = H * 0.45; for (const [x, y] of [[18, 14], [W - 18, 14], [18, H - 14], [W - 18, H - 14]]) { c.beginPath(); c.moveTo(x, y); c.lineTo(vx, vy); c.stroke(); } c.strokeRect(vx - 40, vy - 30, 80, 60); for (let i = 1; i < 5; i++) { const t = i / 5; c.beginPath(); c.moveTo(18 + (vx - 40 - 18) * t, H - 14 + (vy + 30 - H + 14) * t); c.lineTo(W - 18 + (vx + 40 - W + 18) * t, H - 14 + (vy + 30 - H + 14) * t); c.stroke(); } }
+  else { c.beginPath(); for (let x = 20; x < W - 20; x += 4) c.lineTo(x, H * 0.55 + Math.sin(x * 0.05 + k) * 30 * r()); c.stroke(); for (let y = 40; y < H - 20; y += 30) { c.globalAlpha = 0.25; c.beginPath(); c.moveTo(20, y); c.lineTo(W - 20, y); c.stroke(); c.globalAlpha = 1; } }
+  c.fillStyle = `rgba(${base},0.9)`; c.font = '700 18px monospace'; c.fillText(['3F-07', 'B2-11', '东廊-03', '广场-01', 'B5-02', '机库-04'][k], 30, 38); c.fillText('●REC', W - 90, 38);
+  for (let y = 0; y < H; y += 3) { c.fillStyle = 'rgba(0,0,0,0.28)'; c.fillRect(0, y, W, 1); } c.restore();
+  c.strokeStyle = '#2a2b28'; c.lineWidth = 10; c.strokeRect(5, 5, W - 10, H - 10); }, 0.9); }
+function mapWallMat(title, aspect, seed) { return cvMat('map' + seed, 1536, Math.round(1536 / aspect), (c, W, H) => { const r = rnd(seed * 31 + 5);
+  c.fillStyle = '#1d2a24'; c.fillRect(0, 0, W, H); c.strokeStyle = 'rgba(160,190,170,0.12)'; c.lineWidth = 1; for (let x = 0; x < W; x += 48) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); } for (let y = 0; y < H; y += 48) { c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
+  c.fillStyle = '#e8dcbc'; c.font = '700 54px "NB Title","NB Serif",serif'; c.textAlign = 'left'; c.fillText(title, 40, 74); c.font = '24px "NB Serif",serif'; c.fillStyle = '#b8b098'; c.fillText('京 城 · 叙 事 污 染 区 域 分 布　（ 一 九 七 九 年 版 ）', 40, 112);
+  // 区块（不规则多边形）+ 河道 + 环路
+  c.strokeStyle = '#6e8a76'; c.lineWidth = 3; const cx = W * 0.52, cy = H * 0.58; for (const R of [0.16, 0.28, 0.4]) { c.beginPath(); c.ellipse(cx, cy, W * R, H * R * 1.15, 0, 0, 7); c.stroke(); }
+  c.strokeStyle = '#3e6a8a'; c.lineWidth = 7; c.beginPath(); c.moveTo(0, H * 0.82); for (let x = 0; x <= W; x += 40) c.lineTo(x, H * 0.82 - Math.sin(x / 210) * 60 - x * 0.12); c.stroke();
+  const pts = []; for (let i = 0; i < 22; i++) { const a = r() * 6.28, d = 0.08 + r() * 0.36; pts.push([cx + Math.cos(a) * W * d, cy + Math.sin(a) * H * d * 1.1]); }
+  c.lineWidth = 2; for (const [x, y] of pts) { c.strokeStyle = 'rgba(232,220,188,0.55)'; c.beginPath(); for (let k = 0; k < 6; k++) { const a = k / 6 * 6.28 + r() * 0.5, d = 40 + r() * 50; k ? c.lineTo(x + Math.cos(a) * d, y + Math.sin(a) * d) : c.moveTo(x + Math.cos(a) * d, y + Math.sin(a) * d); } c.closePath(); c.stroke(); }
+  pts.forEach(([x, y], i) => { const v = r(), col = v < 0.2 ? '#ff3a24' : v < 0.45 ? '#ffb030' : '#5cff7a'; const gg = c.createRadialGradient(x, y, 2, x, y, 26); gg.addColorStop(0, col); gg.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gg; c.beginPath(); c.arc(x, y, 26, 0, 7); c.fill(); c.fillStyle = '#fff6e0'; c.beginPath(); c.arc(x, y, 6, 0, 7); c.fill();
+    c.fillStyle = '#d8ccb0'; c.font = '20px "NB Serif",serif'; c.fillText(`${'甲乙丙丁戊己庚辛'[i % 8]}-${(i * 7) % 30 + 1}`, x + 14, y - 12); });
+  c.font = '22px "NB Serif",serif'; [['#ff3a24', '封锁'], ['#ffb030', '警戒'], ['#5cff7a', '正常']].forEach(([col, t], i) => { c.fillStyle = col; c.beginPath(); c.arc(W - 220, H - 120 + i * 34, 9, 0, 7); c.fill(); c.fillStyle = '#e8dcbc'; c.fillText(t, W - 200, H - 112 + i * 34); });
+}, 0.5); }
 let _exam = null;
 function examPaperMat() { // 试卷：米白纸 + 黑色印刷正文 + 红头 + 左侧密封线（与浅色桌面拉开对比靠满版深色字块）
   if (_exam) return _exam; const w = 420, h = 594, cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');

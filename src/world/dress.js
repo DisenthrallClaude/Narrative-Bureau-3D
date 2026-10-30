@@ -103,6 +103,7 @@ export function dressMats(M) {
       const m = new THREE.MeshStandardMaterial({ map: loadTex(P + '_col.webp', { srgb: true, ...R }), normalMap: loadTex(P + '_nrm.webp', R), roughnessMap: loadTex(P + '_arm.webp', R), color: 0xbcb0a0, roughness: 1, envMapIntensity: 0.4 }); m.normalScale.set(1.2, 1.2); m.name = 'ph:ashlarEC'; return m; })(), { macro: 0.14, grime: 0.3, streak: 0.12 }),
     r3_marbleHoned: W(pbr('Marble016', { rn: true, color: 0x8a8a92, roughness: 0.46, env: 0.42 }), { macro: 0.12, dust: 0.05 }),
     r3_frosted: new THREE.MeshPhysicalMaterial({ color: 0xc4ccc8, roughness: 0.4, metalness: 0, transparent: true, opacity: 0.3, envMapIntensity: 0.35, depthWrite: false }), // 批次12 收尾：原 0.55 不透明度 + 近白色在球吊灯下发白，像灯箱板、透不出后面（cs_r3 / cs_r3_b）
+    r3_consoleSteel: W(new THREE.MeshStandardMaterial({ color: 0x5a6356, roughness: 0.55, metalness: 0.35, envMapIntensity: 0.5 }), { macro: 0.18, grime: 0.3, tarnish: 0.2 }), // 批次16：监控台灰绿喷漆钢
     r3_clerestory: new THREE.MeshStandardMaterial({ color: 0xcfd4cc, emissive: 0xc9d2d4, emissiveIntensity: 0.55, roughness: 0.35 }), // 批次16：阅卷中心北墙高窗磨砂天光
     r3_paintYellow: W(new THREE.MeshStandardMaterial({ color: 0xc8a020, roughness: 0.7 }), { macro: 0.3, dust: 0.2 }),
   };
