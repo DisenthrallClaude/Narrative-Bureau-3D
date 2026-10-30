@@ -617,7 +617,7 @@ function buildCity(g, M, ctx) {
   const place = (x, z) => riverDist(x, z) > 100 && !(Math.abs(x) < 70 && z > 90 && z < 1600);
   // 街区：沿环形放射路网排列（比随机撒点更像城市肌理）
   while (nb < N) {
-    const a = rnd() * Math.PI * 2, r = 175 + Math.pow(rnd(), 0.85) * 1500;
+    const a = rnd() * Math.PI * 2, r = 470 + Math.pow(rnd(), 0.85) * 1200; // 批次28：<450 m 近排改为下方成排街屋，程序方块只留远景剪影
     const x = Math.sin(a) * r, z = -35 + Math.cos(a) * r; if (!place(x, z)) continue;
     const near = r < 450;
     const h = (14 + Math.pow(rnd(), 1.8) * (near ? 34 : 60)) * (rnd() < 0.06 ? 2.2 : 1);
@@ -628,7 +628,7 @@ function buildCity(g, M, ctx) {
   }
   // 尖塔楼：细高主体 + 主尖塔 + 四角小尖塔 + 金色塔尖
   for (let i = 0; i < NS; i++) {
-    const a = rnd() * Math.PI * 2, r = 200 + Math.pow(rnd(), 0.8) * 1500;
+    const a = rnd() * Math.PI * 2, r = 520 + Math.pow(rnd(), 0.8) * 1200;
     const x = Math.sin(a) * r, z = -35 + Math.cos(a) * r; if (!place(x, z)) { i--; continue; }
     const big = rnd() < 0.12;
     const bw = (big ? 22 : 9) + rnd() * 8, bh = (big ? 70 : 30) + rnd() * (big ? 70 : 50);
@@ -644,6 +644,7 @@ function buildCity(g, M, ctx) {
     for (const tt of [0.04, 0.3, 0.58]) { const rr = bw * 0.5 * (1 - tt) * 1.03; m4.compose(new THREE.Vector3(x, -4.4 + bh + sh * tt, z), q, new THREE.Vector3(rr, Math.max(0.5, sh * 0.012), rr)); bands.setMatrixAt(nbd++, m4); }
   }
   for (const im of [bodies, roofs, spires, tips, bands]) { im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; im.computeBoundingSphere?.(); g.add(im); }
+  buildStreetRows(g, M, place, rnd);
   ctx.cityMats = { stoneCity };
   loadModel('cathedral').then((src) => {
     const spots = [[-420, -640, 0.4], [520, -900, 2.1], [-900, 300, 1.2], [880, 260, -0.6], [-260, -1300, 0.9], [1300, -500, 3.0], [-1500, -600, 2.4], [300, 900, 0.2]];
@@ -664,6 +665,100 @@ function buildCity(g, M, ctx) {
     const r = i < 3 ? 260 + i * 80 : 600 + rnd() * 1400; const h = i < 3 ? 120 + i * 30 : 140 + rnd() * 260; const sp2 = (i % 2 ? 1 : -1) * (0.02 + rnd() * 0.03) * (i < 3 ? 1 : 0.6); const ph = rnd() * 6.28;
     g.add(ac); ctx.aircraft.push({ o: ac, r, h, sp: sp2, ph });
   }
+}
+
+// 批次28 E3：近排 1960–80 年代街屋立面（两圈沿环路连续临街，非随机撒点）+ 车行道 / 人行道路沿 / 成列路灯 / 行道树。
+// 立面全部在着色器里按楼内局部米制坐标画：底层商铺橱窗 + 招牌带、上层分格木窗（窗套 + 窗台 + 雨渍）、楼板腰线、檐口；亮窗稀疏（黄昏 12%）。
+function buildStreetRows(g, M, place, rnd) {
+  const hs = (k) => { const x = Math.sin(k * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+  const boxG = new THREE.BoxGeometry(1, 1, 1); boxG.translate(0, 0.5, 0);
+  const lit = TOD.label === '白昼' ? 0.02 : 0.12;
+  const houseMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.86, metalness: 0, envMapIntensity: 0.45 });
+  houseMat.onBeforeCompile = (sh) => {
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vLm; varying vec3 vLn; varying float vSd; varying float vH;')
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+        vec3 isc = vec3(1.0); vSd = 0.0;
+        #ifdef USE_INSTANCING
+        isc = vec3(length(instanceMatrix[0].xyz), length(instanceMatrix[1].xyz), length(instanceMatrix[2].xyz)); vSd = fract(instanceMatrix[3].x * 0.0137 + instanceMatrix[3].z * 0.0071);
+        #endif
+        vLm = transformed * isc; vLn = normal; vH = isc.y;`);
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLm; varying vec3 vLn; varying float vSd; varying float vH;\nfloat h2(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5);}')
+      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+        { float wall = 1.0 - step(0.5, abs(vLn.y));
+          float u = abs(vLn.x) > 0.5 ? vLm.z : vLm.x; float y = vLm.y; float side = abs(vLn.x) > 0.5 ? 1.0 : 0.0;
+          vec3 pal = vSd < 0.3 ? vec3(0.78, 0.71, 0.58) : vSd < 0.55 ? vec3(0.62, 0.36, 0.28) : vSd < 0.8 ? vec3(0.66, 0.66, 0.63) : vec3(0.62, 0.68, 0.60);
+          vec3 col = pal;
+          // 面砖 / 砖缝
+          vec2 tg = fract(vec2(u / 0.6, y / 0.3)); col *= 0.93 + 0.07 * step(0.08, tg.x) * step(0.1, tg.y);
+          vec3 em = vec3(0.0);
+          if (y < 4.2) { // 底层商铺
+            float bay = floor(u / 5.0 + 0.5 + side * 7.0 + vSd * 13.0); float bx = fract(u / 5.0 + 0.5);
+            float glass = step(0.08, bx) * step(bx, 0.92) * step(0.45, y) * step(y, 3.0);
+            float sign = step(0.04, bx) * step(bx, 0.96) * step(3.15, y) * step(y, 3.95);
+            vec3 sc = h2(vec2(bay, 1.0)) < 0.33 ? vec3(0.62, 0.10, 0.08) : h2(vec2(bay, 1.0)) < 0.66 ? vec3(0.10, 0.22, 0.48) : vec3(0.12, 0.36, 0.22);
+            col = mix(col * 0.75, vec3(0.05, 0.06, 0.07), glass); col = mix(col, sc, sign);
+            float shopOn = step(0.55, h2(vec2(bay, 7.0 + vSd)));
+            em += glass * shopOn * vec3(1.0, 0.72, 0.42) * 1.4 + sign * vec3(1.0, 0.9, 0.8) * sc * 1.6 * step(0.4, h2(vec2(bay, 3.0)));
+            col *= 1.0 - 0.25 * step(y, 0.45); // 水刷石勒脚
+          } else if (y > vH - 0.9) { col *= y > vH - 0.6 ? 0.55 : 1.15; // 檐口 + 檐下线脚
+          } else {
+            float fy = (y - 4.2) / 3.2; float cy = floor(fy); float f = fract(fy);
+            float cx = floor(u / 3.4); float fx = fract(u / 3.4);
+            float win = step(0.22, fx) * step(fx, 0.78) * step(0.28, f) * step(f, 0.82);
+            float frame = step(0.18, fx) * step(fx, 0.82) * step(0.24, f) * step(f, 0.86) - win;
+            float mull = win * (step(abs(fx - 0.5), 0.015) + step(abs(f - 0.6), 0.015));
+            col *= 1.0 - 0.18 * step(f, 0.07); // 楼板腰线
+            col *= 1.0 - 0.14 * step(0.3, fx) * step(fx, 0.7) * step(f, 0.24) * (1.0 - f / 0.24); // 窗台下雨渍
+            col = mix(col, vec3(0.85, 0.83, 0.78), frame * 0.7);
+            col = mix(col, vec3(0.04, 0.05, 0.06), win); col = mix(col, vec3(0.30, 0.18, 0.10), mull);
+            float on = step(1.0 - ${lit.toFixed(2)}, h2(vec2(cx + side * 31.0, cy) + vSd * 17.0));
+            em += win * (1.0 - mull) * on * mix(vec3(1.0, 0.66, 0.36), vec3(1.0, 0.86, 0.62), h2(vec2(cx, cy * 3.1))) * 2.0;
+          }
+          col = mix(vec3(0.16, 0.16, 0.17), col, wall); // 平屋面
+          diffuseColor.rgb *= col; totalEmissiveRadiance += em * wall;
+        }`);
+  };
+  const parMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3c, roughness: 0.9 });
+  const roadMat = new THREE.MeshStandardMaterial({ color: 0x1e1f22, roughness: 0.82 });
+  const walkMat = M.paving; const curbMat = new THREE.MeshStandardMaterial({ color: 0x77767a, roughness: 0.8 });
+  const leafMat = M.hedge; const trunkMat = M.iron;
+  const NH = 420, NSEG = 900;
+  const houses = new THREE.InstancedMesh(boxG, houseMat, NH), pars = new THREE.InstancedMesh(boxG, parMat, NH * 2);
+  const roads = new THREE.InstancedMesh(boxG, roadMat, NSEG), walks = new THREE.InstancedMesh(boxG, walkMat, NSEG * 2), curbs = new THREE.InstancedMesh(boxG, curbMat, NSEG * 2);
+  const poleG = new THREE.CylinderGeometry(0.12, 0.16, 7, 6); poleG.translate(0, 3.5, 0); const armG = new THREE.BoxGeometry(0.1, 0.1, 1.6); armG.translate(0, 7, -0.7); const headG = new THREE.BoxGeometry(0.4, 0.18, 0.7); headG.translate(0, 6.9, -1.4);
+  const lampMat = new THREE.MeshStandardMaterial({ color: 0xffe2b0, emissive: 0xffc27a, emissiveIntensity: TOD.label === '白昼' ? 0.2 : 2.6 });
+  const NL = 700; const poles = new THREE.InstancedMesh(poleG, M.iron, NL), arms = new THREE.InstancedMesh(armG, M.iron, NL), heads = new THREE.InstancedMesh(headG, lampMat, NL);
+  const crownG = new THREE.IcosahedronGeometry(1, 1); crownG.translate(0, 1, 0); const stemG = new THREE.CylinderGeometry(0.14, 0.2, 1, 6); stemG.translate(0, 0.5, 0);
+  const crowns = new THREE.InstancedMesh(crownG, leafMat, NL), stems = new THREE.InstancedMesh(stemG, trunkMat, NL);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), Y0 = -4.4;
+  let nh = 0, np = 0, nr = 0, nw = 0, nc = 0, nl = 0, nt = 0;
+  const at = (R, th) => [Math.sin(th) * R, -35 + Math.cos(th) * R];
+  // 两圈环路：R 为车行道中心线；内侧、外侧各一排临街街屋
+  for (const R of [212, 300]) {
+    const C = 2 * Math.PI * R, roadW = 12, walkW = 4;
+    for (let s = 0; s < C; s += 6) { const th = s / R; const [x, z] = at(R, th); if (!place(x, z)) continue; q.setFromAxisAngle(up, th);
+      if (nr < NSEG) { m4.compose(new THREE.Vector3(x, Y0, z), q, new THREE.Vector3(6.3, 0.06, roadW)); roads.setMatrixAt(nr++, m4); }
+      for (const sd of [-1, 1]) { const rr = R + sd * (roadW / 2 + walkW / 2); const [wx, wz] = at(rr, th); if (nw < NSEG * 2) { m4.compose(new THREE.Vector3(wx, Y0, wz), q, new THREE.Vector3(6.3 * rr / R, 0.2, walkW)); walks.setMatrixAt(nw++, m4); }
+        const rc = R + sd * (roadW / 2 + 0.12); const [cx, cz] = at(rc, th); if (nc < NSEG * 2) { m4.compose(new THREE.Vector3(cx, Y0, cz), q, new THREE.Vector3(6.3, 0.24, 0.26)); curbs.setMatrixAt(nc++, m4); } }
+    }
+    // 路灯（每 30 m，两侧对位）与行道树（灯间居中，每 30 m）——等距成列
+    for (let s = 0; s < C; s += 15) { const th = s / R; const lamp = Math.round(s / 15) % 2 === 0;
+      for (const sd of [-1, 1]) { const rr = R + sd * (roadW / 2 + 0.9); const [x, z] = at(rr, th); if (!place(x, z) || nl >= NL || nt >= NL) continue;
+        const yaw = th + (sd > 0 ? 0 : Math.PI); q.setFromAxisAngle(up, yaw);
+        if (lamp) { m4.compose(new THREE.Vector3(x, Y0 + 0.2, z), q, new THREE.Vector3(1, 1, 1)); poles.setMatrixAt(nl, m4); arms.setMatrixAt(nl, m4); heads.setMatrixAt(nl++, m4); }
+        else { m4.compose(new THREE.Vector3(x, Y0 + 0.2, z), q, new THREE.Vector3(1, 3.2, 1)); stems.setMatrixAt(nt, m4); m4.compose(new THREE.Vector3(x, Y0 + 2.9, z), q, new THREE.Vector3(2.6, 2.4, 2.6)); crowns.setMatrixAt(nt++, m4); } } }
+    // 临街街屋：连续面宽，每 6 栋留 10 m 支路口
+    for (const sd of [-1, 1]) {
+      const front = R + sd * (roadW / 2 + walkW); let s = 0, k = 0;
+      while (s < C && nh < NH) { const w = 12 + Math.floor(hs(k + R) * 4) * 3, d = 14 + Math.floor(hs(k * 3.3 + R) * 3) * 2, fl = 4 + Math.floor(hs(k * 7.7 + R + sd) * 4);
+        const h = 4.2 + (fl - 1) * 3.2 + 0.9; const th = (s + w / 2) / front; const rc = front + sd * d / 2; const [x, z] = at(rc, th);
+        if (place(x, z) && place(...at(front, th))) { q.setFromAxisAngle(up, th); m4.compose(new THREE.Vector3(x, Y0, z), q, new THREE.Vector3(w, h, d)); houses.setMatrixAt(nh++, m4);
+          m4.compose(new THREE.Vector3(x, Y0 + h, z), q, new THREE.Vector3(w + 0.3, 0.7, d + 0.3)); if (np < NH * 2) pars.setMatrixAt(np++, m4);
+          if (k % 3 === 1 && np < NH * 2) { m4.compose(new THREE.Vector3(x, Y0 + h + 0.7, z), q, new THREE.Vector3(3, 2.2, 3)); pars.setMatrixAt(np++, m4); } } // 屋顶水箱间
+        s += w + 0.4; k++; if (k % 6 === 0) s += 10; }
+    }
+  }
+  for (const [im, n] of [[houses, nh], [pars, np], [roads, nr], [walks, nw], [curbs, nc], [poles, nl], [arms, nl], [heads, nl], [stems, nt], [crowns, nt]]) { im.count = n; im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; g.add(im); }
 }
 
 function aircraft(M, s) {

@@ -59,7 +59,7 @@
 · Caged Hanging Light (caged_hanging_light)
 · Mounted Fluorescent Lights (mounted_fluorescent_lights)
 
-【PBR 材质】ambientCG（CC0）：Granite003A、Marble006/012/016/021、Metal009/027/046A/048A、PavingStones142、Tiles138、Terrazzo005、Paper006、Cardboard004、Fabric023、Concrete034/036、Onyx013、Wood051、WoodFloor064、Carpet012、Leather026、Facade001
+【PBR 材质】ambientCG（CC0）：Granite003A、Marble006/012/016/021、Metal009/027/046A/048A、PavingStones142、Tiles138、Terrazzo005、Paper006、Cardboard004、Fabric023、Concrete034/036、Onyx013、Wood051、WoodFloor064、Carpet012、Leather026、Facade001、Grass001（批次28 草坪）
 【HDRI】Poly Haven（CC0）：kloofendal_48d_partly_cloudy_puresky（Greg Zaal, Jarod Guest）、entrance_hall（Sergej Majboroda）、large_corridor（Sergej Majboroda）
 【字体】Noto Serif SC / Noto Sans SC（SIL Open Font License 1.1）
 【引擎】three.js（MIT）、three-mesh-bvh（MIT）、postprocessing（Zlib）、N8AO（CC0）

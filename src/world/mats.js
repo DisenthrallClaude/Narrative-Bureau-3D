@@ -52,7 +52,7 @@ export function mats() {
   M.whiteMarble = pbr('Marble021', { color: 0xd8d8da, roughness: 0.3, env: 1.0 });
   const leaf = leafTextures();
   M.hedge = new THREE.MeshStandardMaterial({ color: 0x6f8a62, map: leaf.map, normalMap: leaf.normal, normalScale: new THREE.Vector2(1.6, 1.6), roughness: 0.92 });
-  M.grass = new THREE.MeshStandardMaterial({ color: 0x8aa070, map: leaf.grass, roughness: 0.95 });
+  M.grass = pbr('Grass001', { color: 0xb8c8a8, roughness: 0.95, env: 0.3 }); // 批次28：程序化竖线草 → ambientCG Grass001 实拍修剪草坪（CC0）
   // 室内
   M.hallFloor = pbr('Marble012', { rn: true, color: 0x3c3c42, roughness: 0.34, env: 0.22, physical: true, clearcoat: 0.12, clearcoatRoughness: 0.25 });
   M.hallFloorDark = pbr('Marble006', { rn: true, color: 0x46464c, roughness: 0.3, env: 0.3, physical: true, clearcoat: 0.12, clearcoatRoughness: 0.25 });

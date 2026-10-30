@@ -301,7 +301,7 @@ function setZone(z, force = false) {
   { const sunOn = L.sun > 0; for (const [k, g] of Object.entries(ctx.zones)) { if (k === 'surface' || k === 'gate') continue; if (!g.userData.casters) { g.userData.casters = []; g.traverse((o) => { if (o.isMesh && o.castShadow) g.userData.casters.push(o); }); } for (const o of g.userData.casters) o.castShadow = !sunOn; } } hemi.intensity = L.env === 'sky' && L.sun > 0 ? L.hemi * TOD.hemiMul : L.hemi;
   // 批次4 性能：站在正门门廊里，外立面/广场只透过门洞可见，门廊自身墙顶已投影 → 外部组不进阳光阴影图（zonestat：gate 阴影三角面 6.08M）
   { const off = z === 'gate' && !/[?&]extShadow=1/.test(location.search); scene.getObjectByName('exterior').traverse((o) => { if (!o.isMesh) return; if (o.userData.cs0 === undefined) o.userData.cs0 = o.castShadow; o.castShadow = o.userData.cs0 && !off; if (/^F_(trim|slate|lead)$/.test(o.name)) { o.userData.zoneHide = off && !/[?&]facadeAll=1/.test(location.search); if (!G.lod) o.visible = !o.userData.zoneHide; } }); G.lod?.refresh(camera); } // 门廊内看不到外立面线脚/屋面（F_trim 1.58M 面）→ 隐藏
-  scene.fog = new THREE.FogExp2(L.fog[0], L.fog[1]);
+  scene.fog = new THREE.FogExp2(L.fog[0], L.fog[1] * (L.env === 'sky' ? (TOD.fogMul ?? 1) : 1)); // 批次28：黄昏外景大气雾加重，远景天际线退成剪影
   { const deep = /^(abyss|seventh)/.test(z); scene.background = deep ? new THREE.Color(L.fog[0]) : skyTex; }
   targetExp = z === 'plaza' ? TOD.plazaExp : L.exp;
   reflector.enabled = z === 'gate' || z === 'security_hall';
