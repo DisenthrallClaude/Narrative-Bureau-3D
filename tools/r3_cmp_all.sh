@@ -14,7 +14,7 @@ c canteen "食堂" "M4b 旧" $S/m4b/canteen.png $R/canteen_r3.png $W/plan_cantee
 c medical "3F 东 · 医务室" "旧（无同机位）" - $R/med_r3.png $W/plan_medical.png $R/med_top.png $R/med_b.png $R/med_ward.png
 c dorm "宿舍 1F/2F" "M7 旧" $S/m7/dorm_lobby.png $R/dorm_lobby.png $W/plan_dorm.png $R/dorm_top.png $R/dorm_lobby_b.png $R/dorm_lounge.png $R/dorm2_top.png $W/plan_dorm2.png
 c interrogation "B2 · 审讯室" "M4b 旧" $S/m4b/interrogation.png $R/int_r3.png $W/plan_interrogation.png $R/int_top.png $R/int_obs.png
-c hangar "飞行器机库" "M7 旧" $S/m7/hangar.png $R/hangar_r3.png $W/plan_hangar.png $R/hangar_top.png $R/hangar_b.png $R/hangar.png
+c hangar "飞行器机库" "M7 旧" $S/m7/hangar.png $R/hangar_r3.png $W/plan_hangar.png $R/hangar_top.png $R/hangar_b.png
 c b1 "B1 · 装卸区/档案分库" "M4b 旧" $S/m4b/b1.png $R/b1_dock.png $W/plan_b1.png - $R/ab1_r3.png $R/ab1_east.png $W/plan_archive_b1.png
 c b2 "B2 · 机电间" "旧（无同机位）" - $R/b2_mech.png $W/plan_b2.png - $R/b2_mech_b.png
 c b4 "B4" "旧（无同机位）" - $R/b4_r3.png $W/plan_b4.png -
