@@ -427,11 +427,11 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
   // 批次27 E4/E8：立面洗墙灯 / 投光（黄昏）——广场前沿地埋灯 ×6 上照立面，双塔各 1 盏远投光打尖塔；暖白 3000K，不投影
   { const fix = new THREE.MeshStandardMaterial({ color: 0x2a2620, metalness: 0.8, roughness: 0.4 }), lens = new THREE.MeshStandardMaterial({ color: 0xffe2b8, emissive: 0xffd49a, emissiveIntensity: 2.5 });
     const dusk = TOD.label !== '白昼', k = dusk ? 1 : 0.25;
-    const spot = (p, t, i, ang) => { const l = new THREE.SpotLight(0xffd7a8, i * k, 90, ang, 0.65, 1.6); l.position.set(...p); l.target.position.set(...t); l.castShadow = false; g.add(l, l.target); };
+    const spot = (p, t, i, ang, pen = 0.65) => { const l = new THREE.SpotLight(0xffd7a8, i * k, 90, ang, pen, 1.6); l.position.set(...p); l.target.position.set(...t); l.castShadow = false; g.add(l, l.target); };
     for (const x of [-27, -15.5, -6.2, 6.2, 15.5, 27]) { // 地埋灯：石框 + 铜面 + 发光透镜，前沿 z 4.2（台阶外），对准立面 30 m 高处
       const f = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 0.5), fix); f.position.set(x, 0.04, 5.6); g.add(f);
       const ln = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.02, 0.3), lens); ln.position.set(x, 0.09, 5.6); g.add(ln);
-      spot([x, 0.3, 5.6], [x * 0.92, Y + 17, -8], 1550, 0.56); } // 批次49：下半立面再提一档——1250 → 1550、锥角 0.5 → 0.56、对准 Y+20 → Y+17（光池下移覆盖门廊雕像列与一层窗台） // 批次48：台阶前移到 z 4.5 → 地埋灯退到 5.6；对准点 Y+26 → Y+20、锥角 0.42 → 0.5，让下半立面也进光池（ext_plaza 下半立面发黑）
+      spot([x, 0.3, 5.6], [x * 0.92, Y + 8.7, -8], 1550, 0.62, 0.4); } // 批次58：算锥体覆盖（work/r3/b58/cone.txt）——原对准 Y+17、半影 0.65：立面 y<6 m 落在锥外（光强系数 0）、y 6–8 m 仅 0.35–0.86 → 下半立面根本没被投光打到；改对准 Y+8.7、锥角 0.62、半影 0.4 → y 2.5–18 m 全在锥内 // 批次49：下半立面再提一档——1250 → 1550、锥角 0.5 → 0.56、对准 Y+20 → Y+17（光池下移覆盖门廊雕像列与一层窗台） // 批次48：台阶前移到 z 4.5 → 地埋灯退到 5.6；对准点 Y+26 → Y+20、锥角 0.42 → 0.5，让下半立面也进光池（ext_plaza 下半立面发黑）
     // 批次48：下半立面补光——实体铜投光器 ×4：台阶两侧石栏端墩顶（打门洞两侧墩柱 / 雕像列）+ 双塔脚石座前沿（贴墙掠射塔身下段），暖 2900K，不投影
     const proj = (p, t, i, ang) => { const h = new THREE.Group(); const body = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.16, 0.34, 14), fix); body.rotation.x = Math.PI / 2; h.add(body);
       const le = new THREE.Mesh(new THREE.CircleGeometry(0.12, 14), lens); le.position.z = 0.175; h.add(le); const yoke = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.05, 0.12), fix); yoke.position.y = -0.2; h.add(yoke);
@@ -500,7 +500,7 @@ async function heroFacade(g, M, world, ctx, add) {
   // 根因不是底色：门扇转 72° 后立在门廊深处，下半落在券口 / 雕像阴影里，直射暖光到不了，只剩黄昏半球光天色 0x9a96c8（淡紫，×1.45）+ 天空环境反射 → 紫。
   // 真实情况门廊券顶 / 石壁挡住了大半天空 → 用常量 aoMap 给门扇所有材质（含铁箍改用的暖黑铁克隆）做「门廊天空遮蔽」：只压间接光（半球光 + 环境反射）到 22%，直射灯不变。
   const skyOcc = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1); skyOcc.needsUpdate = true;
-  const occ = (c) => { if (!c.aoMap) { c.aoMap = skyOcc; c.aoMapIntensity = 0.78; } else c.aoMapIntensity = Math.max(c.aoMapIntensity ?? 1, 1) * 1.8; c.needsUpdate = true; return c; };
+  const occ = (c) => { if (!c.aoMap) { c.aoMap = skyOcc; c.aoMapIntensity = 0.45; } else c.aoMapIntensity = Math.max(c.aoMapIntensity ?? 1, 1) * 1.45; /* 批次58：0.78（间接光留 22%）整扇近黑 → 0.45（留 55%）+ 下面门廊暖补光 */ c.needsUpdate = true; return c; };
   for (const k in dM) occ(dM[k]);
   const ironD = M.iron.clone(); if (Object.prototype.hasOwnProperty.call(M.iron, 'onBeforeCompile')) ironD.onBeforeCompile = M.iron.onBeforeCompile; if (Object.prototype.hasOwnProperty.call(M.iron, 'customProgramCacheKey')) ironD.customProgramCacheKey = M.iron.customProgramCacheKey;
   ironD.color.set(0x2a2420); occ(ironD); // 铁箍：冷蓝灰 → 暖黑铁（共享 M.iron 不动）
@@ -514,6 +514,8 @@ async function heroFacade(g, M, world, ctx, add) {
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 8, 24), M.gold); ring.position.set(sx * -(w - 0.5), h * 0.45, 0.2); leaf.add(ring);
     leaf.position.set(sx * DW / 2, Y, -6.2); leaf.rotation.y = sx * -1.25; g.add(leaf);
   }
+  // 批次58：门廊券内石面反弹暖光（2850K，不投影）——批55 遮蔽后左门扇只剩间接光、直射暖灯照不到外表面；补光偏左放（距左门扇外表面 ≈1.9 m、右门扇 ≈3.8 m + 射程窗口衰减），把左扇抬到暗古铜而右扇基本不变
+  { const pb = new THREE.PointLight(0xffb26e, 24, 6, 2); pb.position.set(-1.0, Y + 3.4, -7.8); pb.castShadow = false; pb.name = 'porch_bounce58'; g.add(pb); }
   innerVestibuleDoors(g, M, Y); // 批次49：门洞纵深——门厅尽头内门（铜饰胡桃木门半开）+ 门厅暖光渐变
   // 文字带「叙事管理局」（黑色抛光石板上的鎏金字）
   const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + 31.2, -4.99); g.add(txt);
