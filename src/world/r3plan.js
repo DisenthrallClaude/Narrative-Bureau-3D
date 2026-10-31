@@ -834,6 +834,18 @@ export function planCommand(y) {
   out.push({ m: 'r2/fire_extinguisher', x: 42.9, y: yp, z: -60.6, yaw: 0, h: 0.58, tag: 'K3', on: 'floor' });
   out.push({ m: 'r2/exit_sign', x: 49.85, y: y + 3.4, z: -45.75, yaw: ROT.W, w: 0.36, tag: 'K3', on: 'wall' });
   smoke(out, y, H, [[26, -36], [44, -36], [26, -46], [44, -46], [26, -54.8], [44, -54.8], [35, -59]]);
+  // ⑧ 批次35 按功能补空：值班平台北墙（值班长台背后）三联挂图 + 两盏铜壁灯（暖色点缀，自发光无实时光源）——IMAGE-PLAN 未用图：B01_01 局徽高清 / B01_06 扫描异常屏样张 / jiangli 重点监测对象
+  pic(out, 'textures/b01/B01_01_局徽高清.png', 35, yp + 2.05, Z0 + 0.03, 0, 1.15, 1.15, 'gold', { tag: '值班长台背墙' });
+  pic(out, 'textures/b01/B01_06_安检扫描异常屏.png', 32.2, yp + 1.95, Z0 + 0.03, 0, 1.44, 0.81, 'black', { tag: '值班长台背墙' });
+  pic(out, 'textures/archives/jiangli.jpg', 37.8, yp + 1.95, Z0 + 0.03, 0, 0.6, 1.07, 'black', { tag: '值班长台背墙' });
+  for (const x of [33.6, 36.4]) sconce(out, x, yp + 2.2, Z0 + 0.02, 0);
+  // ⑨ 批次35 东墙资料柜成排（第 3 级台阶面，z −53.2…−50.6，与最后一排控制台东端留 1.45 m 走道；不进平台前通道）
+  cabRow(out, 49.62, -53.2, y + 3 * 0.45, 6, ROT.W, '资料柜（东墙）', 0.52, true);
+  // ⑩ 批次35 地图台（东南：前排控制台背后与证据摄录之间，主屏前通道东 x 43.5 以东）：长桌 + 平铺巨城全景照 + 压镇铜尺 / 文件夹
+  out.push({ m: 'r2/woodentable_01', x: 46.6, y, z: -38.6, yaw: 0, fit: [1.6, 0.8, 0.85], tag: '地图台', on: 'floor', col: [1.6, 0.8, 0.85] });
+  out.push({ pic: 'textures/b01/B01_14_天空盒_黄昏巨城.png', x: 46.6, y: y + 0.805, z: -38.6, yaw: 0, w: 1.4, h: 0.7, frame: 'none', flat: true, size: [1.4, 0.7, 0.01], tag: '地图台', on: 'desk' });
+  out.push({ box: 'brass', x: 46.6, y: y + 0.815, z: -38.27, w: 1.2, h: 0.012, d: 0.03, yaw: 0, tag: '地图台', on: 'partv' });
+  out.push({ m: 'r2/several_folders', x: 47.25, y: y + 0.8, z: -38.85, yaw: 0.3, h: 0.2, tag: '地图台', on: 'desk' });
   light(out, 23.4, y + 2.4, -36.5, 0xffe2b8, 2.2, 6); light(out, 47.2, y + 2.4, -36.5, 0xffe2b8, 2.0, 6); light(out, 47.0, yp + 2.3, -58.8, 0xffd8a8, 2.2, 5.5); light(out, 26.0, yp + 2.3, -58.8, 0xffd8a8, 2.2, 6);
   return { room, items: out };
 }

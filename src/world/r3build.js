@@ -144,6 +144,7 @@ export async function buildR3(ctx, world, MAT, late = false) {
         const n = [Math.sin(yaw), Math.cos(yaw)]; const t = tex(it.pic);
         const mat = new THREE.MeshStandardMaterial({ map: t, roughness: 0.75, side: it.side === 2 ? THREE.DoubleSide : THREE.FrontSide });
         const m = new THREE.Mesh(new THREE.PlaneGeometry(it.w, it.h), mat); m.position.set(it.x + n[0] * 0.012, it.y, it.z + n[1] * 0.012); m.rotation.y = yaw; zone.add(m);
+        if (it.flat) { m.position.set(it.x, it.y, it.z); m.rotation.order = 'YXZ'; m.rotation.set(-Math.PI / 2, yaw, 0); m.receiveShadow = true; continue; } // 批次35：平铺在桌面（地图台全景照）
         if (it.cork) b.box('dz_cork', it.cork[0], it.cork[1], 0.025, [it.x - n[0] * 0.01, it.y, it.z - n[1] * 0.01], { uv: 1, rot: [0, yaw, 0] });
         if (it.cork) b.box('dz_wain2', it.cork[0] + 0.06, it.cork[1] + 0.06, 0.02, [it.x - n[0] * 0.025, it.y, it.z - n[1] * 0.025], { uv: 1, rot: [0, yaw, 0] });
         else if (it.frame !== 'none') { b.box(FRAME[it.frame] ?? 'gold', it.w + 0.07, it.h + 0.07, 0.03, [it.x - n[0] * 0.006, it.y, it.z - n[1] * 0.006], { uv: 1, rot: [0, yaw, 0] }); }

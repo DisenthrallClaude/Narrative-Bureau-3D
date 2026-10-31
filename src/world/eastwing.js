@@ -229,13 +229,15 @@ export function buildEastWing(scene, world, ctx) {
   // 值班长台（后排中央）+ 红色预警按钮 + 打印机长条
   const dz = ccz1 + 2.4, dh = 4 * 0.45;
   b.box('carpet', XS - X0, dh, 4.6, [(X0 + XS) / 2, F2 + dh / 2, ccz1 + 2.3], { uv: 0.4, collide: true });
-  b.box('wood', 6, 1.0, 1.2, [35, F2 + dh + 0.5, dz], { uv: 0.5, collide: true });
+  // 批次35：wood 方盒 6×1.0×1.2 → Blender 精建 r2/cc_duty_desk（tools/blender/cc_duty_desk.py：胡桃木三联凸起芯板 + 铜包边 / 铜踢脚 + 操作员侧抽屉柜 + 容膝洞；台上电话交换机斜面插孔板 + 两部胶木话机 + 绿罩台灯），碰撞盒不变
+  world.box(35, F2 + dh + 0.5, dz, 6, 1.0, 1.2);
+  queueMicrotask(() => loadModel('r2/cc_duty_desk').then((src) => { src.position.set(35, F2 + dh, dz); src.traverse((o) => { if (!o.isMesh) return; o.castShadow = true; o.receiveShadow = true; const mn = (o.material?.name || ''); if (/dd_lamp/.test(mn)) Object.assign(o.material, { emissive: o.material.color.clone(), emissiveIntensity: mn === 'dd_lampG' ? 0.35 : 1.4 }); }); zone.add(src); }).catch((e) => console.warn('[NB] cc_duty_desk', e)));
   b.box('onyx', 6.2, 0.06, 1.4, [35, F2 + dh + 1.03, dz], { uv: 0.5 });
   const btnBase = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.06, 24), M.blackMetal); btnBase.position.set(36.8, F2 + dh + 1.09, dz); zone.add(btnBase);
   const btn = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x8a0a0a, emissive: 0xff1a1a, emissiveIntensity: 1.2 })); btn.position.set(36.8, F2 + dh + 1.11, dz); zone.add(btn);
   const cover = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.16, 0.3), M.glassClear); cover.position.set(36.8, F2 + dh + 1.16, dz); zone.add(cover); ctx.anchors.doc_cmd_alert_flow = cover;
   const ledger = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.03, 0.46), M.leather); ledger.position.set(34.6, F2 + dh + 1.075, dz); zone.add(ledger); ctx.anchors.doc_cmd_handover = ledger;
-  b.box('paintedSteel', 0.6, 0.3, 0.45, [33, F2 + dh + 1.21, dz], { uv: 1 });
+  // 批次35：台上 paintedSteel 方块 0.6×0.3×0.45 → 并入 cc_duty_desk 的电话交换机（x 33）
   const strip = new THREE.Mesh(new THREE.PlaneGeometry(0.24, 1.9), stripMaterial()); strip.position.set(33, F2 + dh + 0.2, dz + 0.62); strip.rotation.x = -0.15; zone.add(strip); ctx.anchors.doc_cmd_log_strip = strip;
   const zw = person(M, { coat: 0x101622, clue: 'chair', name: '周闻', flipDossier: true }); zw.position.set(35, F2 + dh, dz - 1.0); zw.rotation.y = 0; zone.add(zw); point(zone, 0xffe2b8, 2.2, [35.3, F2 + dh + 1.25, dz - 0.55], 2.6); /* 批次18：周闻空椅补光（id_zhouwen 证件卡太暗） */ // 空椅面朝值班长台/主屏（+Z），原 PI 是旧人形朝向。批次16：原 zone.add 被吞进行尾注释 → 周闻空椅从未加入场景（id_zhouwen 一直拍不到的根因）
   ctx.anchors.int_cmd_zhouwen = { box: [35, F2 + dh + 1.0, dz - 1.0, 1.2, 2, 1.2] };
@@ -244,8 +246,14 @@ export function buildEastWing(scene, world, ctx) {
   clocks.forEach(([n, off], i) => { const cs = new CanvasScreen(256, 300, (c) => drawWorldClock(c, n, off), { fps: 0.5, intensity: 1.0 }); ctx.screens.push(cs); const m = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 1.17), cs.mat); m.position.set(X0 + 0.25, F2 + 4.2, -38 - i * 2.4); m.rotation.y = Math.PI / 2; zone.add(m); });
   const ccTitle = goldText('全国现实稳定度监测指挥中心', 6, 0.5, M.goldBright, { res: 128 }); ccTitle.position.set(35, F2 + 6.4, ccz1 + 0.2); zone.add(ccTitle);
   // 灯光（冷蓝）
-  rectLight(zone, 0x9ec2ff, 2.0, 18, 5, [35, F2 + 3.6, ZA - 1.4], [35, F2 + 1, ZA - 10]);
-  for (const x of [26, 35, 44]) point(zone, 0xbcd4ff, 10, [x, F2 + 6, ccz], 14);
+  // 批次35 灯光分层：主屏冷色补光（rectLight 1.6 + 主屏前一盏冷点光）+ 席位上空两盏铜吊灯暖光 + 值班平台两盏暖色筒灯；不再三盏同色冷蓝
+  rectLight(zone, 0x9ec2ff, 1.6, 18, 5, [35, F2 + 3.6, ZA - 1.4], [35, F2 + 1, ZA - 10]);
+  point(zone, 0xbcd4ff, 7, [35, F2 + 5, ccz0 - 5], 13);
+  for (const x of [28.1, 41.9]) { point(zone, 0xffc58a, 9, [x, F2 + 4.6, ccz - 1.8], 12); const pz = ccz - 1.8;
+    b.box('brass', 0.03, F3 - 0.5 - (F2 + 5.05), 0.03, [x, (F3 - 0.5 + F2 + 5.05) / 2, pz], { uv: 1 });
+    b.add('brass', new THREE.CylinderGeometry(0.16, 0.55, 0.32, 24, 1, true), { pos: [x, F2 + 4.9, pz] }, { uv: 1 });
+    b.add('lampWarm', new THREE.CircleGeometry(0.5, 24), { pos: [x, F2 + 4.75, pz], rot: [Math.PI / 2, 0, 0] }, { uv: false }); }
+  for (const x of [32.4, 37.6]) { point(zone, 0xffd6a0, 4, [x, F2 + dh + 3.4, dz + 0.2], 6); b.add('lampWarm', new THREE.CircleGeometry(0.12, 20), { pos: [x, F3 - 0.51, dz + 0.2], rot: [Math.PI / 2, 0, 0] }, { uv: false }); }
   b.box('vault', XS - X0, 0.2, ccz0 - ccz1, [(X0 + XS) / 2, F3 - 0.4, ccz], { uv: 0.3 });
 
   // ================= 2F 阅卷中心 =================
