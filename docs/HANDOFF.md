@@ -1963,8 +1963,8 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 - A3 B1 机位：m9_b1cab（西墙铁柜排）/ m9_b1door（东墙铁门）。看图：16 柜成排贴墙、暖灰烤漆 ✔（略偏白）；铁门门套/凸板/推杠可读 ✔。B1 右侧地面镜面黑反光是旧问题，未处理。
 - A4 检查：audit56（archive/archive_b1/training 三区 dump 在 work/r3/m9/plans/）落地件↔隔断 0；落地件互插 1 处为旧有 archive_b1 古董桌↔扶手椅 7 cm（椅子塞桌下，合理）；训练场 4 面局旗"背后无墙"为旧项（挂桁架）。r3plan_draw training errors=0。
 - B 训练场：规划 work/r3/m9/plans/training_plan.md + plan_training.png。tools/blender/m9_training.py → public/assets/models/m9/：tr_bay（8×16 m 开间：胡桃凸芯板墙裙 1.4 m + 踢脚石 + 腰线暗铜嵌条、暖灰石饰面分缝、半壁柱拼 0.8 m 带础/头、高窗 3.0×3.4 窗套/石窗台/铁棂/暖琥珀内透 emissive 0.7、三级檐口；2940 三角）×26（东西各 8、南两翼各 3、北两翼 2 + 开口旁 0.8 缩放窄开间）；tr_lectern（简报区 −22,−104）；tr_locker ×5（x 12.7，每 1.02 m 成排）。src/world/m9_training.js 接入；dressing.js 在 M9_TRAIN 下关掉蓝色灯条护墙板（南墙中段 ±8 m 保留、灯条改 dz_brassDim）；r3plan 讲台/器材柜改 F7 固定件登记。`?nom9=1` 回旧。锚点/触发器/副本门/控制塔/维护门碰撞未动；讲台、柜排各加一个小碰撞盒。Blender 预览 work/r3/m9/preview/（prev_sheet.jpg）。
-- 游戏内 training_r3（run 41221264162）亲眼看：墙面从蓝灯条深色瓷砖变成暖灰石 + 壁柱 + 高窗暖光，蓝色消失 ✔；高窗偏亮奶黄（B6 地下有窗叙事上牵强，可改成"采光井/通风窗"或压 emissive 0.45）。
-- 截图：work/r3/m9/r41220497557/m9a/、work/r3/m9/r41221264162/m9b/；拼图 work/r3/m9/sheet.jpg（9 张）。走查 run 41221284508（e0c73ef）通过 31 / 失败 0 / 控制台错误 0（work/r3/m9/walk/walk/WALKTHROUGH.md）。另：简报区课桌椅（r2/schooldesk）椅面仍是蓝色，违反禁人造物蓝绿，未处理。机位 m9_eastglobe / m9_b1cab / m9_b1door / m9_tr_wall / m9_tr_north / m9_tr_brief / m9_tr_locker。
+- 游戏内 training_r3（run 41221264162）亲眼看：墙面从蓝灯条深色瓷砖变成暖灰石 + 壁柱 + 高窗暖光，蓝色消失 ✔；m9_tr_north / m9_tr_locker 也已看：北墙两翼开间 + 高窗到位、器材柜 5 联成排暖灰（略偏白）✔；北侧电梯厅方向可见一片红砖 + 橄榄绿墙裙（旧件，非本批）。高窗偏亮奶黄（B6 地下有窗叙事上牵强，可改成"采光井/通风窗"或压 emissive 0.45）。
+- 截图：work/r3/m9/r41220497557/m9a/、work/r3/m9/r41221264162/m9b/；拼图 work/r3/m9/sheet.jpg（12 张）。走查 run 41221284508（e0c73ef）通过 31 / 失败 0 / 控制台错误 0（work/r3/m9/walk/walk/WALKTHROUGH.md）。另：简报区课桌椅（r2/schooldesk）椅面仍是蓝色，违反禁人造物蓝绿，未处理。机位 m9_eastglobe / m9_b1cab / m9_b1door / m9_tr_wall / m9_tr_north / m9_tr_brief / m9_tr_locker。
 - Drive：分卷文件夹下新建 v12_m9_models（1IrJcljXdlIphXPU_CoCSNe5c3vsQjTGC）内 v12_m9_models.tar.gz（1IKNrlSQ_CqWdIlI-obNzOYXDlmV8hvqv：3 glb + m9_training.py + m9_training.js + 预览 + 规划）。未删任何旧卷。
 - 未完成：屋架 tr_truss（脚本函数已写，未出模/未接入）；靶位/训练台 hero；电梯厅开口门套；高窗亮度/叙事再定。
 
