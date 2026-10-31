@@ -2194,3 +2194,42 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 - 未验证：low 档未单独实拍（同批 `e2g:ab1_r3:&q=low` 与 high 同名 artifact 冲突，未取到）。
 ### 下批建议
 1. 门洞竖向铜框：点光照不到朝内的竖带 → 建议改材质（铜框单独暖自发光 0.3 描边贴图）或在 Blender 里给门框加倒角高光面。2. B1 雾：需先在管线里提供深度纹理再做软粒子。3. B1 墙面中性转暖系数 0.55 可降到 0.4。4. B1 推车 storage_cart 是橄榄绿（非本批范围，属禁蓝绿边缘，可另批改暖灰）。
+
+## 批次 I1 · 交互音效（Kenney CC0）+ 三个小尾巴（2026-11-01 03:06 CST 接手，约 30 分钟；与 M18 并行，未碰 M18 文件 / UI 样式 / game-intranet；独立 worktree /tmp/i1wt）
+- 提交：f25ae39（A 音效 + 代码）、f0e87b3（B 三项）、b9cdf05（署名）、e122b90（铜框描边匹配修正）。每次 `npx vite build --outDir /tmp/i1dist` = 0，build 后即删。
+- **A 音效**：Kenney 官方 zip（kenney.nl/assets → download-link，Interface Sounds 1.0 / Impact Sounds / RPG Audio；UI Audio 下载未用）→ ffmpeg 转 mono 44.1 kHz vorbis q3，按均值响度统一（UI −22…−26 dB、脚步 −22/−24、门/柜 −22），峰值 ≤ −3 dBFS；UI 音加 4.2 kHz 低通 + 降调 0.89 处理成暗调。29 个文件共 **236 KB**，放 public/content/audio/K_*.ogg，index.json 已重生成。源 zip、转码脚本：项目 work/r3/i1/kenney_src/、work/r3/i1/kbuild.sh。
+  - 代码只在 src/engine/audio.js（KSET / KALIAS / KINTER、kfx()、interact()、bindUI()、gears()、footstep() 改走 Kenney）+ src/main.js 两处（init 后 `audio.bindUI()`；E 键 `audio.sfx('S15')` → `audio.interact(inter.current)`）。全部走原 THREE.AudioListener 总线 → 沿用设置里的主音量（setVol，设 0 即静音；项目无单独静音开关）与 vol.sfx；任何 K 文件缺失自动回落原 Sxx。
+  - 旧编号别名（所有现有调用点不改）：S08 翻页 → K_paper_*（随机），S11 木门 → K_door_open，S22 菜单 → K_ui_open。
+  - AudioContext：listener 仍按原逻辑在启动时创建（未新增 context）；悬停音在 context 未 running 时直接跳过（无手势不触发任何播放 / 警告）；点击时先 resume。walk 两次控制台 0、日志无 audio 相关输出。
+  - 齿轮加载：点「开始游戏」（用户手势）时 `gears(2.8)` 程序化合成：46 / 69.5 Hz 两路锯齿（起转时 0.8→1 倍频滑升）过 900 Hz 低通 = 转轴低吟 + 每 0.19 s（每 4 拍多停 0.07 s）一次棘轮咔嗒（参照 work/ref/teardown/sfx/synth.py 的 click/impact：噪声瞬态 + 180 Hz 体，700 Hz 带通），0.35 s 淡入 / 0.6 s 淡出，峰值 0.16 × vol.sfx。
+  - 金属格栅脚步：物理层 surfaces 只登记了 stone/marble/carpet/wood，没有 metal/grate → 本批在 audio.footstep 里按区域补：east_stair、spine_b3–b5 中默认 stone 的地面判为金属（近似，若以后在 physics 里登记 'grate' 面会直接生效）。
+
+| 文件 | 来源 | 用途 | 触发点 | 时长 | 体积 |
+|---|---|---|---|---|---|
+| K_ui_hover.ogg | Interface tick_002 | UI 悬停 | button / .btn / .seg span / 对话选项 pointerover（60 ms 节流，context 未解锁时静默）vol 0.22 | 0.03 s | 3.9 KB |
+| K_ui_click.ogg | Interface click_002 | UI 点击 | 上述元素 click vol 0.4 | 0.02 s | 3.7 KB |
+| K_ui_confirm.ogg | Interface confirmation_002 | 确认 | 「开始游戏」点击（+齿轮声）；E 键非门柜类交互 vol 0.35 | 0.61 s | 5.9 KB |
+| K_ui_open.ogg | Interface open_002 | 菜单打开 | S22 别名（暂停菜单） | 0.35 s | 6.8 KB |
+| K_ui_back.ogg | Interface close_002 | 返回（备用） | 暂未接（UI 无独立返回钩子） | 0.35 s | 6.8 KB |
+| K_step_stone_0–3.ogg | Impact footstep_concrete | 石材/大理石脚步 | footstep stone/marble（默认） | 0.11 s | 4×4.3 KB |
+| K_step_wood_0–3.ogg | Impact footstep_wood | 木地板脚步 | footstep wood（楼上办公/图书馆等） | 0.25 s | 4×4.3 KB |
+| K_step_carpet_0–3.ogg | Impact footstep_carpet | 地毯脚步 | footstep carpet（×0.8 音量） | 0.14 s | 4×4.7 KB |
+| K_step_metal_0–3.ogg | Impact impactMetal_light 截 0.25 s | 金属格栅脚步 | footstep metal/grate；east_stair、spine_b* 区域 | 0.25 s | 4×4.5 KB |
+| K_paper_0–2.ogg | RPG bookFlip1–3 | 翻页 | S08 别名：打开文档 / 档案、阅读器每页 onShow | 0.23–0.77 s | 10.2 / 7.7 / 6.0 KB |
+| K_paper_open.ogg | RPG bookOpen | 翻开（备用） | 暂未接 | 0.15 s | 5.4 KB |
+| K_door_open.ogg | RPG doorOpen_1 | 门开 | S11 别名；E 键提示语含「门 / door」 | 0.92 s | 12.3 KB |
+| K_door_close.ogg | RPG doorClose_1 | 门关（备用） | 暂未接（门无关闭事件） | 0.68 s | 9.6 KB |
+| K_drawer.ogg | RPG creak3 + Impact impactWood_light_000 | 抽屉 | E 键提示语含「抽屉 / 投放口」（如 int_cit_drawer） | 0.52 s | 7.2 KB |
+| K_cabinet.ogg | RPG metalLatch + Impact impactMetal_medium_000 | 金属柜 | E 键提示语含「柜 / 锁 / 箱」 | 0.45 s | 6.6 KB |
+| （程序化）gears() | WebAudio 合成 | 齿轮加载 | 「开始游戏」点击 | 2.8 s | 0 |
+
+- **B 小尾巴**（均在 src/world/e2_fx.js）：
+  1. B1 推车 storage_cart（material `industrial_storage_cart`）橄榄绿 → warmB1 克隆材质里全去色 × (0.78, 0.74, 0.70) 暗铁暖灰、metalness ≥0.55 / roughness ≤0.6；只作用于 archive_b1 分组（其它区的推车不变）。亲眼看 m6_b1 局部：绿味消失，成暖褐灰 ✔。
+  2. B1 中性转暖 0.55 → 0.4：ab1_r3 左墙赭黄减一档，仍暖、不回蓝 ✔。
+  3. 深渊门铜框（新方案只试一次）：复制铜框材质（仅 m13_abyss_gate 内替换，门座符刻板 / 他处不受影响）加暖色自发光 0xffa050 × 0.16，按菲涅尔加权（0.35 + 1.65·(1−N·V)²，掠射边缘亮）。**注意**：f0e87b3 首拍按 material.name `m2_bronze` 匹配到 0 个网格——pbr() 把 name 设成贴图集 `Metal046A`，与符刻板共用 → e122b90 改为「name=Metal046A 且底色 r 0.45 / g 0.30」只认铜框（属匹配 bug 修正，方案本身只上了这一次）。亲眼看 m13_gate_side：拱券内圈铜框上段 + 竖向内边出现一道连续暖铜描边，中上段不再是深褐 ✔；正面 m13_gate_front 只在拱券内圈多出一道很细的暖边（正对时菲涅尔项弱，变化不大）——侧看 / 斜看有效、正看仍偏暗。开关 `?e1off=bronzerim`。
+- walk：run 41233194761（f0e87b3）31/31、控制台 0；run 41233883838（e122b90）31/31、控制台 0。
+- 截图（1280×720 high，Actions）：改前 = E2 末版（work/r3/e2/r41231792235/e2g、r41230989821/e2a）；改后 run 41233194761（组 i1：ab1_r3 / m6_b1）、41233883838（组 i1b：铜框修正后 m13_gate_front / side）。拼图 work/r3/i1/sheet.jpg（改前 | 改后）；脚本 work/r3/i1/sheet.py、fetch.sh。
+- Pages：线上 content/audio/K_ui_hover.ogg 200、index.json 含 K_*（f25ae39 Deploy 41233032805 success）。
+- 未验证：音效听感无法在无头 CI 里实听（只验证了加载 / 无报错 / 音量链路）；low 档未单独拍（B 项不分档）。
+### 下批建议
+1. 在 physics 登记真正的 'grate'/'metal' 地面（东楼梯 / 书脊井钢梯），替代按区域近似。2. 门关闭、阅读器关闭（K_door_close / K_ui_back / K_paper_open 已入仓未接）。3. 如需更强存在感可把 KALIAS / KINTER 里的音量系数上调，统一在 audio.js 顶部。
