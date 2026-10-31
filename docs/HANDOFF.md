@@ -175,6 +175,35 @@
 - **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
 - 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
 
+## R3 批次35（2026-10-31 09:10 CST 接手，约 35 分钟）
+### 提交
+13ed3a6 截图工作流取图超时；ea7b69a 指挥中心；f2ab923 外观街屋 / 树皮；123d67b 宿舍衣柜 + dorm_r3_c + 相框倒圆（**最终游戏代码**）；52c446c 截图脚本 browser.close 挂死修复（只动 tools/shot.mjs）。每次提交前本机 `npx vite build` 返回 0；r3plan command_center 324 件 0 错（3 条旧 cctv 离墙警告，work/r3/b35/plan_command.png），dorm3 468 件 0 错 0 警（work/r3/b35/plan_dorm3.png）。
+### ★ 截图“超时”根因（hall_wanted / cc / ext_sky 连续多批超 25 分钟）
+- 不是机位重：取消 ext_house 任务后拿到日志——**PNG 165 s 就写出了**（canvas grab ok），之后 `await browser.close()` 在 SwiftShader 下挂死，任务一直跑到被取消。实测各机位真实耗时：hall_wanted 1052 s、cc_r3 765 s、ext_bird 936 s、ext_sky 452 s、其余 165–491 s（frames 4、1280×720 medium）。
+- 修：52c446c tools/shot.mjs 结尾限时 15 s 关浏览器后 `process.exit(0)`；13ed3a6 shots.yml canvas 取图超时 240 s → 1500 s、page.screenshot 回退 50 min → 10 min。**下批派图后看 job 是否在“拍”步骤正常结束；若旧 run 仍挂，取消后 upload-artifact 仍会上传已拍好的 PNG（本批全部 12 张都是这样取回的）。**
+### 1 取回旧 run
+- 41152757734 / 41152324220 / 41152283936 均超 25 分钟取消（都是上面的挂死）；重派为 41154157778（hall_wanted / ext_sky / ext_bird）+ 新代码 41154576040（cc_r3 / cc_r3_b / cc_top / id_zhouwen）。全部取回，`python3 work/r3/b35/cmp35.py` → work/r3/cmp35_*.jpg（12 张）。
+- hall_wanted（work/r3/b35/r41154157778/b35w/hall_wanted.png）：三批来第一次出图 ✔，通缉栏 + 铜字牌完整。
+### 2 指挥中心（ea7b69a）
+- 值班长台 wood 方盒 + paintedSteel 方块 → **Blender 精建 r2/cc_duty_desk**（tools/blender/cc_duty_desk.py：胡桃木正面三联凸起芯板 + 铜线脚 / 铜包边 / 铜踢脚 + 中联铜徽框；操作员侧两组 6 抽屉 + 铜拉手卡片框 + 容膝洞；台上电话交换机：木底座 + 32° 胶木斜面板 3×10 铜插孔 + 指示灯排 + 8 个拨杆键 + 两部胶木话机（拨号盘 / 叉簧 / 卷线）+ 绿罩银行灯）。玛瑙台面 / 红按钮 / 交班簿 / 打印纸带锚点不变，碰撞盒不变。预览 work/r3/b35/prev/dd_front.png、dd_back.png 合格。
+- 灯光分层：三盏同色冷蓝点光 → 主屏前一盏冷补光（7）+ 主屏 rectLight 2.0→1.6 + **两盏铜吊灯暖光 0xffc58a**（席位上空 x 28.1 / 41.9，带铜吊杆 + 铜灯罩 + 暖光盘）+ **值班平台两盏暖色筒灯**；值班长台背墙两盏铜壁灯（自发光，无实时光源）。
+- 按功能补空：值班长台背墙（北墙）三联挂图——IMAGE-PLAN 未用 B01_01 局徽高清（金框）/ B01_06 扫描异常屏样张 / jiangli 重点监测对象（黑框）；东墙第 3 级台阶面资料柜 6 只成排；东南地图台（woodentable_01 + 平铺 B01_14 巨城全景照 + 铜压尺 + 文件夹；r3build 新增 pic `flat: true`）。
+- **看图**（work/r3/b35/cc_sheet.jpg；cmp35_cc_r3 / cc_r3_b / cc_top / id_zhouwen）：cc_r3_b 两盏暖吊灯在冷屏海里形成暖点，不再单一冷蓝 ✔（中上）；新控制台成排、屏幕 / 椅子朝向正确，未见穿模（中上）；cc_top 俯视布局整齐、地图台和东墙柜可见（中）；**值班长台在三张机位里都不占画面（cc_r3_b 机位在长台前方背对它），精建效果未在游戏内验收**——下批加一个从平台前通道看北的 cc_r3_c 机位。
+### 3 外观（f2ab923）
+- 阳台模块 ×1.3 → 宽 ×1.15 / 深 ×1.5，阳台板 0x77736c → 0xa29d93；雨棚出挑 ×1.9 → ×2.6；玻璃 / 窗框不随进深放大（原 ×2.2 把玻璃推到墙后 6 cm）+ 阳台遮板 polygonOffset；内圈行道树干换 ambientCG **Bark007（CC0，已署名 CREDITS.txt）**按米制柱面重映射（u = 角度×半径/0.6 m，v = 高/0.9 m）。
+- **看图 ext_house（work/r3/b35/r41154755051/b35h/ext_house.png，cmp35_ext_house.jpg）：几乎没变化（下）**——阳台仍只见落地门 + 细横线、雨棚不明显、右侧两扇窗白闪点仍在；树干颜色变浅褐，近处看不出树皮纹理。说明这两栋近景楼**很可能不是 streetModules 贴的楼**（或模块朝向反了贴在楼内侧）：下批必须用 pick 探针点这栋楼窗口看命中对象名 / 材质（sh_glass? houseMat?），再决定修哪。白闪点更像着色器自己画的“亮窗噪点”，不是 z-fighting。ext_street（中）：行道树 / 车道不变。
+### 4 宿舍 + 相框（123d67b）
+- 偏橙大面的真实材质 = 衣柜门板 + 凸芯板用的 **dm_desk（0x6a4a2c 无贴图）**，不是 dm_wardrobe → 新材质 dm_wardrobePanel（木纹 0x4a2f1c）+ dm_wardrobe 压到 0x5a3a24。新机位 **dorm_r3_c**（306 西南角书桌旁看东北）。证件相框铜框条 → RoundedBox 2.8 mm 倒圆。
+- **看图**（work/r3/b35/misc_sheet.jpg）：dorm_r3_b 右前衣柜变深胡桃 ✔（中上）；dorm_r3_c 枕头 + 毛毯卷 + 门扇 + 衣柜同框 ✔（中上）；id_yinze / id_zhouwen 框边有一圈高光，比纯暗褐更像金属 ✔（中，仍偏木色，可再加局部磨亮）。
+### 收尾
+- 走查（123d67b = 最终游戏代码；52c446c 只改截图脚本）run 41154897169：**通过 31 / 失败 0 / 控制台错误 0** ✔（work/r3/b35/r41154897169/walk/WALKTHROUGH.md）。Pages：123d67b Deploy success（41154897323）；52c446c 见 PROGRESS-LOG。
+- Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删同名旧卷再传 v03 1N7TOdwpI9L-KyQ5H1t2eJ5JZ95rEUpgu、v04 1TlPNkJoy6c6jQ6O7qn8X9IJf8t8F6hFX、v02 1uInfqeUbFyAopfwKmmmPJO7tGn5-jmwg；v01 在本 HANDOFF 提交后重传（见 PROGRESS-LOG）。
+### 下批先做
+1. ext_house：pick 探针点近景两栋楼窗口 / 阳台位置，确认是不是 streetModules 楼、模块是否朝内；白闪点查着色器亮窗噪点。
+2. 指挥中心补 cc_r3_c（平台前通道看北，验收值班长台精建 + 背墙挂图 + 壁灯）。
+3. 树干树皮近景验收（ext_street 拉近一棵或新机位）。
+4. 新派图确认 52c446c 后 job 正常结束（不再挂到取消）。
+
 ## R3 批次34（2026-10-31 08:41 CST 接手，约 35 分钟）
 ### 提交
 2ffaa16 街屋立面 / 行道树；860d773 旧铜相框；79774be 宿舍；a24211b 指挥中心控制台 Blender 精建；e872fb2 修内圈行道树量化坐标（**最终代码**）。每次提交前本机 `npx vite build` 返回 0；r3plan dorm3 468 件 0 错 0 警（work/r3/b34/plan_dorm3.png）、command_center 309 件 0 错（3 条旧警告 cctv 离墙 0.4 m，work/r3/b34/plan_command.png）。
