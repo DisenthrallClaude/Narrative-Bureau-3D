@@ -6,6 +6,7 @@
 
 export const R3 = { floor3_office: true, floor2_liaison: true, floor2_pub: true, director: true, gate: true, archive: true, command_center: true, canteen: true, b1: true, b2: true, archive_b1: true, b4: true, b5: true, b6: true, b7: true, medical: true, dorm: true, dorm2: true, dorm3: true, interrogation: true, hangar: true, security_hall: true, plaza: true };
 
+const M12CH = typeof location === 'undefined' || !new URLSearchParams(location.search).has('nom12'); // 批次 M12
 const rot = (yaw, lx, lz) => [lx * Math.cos(yaw) + lz * Math.sin(yaw), -lx * Math.sin(yaw) + lz * Math.cos(yaw)];
 const at = (o, yaw, lx, lz) => { const [dx, dz] = rot(yaw, lx, lz); return [o[0] + dx, o[1] + dz]; };
 // 金属办公桌（Poly Haven metal_office_desk）按桌面高 0.76 m 等比 → 1.93 × 0.91 m
@@ -1609,7 +1610,7 @@ export function planTraining(y) {
     pic(out, 'textures/b07/B07_副本投放调度单.png', x - sx * 0.0, y + 1.7, -92.25, Math.PI, 0.8, 0.6, 'black', { stand: true, fy: y }); /* 批次57：4:3 横版 + 落地展架（AUDIT 表4 悬空） */ light(out, x, y + 3.2, z, 0xfff0d8, 1.6, 7); }
   stanchions(out, [[-2.9, -98.0], [-2.9, -101.0], [-2.9, -104.0]], y, '分流'); stanchions(out, [[2.9, -98.0], [2.9, -101.0], [2.9, -104.0]], y, '分流');
   // ② 战术简报区：控制塔成绩榜（南面）前 4 排 × 4 课桌（中间过道 x −22），讲台 + 立式黑板 + 投放调度单
-  { let k = 0; for (const z of [-106.4, -108.2, -110.0, -111.8]) for (const x of [-25.9, -24.5, -19.5, -18.1]) { out.push({ m: 'r2/schooldesk_01', x, y, z, yaw: Math.PI, w: 0.7, tag: '简报区', on: 'floor', col: [0.7, 0.75, 0.5] }); if (k % 5 !== 3) out.push({ m: 'r2/schoolchair_01', x: x + (hash(x, z) - 0.5) * 0.08, y, z: z - 0.5, yaw: (hash(z, x) - 0.5) * 0.12, h: 0.82, tag: '简报区', on: 'floor' }); k++; } }
+  { let k = 0; for (const z of [-106.4, -108.2, -110.0, -111.8]) for (const x of [-25.9, -24.5, -19.5, -18.1]) { out.push({ m: 'r2/schooldesk_01', x, y, z, yaw: Math.PI, w: 0.7, tag: '简报区', on: 'floor', col: [0.7, 0.75, 0.5] }); if (k % 5 !== 3) out.push({ m: M12CH ? 'm12/tr_chair' : 'r2/schoolchair_01', x: x + (hash(x, z) - 0.5) * 0.08, y, z: z - 0.5, yaw: (hash(z, x) - 0.5) * 0.12, h: 0.82, tag: '简报区', on: 'floor' }); /* 批次 M12：蓝塑料课椅 → 胡桃 / 铸铁老式课椅 */ k++; } }
   if (M9_TR) F7(out, '讲台（M9 hero）', -22, -104.0, 0.82, 0.64, y, Math.PI, 1.15); else out.push({ m: 'r2/lectern', x: -22, y, z: -104.0, yaw: Math.PI, h: 1.15, tag: '简报区', on: 'floor', col: [0.6, 1.15, 0.5] });
   out.push({ m: 'r2/standing_chalkboard_01', x: -16.4, y, z: -106.6, yaw: -2.2, h: 1.8, tag: '简报区', on: 'floor' });
   floorZ(out, 'r3_epoxy', -27.2, -16.6, -113.0, -103.2, y, { border: 0.12, bmat: 'r3_paintYellow' });
