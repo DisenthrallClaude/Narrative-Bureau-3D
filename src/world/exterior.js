@@ -737,7 +737,35 @@ function buildStreetRows(g, M, place, rnd) {
           float front = step(0.5, abs(vLn.z));
           float shopCov = 5.0 * floor((vW * 0.5 - 2.5) / 5.0) + 2.5, winCov = 3.4 * (floor((vW * 0.5 - 1.7) / 3.4 - 0.5 + 0.001) + 1.0);
           float keepShop = 1.0 - front * step(shopCov, abs(u)), keepWin = 1.0 - front * step(winCov, abs(u));
-          if (y < 4.2) { // 底层商铺
+          if (y < 4.2 && side > 0.5) { // 批次38：山墙侧面底层——去掉平涂彩色招牌带，改真实材质：石勒脚 + 墙砖（红砖楼）/ 方整石（灰 / 米色楼）+ 石套窗 + 窗台 + 腰线
+            float aa = clamp(fwidth(u) * 6.0, 0.0, 1.0); // 远处砖缝淡出，防摩尔纹
+            if (y < 0.9) { // 花岗岩勒脚：大块石 1.2×0.45，深灰
+              vec2 sb = vec2(u / 1.2 + 0.5 * mod(floor(y / 0.45), 2.0), y / 0.45); vec2 sf = fract(sb);
+              float mort = (1.0 - step(0.03, sf.x) * step(sf.y, 0.94)) * (1.0 - aa);
+              col = vec3(0.30, 0.29, 0.28) * (0.88 + 0.2 * h2(floor(sb))) * (1.0 - 0.35 * mort);
+              col *= 1.0 - 0.3 * step(0.82, y); // 勒脚压顶阴影线
+            } else {
+              bool brick = vSd >= 0.34 && vSd < 0.67;
+              vec2 bs = brick ? vec2(0.25, 0.065) : vec2(0.9, 0.42);
+              float row = floor(y / bs.y); vec2 bb = vec2(u / bs.x + 0.5 * mod(row, 2.0), y / bs.y); vec2 bf = fract(bb);
+              float mort = (1.0 - step(brick ? 0.05 : 0.025, bf.x) * step(bf.y, brick ? 0.82 : 0.95)) * (1.0 - aa);
+              vec3 base = brick ? vec3(0.50, 0.26, 0.19) : pal * 0.95;
+              col = base * (0.86 + 0.24 * h2(floor(bb) + vSd * 9.0)) ;
+              col = mix(col, brick ? vec3(0.62, 0.58, 0.52) : pal * 0.7, mort * 0.8);
+              // 石套窗：每 3.4 m 一樘，窗洞 1.1–2.9 m
+              float fx = fract(u / 3.4); float cx = floor(u / 3.4);
+              float wn = step(0.3, fx) * step(fx, 0.7) * step(1.15, y) * step(y, 2.85);
+              float fr = step(0.27, fx) * step(fx, 0.73) * step(1.05, y) * step(y, 3.0) - wn;
+              float sill = step(0.25, fx) * step(fx, 0.75) * step(0.98, y) * step(y, 1.1);
+              float ml = wn * (step(abs(fx - 0.5), 0.012) + step(abs(y - 2.25), 0.02));
+              col = mix(col, vec3(0.70, 0.68, 0.63), max(fr, sill));
+              col = mix(col, vec3(0.05, 0.055, 0.06), wn); col = mix(col, vec3(0.26, 0.17, 0.10), ml);
+              col *= 1.0 - 0.3 * step(0.98, y) * step(y, 1.0) * step(0.25, fx) * step(fx, 0.75); // 窗台下影
+              float wo = step(0.82, h2(vec2(cx * 2.3, vSd * 31.0)));
+              em += wn * (1.0 - ml) * wo * vec3(1.0, 0.55, 0.25) * 0.35;
+              if (y > 3.85) col = vec3(0.66, 0.64, 0.59) * (1.0 - 0.3 * step(y, 3.92)); // 腰线石
+            }
+          } else if (y < 4.2) { // 底层商铺
             float bay = floor(u / 5.0 + 0.5 + side * 7.0 + vSd * 13.0); float bx = fract(u / 5.0 + 0.5);
             float glass = step(0.08, bx) * step(bx, 0.92) * step(0.45, y) * step(y, 3.0) * keepShop;
             float sign = step(0.04, bx) * step(bx, 0.96) * step(3.15, y) * step(y, 3.95);
