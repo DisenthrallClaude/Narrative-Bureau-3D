@@ -1087,19 +1087,10 @@ function innerVestibuleDoors(g, M, Y) {
   box(g, glow, OW, 1.5, 0.04, 0, Y + doorH + 0.8, ZW - 0.05);
   for (let i = 1; i < 12; i++) box(g, brass, 0.05, 1.5, 0.08, -OW / 2 + i * OW / 12, Y + doorH + 0.8, ZW);
   box(g, woodDk, OW, 0.18, 0.3, 0, Y + doorH + 0.05, ZW);
-  for (const sx of [-1, 1]) {
-    const leaf = new THREE.Group();
-    box(leaf, wood, w, doorH, 0.12, sx * -w / 2, doorH / 2, 0);
-    for (const fz of [-1, 1]) for (let r = 0; r < 3; r++) { // 每扇 2 列 × 3 行凸芯板 + 铜包边
-      const ph = r === 0 ? 1.1 : 1.85, py = 0.35 + [0, 1.25, 3.25][r] + ph / 2;
-      for (let c = 0; c < 2; c++) { const px = sx * -(w * 0.27 + c * w * 0.46), pw = w * 0.38;
-        box(leaf, woodDk, pw, ph, 0.04, px, py, fz * 0.075); box(leaf, brass, pw + 0.08, 0.035, 0.02, px, py + ph / 2 + 0.02, fz * 0.07); box(leaf, brass, pw + 0.08, 0.035, 0.02, px, py - ph / 2 - 0.02, fz * 0.07);
-        for (const e of [-1, 1]) box(leaf, brass, 0.035, ph + 0.08, 0.02, px + e * (pw / 2 + 0.02), py, fz * 0.07); }
-    }
-    box(leaf, brass, 0.16, 0.9, 0.03, sx * -(w - 0.35), 1.35, 0.08); box(leaf, brass, 0.16, 0.9, 0.03, sx * -(w - 0.35), 1.35, -0.08); // 铜推板
-    box(leaf, brass, w, 0.22, 0.13, sx * -w / 2, 0.11, 0); // 铜踢板
-    leaf.position.set(sx * w, Y, ZW + 0.1); leaf.rotation.y = sx * 0.87; g.add(leaf); // 向门厅（+z）半开 ≈ 50°
-  }
+  // 批次50：门扇改 Blender 精建 r2/inner_door（tools/blender/inner_door.py：4.8 × 5.6 m，2×3 凸芯板 + 铜压线 / 推板 / 踢板 / 合页筒；原点门轴下端、沿 −X 展开），左扇镜像
+  loadModel('r2/inner_door').then((src) => { for (const sx of [-1, 1]) {
+    const leaf = src.clone(true); leaf.traverse((o) => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; } });
+    leaf.scale.set(sx > 0 ? 1 : -1, 1, 1); leaf.position.set(sx * w, Y, ZW + 0.1); leaf.rotation.y = sx * 0.87; g.add(leaf); } }); // 向门厅（+z）半开 ≈ 50°
   // 暖光渐变卡（大厅深处 → 门洞）：竖向卡，中心暖、四周透明，加法混合不写深度
   const cv = document.createElement('canvas'); cv.width = 256; cv.height = 256; const c2 = cv.getContext('2d');
   const gr = c2.createRadialGradient(128, 150, 10, 128, 150, 140); gr.addColorStop(0, 'rgba(255,196,120,0.85)'); gr.addColorStop(0.45, 'rgba(255,150,70,0.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
