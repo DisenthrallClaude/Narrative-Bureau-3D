@@ -67,8 +67,15 @@ def bay():
     for sx in (-1, 1): box(P['walnutD'], 0.16, WH + 0.32, 0.12, x=sx * (WW / 2 + 0.08), y=WY0 + WH / 2, z=0.06, bev=0.01)
     box(P['walnutD'], WW + 0.48, 0.18, 0.14, y=WY0 + WH + 0.09, z=0.07, bev=0.012)
     box(P['stoneD'], WW + 0.6, 0.12, 0.22, y=WY0 - 0.06, z=0.11, bev=0.01)
-    for k in (1, 2): box(P['iron'], 0.05, WH, 0.05, x=-WW / 2 + k * WW / 3, y=WY0 + WH / 2, z=0.06)
-    for k in (1, 2, 3): box(P['iron'], WW, 0.04, 0.05, y=WY0 + k * WH / 4, z=0.06)
+    # 批次 M16：铁窗棂方格 → 采光井格栅（铁内框 + 两根竖梃 + 斜百叶 17 条 + 中腰横档；B6 地下"高窗"读成通风采光井）
+    for sx in (-1, 1): box(P['iron'], 0.06, WH, 0.07, x=sx * (WW / 2 - 0.03), y=WY0 + WH / 2, z=0.06)
+    for yy in (WY0 + 0.03, WY0 + WH - 0.03, WY0 + WH / 2): box(P['iron'], WW, 0.06, 0.07, y=yy, z=0.06)
+    for k in (1, 2): box(P['iron'], 0.05, WH, 0.07, x=-WW / 2 + k * WW / 3, y=WY0 + WH / 2, z=0.06)
+    n = 17
+    for k in range(n):
+        yy = WY0 + 0.12 + k * (WH - 0.24) / (n - 1)
+        if abs(yy - (WY0 + WH / 2)) < 0.06: continue
+        box(P['iron'], WW - 0.1, 0.012, 0.11, y=yy, z=0.07, rx=math.radians(-40))
     # 檐口：三级线脚 + 暗铜嵌条
     box(P['stoneD'], W, 0.3, 0.16, y=15.0, z=0.08)
     box(P['stone'], W, 0.18, 0.26, y=15.24, z=0.13, bev=0.01)
