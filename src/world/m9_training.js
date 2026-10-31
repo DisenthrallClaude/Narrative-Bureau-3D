@@ -25,7 +25,7 @@ function mats() {
   };
 }
 // M12：器材柜单独一套暖灰烤漆（原 0xa79b8b 在游戏里读成白色现代铁柜）
-const LOCKER = { m6_enamel: new THREE.MeshStandardMaterial({ color: 0x766b5e, metalness: 0.15, roughness: 0.55, envMapIntensity: 0.5 }), m6_enamelDark: new THREE.MeshStandardMaterial({ color: 0x463e35, metalness: 0.15, roughness: 0.55, envMapIntensity: 0.5 }) };
+const LOCKER = { m6_enamel: new THREE.MeshStandardMaterial({ color: 0x5c5248, metalness: 0.15, roughness: 0.55, envMapIntensity: 0.5 }), m6_enamelDark: new THREE.MeshStandardMaterial({ color: 0x382f28, metalness: 0.15, roughness: 0.55, envMapIntensity: 0.5 }) };
 const pick = (MAT, m) => MAT[(m?.name || '').replace(/\.\d+$/, '')] ?? m;
 function bake(src, mxs, MAT) {
   const byMat = new Map(); src.updateMatrixWorld(true);

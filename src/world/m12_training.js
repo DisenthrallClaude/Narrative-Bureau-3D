@@ -2,7 +2,7 @@
 // 1 地面：深蓝灰橡胶地垫 → 暖灰混凝土（带磨损）；地面网格灯带与黄 / 白标线压成暗铜 / 暗黄。
 // 2 简报区课椅：r3plan 改用 m12/tr_chair（tools/blender/m12_training.py，胡桃座背 + 铸铁腿）。
 // 3 副本门：书页拱门发光色 蓝 / 黄 / 紫 / 绿 / 橙 → 琥珀 / 暗金 / 酒红 / 铜褐 / 羊皮纸（ABY 封门保持暗红），门前点光一并暖化；自发光峰值 ≤0.67（updateRooms）。
-// 4 B6 电梯厅：铆钉钢板墙裙（橄榄绿调）→ 胡桃板；训练场一侧开口加石门套（门柱 + 门楣 + 檐口 + 柱础，两个小碰撞盒，不占通行宽度）。
+// 4 B6 电梯厅：铆钉钢板墙裙 → 胡桃板、素混凝土墙（透过开口读成橄榄绿大片）→ 暖深灰、环氧地坪 → 同训练场地面；训练场一侧开口加石门套（门柱 + 门楣 + 檐口 + 柱础，两个小碰撞盒，不占通行宽度）。
 // 5 器材柜 / 高窗：在 m9_training.js 里改（暖灰烤漆压深、高窗暖白 0.45）。
 // 6 屋架：m12/tr_truss（m9_training.py truss 出模）×5 替换 dressing.js 的平铁灯光桁架（M12_TRAIN 下关闭旧件，射灯头保留）。
 // 7 兜底：区内其余材质 / 灯光若色相落在黄绿—蓝—紫（72°–288°）且有饱和度 → 改成暖褐 / 暖白（克隆材质，不影响其他区）。
@@ -32,6 +32,9 @@ function mats() {
     bronze: pbr('Metal046A', { color: 0x7a5634, metalness: 0.9, roughness: 0.5, env: 0.5 }),
     truss: pbr('Metal046A', { color: 0x5a3c26, metalness: 0.6, roughness: 0.55, env: 0.5 }),
     iron: pbr('Metal046A', { color: 0x2e2a26, metalness: 0.8, roughness: 0.5, env: 0.45 }),
+    trussIron: pbr('Metal046A', { color: 0x2e2a26, metalness: 0.5, roughness: 0.6, env: 0.3 }), // 屋架节点板 / 铆钉：金属度 0.8 时反射天空 HDR 成蓝点 → 压低
+    trussRivet: pbr('Metal046A', { color: 0x6a4a2e, metalness: 0.5, roughness: 0.6, env: 0.3 }),
+    hallWall: pbr('Concrete034', { color: 0x6a6158, roughness: 0.8, env: 0.35 }), // B6 电梯厅墙（原 r3_bunkerConc 透过开口读成橄榄绿）→ 暖深灰
   };
   for (const k of ['grid', 'paintY', 'paintW']) M[k].userData.noShadow = true;
   for (const m of Object.values(M)) m.userData.m12 = true;
@@ -85,13 +88,13 @@ export async function applyM12Training(ctx, world) {
   // 屋架
   try {
     const s = await loadModel('m12/tr_truss'); const tg = new THREE.Group(); tg.name = 'm12_tr_truss';
-    s.traverse((o) => { if (o.isMesh) { const n = (o.material?.name || '').replace(/\.\d+$/, ''); o.material = n === 'm1_iron' ? T.iron : n === 'm2_bronze' ? T.bronze : T.truss; o.castShadow = true; o.receiveShadow = true; } });
+    s.traverse((o) => { if (o.isMesh) { const n = (o.material?.name || '').replace(/\.\d+$/, ''); o.material = n === 'm1_iron' ? T.trussIron : n === 'm2_bronze' ? T.trussRivet : T.truss; o.castShadow = true; o.receiveShadow = true; } });
     for (let z = -102; z > -152; z -= 12) { const c = s.clone(); c.position.set(0, y + 16 - 2.0, z); c.scale.set(63.2 / 64.36, 1, 1); tg.add(c); }
     zone.add(tg);
   } catch (e) { console.warn('M12 truss', e); }
   doorSurround(zone, world, y);
   // 材质替换 + 兜底暖化
-  const swap = (m) => m === MM.trainFloor ? T.floor : m === MM.paintY ? T.paintY : m === MM.paintW ? T.paintW : (D.r3_steelRivet && m === D.r3_steelRivet) ? T.walnut : (m?.emissive && m.color && m.emissive.getHex() === 0xc9a052 && m.color.getHex() === 0x1a1610) ? T.grid : warmMat(m);
+  const swap = (m) => m === MM.trainFloor ? T.floor : m === MM.paintY ? T.paintY : m === MM.paintW ? T.paintW : (D.r3_steelRivet && m === D.r3_steelRivet) ? T.walnut : (D.r3_bunkerConc && m === D.r3_bunkerConc) ? T.hallWall : (D.r3_epoxy && m === D.r3_epoxy) ? T.floor : (m?.emissive && m.color && m.emissive.getHex() === 0xc9a052 && m.color.getHex() === 0x1a1610) ? T.grid : warmMat(m);
   zone.traverse((o) => {
     if (o.isMesh) o.material = Array.isArray(o.material) ? o.material.map(swap) : swap(o.material);
     if (o.isLight && o.color && coolHue(o.color, 0.08)) { o.color.getHSL(_hsl); o.color.setHSL(0.08, 0.55, Math.max(_hsl.l, 0.8)); }
