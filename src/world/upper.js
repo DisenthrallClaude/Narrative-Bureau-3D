@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { Batch } from '../engine/batch.js';
 import { placeModel } from '../engine/assets.js';
 import { R3 } from './r3plan.js';
+import { buildM11Director, M11_DIR } from './m11_director.js';
 import { mats } from './mats.js';
 import { Frame, archRingGeo, archShape, lancetWindow, emblem, goldText } from './gothic.js';
 import { CanvasScreen, dust, lightShaft } from '../engine/fx.js';
@@ -186,9 +187,9 @@ export function buildUpper(scene, world, ctx) {
     for (let k = -2; k <= 2; k++) { const f = new Frame([k * 4.6, y, Z1 + 0.25], 0); b.add('glassClear', new THREE.ShapeGeometry(archShape(3.6, 4.4)), f.at(0, 0.3, 0.0), { uv: false }); b.add('stoneDark', archRingGeo(4.2, 4.4, 3.6, 4.4, 0.4), f.at(0, 0.3, 0.05), { uv: 0.5 }); b.add('gold', archRingGeo(4.3, 4.4, 4.2, 4.4, 0.42), f.at(0, 0.3, 0.05), { uv: 1 }); }
     // 书桌 + 镇纸 + 玻璃板手稿 + 抽屉信
     // M4：大班台——双柜体（抽屉 + 黄铜拉手）+ 凹进的挡板 + 出沿台面 + 金色包边 + 底座线脚
-    b.box('wood', 3.34, 0.07, 1.52, [0, y + 0.855, -104], { uv: 0.6, collide: true }); b.box('gold', 3.36, 0.02, 1.54, [0, y + 0.83, -104], { uv: 1 });
-    for (const sx of [-1, 1]) { b.box('wood', 0.95, 0.8, 1.36, [sx * 1.15, y + 0.42, -104], { uv: 0.6, collide: true }); b.box('dz_base', 1.0, 0.1, 1.42, [sx * 1.15, y + 0.05, -104], { uv: 0.5 }); for (let k = 0; k < 3; k++) { b.box('dz_wain2', 0.82, 0.2, 0.02, [sx * 1.15, y + 0.2 + k * 0.24, -103.31], { uv: 0.6 }); b.box('brass', 0.16, 0.025, 0.03, [sx * 1.15, y + 0.24 + k * 0.24, -103.29], { uv: 1 }); } for (const ex of [-1, 1]) b.box('dz_wain2', 0.06, 0.8, 0.06, [sx * 1.15 + ex * 0.47, y + 0.42, -103.33], { uv: 0.6 }); }
-    b.box('dz_wain', 1.36, 0.62, 0.05, [0, y + 0.5, -104.55], { uv: 0.6 }); b.box('glassClear', 3.0, 0.02, 1.2, [0, y + 0.915, -104], { uv: false }); b.box('leather', 1.6, 0.01, 0.8, [0, y + 0.905, -104], { uv: 1 });
+    if (!M11_DIR) { b.box('wood', 3.34, 0.07, 1.52, [0, y + 0.855, -104], { uv: 0.6, collide: true }); b.box('gold', 3.36, 0.02, 1.54, [0, y + 0.83, -104], { uv: 1 }); } // M11：大班台换 Blender hero（m11_director.js）
+    if (!M11_DIR) for (const sx of [-1, 1]) { b.box('wood', 0.95, 0.8, 1.36, [sx * 1.15, y + 0.42, -104], { uv: 0.6, collide: true }); b.box('dz_base', 1.0, 0.1, 1.42, [sx * 1.15, y + 0.05, -104], { uv: 0.5 }); for (let k = 0; k < 3; k++) { b.box('dz_wain2', 0.82, 0.2, 0.02, [sx * 1.15, y + 0.2 + k * 0.24, -103.31], { uv: 0.6 }); b.box('brass', 0.16, 0.025, 0.03, [sx * 1.15, y + 0.24 + k * 0.24, -103.29], { uv: 1 }); } for (const ex of [-1, 1]) b.box('dz_wain2', 0.06, 0.8, 0.06, [sx * 1.15 + ex * 0.47, y + 0.42, -103.33], { uv: 0.6 }); }
+    if (!M11_DIR) { b.box('dz_wain', 1.36, 0.62, 0.05, [0, y + 0.5, -104.55], { uv: 0.6 }); b.box('leather', 1.6, 0.01, 0.8, [0, y + 0.905, -104], { uv: 1 }); } b.box('glassClear', 3.0, 0.02, 1.2, [0, y + 0.915, -104], { uv: false });
     const md = paper('doc_dir_motto_draft', '手稿'); md.position.set(-0.6, y + 0.91, -104); zone.add(md); ctx.anchors.doc_dir_motto_draft = md;
     const pw = emblem(0.07, M.goldBright, M.navy); pw.rotation.x = -Math.PI / 2; pw.position.set(0.5, y + 0.95, -104); zone.add(pw); ctx.anchors.int_dir_paperweight = { box: [0.5, y + 0.95, -104, 0.3, 0.2, 0.3] };
     const lt = paper('doc_dir_letter_k', '致 K'); lt.position.set(1.2, y + 0.75, -103.25); zone.add(lt); ctx.anchors.doc_dir_letter_k = { box: [1.2, y + 0.7, -103.2, 0.6, 0.3, 0.4] };
@@ -210,6 +211,7 @@ export function buildUpper(scene, world, ctx) {
     rectLight(zone, 0xc8b8e8, 2.0, 22, 5, [0, y + 2.5, Z1 + 0.6], [0, y + 2, -100]);
     const tl = goldText('局长室', 2.2, 0.42, M.goldBright, { res: 112 }); tl.position.set(0, y + 5.6, Z0 - 0.25); tl.rotation.y = Math.PI; zone.add(tl);
     b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); world.surface(-X, Z1, X, Z0 + 8, 'wood', y - 1, y + 3);
+    jobs.push(buildM11Director(zone, world, y)); // 批次 M11：局长室 hero 壳 + 大班台 / 矮书柜 / 文件柜 / 局旗
   }
   T('upper built');
   return Promise.all(jobs);
