@@ -394,13 +394,13 @@ function buildHall(zone, world, ctx, M, add) {
   for (const z of [-42.5, -64.5]) for (const sx of [-1, 1]) add(placeModel('cctv', { maxDim: 0.5, pos: [sx * 11.2, Y + 10.5, z], rotY: sx > 0 ? Math.PI / 2 : -Math.PI / 2 }));
   // —— 中央悬挂 LED 大屏（双面）——
   ctx.mainScreenTex = content.tex('tex_sec_main_screen');
-  const hud = new CanvasScreen(2048, 896, (c, t, W, H) => drawMainScreen(c, t, W, H, ctx), { fps: 2, intensity: 1.15 }); ctx.screens.push(hud); // 批次42：1.35→1.15（琥珀调后不再需要压过蓝光）
+  const hud = new CanvasScreen(2048, 896, (c, t, W, H) => drawMainScreen(c, t, W, H, ctx), { fps: 2, intensity: 1.15 }); hud.mat.polygonOffset = true; hud.mat.polygonOffsetFactor = -2; hud.mat.polygonOffsetUnits = -2; ctx.screens.push(hud); // 批次45：屏面 polygonOffset 再保险；批次42：1.35→1.15（琥珀调后不再需要压过蓝光）
   const SW = 15, SH = 6.56, SY = Y + 12.4, SZ = -57;
   bA.box('blackMetal', SW + 0.5, SH + 0.5, 0.5, [0, SY, SZ], { uv: 0.5 });
   bA.box('gold', SW + 0.7, 0.12, 0.6, [0, SY + SH / 2 + 0.3, SZ], { uv: 1 });
   bA.box('gold', SW + 0.7, 0.12, 0.6, [0, SY - SH / 2 - 0.3, SZ], { uv: 1 });
   for (const ex of [-1, 1]) rib(b, 'iron', [new THREE.Vector3(ex * 6.5, SY + SH / 2 + 0.3, SZ), new THREE.Vector3(ex * 6.5, crownY - 0.4, SZ)], 0.03);
-  for (const side of [1, -1]) { const sm = new THREE.Mesh(new THREE.PlaneGeometry(SW, SH), hud.mat); sm.position.set(0, SY, SZ + side * 0.26); sm.rotation.y = side > 0 ? 0 : Math.PI; zone.add(sm); }
+  for (const side of [1, -1]) { const sm = new THREE.Mesh(new THREE.PlaneGeometry(SW, SH), hud.mat); sm.position.set(0, SY, SZ + side * 0.31); /* 批次45：0.26 → 0.31——屏面离黑铁箱体前脸（±0.25）只 1 cm，25 m 外 SwiftShader 深度精度不够 → 与金属箱体 z-fighting，箱体反射天空蓝 = 屏上蓝横条 / 竖栅 */ sm.rotation.y = side > 0 ? 0 : Math.PI; zone.add(sm); }
   ctx.mainScreenPos = new THREE.Vector3(0, SY, SZ);
   // 东墙通缉公告栏
   const wb = content.texPatched('tex_sec_wanted_board', [{ rect: [814 / 2176, 1322 / 1632, 72 / 2176, 72 / 1632], fill: '#161617', text: '叙', color: '#d8b56c', size: 0.86 },
