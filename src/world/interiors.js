@@ -9,7 +9,7 @@ import { lightShaft, dust, CanvasScreen, time, roseGlassTexture } from '../engin
 import { content } from '../engine/content.js';
 import { FLOOR, T, HERO } from './exterior.js';
 import { placeHero, hallMats } from './hero.js';
-import { buildM2Archive, buildM2ArchiveB1, M2_ARCHIVE } from './m2_archive.js';
+import { buildM2Archive, buildM2ArchiveB1, M2_ARCHIVE, M6_LAMP } from './m2_archive.js';
 export const HERO_HALL = HERO && !new URLSearchParams(location.search).has('legacyhall');
 
 const Y = FLOOR;
@@ -25,7 +25,7 @@ export async function buildInteriors(scene, world, ctx) {
   buildHall(zones.security_hall, world, ctx, M, (p) => add('security_hall', p)); T('int hall');
   buildArchive(zones.archive, zones.archive_b1, world, ctx, M, (p) => add('archive', p), (p) => add('archive_b1', p));
   jobs.push(buildM2Archive(zones.archive, world, Y)); // 批次 M2：档案馆藻井/檐部/东墙壁柱/东门门套
-  jobs.push(buildM2ArchiveB1(zones.archive_b1, Y - 6.0)); // 批次 M2：B1 混凝土肋梁 + 北墙管线
+  jobs.push(buildM2ArchiveB1(zones.archive_b1, Y - 6.0, ctx)); // 批次 M2：B1 混凝土肋梁 + 北墙管线
   T('int archive'); if (ctx.heroHallJob) jobs.push(ctx.heroHallJob); await Promise.all(jobs); T('int models');
   return zones;
 }
@@ -544,7 +544,7 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   for (let k = 0; k < 4; k++) {
     const z = Z1 + 6 + k * 8.6;
     const f = new Frame([X0 + 0.02, Y, z], Math.PI / 2);
-    b.add('glassIn', new THREE.ShapeGeometry(archShape(2.0, 3.3)), f.at(0, 7.4, 0), { uv: false });
+    if (!M2_ARCHIVE) b.add('glassIn', new THREE.ShapeGeometry(archShape(2.0, 3.3)), f.at(0, 7.4, 0), { uv: false }); // 批次 M6：蓝色彩窗 → m2_archive.js 琥珀/酒红/暗金彩窗
     b.add('stoneDark', archRingGeo(2.6, 3.3, 2.0, 3.3, 0.3), f.at(0, 7.4, 0.12), { uv: 0.6 });
     b.add('gold', archRingGeo(2.7, 3.3, 2.6, 3.3, 0.32), f.at(0, 7.4, 0.12), { uv: 1 });
     const s = lightShaft({ from: [X0 + 0.3, Y + 10, z], to: [X0 + 13, Y, z + 2], r0: 1.1, r1: 2.6, color: 0xffe5bb, intensity: 0.014 }); zone.add(s); (ctx.shafts = ctx.shafts ?? []).push(s);
@@ -618,7 +618,7 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
     // 批次32：阅览长桌方块（板 + 绿呢 + 4 方腿 + 横枨）→ Blender 精建 r2/reading_table_6080（胡桃木桌面 + 内嵌绿呢铜压条 + 牙板线脚 + 6 只车削腿铜脚套 + 落地横枨；tools/blender/hall_props.py reading_table），桌面顶 0.82 不变
     add(placeModel('r2/reading_table_6080', { width: 5.63, pos: [tx, Y, tz] }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); return o; }));
     world.box(tx, Y + 0.4, tz, 5.6, 0.8, 1.5);
-    for (const ex of [-1.4, 1.4]) { bankerLamp(b, zone, M, tx + ex, Y + 0.82, tz); ctx.archiveLamps.push([tx + ex, tz]); }
+    for (const ex of [-1.4, 1.4]) { bankerLamp(b, zone, M2_ARCHIVE ? M6_LAMP(M) : M, tx + ex, Y + 0.82, tz); ctx.archiveLamps.push([tx + ex, tz]); } // 批次 M6：绿罩 → 铜罩
     for (const ex of [-1.6, 0, 1.6]) for (const ez of [-1, 1]) woodChair(b, tx + ex, Y, tz + ez * 1.05, ez);
     // 桌面散落档案
     if (r % 2 === 0) add(placeModel('binder', { width: 0.42, pos: [tx - 0.6 * sx, Y + 0.83, tz + 0.2], rotY: 0.3 }));
@@ -758,14 +758,14 @@ function buildB1(zone, world, ctx, M, add, X0, X1, Z0, Z1, BY) {
     const grp = new THREE.Group();
     const lb = new Batch();
     lb.box('paintedGreen', 1.9, 2.8, rowLen, [0, 1.4 + 0.08, -rowLen / 2], { uv: 0.4 });
-    lb.box('paintedSteel', 2.0, 3.0, 0.12, [0, 1.5, 0.06], { uv: 0.6 }); // 端板
+    if (!M2_ARCHIVE) lb.box('paintedSteel', 2.0, 3.0, 0.12, [0, 1.5, 0.06], { uv: 0.6 }); // 端板（批次 M6：→ m6/compact_end.glb）
     lb.box('blackMetal', 2.0, 0.12, rowLen + 0.1, [0, 0.06, -rowLen / 2], { uv: 1 });
     lb.box('gold', 1.6, 0.04, 0.02, [0, 2.75, 0.13], { uv: 1 });
     // M4：端板细节——凹线分格、黄铜卡槽（索引卡）、踢脚护板、推拉把手
-    for (const yy of [0.55, 2.55]) lb.box('blackMetal', 1.9, 0.02, 0.01, [0, yy, 0.125], { uv: 1 });
-    for (const xx of [-0.92, 0.92]) lb.box('blackMetal', 0.02, 2.0, 0.01, [xx, 1.55, 0.125], { uv: 1 });
-    lb.box('brass', 0.62, 0.36, 0.015, [0.35, 1.95, 0.128], { uv: 1 }); lb.box('steel', 1.96, 0.3, 0.02, [0, 0.27, 0.13], { uv: 1 });
-    for (const yy of [1.05, 1.5]) lb.box('steel', 0.04, 0.22, 0.05, [-0.85, yy, 0.15], { uv: 1 });
+    if (!M2_ARCHIVE) for (const yy of [0.55, 2.55]) lb.box('blackMetal', 1.9, 0.02, 0.01, [0, yy, 0.125], { uv: 1 });
+    if (!M2_ARCHIVE) for (const xx of [-0.92, 0.92]) lb.box('blackMetal', 0.02, 2.0, 0.01, [xx, 1.55, 0.125], { uv: 1 });
+    lb.box('brass', 0.62, 0.36, 0.015, [0.35, 1.95, 0.128], { uv: 1 }); if (!M2_ARCHIVE) lb.box('steel', 1.96, 0.3, 0.02, [0, 0.27, 0.13], { uv: 1 });
+    if (!M2_ARCHIVE) for (const yy of [1.05, 1.5]) lb.box('steel', 0.04, 0.22, 0.05, [-0.85, yy, 0.15], { uv: 1 });
     lb.build(grp, M);
     { const cv = document.createElement('canvas'); cv.width = 256; cv.height = 150; const c = cv.getContext('2d'); c.fillStyle = '#ece4cc'; c.fillRect(0, 0, 256, 150); c.fillStyle = '#7a1a1a'; c.fillRect(0, 0, 256, 26); c.fillStyle = '#fff'; c.font = '700 20px "NB Sans", sans-serif'; c.fillText(`第 ${String(i + 1).padStart(2, '0')} 排`, 10, 20); c.fillStyle = '#2a241c'; c.font = '18px "NB Sans", sans-serif'; c.fillText(['人事卷宗', '外勤记录', '叙事者备案', '考务档案', '收容登记', '联络函件', '（空）', '离职归档', '内部审查', '证物清单', '市民来信', '其他'][i], 10, 60); c.fillText(`07-${String(2016 + i)}　至　07-${String(2020 + i)}`, 10, 92); c.fillStyle = '#8a8070'; c.fillText(i === 6 ? '请勿调阅' : '管理员：叶寻', 10, 128); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; const card = new THREE.Mesh(new THREE.PlaneGeometry(0.56, 0.3), new THREE.MeshStandardMaterial({ map: t, roughness: 0.8 })); card.position.set(0.35, 1.95, 0.137); grp.add(card); }
     // 手摇轮

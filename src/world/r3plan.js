@@ -712,6 +712,8 @@ export function planPlaza(y) {
 }
 
 // ================= 1F 西翼 · 人事档案馆（批次3 新做；柜台、叶寻、登记簿、阅览长桌、抽屉柜墙、回廊、楼梯、B1 洞口均为原锚点） =================
+// 批次 M6：卡片目录柜 8 联改由 m2_archive.js 放 Blender hero（m6/card_catalog）；?nom2=1 回旧
+const M6_CAT = typeof location !== 'undefined' && !new URLSearchParams(location.search).has('nom2');
 export function planArchive(y) {
   const out = []; const X0 = -56, X1 = -20, Z0 = -70, Z1 = -32, H = 13, TOP = y + 11.4; // TOP：铁桁架下沿（吊灯挂点）
   const room = { name: '1F 西翼 · 人事档案馆（批次3）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H,
@@ -736,7 +738,7 @@ export function planArchive(y) {
   out.push({ m: 'r2/wooden_ladder', x: -22.4, y, z: -42.75, yaw: 0, h: 2.0, tag: '开架区 A', on: 'floor' });
   out.push({ m: 'r2/wooden_stool_01', x: -25.6, y, z: -60.55, yaw: 0.4, h: 0.5, tag: '开架区 B', on: 'floor' });
   for (const [x, z] of [[-21.3, -44.6], [-26.6, -62.4]]) out.push({ m: 'r2/mousetrap', x, y, z, yaw: 0.7, w: 0.16, tag: '开架区', on: 'floor' });
-  for (const z of [-40.65, -42.75, -44.85, -58.45, -60.55, -62.65]) globe(out, -24.05, z, y, TOP - y, 3.1, { r: 0.18 });
+  for (const z of [-40.65, -42.75, -44.85, -58.45, -60.55, -62.65]) globe(out, -24.05, z, y, TOP - y, 3.1, { r: 0.18, dim: true }); // 批次 M6：档案馆球灯一律 r3_globeDim（自发光 0.5），东门近景不再过曝
   // ② 东门入口：石材门厅 + 还档分拣台 + 灭火器（档案馆禁水，不设消火栓）
   floorZ(out, 'r3_terrDeep', -27.4, -20.15, -56.4, -46.6, y, { uv: 1.5, border: 0.14, bmat: 'r3_stoneBorder' }); // 批次33：浅灰暖水磨石（红地毯两侧大片发白）→ 深色水磨石 + 黑石收边
   out.push({ m: 'r2/woodentable_01', x: -23.2, y, z: -47.6, yaw: Math.PI, fit: [2.2, 0.82, 0.8], tag: '还档分拣台', on: 'floor', col: [2.2, 0.82, 0.8] });
@@ -745,13 +747,13 @@ export function planArchive(y) {
   out.push({ m: 'r2/fire_extinguisher', x: -20.45, y, z: -46.9, yaw: ROT.W, h: 0.58, tag: 'K3', on: 'floor' });
   out.push({ m: 'r2/fire_extinguisher', x: -20.45, y, z: -56.1, yaw: ROT.W, h: 0.58, tag: 'K3', on: 'floor' });
   out.push({ m: 'r2/exit_sign', x: -20.1, y: y + 6.45, z: -51.5, yaw: ROT.W, w: 0.36, tag: 'K3', on: 'wall' });
-  globe(out, -23.8, -51.5, y, TOP - y, 3.4, { r: 0.22 });
+  globe(out, -23.8, -51.5, y, TOP - y, 3.4, { r: 0.22, dim: true });
   // ③ 西南（近南墙）：历届叙事事件陈列柜 ×2 + 卡片目录柜（西墙一排）+ 地球仪
   vitrine(out, -51.4, -38.2, y, 4.0, 0, '叙事事件陈列', { model: true }); vitrine(out, -51.4, -42.2, y, 4.0, 0, '叙事事件陈列', { model: true });
-  for (let k = 0; k < 8; k++) out.push({ m: 'drawer_cabinet', x: -55.45, y, z: -36.2 - k * 0.9, yaw: ROT.E, h: 1.4, tag: '卡片目录', on: 'floor', col: [0.85, 1.4, 0.36] });
+  if (!M6_CAT) for (let k = 0; k < 8; k++) out.push({ m: 'drawer_cabinet', x: -55.45, y, z: -36.2 - k * 0.9, yaw: ROT.E, h: 1.4, tag: '卡片目录', on: 'floor', col: [0.85, 1.4, 0.36] });
   out.push({ sign: '卡片目录', sub: '按姓氏笔画 · 按入局年份', x: -55.24, y: y + 1.7, z: -39.3, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
   out.push({ m: 'r2/antique_globe', x: -48.4, y, z: -45.2, yaw: 0.6, h: 1.0, tag: '陈列', on: 'floor' });
-  globe(out, -51.4, -40.2, y, TOP - y, 3.4, { r: 0.2 });
+  globe(out, -51.4, -40.2, y, TOP - y, 3.4, { r: 0.2, dim: true });
   // 批次32（archive_west 看图：西墙 1.4 m 以上整片纯墨绿）→ 胡桃木壁柱 4 根（3.5 m 一间）+ 护墙顶线（y+1.55）+ 檐下冠线（y+6.0）+ 每间一幅金框证物照（IMAGE-PLAN 未用 N13 涂黑机密文件 / N11 回响座钟 / N12 相框里的手）+ 画下铜壁灯
   for (const z of [-35.0, -38.5, -42.0, -45.5]) { out.push({ box: 'wood', x: -55.92, y: y + 3.775, z, w: 0.12, h: 4.45, d: 0.32, tag: '壁柱', on: 'partv' }); out.push({ box: 'brass', x: -55.85, y: y + 5.85, z, w: 0.04, h: 0.08, d: 0.36, tag: '壁柱', on: 'partv' }); out.push({ box: 'wood', x: -55.9, y: y + 1.7, z, w: 0.16, h: 0.3, d: 0.4, tag: '壁柱', on: 'partv' }); }
   out.push({ box: 'wood', x: -55.93, y: y + 1.55, z: -40.25, w: 0.1, h: 0.1, d: 11.0, tag: '护墙顶线', on: 'partv' });
@@ -763,7 +765,7 @@ export function planArchive(y) {
     out.push({ m: 'r2/microfiche_reader', x: -55.35, y: y + 0.76, z, yaw: ROT.E, h: 0.5, tag: '缩微阅读', on: 'desk' });
     out.push({ m: 'r2/gallinera_chair', x: -54.35, y, z: z + (i - 1) * 0.06, yaw: ROT.W + (i === 1 ? 0.35 : 0), h: 0.9, tag: '缩微阅读', on: 'floor' });
   }
-  globe(out, -54.6, -59.7, y, TOP - y, 3.1, { r: 0.17 });
+  globe(out, -54.6, -59.7, y, TOP - y, 3.1, { r: 0.17, dim: true });
   // ⑤ 柜台后员工区地胶 + K3（监控、温湿度）
   floorZ(out, 'r3_lino', -55.95, -50.7, -55.9, -47.1, y, {});
   for (const [x, z, yaw] of [[-55.6, -32.6, Math.PI * 0.75], [-20.4, -69.4, -Math.PI * 0.25]]) out.push({ m: 'r2/cctv_camera', x, y: y + 5.4, z, yaw, h: 0.3, tag: 'K3', on: 'wall' });
