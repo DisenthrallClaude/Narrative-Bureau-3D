@@ -2020,7 +2020,7 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 - Blender 预览：work/r3/m10/preview/m10_{pendant,chair,stool}_*.png、prev_sheet.jpg（pendant_1 机位落在地面下，无效）。
 ### A 正门
 - 叫号机（eastwing.js）：qm4_bronze 底色 → (0.24,0.15,0.072)、roughness ≥0.5；qm4_bronzeHi → (0.42,0.29,0.14)。cs_qm 游戏内（41222140159）柜身像素均值 (121,84,46)→(100,64,29)，读成更深的古铜 ✔，「047」红橙不变。
-- 门扇色相锁：41219985684 门/广场机位 40 分钟未出图 → 00:49 取消；新派 lite 单机位 **41221558412**（m10d:ext_door_mid，medium / 1280×720 / frames 4）——截至本节仍在跑，**色相锁仍未亲眼验收，0.85 未调（未验证前不动）**；门廊 M7 新件对位同样未验。
+- 门扇色相锁：41219985684 门/广场机位 40 分钟未出图 → 00:49 取消；新派 lite 单机位 **41221558412**（m10d:ext_door_mid，medium / 1280×720 / frames 4）——01:12 出图（work/r3/m10/door/m10d/ext_door_mid.png）。亲眼看 + 取样：两扇（均开启）同为暗古铜色相——右扇 (55,32,13)/(52,30,13) 上下一致、左扇 (71,49,29)/(76,52,34)，色相均 27–30°，**左下不紫、右扇不红 ✔**；凸芯板有明暗、不算发灰太平 → **mix 保持 0.85，未动用那一次调整**。门廊 M7 柱头/柱础/门套在 720p 远景下与柱身对位、未见漂浮或闪烁，但分辨率不足以确认毫米级 z-fight，下批可拍 ext_door_near（lite）细看。
 - 走查：41219987735 其实是 "after:walk" 截图任务（不是剧情走查），无 31/31 结果；29eed1b 的 41220220735 通过 31 / 失败 0 / 控制台 0；本批 24efb62 的 **41222145865 通过 31 / 失败 0 / 控制台 0**。
 ### meshopt（ae23567）
 m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0.82、m10 三件 1.2→0.48 MB；压前压后包围盒与材质名逐一核对一致。均为 position.set 整体放置，非 bakeInstances 顶点烘焙（m1/gutter_* 未碰）。
@@ -2028,4 +2028,4 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 - 拼图 work/r3/m10/sheet.jpg（改前 M8 / 改后 M10：ops_lamp、wrap、ops_w、cs_qm + Blender 预览；脚本 work/r3/m10/sheet.py，seventh_ops 到了重跑）。M8 原始 6 机位拼图 work/r3/m8/sheet.jpg。
 - Drive 快照_分卷 新增 v13_m10_models.tar 1vaVOVHjIcnzTll7X5nLw-gAT5MBVnYL8（m10 glb + 脚本 + m10_seventh.js + 预览），其它卷未动。
 ### 下批先做
-1. `bash tools/gh_shots_fetch.sh 41221558412 work/r3/m10/door` 看门扇；发灰太平才把 exterior.js hueLock mix 0.85→0.7（只允许一次）。2. 取 41222140159 seventh_ops。3. 沙盘铜碗灯蓝顶、东墙军绿油桶。
+1. 门扇已验（不调）。2. seventh_ops 已到，见 sheet。3. 沙盘铜碗灯蓝顶、东墙军绿油桶。
