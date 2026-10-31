@@ -2,6 +2,7 @@
 // 入口：B6 训练场西墙维护通道 / B5 深库北门 → 墨渊折页门；定稿厅镇纸柱底红线 → 装订线回廊；
 //       档案馆 B1 第 7 排缝隙（q5_b1 后）/ 电梯 B6+关门 7 秒（B7）/ 局长室南墙无名书 → 装订线入口；回写台三结局。
 // 视觉：墨黑 + 纸白 + 金（墨渊）；暗红线 + 牛皮纸（装订线）。区域判定见 main.js zoneAt（y < −250）。
+import { buildS1Seventh } from './s1_seventh.js';
 import * as THREE from 'three';
 import { Batch } from '../engine/batch.js';
 import { content } from '../engine/content.js';
@@ -266,7 +267,7 @@ export async function buildDepths(scene, world, ctx) {
     for (let r = 0; r < 4; r++) for (const sx of [-1, 1]) { if (NO_M10) { b.add('dz_shade', new THREE.ConeGeometry(0.3, 0.26, 14, 1, true), { pos: [sx * 3, Y + 3.6, -138 - r * 4.6] }, { uv: false }); b.add('dz_cable', new THREE.CylinderGeometry(0.01, 0.01, 1.8, 4), { pos: [sx * 3, Y + 4.5, -138 - r * 4.6] }, { uv: false }); } else { b.add('dz_cable', new THREE.CylinderGeometry(0.01, 0.01, 0.85, 4), { pos: [sx * 3, Y + 4.975, -138 - r * 4.6] }, { uv: false }); M10.pendants.push([sx * 3, Y + 4.55, -138 - r * 4.6]); } } // M10：杀青室吊灯同换
     b.box('dp_kraft', 2.4, 0.04, 20, [0, Y + 0.01, -146], { uv: false }); for (let k = 0; k < 6; k++) { if (NO_M10) b.box('wood', 0.5, 0.45, 0.5, [-1.6 + (k % 2) * 3.2, Y + 0.23, -138 - Math.floor(k / 2) * 6], { uv: 0.6 }); else M10.stools.push([-1.6 + (k % 2) * 3.2, Y, -138 - Math.floor(k / 2) * 6]); } // M10：纯黑方块 = 杀青室木凳（无碰撞、非锚点）→ 胡桃框皮面方凳
     zone.add(dust([0, Y, -120], [24, 10, 140], 400, 0xd8b890));
-    b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); jobs.push(P.build(zone)); jobs.push(buildM5Seventh(zone, world, Y, D, M)); if (!NO_M10) jobs.push(buildM10Seventh(zone, M10)); // 批次 M5：作战室/杀青室/回写台精建壳
+    b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); jobs.push(P.build(zone)); jobs.push(buildM5Seventh(zone, world, Y, D, M)); jobs.push(buildS1Seventh(zone, world, Y)); /* 批次 S1 */ if (!NO_M10) jobs.push(buildM10Seventh(zone, M10)); // 批次 M5：作战室/杀青室/回写台精建壳
   }
   // —— 入口道具：B6 维护门、B5 深库后门、局长室无名书 ——
   { const z = ctx.zones.training; if (z) { const y = UNDER.B6, g = new THREE.Group(); const fr = new THREE.Mesh(new THREE.BoxGeometry(0.3, 3.4, 2.2), M.blackMetal); fr.position.set(0, 1.7, 0); g.add(fr); const dr = new THREE.Mesh(new THREE.BoxGeometry(0.1, 3.0, 1.8), M.paintedSteel); dr.position.set(0.12, 1.5, 0); g.add(dr); const pl = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.3), tagMaterial('维护通道　·　通往书芯')); pl.position.set(0.19, 3.1, 0); pl.rotation.y = Math.PI / 2; g.add(pl); const lt = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), new THREE.MeshStandardMaterial({ color: 0, emissive: 0xff3020, emissiveIntensity: 3 })); lt.position.set(0.2, 3.5, 0); g.add(lt); g.position.set(-31.75, y, -146); z.add(g); ctx.depths.b6Door = dr; } }

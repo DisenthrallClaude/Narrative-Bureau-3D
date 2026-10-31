@@ -11,3 +11,12 @@
 | I1 | Kenney UI Audio | https://kenney.nl/assets/ui-audio（官方 zip） | CC0 1.0 | sha256 946fc23a63d535d693eb31b2eabb80c8c28d6351e2186b344ceb71b2cb1d5eb6 | 已下载备选，本批未入仓 |
 
 注：三个下载件共用同一份运行时（仅末尾 preset 不同），仓库只存一份 src/vendor/gdevs-vfx.js（来自 astral-gate.js，去掉末尾 preset/default 导出），preset 写在 src/world/e1_fx.js。原件与 metadata 存于项目工作区 work/r3/e1/fxlib/。库依赖 three 0.187.0，本项目 0.186.1：静态核对所用 THREE.* 符号全部存在，游戏内实测见 HANDOFF E1 节。
+
+## 批次 S1（第七局开源资源，2026-11-01）
+| 文件 | 来源 | 作者 | 许可 | 处理 | 大小 |
+|---|---|---|---|---|---|
+| models/s1/metal_office_desk.glb | https://polyhaven.com/a/metal_office_desk | Ulan Cabanilla | CC0 | 1k webp + meshopt | 170 KB |
+| models/s1/binder_notebook.glb | https://polyhaven.com/a/binder_notebook | DaDrood | CC0 | 1k webp + meshopt，减面 50% | 218 KB |
+| models/s1/book_encyclopedia_set_01.glb | https://polyhaven.com/a/book_encyclopedia_set_01 | John Malcolm | CC0 | 1k webp + meshopt，减面 25%（6.7 万→约 1.7 万面） | 536 KB |
+| models/s1/vintage_grandfather_clock_01.glb | https://polyhaven.com/a/vintage_grandfather_clock_01 | Yann Kervran, James Ray Cock | CC0 | 1k webp + meshopt | 342 KB |
+已下载但弃用：vintage_stapler（青绿漆，违反禁蓝绿）、stationery_supplies（蓝色笔杆）。

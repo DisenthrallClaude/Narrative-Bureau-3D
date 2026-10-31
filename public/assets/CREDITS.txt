@@ -96,3 +96,9 @@ Kenney（www.kenney.nl）音效包，CC0 1.0（http://creativecommons.org/public
   「Impact Sounds」— 脚步 石材 / 木地板 / 地毯、金属格栅脚步（impactMetal_light 截短）、抽屉末端木撞、金属柜门撞（K_step_*、K_drawer、K_cabinet）
   「RPG Audio」— 翻页 bookFlip / bookOpen、木门开关 doorOpen / doorClose、抽屉木轨 creak、金属柜锁舌 metalLatch（K_paper_*、K_door_*、K_drawer、K_cabinet）
   齿轮加载声为本项目 WebAudio 程序化合成（src/engine/audio.js gears()），非素材。
+
+[批次 S1 · 第七局 · Poly Haven CC0] public/assets/models/s1/
+- metal_office_desk.glb — "Metal Office Desk" by Ulan Cabanilla, https://polyhaven.com/a/metal_office_desk — CC0 1.0
+- binder_notebook.glb — "Binder Notebook" by DaDrood, https://polyhaven.com/a/binder_notebook — CC0 1.0
+- book_encyclopedia_set_01.glb — "Book Encyclopedia Set 01" by John Malcolm, https://polyhaven.com/a/book_encyclopedia_set_01 — CC0 1.0（减面至约 25%）
+- vintage_grandfather_clock_01.glb — "Vintage Grandfather Clock 01" by Yann Kervran, James Ray Cock, https://polyhaven.com/a/vintage_grandfather_clock_01 — CC0 1.0
