@@ -1978,3 +1978,20 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 - Blender 预览（亲眼看）：work/r3/m8/preview/m8_ops_0-5、m8_wrap_0-2、m8_rewrite_0-1.png，ops_sheet.jpg。壁骨分格读出建筑感，护墙板明显变高、框芯可读；格心酒红褐在顶视读得出；电话台/标图柜成排靠墙；三盏灯组成形。
 - Drive 分卷：v11_m8_models.tar 1H1I3TfI7HjqMS1EB9X9QFG-3ULt0dNVw（m8 glb + m8_rooms.py + m1_seventh.js + plans + preview）。
 - 截图 run 41220222639 / walk run 41220220735（均 29eed1b）已派，结果见汇报；**游戏内 sheet 待取**（work/r3/m8/sheet.jpg）。
+
+## 批次 M7 · 正门收尾（2026-11-01 00:10 CST 接手，约 35 分钟；与 r3-model-m6 / r3-model-m8 并行，只动 exterior.js 门廊 + eastwing.js 叫号机）
+- 工作方式：game/ 主工作区里有别的批次未跟踪文件（m5 glb 等）挡住 pull --rebase → 本批改在 worktree `work/m7wt`（origin/main，node_modules 软链 game/），只提交自己的文件。
+- 提交 ae4e5cc：叫号机 qm_segGlow 底色压暗 (0.10,0.012,0) + 自发光 (1.0,0.10,0.015)×0.95（Blender 脚本与 eastwing.js 运行时双改）；头顶暖光 qm_rim_m4 1.6→2.6、新增左侧贴边小暖光 qm_edge_m7（1.4 / 射程 1.4，不投影）；qm4_ 大面 roughness ≥0.45、env 0.5 不变。Blender 预览 work/r3/m7/preview/m4_qm_0/1.png：红取号钮、白纸票保持。
+  - 游戏内 m7q cs_qm（run 41219985684，bdfd81d）亲眼看：「047」读成橙红（亮段像素均值 (220,123,78)，M4 时奶黄）✔，红钮 / 白票 ✔；铜壳顶沿与檐口有暖高光边，整体仍偏浅黄铜（不够“暗古铜”），可下批把 qm4_bronze 底色再压一档。
+- 提交 bdfd81d：门廊 hero 细部 tools/blender/m7_portico.py → public/assets/models/m7/portico.glb（27.9k 三角，2.0 MB 未 meshopt），叠加在 hero_facade 原 portal() 五重券上：
+  - 五重券门柱 ×10：叶饰钟形柱头（颈环 + 圆棍 + 钟形 + 两层 8 片卷叶 + 八角柱顶板）、八角阶梯柱础（方墩 + 八角座 + 两道环面 + 凹槽）；
+  - 门洞内侧石门套（x ±3.5，三级退缩 0.06/0.11/0.16 + 两根圆棍 + 底部基石 + 暗铜嵌线）；门楣下沿三级叠涩 + 29 枚齿饰 + 暗铜线。
+  - 规划图 work/r3/m7/plans/plan_portico_m7.png（平面 + 立面）；Blender 预览 work/r3/m7/preview/m7_portico_0/1/2.png。
+  - 接入 exterior.js heroFacade（innerVestibuleDoors 之前）：loadModel('m7/portico') 放 (0, FLOOR, −5) 进 facade_hi；材质换游戏 Granite003A 深灰 0x6a645c / 0x45403a（weather 处理，env 0.35）、暗铜 0x4a3420 金属 0.6 / 粗糙 0.5 / env 0.5；**不加碰撞**（门套只往洞内凸 0.16 m，通行 6.68 m），门扇 / 触发器 / 原碰撞未动。`?nom7=1` 关闭对比。
+  - 未做：台阶磨损倒角重建、颊墙 hero 化（buildFrontSteps 已有颊墙 + 圆角前沿，本批没时间换）；尖拱退缩线脚本身仍是原 glb 的方截面券（没有拆原 glb）。
+- 门扇色相锁：41218178525（m4d 两个门机位）跑满 25 分钟未出图 → 00:33 取消；新代码（色相锁未改，含门廊细部）重派 **41219985684**（m7:ext_door_mid / m7:ext_door_near / m7p:ext_plaza / m7q:cs_qm），截至本节写完只回了 cs_qm。**色相锁仍未亲眼验收，锁定强度 0.85 未调。**
+- 走查：41219987735（walk，bdfd81d）进行中。Pages：bdfd81d Deploy success 41219952797，m7/portico.glb、m4/queue_machine.glb 线上 200。
+- 拼图 work/r3/m7/sheet.jpg（脚本 work/r3/m7/sheet.py <rundir>，门 / 广场图到了重跑）。Drive 快照_分卷 新增 v10_m7_models.tar 1ezea95o9kHEDm447INVSQp3wdHD3zw_x（m7/m4 glb + 两脚本 + 预览 + 规划图），其它卷未动。
+### 下批先做
+1. `bash tools/gh_shots_fetch.sh 41219985684 work/r3/m7/r41219985684` 取 ext_door_mid / near / plaza：看门扇两扇是否同为暗古铜、左下不紫、右扇不红；发灰 / 太平 → exterior.js hueLock 的 mix 0.85→0.7（只允许再调一次）。同时看门廊柱头 / 柱础 / 门套在游戏里是否与原柱身对位、有无漂浮或 z-fight。
+2. 取 41219987735 walk 结果（31/31、控制台 0）。
