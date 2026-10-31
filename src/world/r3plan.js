@@ -744,7 +744,7 @@ export function planArchive(y) {
   out.push({ sign: '还档处', sub: '请勿直接放回架上', x: -23.2, y: y + 1.25, z: -47.2 - 0.01, yaw: 0, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
   out.push({ m: 'r2/fire_extinguisher', x: -20.45, y, z: -46.9, yaw: ROT.W, h: 0.58, tag: 'K3', on: 'floor' });
   out.push({ m: 'r2/fire_extinguisher', x: -20.45, y, z: -56.1, yaw: ROT.W, h: 0.58, tag: 'K3', on: 'floor' });
-  out.push({ m: 'r2/exit_sign', x: -20.1, y: y + 5.5, z: -51.5, yaw: ROT.W, w: 0.36, tag: 'K3', on: 'wall' });
+  out.push({ m: 'r2/exit_sign', x: -20.1, y: y + 6.45, z: -51.5, yaw: ROT.W, w: 0.36, tag: 'K3', on: 'wall' });
   globe(out, -23.8, -51.5, y, TOP - y, 3.4, { r: 0.22 });
   // ③ 西南（近南墙）：历届叙事事件陈列柜 ×2 + 卡片目录柜（西墙一排）+ 地球仪
   vitrine(out, -51.4, -38.2, y, 4.0, 0, '叙事事件陈列', { model: true }); vitrine(out, -51.4, -42.2, y, 4.0, 0, '叙事事件陈列', { model: true });

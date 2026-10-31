@@ -9,6 +9,7 @@ import { lightShaft, dust, CanvasScreen, time, roseGlassTexture } from '../engin
 import { content } from '../engine/content.js';
 import { FLOOR, T, HERO } from './exterior.js';
 import { placeHero, hallMats } from './hero.js';
+import { buildM2Archive, M2_ARCHIVE } from './m2_archive.js';
 export const HERO_HALL = HERO && !new URLSearchParams(location.search).has('legacyhall');
 
 const Y = FLOOR;
@@ -23,6 +24,7 @@ export async function buildInteriors(scene, world, ctx) {
   T('int start'); buildGate(zones.gate, world, ctx, M, (p) => add('gate', p)); T('int gate');
   buildHall(zones.security_hall, world, ctx, M, (p) => add('security_hall', p)); T('int hall');
   buildArchive(zones.archive, zones.archive_b1, world, ctx, M, (p) => add('archive', p), (p) => add('archive_b1', p));
+  jobs.push(buildM2Archive(zones.archive, world, Y)); // 批次 M2：档案馆藻井/檐部/东墙壁柱/东门门套
   T('int archive'); if (ctx.heroHallJob) jobs.push(ctx.heroHallJob); await Promise.all(jobs); T('int models');
   return zones;
 }
@@ -531,9 +533,9 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   for (const [x0, z0, x1, z1] of [[X0, Z0, X1, Z0], [X0, Z1, X1, Z1]]) b.box('wood', x1 - x0, 1.2, 0.08, [(x0 + x1) / 2, Y + 0.6, z0 + (z0 === Z0 ? -0.04 : 0.04)], { uv: 0.5 });
   // 天花：木质藻井 + 铁桁架
   b.box('wood', W, 0.3, L, [cx, Y + H + 0.15, cz], { uv: 0.3 });
-  for (let x = X0 + 3; x < X1; x += 3) b.box('wood', 0.3, 0.6, L, [x, Y + H - 0.3, cz], { uv: 0.5 });
-  for (let z = Z1 + 3; z < Z0; z += 3) b.box('wood', W, 0.6, 0.3, [cx, Y + H - 0.3, z], { uv: 0.5 });
-  for (let z = Z1 + 6; z < Z0 - 2; z += 6) { // 铁桁架
+  if (!M2_ARCHIVE) for (let x = X0 + 3; x < X1; x += 3) b.box('wood', 0.3, 0.6, L, [x, Y + H - 0.3, cz], { uv: 0.5 }); // 批次 M2：木梁格 + 铁桁架 → m2_archive.js 藻井
+  if (!M2_ARCHIVE) for (let z = Z1 + 3; z < Z0; z += 3) b.box('wood', W, 0.6, 0.3, [cx, Y + H - 0.3, z], { uv: 0.5 });
+  if (!M2_ARCHIVE) for (let z = Z1 + 6; z < Z0 - 2; z += 6) { // 铁桁架
     b.box('iron', W, 0.25, 0.25, [cx, Y + H - 1.6, z], { uv: 1 });
     for (let x = X0 + 2; x < X1; x += 2) b.box('iron', 0.08, 1.3, 0.08, [x, Y + H - 0.95, z], { uv: 1, rot: [0, 0, (x / 2) % 2 ? 0.6 : -0.6] });
   }
