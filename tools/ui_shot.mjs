@@ -21,7 +21,7 @@ for (const st of states) {
     const tk = document.getElementById('tk'); if (tk && !tk.childElementCount) for (let k = 0; k < 48; k++) { const a = k / 48 * Math.PI * 2, r0 = k % 4 ? 41 : 38; tk.insertAdjacentHTML('beforeend', `<line x1="${Math.sin(a) * r0}" y1="${-Math.cos(a) * r0}" x2="${Math.sin(a) * 45}" y2="${-Math.cos(a) * 45}"/>`); } // 同 ui.js
     document.body.style.background = `#000 url(${bg}) center/cover`; $('c').style.visibility = 'hidden';
     if (st === 'loading') { $('loadbar').style.width = '62%'; if ($('loadpct')) $('loadpct').textContent = '62%'; $('loadtip').textContent = '正在装订页面……'; return; }
-    if (st === 'menu') { $('loadbar').style.width = '100%'; $('loadtip').textContent = '点击「进入」开始（建议佩戴耳机）'; $('start').classList.remove('hidden'); return; }
+    if (st === 'menu') { $('loadbar').style.width = '100%'; if ($('loadpct')) $('loadpct').textContent = '100%'; $('loadtip').textContent = '点击「进入」开始（建议佩戴耳机）'; $('start').classList.remove('hidden'); return; }
     $('loading').classList.add('hidden'); $('hud').classList.remove('hidden');
     $('objm').textContent = '前往西翼人事档案馆，向管理员领取本人入职档案'; $('objo').textContent = '';
     if (st === 'hud') { $('prompt').innerHTML = '<b class="key">E</b><span class="pt">查阅 卡片目录柜 · 甲字 07 屉</span>'; $('cross').classList.add('on'); $('arean').textContent = '人事档案馆'; $('areae').textContent = 'PERSONNEL ARCHIVE'; $('area').classList.add('on'); return; }

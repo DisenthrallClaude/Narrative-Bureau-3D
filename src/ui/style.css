@@ -120,7 +120,11 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #pause .seg span { padding: 5px 14px; border: 1px solid rgba(176,129,74,.38); cursor: pointer; font-size: 13px; color: #b9ae96; letter-spacing: .1em; transition: background .2s, color .2s; }
 #pause .seg span:hover { color: #ece3cc; border-color: rgba(226,191,134,.7); }
 #pause .seg span.on { background: linear-gradient(180deg, rgba(176,129,74,.32), rgba(110,74,38,.28)); color: #f3dfb4; border-color: #c79a5e; box-shadow: inset 0 1px 0 rgba(255,230,180,.18); }
-#pause input[type=range] { width: 220px; accent-color: #b0814a; }
+#pause input[type=range] { -webkit-appearance: none; appearance: none; width: 220px; height: 16px; background: transparent; cursor: pointer; }
+#pause input[type=range]::-webkit-slider-runnable-track { height: 1px; background: linear-gradient(90deg, rgba(226,191,134,.75), rgba(176,129,74,.35)); }
+#pause input[type=range]::-moz-range-track { height: 1px; background: rgba(176,129,74,.5); }
+#pause input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 11px; height: 11px; margin-top: -5px; background: linear-gradient(135deg, #f0d6a0, #9a6a3a); border: 1px solid #3a2a18; transform: rotate(45deg); box-shadow: 0 0 6px rgba(226,191,134,.4); }
+#pause input[type=range]::-moz-range-thumb { width: 10px; height: 10px; background: #c79a5e; border: 1px solid #3a2a18; border-radius: 0; transform: rotate(45deg); }
 #pause .btns { display: flex; justify-content: center; gap: 18px; margin-top: 26px; }
 #pause .btn { margin-top: 0; border-color: rgba(176,129,74,.75); color: #ece3cc; font-family: var(--serif-zh); font-size: 15px; letter-spacing: .5em; padding: 10px 34px 10px 40px; box-shadow: inset 0 0 0 3px rgba(9,16,12,.9), inset 0 0 0 4px rgba(226,191,134,.25); }
 #pause .btn:hover { background: rgba(226,191,134,.10); }

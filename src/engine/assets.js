@@ -24,7 +24,7 @@ const modelCache = new Map();
 export const ALIAS = { lion_justice: 'r2/lion_palais_de_justice_d_orl_ans_france', gargoyle_a: 'r2/gargoyle_3dst27', gargoyle_b: 'r2/gargoyle_statue_photogrammetry' };
 /** 加载 GLB，返回原始 scene（缓存）。unlit 扫描件转为 PBR。 */
 const _woodMats = {};
-const WOOD_TONE = { 'r2/lib_vitrine': [0x7c5434, 0x9a6a44], 'r2/lib_globe': [0x6a4630, 0xb07a4c], 'r2/arch_catalog': [0x684430, 0x9a6844], 'r2/arch_bookcart': [0x684430, 0x9a6844] }; // 批次46：档案馆目录柜 / 书车 ac_walnut 纯色直出在游戏里读成米色胶合板 → 走盒投影 Wood051（0x3a2416 一档看图成黑漆 → 0x9a6844 中胡桃） // 批次43：陈列柜底柜芯板（sw_walnutDarkVit → 0x4a3020 近黑）、地球仪三弯腿看图偏黑 → 按模型提亮木纹 albedo（不再加灯）
+const WOOD_TONE = { 'r2/lib_vitrine': [0x7c5434, 0x9a6a44], 'r2/lib_globe': [0x6a4630, 0xb07a4c], 'r2/arch_catalog': [0x8a5a38, 0xc08a58], 'r2/arch_bookcart': [0x8a5a38, 0xc08a58] }; // 批次46：档案馆目录柜 / 书车 ac_walnut 纯色直出在游戏里读成米色胶合板 → 走盒投影 Wood051（0x3a2416 一档看图成黑漆 → 0x9a6844 仍近乌木 → 0xc08a58 中胡桃） // 批次43：陈列柜底柜芯板（sw_walnutDarkVit → 0x4a3020 近黑）、地球仪三弯腿看图偏黑 → 按模型提亮木纹 albedo（不再加灯）
 function woodBox(o, m, model) { // 物体空间盒投影 UV（0.5 m 一格，按法线主轴取面），木纹沿长边
   const g = o.geometry, pa = g.getAttribute('position'), na = g.getAttribute('normal'); if (!pa || !na) return;
   const uv = new Float32Array(pa.count * 2);
