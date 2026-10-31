@@ -2460,7 +2460,7 @@ export function planLibrary(y) {
     { const [x, z] = at(c, a, 0.4, -0.2); out.push({ m: 'r4/paper_stack_a04', x, y: y + 0.78, z, yaw: a - 0.2, fit: [0.24, 0.083, 0.34], tag: '阅读桌', on: 'desk' }); }
     light(out, c[0], y + 2.4, c[1], 0xffe2b8, 0.9, 5.5); }
   // —— ④ 北区：地球仪 / 星图台（dressing.js 在 R3 下按这里的位置摆放）——
-  for (const [a, lab, w, d] of [[160 * D, '地球仪', 0.9, 0.9], [-160 * D, '星图台', 1.4, 1.0]]) { const [x, z] = P(a, 7.0); out.push({ fixed: true, m: '固定:' + lab, x, y, z, yaw: 0, size: [w, 1.4, d], col: [w, 1.4, d], tag: lab, on: 'floor' }); }
+  for (const [a, lab, w, d] of [[160 * D, '地球仪', 0.9, 0.9], [-160 * D, '星图台', 1.4, 1.0]]) { const [x, z] = P(a, 7.0); out.push({ fixed: true, m: '固定:' + lab, x, y, z, yaw: 0, size: [w, 1.5, d], col: [w, 1.5, d], tag: lab, on: 'floor' }); }
   // —— ⑤ 移动登高梯（停在书架前，面朝圆心）——
   for (const a of [112 * D, -112 * D]) { const [x, z] = P(a, RI - 0.55); out.push({ m: 'r4/ladder_step_rolling_a01', x, y, z, yaw: a + Math.PI, fit: [0.758, 1.523, 0.655], tag: '登高梯', on: 'floor' }); }
   return { room, items: out };
