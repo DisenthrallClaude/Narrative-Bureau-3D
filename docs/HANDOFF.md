@@ -175,6 +175,35 @@
 - **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
 - 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
 
+## R3 批次33（2026-10-31 08:08 CST 接手，约 35 分钟）
+### 提交
+0e553e7 小修 + 大厅侧廊排椅；d7e3ddc 档案馆地面；29b81d6 行道树 / 沥青车道 / 板缝；c59a0c5 街屋 Blender 立面模块；4b2d590 宿舍墙裙 + ext_house 机位（**最终代码**）。每次提交前本机 `npx vite build` 返回 0；r3plan archive 210 件 0 错（2 条旧警告 cctv 离墙 0.4 m，work/r3/b33/plan_archive.png）、metro 207 件 0 错 0 警（work/r3/b33/plan_metro.png）。
+### 1 小修（0e553e7）
+- id_yexun 删 tcam 回默认机位（fov 30）。**看图 run 41148728331 → work/r3/b33/r41148728331/b33a/id_yexun.png**：相框占画面约 2/3 高、名签「叶寻」清楚 ✔（比批次32 俯看好）。
+- 相片座全部铜件改独立旧铜材质 `_oldBronze`（0x5a4630，metal 0.8，rough 0.6；interiors.js dossierStand）——看图：不再亮橙 ✔，但偏深褐、金属感弱，像木框（中）；名签铜牌仍是原贴图亮铜。
+- 周闻（flipDossier）边几从椅子局部 z+0.05 后移到 −0.14（离值班台立面 ≈9 → ≈28 cm）。
+- 六处边几俯视：新增 top_yinze / top_zhouye / top_qichou / top_qilingyun / top_yexun / top_zhouwen（相框局部上方 3.2 m，fov 60）。原 run 41148728331 九个机位串行，25 分钟只出 1 张已取消；拆组重派 41150328176（b33t / b33t2）、41150518765（b33t3 / b33t4）——**截止本节未回，堵路未用俯视图确认**（边几本身无碰撞体，不挡人）。
+### 2 外观大道 / 街屋（29b81d6、c59a0c5）
+- 行道树：手头 CC BY 树（trees_of_paris = 0 三角点云不能用；tree_3dst13 是螺旋造型绿雕；sf_tree 是枯枝）都不合适，Poly Haven 也无法桐 / 国槐 → **tools/tree_lift.mjs 把 Poly Haven jacaranda（CC0）抬冠收冠**：冠下整体抬 0.31H、树冠水平收 0.6 → r2/street_tree_tall.glb（Blender 预览 work/r3/b33/prev/street_tree_tall.png：高干窄冠 ✔），游戏 h 9.5 → 枝下高 ≈3.0 m、冠幅 ≈4.6 m。surface.js 大道 12 株替换（碰撞体不变）。树干是拉伸出来的，近看树皮纹理被纵向拉长（下批可换真法桐模型）。
+- 车道：大道中间 x ±6、z 100.6–135.4 改 **Poly Haven asphalt_02（CC0，Rob Tuytel）沥青**，3 m/张，法线 1.6；两侧 22 cm 花岗岩立缘（1 m 分缝）；白色标线：车道 / 停车带分界线（x ±3.6）、3 m 虚线分道线、两侧路边停车位横线（5.5 m 一位）、z 129.6 停止线、z 132.6 斑马线（0.45 m 条 / 0.9 m 距）。北段黄色盲道（100.2–134.2）随之删掉，出站口南侧那段保留。
+- 花岗岩人行道：normalScale 2.4 + ARM 的 AO 通道作 aoMap（强度 1.8）压板缝，色压到 0x8e8a82。
+- 街屋：**tools/blender/street_house.py 精建三种立面模块**（r2/sh_bay_win 168 三角：水刷石窗套 + 窗楣压顶 + 带滴水窗台 + 枣红木框十字分格 + 退进玻璃；r2/sh_bay_bal 600 三角：落地门 + 阳台板滴水 + 铁栏立杆 0.14 m 距 + 扶手 / 下横档 / 腰条；r2/sh_shop 240 三角：勒脚 + 壁柱 + 橱窗分格 + 招牌框 + 斜帆布雨棚铁骨 + 店面檐板）。预览 work/r3/b33/prev/street_house.png 合格。exterior.js streetModules()：**最内圈 R160 两侧街屋**按着色器开间网格（窗 3.4 m、店 5 m）成排 InstancedMesh，三种户型（全窗 / 中轴阳台 / 隔开间隔层阳台，按户 hash 定，非散布）；阳台开间加同墙色背板遮住着色器窄窗；约 12% 窗玻璃用暖光自发光（同原夜窗比例）。外两圈仍是着色器立面 + 程序坡顶。
+- 重拍：ext_street / ext_sky / ext_bird = run 41150099173（c59a0c5，含树 + 车道 + 街屋）；新增 ext_house（R160 路心看外侧街屋）= 41150328176 b33h——**截止本节未回**。
+### 3 安检大厅（0e553e7）
+- hero.js placeHero 新 `opts.cut`（按世界包围盒删三角，非索引化后重建，保留 UV1 光照贴图）：hero_hall 两侧廊 hall.py beam_seating（x ±14.9，z −59 / −62）的 leatherBlack + steel 三角删掉；原位放 r2/wait_bench_6080 ×4（宽 2.9 m，坐面朝中殿，两张成排，boundsOf 碰撞）。hero_hall_col 里的旧排椅碰撞盒保留（与新长椅同位）。hall_wanted 改后 = 41150518765 b33w——**截止本节未回**。
+### 4 档案馆（d7e3ddc）
+- 东门入口 r3_check 浅暖灰水磨石（红地毯两侧大片发白那块）→ 新 r3_terrDeep（0x3e3a33，比 r3_terrDark 再压一档）+ 黑石收边；陈列区 r3_terrDark 也换 r3_terrDeep。
+- **看图 run 41148866853 → work/r3/b33/r41148866853/b33r/sheet.jpg**：archive 前景两侧已是深色水磨石，不再发白 ✔（中上）；新机位 archive_loan：借阅柜台芯板 + 铜钮 + 铜扶脚杆 + 黑石台面铜包边读得清 ✔（中上），台上旧显示器 / 档案柜照旧。
+### 5 宿舍 / 指挥中心（4b2d590，只做了一项）
+- dorm3 墙裙 r3_labWain → r3_dormWain（dress.js chippedPaint() 确定性 canvas：刷痕色差 + 掉漆斑露米灰底灰（越往下越多）+ 踢脚擦痕）。改后 dorm_r3_b = 41150328176 b33d，截止未回。**铁床毯子褶皱 / 枕头、门扇质感、上部墙面斑驳未做**；「指挥中心」排查清单未做。
+### 收尾
+- 走查（4b2d590 = 最终代码）= run 41150328176 walk 组，截止本节未回。
+- Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删同名旧卷再传 v03 1j_TKjwS7XkJrXKOOqobwa4GdINM-D4XT（136.8 MB）、v04 1gVtB-hZ7Fbr7n8cM-udMtDZ7EIvM4-2T（286.3 MB，含 street_tree_tall / sh_* glb）；v01 / v02 见下行（文档提交后打包，脚本 work/r3/b33/vol.sh）。
+### 下批先做
+1. 取 41150328176（walk / dorm_r3_b / ext_house / 四张俯视）、41150099173（ext_street / ext_sky / ext_bird）、41150518765（hall_wanted / 两张俯视）；`python3 work/r3/b33/cmp33.py` 重跑对比图。
+2. 若 ext_house 里模块错位（开间没对上着色器窗、朝向反）先修 streetModules；外两圈也上模块（注意三角数）。
+3. 相片座旧铜再提一点金属感（0x6b5638 / rough 0.5）；宿舍床 / 门扇；指挥中心排查。
+
 ## R3 批次32（2026-10-31 07:33 CST 接手，约 35 分钟）
 ### 提交
 0c80592 证件照立式铜框相片座；5759f85 ext_street 铺装 / 行道树池 / 绿篱花坛 + 街屋坡顶檐口三色；2d1647a 档案馆西墙壁柱 / 线脚 / 证物照 + 深色水磨石；c8d3960 阅览长桌 ×8 / 借阅柜台 Blender 精建 + id_yexun 机位。每次提交前本机 `npx vite build` 返回 0；r3plan metro 208 件 0 错 0 警（work/r3/b32/plan_metro.png）、archive 210 件 0 错（2 条旧警告 cctv 离墙 0.4 m，work/r3/b32/plan_archive.png）。
