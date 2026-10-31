@@ -181,7 +181,7 @@
 ### 1 取回批次45 run
 - **41174202288（archive*，b1d26e8）已回**：卡片目录柜落地（底座踢脚贴地）、正面朝 +Z 对阅览区 ✔；书车 4 脚轮落地、档案盒在顶层搁板上 ✔。**问题：ac_walnut 是无 UV 纯色（0.34/0.20/0.11）→ 游戏里读成米色胶合板（最显眼）**。修：assets.js woodBox 正则加 `ac_` + WOOD_TONE 'r2/arch_catalog' / 'r2/arch_bookcart'。0x5e3c24 一档看图成黑漆、0x9a6844 仍近乌木，定 **[0x8a5a38, 0xc08a58]**。看图 a5a27ad（work/r3/b46/r41175260351/a46k3/archive_cart.png）：书车暖胡桃木纹 + 铜推把 / 铜挡条读得清 ✔（中上）；目录柜（a46c3/archive_cat.png）在西北暗角，读成深胡桃 / 近乌木，铜标签框 + 米白卡签 + 拉环清楚（中；柜体偏暗是该区光照少，下批可在柜前加 1 盏不投影暖补光，未做）。
 - **41174238672 walk（b1d26e8）**：31 / 0 / 控制台 0。
-- **41173862139（hall / hall_gates，469120b）截止 14:1x 仍在拍（> 30 分钟）→ 大屏蓝条是否消失仍未亲眼验收。** 下批先取：`rm -rf /tmp/afz; bash tools/gh_shots_fetch.sh 41173862139 work/r3/b46/r41173862139`。
+- **41173862139（hall / hall_gates，469120b）14:15 回**：work/r3/b46/r41173862139/h45/hall.png、h45g/hall_gates.png——**大屏蓝横条已消失 ✔**（琥珀屏面干净，数据 / 环形仪表读得清，中上）。**新发现**：hall_gates 里隔离带每段除深红天鹅绒绳外**还有一根深蓝带**（疑似批次43 换拉绳时旧伸缩带没删，或上下两根），下批查 interiors.js 隔离带。
 ### 2 UI 精修起步
 - **新工具** `tools/ui_shot.mjs`（Actions：`disp.sh "ui3:all"`；组名以 ui 开头即走此分支；`组:all:<旧提交>` 拍旧 UI 作对比）：拦截 .js/.glb/.hdr（游戏 JS 世界构建占满主线程会让 page.screenshot 超时——首跑 ui0 即因此失败），在 tools/ui_bg.jpg 静帧上叠 HTML，出 loading / menu / hud / reader / pause 五张 1280×720。约 3 分钟一轮。
 - **UI 问题清单**（看 ui0b 改前图 work/r3/b46/r41175041717/ui0b/*.png）：
@@ -200,9 +200,9 @@
 - 走查：a5a27ad run **41175278356 通过 31 / 失败 0 / 控制台错误 0**（work/r3/b46/r41175278356/walk/WALKTHROUGH.md）。
 - Pages：**a5a27ad Deploy success（41175260581）**。
 - Drive「快照_分卷」：先删同名旧卷再传 v03 12aJ--49lq2gkCxJb0xYLhInVofhNS697、v04 1uY21nneZQmVGAYWNdd5fdJlJ_QJHCPay；v01 / v02 在本 HANDOFF 提交后传（见 PROGRESS-LOG）。
-- 对比图 `python3 work/r3/b46/cmp46.py` → work/r3/cmp46_loading / menu / prompt / pause / catalog / cart.jpg + 总拼图 work/r3/b46/sheet.jpg（8 张：加载、主菜单、HUD 提示、暂停、书车、目录柜、阅读、档案馆全景）。
+- 对比图 `python3 work/r3/b46/cmp46.py` → work/r3/cmp46_loading / menu / prompt / pause / catalog / cart.jpg + 总拼图 work/r3/b46/sheet.jpg（8 张：加载、主菜单、HUD 提示、暂停、书车、目录柜、大厅 hall、hall_gates）。
 ### 下批先做
-1. 取 41173862139（hall / hall_gates）看大屏蓝条。
+1. 隔离带深蓝带：查 interiors.js（批次43 747b020 拉绳改动附近），删旧伸缩带或改深红；重拍 hall_gates（约 25 分钟）。
 2. UI 清单 5–8：HUD 目标栏 / 物品栏、对话框、文档阅读（页眉档号 / 页码 / 操作说明；.screen 去科技蓝需定）、章节卡——同墨绿 / 暗铜 / 米白体系；拍 `disp.sh "uiN:all"`。
 3. 目录柜区补一盏不投影暖光（柜前 2 m，射程 6 m），重拍 archive_cat。
 
