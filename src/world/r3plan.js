@@ -2289,7 +2289,7 @@ export function planCitizenService(y) {
   for (const yy of [4.95, 6.25]) out.push({ box: 'r3_limestone', x: 55.85, y: y + yy, z: -42.45, w: 0.1, h: 0.12, d: 19.9, uv: 0.5, tag: '线脚', on: 'partv' });
   out.push({ m: 'r2/exit_sign', x: X0 + 0.36, y: y + 3.4, z: -48.0, yaw: ROT.E, w: 0.36, tag: '导视', on: 'wall' });
   out.push({ m: 'r4/fireExtinguisher_abc_a03', x: 20.45, y, z: -44.4, yaw: ROT.E, fit: [0.144, 0.545, 0.192], tag: '消防', on: 'floor' });
-  for (const [x, z] of [[20.85, -33.0], [44.8, -33.0], [49.0, -51.95]]) out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x, y, z, yaw: 0, h: 0.75, tag: '绿植', on: 'floor' });
+  for (const [x, z] of [/* 批次M4：叫号机旁 (20.85,−33) 绿植撤掉（红按钮配绿植 = 红配绿） */ [44.8, -33.0], [49.0, -51.95]]) out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x, y, z, yaw: 0, h: 0.75, tag: '绿植', on: 'floor' });
   wear(out, 20.4, 24.0, -48.6, -47.4, y + 0.0005);
   // —— 批次13：中部 / 南部空地补成组陈设（用户：俯视图中部大片空地）——
   //  ⑧ 东区南 · 综合候号区（x 44.2…48.4，z −42.2…−37.4）：叫号 LED 立屏背靠 5 号窗屏风、面朝南；两排候号长椅面朝屏；东侧铜柱红绳与楼梯通道隔开

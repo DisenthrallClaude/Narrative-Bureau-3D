@@ -147,7 +147,12 @@ export function buildEastWing(scene, world, ctx) {
   const walnutTone = (o) => { o?.traverse?.((m) => { if (!m.isMesh) return; for (const mt of [].concat(m.material)) if (mt && /^(fd|qm)_walnut/.test(mt.name)) mt.color.setRGB(0.22, 0.205, 0.27); else if (mt && /^qm_brass/.test(mt.name)) { mt.color.setRGB(0.27, 0.19, 0.11); mt.metalness = Math.max(mt.metalness ?? 0, 0.9); mt.roughness = 0.3; if (!mt.userData.qm60) { mt.userData.qm60 = 1; mt.envMapIntensity = (mt.envMapIntensity ?? 1) * 1.6; } mt.needsUpdate = true; } /* 批次60：q58b 头与胡桃柜身几乎同色、金属感弱 → 金属度 ≥0.85、粗糙 0.6→0.38、环境反射 ×0.5→×0.8 出高光边，底色只微提（仍旧铜不亮橙）。envMap 乘法用 userData.qm60 防重复；q60 实测顶边高光 115→124 但仍读木色 → 第二档：底色 0.27/0.19/0.11、金属 0.9、粗糙 0.3、环境反射 ×1.6 */ /* 批次58：叫号机顶部铜壳显示头亮橙 (0.80,0.60,0.30) → 旧铜（暗、哑）；q58 实测 (100,59,18)→(80,41,9) 仍偏饱和橙 → 再去饱和 (0.20,0.145,0.10) */ }); /* 批次55：0.52/0.42/0.36 读成中深偏橙 → 压成深胡桃偏冷（目标 #4a3022 一带，B 相对抬高防偏橙） */ return o; };
   // 叫号机
   if (R3.citizen_service) { // 批次52：方盒 + 蓝发光片 → Blender 精建 r2/cs_queue_machine（胡桃木柜身（批次54 去墨绿） + 铜壳三位七段码显示头 + 取号铜按钮 / 出票口，tools/blender/cs_queue_machine.py），正面朝 −Z
-    add(placeModel('r2/cs_queue_machine', { height: 1.4, pos: [22, Y, ZA - 3], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.95); return walnutTone(o); }));
+    // 批次M4：胡桃木方盒 → Blender 重建 1970 年代铸铁 / 古铜取号机（tools/blender/m4_queue_machine.py → m4/queue_machine.glb：倒角古铜壳、浮凸框铆钉排、铸铁凹窗七段码 047、亮铜唇出票口、阶梯檐口顶饰）；
+    // 古铜大面 roughness ≥0.45、envMapIntensity 0.5、七段码自发光 0.9；头顶一盏很小的不投影暖点光给铜壳打出高光边（批60 加金属度 / 环境反射没东西可反射）
+    add(placeModel('m4/queue_machine', { height: 1.4, pos: [22, Y, ZA - 3], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.95);
+      o.traverse((m) => { if (!m.isMesh) return; for (const mt of [].concat(m.material)) if (mt && /^qm4_/.test(mt.name)) { mt.envMapIntensity = 0.5; mt.roughness = Math.max(mt.roughness, 0.45); } else if (mt && mt.name === 'qm_segGlow') mt.emissiveIntensity = Math.min(mt.emissiveIntensity ?? 1, 0.9); });
+      return o; }));
+    { const ql = new THREE.PointLight(0xffc488, 1.6, 1.8, 2); ql.position.set(22 + 0.25, Y + 1.85, ZA - 3 - 0.35); ql.castShadow = false; ql.name = 'qm_rim_m4'; zone.add(ql); }
   } else {
   b.box('blackMetal', 0.5, 1.4, 0.4, [22, Y + 0.7, ZA - 3], { uv: 1, collide: true });
   const qn = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.3), new THREE.MeshStandardMaterial({ color: 0, emissive: 0x3a8cff, emissiveIntensity: 1.2 })); qn.position.set(22, Y + 1.2, ZA - 3 - 0.21); qn.rotation.y = Math.PI; zone.add(qn); }
