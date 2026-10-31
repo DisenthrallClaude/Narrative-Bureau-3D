@@ -86,6 +86,8 @@ export const SHOTS = {
   m12_tr_gates: { pos: [0, -52 + 1.8, -101], look: [0, -52 + 3.2, -122], fov: 78, zone: 'training' }, // 批次 M12：副本门暖色
   archive_west: { pos: [-46.5, 1.8 + 1.65, -46.0], look: [-55, 1.8 + 1.0, -36], fov: 74, lite: 1 },
   archive_loan: { pos: [-45.6, 1.8 + 1.6, -48.6], look: [-50.2, 1.8 + 0.85, -51.5], fov: 62, zone: 'archive', lite: 1 }, // 批次33：借阅柜台近景
+  m16_table: { pos: [-41.0, 1.8 + 1.55, -45.3], look: [-44.5, 1.8 + 0.8, -48.5], fov: 60, zone: 'archive', lite: 1 }, // 批次 M16：阅览长桌 hero + 暗铜罩台灯近景
+  m16_loan_win: { pos: [-47.4, 1.8 + 1.55, -50.6], look: [-49.6, 1.8 + 1.25, -52.1], fov: 60, zone: 'archive', lite: 1 }, // 批次 M16：借阅柜台窗口格栅 / 铭牌近景
   archive_cat: { pos: [-49.4, 1.8 + 1.6, -60.4], look: [-51.6, 1.8 + 1.0, -63.3], fov: 62, zone: 'archive', lite: 1 }, // 批次45：大档案柜组 → 卡片目录柜精建近景
   archive_cart: { pos: [-43.0, 1.8 + 1.5, -57.2], look: [-44.6, 1.8 + 0.55, -59.0], fov: 58, zone: 'archive', lite: 1 }, // 批次45：书车精建近景
   archive_top: { pos: [-38, 1.8 + 40, -50.99], look: [-38, 1.8, -51], fov: 52, clipY: 1.8 + 4.0, zone: 'archive', lite: 1 },
