@@ -1104,10 +1104,8 @@ export function drawScanAlert(c, t, W, H) {
 }
 function drawMainScreen(c, t, W, H, ctx) {
   const tex = ctx.mainScreenTex;
-  if (tex && tex.image && tex.image.complete) { c.drawImage(tex.image, 0, 0, W, H);
-    // 批次42：原生图冷蓝科幻调与哥特暖石材色温冲突 → 改成旧式琥珀荧光屏：'color' 混合把色相 / 饱和度换成琥珀（保留明度与字形），再 multiply 压蓝
-    c.save(); c.globalCompositeOperation = 'color'; c.globalAlpha = 0.82; c.fillStyle = '#c8862e'; c.fillRect(0, 0, W, H);
-    c.globalCompositeOperation = 'multiply'; c.globalAlpha = 0.35; c.fillStyle = '#ffd9a0'; c.fillRect(0, 0, W, H); c.restore(); }
+  // 批次44：hall 看图大屏仍是冷蓝条带——琥珀混合原只在原生图分支（image.complete），实际走的是下方 canvas 自绘分支 → 两个分支画完后统一做琥珀混合（见函数末）
+  if (tex && tex.image && tex.image.complete) { c.drawImage(tex.image, 0, 0, W, H); }
   else {
     const gr = c.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#061028'); gr.addColorStop(1, '#02040c'); c.fillStyle = gr; c.fillRect(0, 0, W, H);
     c.strokeStyle = '#1d3a7a'; c.lineWidth = 2; for (let x = 0; x < W; x += 64) { c.beginPath(); c.moveTo(x, 120); c.lineTo(x, H); c.stroke(); } for (let y = 120; y < H; y += 64) { c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
@@ -1129,6 +1127,9 @@ function drawMainScreen(c, t, W, H, ctx) {
     c.fillStyle = '#9fb4e0'; c.font = '38px "NB Sans", sans-serif'; c.fillText('入局人员文本完整性扫描　今日通过 1,284 人　复核 3 人', 70, 800);
     c.fillText('地下驯化空间　驯化度 99.98%　状态：稳定', 70, 856);
   }
+  // 批次42/44：冷蓝科幻调与哥特暖石材色温冲突 → 旧式琥珀荧光屏（B7 红色闪帧之后再画，保留剧情红字）：'color' 混合把色相 / 饱和度换成琥珀（保留明度与字形），再 multiply 压蓝
+  c.save(); c.globalCompositeOperation = 'color'; c.globalAlpha = 0.82; c.fillStyle = '#c8862e'; c.fillRect(0, 0, W, H);
+  c.globalCompositeOperation = 'multiply'; c.globalAlpha = 0.35; c.fillStyle = '#ffd9a0'; c.fillRect(0, 0, W, H); c.restore();
   // B7 闪帧（约每 40 秒一帧）
   if ((t % 40) < 0.5) { c.fillStyle = '#000'; c.fillRect(W - 640, H - 150, 600, 110); c.fillStyle = '#ff2a2a'; c.font = '700 54px "NB Sans", sans-serif'; c.textAlign = 'right'; c.fillText('B7 层 —— 无数据', W - 60, H - 72); }
 }
