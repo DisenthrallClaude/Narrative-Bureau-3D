@@ -648,7 +648,7 @@ export function planSecurityHall(y) {
   // ⑥ 局徽主墙（北墙中庭门上方）：大局徽 + 铜字
   // 批次29 看图修：hero_hall 北墙上部本有 9×4.2 m 黑石局徽面板（hall.py end_wall，中心离地 12.0，面板前脸 z≈−75.15），
   // 原局徽（y+11, z Z0+0.7=−75.3）整个埋在面板后 → hall_r3 只见一块空黑板。局徽移到面板正中、贴面板前脸，铜字放面板下金线下方。
-  pic(out, 'textures/emblems/N01.jpg', 0, y + 12.0, Z0 + 0.92, 0, 3.4, 3.4, 'gold', { tag: '局徽主墙' });
+  pic(out, 'textures/emblems/N01.jpg', 0, y + 12.0, Z0 + 0.88, 0, 3.4, 3.4, 'gold', { tag: '局徽主墙' }); // 批次59：pick 41213978757 框背离 hero GLB 黑大理石 H_marbleDark（z −75.15）8 cm → 后移 4 cm 贴墙
   out.push({ wtext: '叙 事 管 理 局', x: 0, y: y + 9.1, z: Z0 + 0.92, yaw: 0, w: 5.0, h: 0.7, size: [5.4, 0.9, 0.1], tag: '局徽主墙', on: 'pic' });
   light(out, 0, y + 7.2, Z0 + 5.0, 0xffe0b0, 4.5, 12);
   // 导向：吊牌（查验后横向动线上方）+ 两侧门牌
