@@ -9,6 +9,7 @@ import { Frame, archRingGeo, archSolidGeo, archShape, archApex, lancetWindow, pi
 import { waterMaterial, waterfallMaterial, bannerMaterial, CanvasScreen, time } from '../engine/fx.js';
 import { content } from '../engine/content.js';
 import { placeHero, phMat } from './hero.js';
+import { weather } from '../engine/weather.js';
 export const HERO = !new URLSearchParams(location.search).has('legacy'); // R2：主楼外观改用 Blender 精修 GLB（?legacy 回到旧版程序化外观对比）
 
 export const T = (n) => { if (window.__SHOT__) console.log('[NB]', n, (performance.now() / 1000).toFixed(1)); };
@@ -64,8 +65,8 @@ export async function buildExterior(scene, world, ctx) {
   //   把 |x|<150、z>90 的 R160 / R245 / R305 南段全部埋住 → 人视角满眼弹石。改：迎宾大道台地只留大道本身（|x|≤25、z 93–175，顶 −4.0，surface.js Y=−4 不动），
   //   其余墙外地坪降到环路基面 −4.40（路面 / 人行道 / 路缘都在它之上分层），台地边缘花岗岩压顶 + 隐形坡道接环路。
   b.box('paving', 50, 0.5, 82, [0, -4.25, 134], { uv: 0.2, collide: true });
-  for (const sx of [-1, 1]) { b.box('stone', 0.5, 0.5, 82.5, [sx * 25.2, -4.17, 134], { uv: 0.5, collide: true }); b.box('stone', 0.56, 0.06, 82.5, [sx * 25.2, -3.9, 134], { uv: 0.5 }); world.ramp([sx * 31, -4.4, 123], [sx * 25.4, -3.88, 123], 22); }
-  b.box('stone', 50.9, 0.5, 0.5, [0, -4.17, 175.2], { uv: 0.5, collide: true }); b.box('stone', 50.9, 0.06, 0.56, [0, -3.9, 175.2], { uv: 0.5 });
+  for (const sx of [-1, 1]) { b.box('stone', 0.5, 0.5, 82.5, [sx * 25.2, -4.17, 134], { uv: 0.5 }); b.box('stone', 0.56, 0.06, 82.5, [sx * 25.2, -3.9, 134], { uv: 0.5 }); world.ramp([sx * 31, -4.4, 123], [sx * 25.4, -3.88, 123], 22); }
+  b.box('stone', 50.9, 0.5, 0.5, [0, -4.17, 175.2], { uv: 0.5 }); b.box('stone', 50.9, 0.06, 0.56, [0, -3.9, 175.2], { uv: 0.5 });
   b.box('paving', 300, 0.1, 400, [0, -4.45, 290], { uv: 0.2, collide: true });
   // 台阶两侧跌水
   for (const sx of [-1, 1]) {
@@ -81,10 +82,10 @@ export async function buildExterior(scene, world, ctx) {
   buildFountain(b, g, M, world, ctx);
 
   // ================= 主楼正门台阶 =================
-  if (HERO) { for (let i = 0; i < 10; i++) { world.box(0, 0.09 + i * 0.18, 0.6 - i * 0.5, 34 - i * 0.4, 0.18, 0.5); b.box('brassNosing', 34 - i * 0.4 - 0.6, 0.01, 0.05, [0, 0.18 * (i + 1) + 0.004, 0.6 - i * 0.5 + 0.2], { uv: 1 }); } world.box(0, FLOOR / 2, -3, 34, FLOOR, 5); } // 批次30：ext_door_near 仰视时 10 级踏步糊成一整块石墙 → 每级踏面前沿嵌铜防滑条（hero_facade 踏步 cbox 深 0.56，前沿 z = 中心 + 0.28）
+  if (HERO) buildFrontSteps(g, world); // 批次48：原 hero_facade 烘焙的光滑深色大理石踏步只露出前 3 级、其后是 1.26 m 高的平台立面（ext_door_near 下 1/4 一整条深褐带）→ 10 级踏步整体前移到平台前沿外（z 4.5…−0.5），花岗岩分缝板 + 前沿圆角线脚 + 双道铜防滑条 + 花岗岩压顶 + 两侧阶梯式石栏墙
   else { for (let i = 0; i < 10; i++) b.box('blackMarble', 34 - i * 0.4, 0.18, 0.5, [0, 0.09 + i * 0.18, 0.6 - i * 0.5], { uv: 0.4, collide: true });
   b.box('blackMarble', 34, FLOOR, 5, [0, FLOOR / 2, -3], { uv: 0.4, collide: true }); }
-  world.ramp([0, 0.0, 1.0], [0, FLOOR, -4.4], 30);
+  if (HERO) world.ramp([0, 0.0, 4.6], [0, FLOOR, -0.5], 30); else world.ramp([0, 0.0, 1.0], [0, FLOOR, -4.4], 30);
 
   T('ext fountain');
   // ================= 主楼外观 =================
@@ -112,7 +113,7 @@ export async function buildExterior(scene, world, ctx) {
   for (let i = 0; i < 12; i++) {
     const sx = i < 6 ? -1 : 1, k = i % 6;
     const x = sx * 14.5, z = 8 + k * 12;
-    if (!HERO) { b.add('blackMarble', new THREE.CylinderGeometry(0.55, 0.65, 0.9, 8), { pos: [x, 0.45, z] }, { uv: 0.5, collide: true });
+    if (!HERO) { b.add('blackMarble', new THREE.CylinderGeometry(0.55, 0.65, 0.9, 8), { pos: [x, 0.45, z] }, { uv: 0.5 });
     b.add('gold', new THREE.CylinderGeometry(0.58, 0.58, 0.06, 8), { pos: [x, 0.92, z] }, { uv: 1 }); }
     b.add('iron', new THREE.CylinderGeometry(0.07, 0.11, 12, 10), { pos: [x, HERO ? 7.05 : 6.9, z] }, { uv: 1 });
     b.add('iron', new THREE.BoxGeometry(2.3, 0.08, 0.08), { pos: [x, 11.5, z + 0.1] }, { uv: 1 });
@@ -428,13 +429,60 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
     const dusk = TOD.label !== '白昼', k = dusk ? 1 : 0.25;
     const spot = (p, t, i, ang) => { const l = new THREE.SpotLight(0xffd7a8, i * k, 90, ang, 0.65, 1.6); l.position.set(...p); l.target.position.set(...t); l.castShadow = false; g.add(l, l.target); };
     for (const x of [-27, -15.5, -6.2, 6.2, 15.5, 27]) { // 地埋灯：石框 + 铜面 + 发光透镜，前沿 z 4.2（台阶外），对准立面 30 m 高处
-      const f = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 0.5), fix); f.position.set(x, 0.04, 4.2); g.add(f);
-      const ln = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.02, 0.3), lens); ln.position.set(x, 0.09, 4.2); g.add(ln);
-      spot([x, 0.3, 4.2], [x * 0.92, Y + 26, -8], 1400, 0.42); }
+      const f = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 0.5), fix); f.position.set(x, 0.04, 5.6); g.add(f);
+      const ln = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.02, 0.3), lens); ln.position.set(x, 0.09, 5.6); g.add(ln);
+      spot([x, 0.3, 5.6], [x * 0.92, Y + 20, -8], 1250, 0.5); } // 批次48：台阶前移到 z 4.5 → 地埋灯退到 5.6；对准点 Y+26 → Y+20、锥角 0.42 → 0.5，让下半立面也进光池（ext_plaza 下半立面发黑）
+    // 批次48：下半立面补光——实体铜投光器 ×4：台阶两侧石栏端墩顶（打门洞两侧墩柱 / 雕像列）+ 双塔脚石座前沿（贴墙掠射塔身下段），暖 2900K，不投影
+    const proj = (p, t, i, ang) => { const h = new THREE.Group(); const body = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.16, 0.34, 14), fix); body.rotation.x = Math.PI / 2; h.add(body);
+      const le = new THREE.Mesh(new THREE.CircleGeometry(0.12, 14), lens); le.position.z = 0.175; h.add(le); const yoke = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.05, 0.12), fix); yoke.position.y = -0.2; h.add(yoke);
+      h.position.set(...p); h.lookAt(...t); g.add(h); spot([p[0], p[1], p[2]], t, i * 1, ang); };
+    for (const sx of [-1, 1]) { proj([sx * 17.6, 1.62, 5.1], [sx * 7.5, Y + 8, -4.5], 900, 0.42); proj([sx * 22, 2.4, -5.9], [sx * 22, Y + 16, -8], 700, 0.55); }
     for (const sx of [-1, 1]) spot([sx * 30, 0.4, 36], [sx * 22, Y + 52, -13], 2600, 0.16); // 尖塔投光（广场两侧路灯列外的灯座处）
     spot([0, 0.4, 24], [0, Y + 36, -5], 1200, 0.13); // 玫瑰窗 / 局徽
   }
   ctx.doorZ = -5;
+}
+
+
+// ---------------- 批次48 正门台阶 + 平台（花岗岩分缝） ----------------
+// 10 级 0.18 × 0.5：踏步 i 踏面顶 y=0.18(i+1)，前沿 z=4.5−0.5i；第 10 级即平台前沿压顶（z 0…−0.5），平台 z −0.5…−5.5。
+// 每级：暗色灰缝底芯（退 4 cm）+ 踢面石板（约 1.4 m 一块，1.2 cm 缝）+ 踏面石板（6 cm 厚、前挑 5 cm）+ 前沿圆角线脚 + 两道铜防滑条（按板分段）。
+function buildFrontSteps(g, world) {
+  const b = new Batch();
+  const gm = (c, r) => weather(pbr('Granite003A', { color: c, roughness: r, env: 0.6, normalScale: 0.9 }), { macro: 0.14, dust: 0.18, grime: 0.25, ground: 0.4, rough: 0.12 });
+  const MT = { tread: gm(0xb0a798, 0.72), riser: gm(0x938b7f, 0.8), coping: gm(0xc4baa8, 0.62), cheek: gm(0xa29a8d, 0.78), joint: new THREE.MeshStandardMaterial({ color: 0x1a1816, roughness: 1 }), nosing: mats().brassNosing };
+  const W = 34, X0 = -W / 2, gap = 0.012, T = 0.06, SL = 1.4;
+  const segs = (off) => { const out = []; let x = X0; const first = off ? SL / 2 : SL; let w = first; while (x < -X0 - 1e-3) { const e = Math.min(-X0, x + w); out.push([x, e]); x = e; w = SL; } return out; };
+  for (let i = 0; i < 10; i++) {
+    const yt = 0.18 * (i + 1), yb = 0.18 * i, zf = 4.5 - 0.5 * i, last = i === 9;
+    world.box(0, yt / 2, zf - 0.25, W, yt, 0.5);
+    b.box('joint', W, yt - T, 0.5, [0, (yt - T) / 2, zf - 0.04 - 0.25]);
+    for (const [a, e] of segs(i % 2)) {
+      const w = e - a - gap, cx = (a + e) / 2;
+      b.box('riser', w, yt - T - yb, 0.04, [cx, yb + (yt - T - yb) / 2, zf - 0.03], { uv: 0.5 });
+      const key = last ? 'coping' : 'tread', d = last ? 0.6 : 0.55, th = last ? 0.12 : T;
+      b.box(key, w, th, d, [cx, yt - th / 2, zf + 0.02 - d / 2], { uv: 0.5 });
+      if (!last) for (const dz of [0.05, 0.1]) b.box('nosing', w - 0.16, 0.006, 0.022, [cx, yt + 0.003, zf - dz], { uv: 1 });
+    }
+    const nose = new THREE.CylinderGeometry(last ? 0.06 : 0.03, last ? 0.06 : 0.03, W, 10); nose.rotateZ(Math.PI / 2);
+    b.add(last ? 'coping' : 'tread', nose, { pos: [0, yt - (last ? 0.06 : 0.03), zf + 0.02] }, { uv: 0.5 });
+  }
+  // 平台：灰缝底芯 + 1.2 m 方板错缝铺装（z −0.5…−5.5）
+  b.box('joint', W, 1.78, 5.0, [0, 0.89, -3.0]);
+  for (let r = 0; r < 4; r++) { const z0 = -0.6 - r * 1.225, z1 = z0 - 1.225; for (const [a, e] of segs(r % 2)) b.box('tread', e - a - gap, 0.04, z0 - z1 - gap, [(a + e) / 2, 1.78 + 0.02, (z0 + z1) / 2], { uv: 0.5 }); }
+  // 两侧阶梯式石栏墙（x ±17…±18.2，z 4.5…1.8 接狮座）+ 端头方墩 + 压顶
+  for (const sx of [-1, 1]) {
+    const xc = sx * 17.6;
+    for (let i = 0; i < 6; i++) { const yt = 0.18 * (i + 1), zf = 4.5 - 0.5 * i, top = yt + 0.85, d = i === 5 ? 0.3 : 0.5;
+      b.box('cheek', 1.2, top - 0.1, d, [xc, (top - 0.1) / 2, zf - d / 2], { uv: 0.5 });
+      b.box('coping', 1.34, 0.1, d + 0.02, [xc, top - 0.05, zf - d / 2], { uv: 0.5 }); }
+    b.box('cheek', 1.5, 1.3, 1.5, [xc, 0.65, 5.1], { uv: 0.5 });
+    b.box('coping', 1.66, 0.12, 1.66, [xc, 1.36, 5.1], { uv: 0.5 });
+    b.box('coping', 1.62, 0.1, 1.62, [xc, 0.05, 5.1], { uv: 0.5 });
+    world.box(xc, 0.6, 3.1, 1.2, 1.2, 3.4);
+  }
+  world.box(0, FLOOR / 2, -3, W, FLOOR, 5);
+  b.build(g, MT);
 }
 
 // ---------------- R2 精修主楼（tools/blender/facade.py → hero_facade.glb）----------------
@@ -442,7 +490,7 @@ async function heroFacade(g, M, world, ctx, add) {
   const Y = FLOOR;
   // R3 批次8：远景 LOD（tools/facade_lod.mjs，Permissive 塌边 2.6M → 0.32M 面）；hi/lo 各自子组，main.js 切块后按格切换
   const gHi = new THREE.Group(); gHi.name = 'facade_hi'; const gLo = new THREE.Group(); gLo.name = 'facade_lo'; g.add(gHi, gLo); ctx.facadeLod = { hi: gHi, lo: gLo };
-  await Promise.all([placeHero(gHi, world, './assets/hero/hero_facade.glb'), placeHero(gLo, null, './assets/hero/hero_facade_lo.glb', { col: false })]);
+  await Promise.all([placeHero(gHi, world, './assets/hero/hero_facade.glb', { hide: ['steps'] }), placeHero(gLo, null, './assets/hero/hero_facade_lo.glb', { col: false, hide: ['steps'] })]);
   // 门洞内：敞开的大门门扇——批次30 看 ext_door_near：原深色木 + 亮铜框读成「棕木板 + 霓虹描边」→ 暗古铜门扇 + 浅一档铜芯板 + 哑光铜框 + 铁箍铜泡钉
   const DW = 7, DH = 9;
   for (const sx of [-1, 1]) {
@@ -521,7 +569,7 @@ function buildRingWall(b, g, M, world, ctx) {
   //   墙基花岗岩勒脚（墙身 y0 以下到墙外地坪 −4.4，外挑 0.35 m + 冠石）→ 1.3 m 浅色石材散水（每 2.4 m 一道分缝）+ 外沿立砌路缘 → 0.2 m 土沟 → 1.0 m 宽 0.9 m 高修剪绿篱（每段 4.0 m、留 0.8 m 检修口，等距成列）。避开塔楼 / 门楼脚（±6.5 m）。
   { const Yg = -4.4, inT = (deg) => towers.some((t) => Math.abs(THREE.MathUtils.radToDeg(Math.atan2(t.x - cx, t.z - cz)) - deg) < 3.4) || Math.abs(Math.abs(deg) - THREE.MathUtils.radToDeg(gap)) < 3.6;
     const ring = (r0, r1, step, fn) => { for (const sgn of [1, -1]) for (let s = R * gap + 0.01; s / r0 < THREE.MathUtils.degToRad(112); s += step) { const a = sgn * (s + step / 2) / r0; if (inT(THREE.MathUtils.radToDeg(a))) continue; fn(a, (r0 + r1) / 2, step); } };
-    ring(121.5, 121.5, 2.4, (a, r, st) => { const [x, z] = P(a, 121.35); b.add('stone', new THREE.BoxGeometry(st + 0.02, 4.6, 0.75), { pos: [x, Yg + 2.3, z], rot: [0, a, 0] }, { uv: 0.5, collide: true }); const [x2, z2] = P(a, 121.62); b.add('stone', new THREE.BoxGeometry(st + 0.02, 0.18, 0.42), { pos: [x2, Yg + 4.0, z2], rot: [0, a, 0] }, { uv: 0.5 }); });
+    ring(121.5, 121.5, 2.4, (a, r, st) => { const [x, z] = P(a, 121.35); b.add('stone', new THREE.BoxGeometry(st + 0.02, 4.6, 0.75), { pos: [x, Yg + 2.3, z], rot: [0, a, 0] }, { uv: 0.5 }); const [x2, z2] = P(a, 121.62); b.add('stone', new THREE.BoxGeometry(st + 0.02, 0.18, 0.42), { pos: [x2, Yg + 4.0, z2], rot: [0, a, 0] }, { uv: 0.5 }); });
     ring(121.7, 123.0, 2.4, (a, r, st) => { const [x, z] = P(a, r); b.add('plazaTile', new THREE.BoxGeometry(st * (r / 121.7) - 0.03, 0.1, 1.3), { pos: [x, Yg + 0.05, z], rot: [0, a, 0] }, { uv: 0.6 }); const [xk, zk] = P(a, 123.08); b.add('stone', new THREE.BoxGeometry(st * (123.08 / 121.7) + 0.01, 0.2, 0.16), { pos: [xk, Yg + 0.1, zk], rot: [0, a, 0] }, { uv: 0.5 }); });
     ring(123.65, 123.65, 4.8, (a, r) => { const [x, z] = P(a, r); b.add('hedge', new THREE.BoxGeometry(4.0, 0.9, 1.0), { pos: [x, Yg + 0.45, z], rot: [0, a, 0] }, { uv: 0.6, collide: true }); b.add('hedge', new THREE.BoxGeometry(3.8, 0.12, 0.8), { pos: [x, Yg + 0.96, z], rot: [0, a, 0] }, { uv: 0.6 }); }); }
 }

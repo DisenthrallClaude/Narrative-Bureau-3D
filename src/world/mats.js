@@ -28,7 +28,7 @@ export function mats() {
   M.iron = pbr('Metal046A', { color: 0x2b2d33, metalness: 1, roughness: 0.42 });
   // M6：深蓝铅条菱格玻璃（canvas 自产，ShapeGeometry UV 为米制 → 每 0.9 m 一组菱格）
   const lead = leadedGlassTexture();
-  M.glassOut = new THREE.MeshPhysicalMaterial({ color: TOD.label === '白昼' ? 0x6f8fe0 : 0x3a5098, map: lead.map, roughnessMap: lead.rough, metalness: 0.25, roughness: 0.9, envMapIntensity: TOD.label === '白昼' ? 1.6 : 1.1, emissive: 0x2440a0, emissiveMap: lead.map, emissiveIntensity: TOD.label === '白昼' ? 0.35 : 0.25, clearcoat: 0.6, clearcoatRoughness: 0.1 });
+  const DAYG = TOD.label === '白昼'; M.glassOut = new THREE.MeshPhysicalMaterial({ color: DAYG ? 0x6f8fe0 : 0x3a3028, map: lead.map, roughnessMap: lead.rough, metalness: 0.25, roughness: 0.9, envMapIntensity: DAYG ? 1.6 : 0.55, emissive: DAYG ? 0x2440a0 : 0x5a3412, /* 批次48：黄昏高窗玻璃冷钴蓝 / 蓝紫（ext_plaza、ext_door_mid）→ 深暖褐反射 + 微弱琥珀底光，环境反射 1.1 → 0.55（反射的是蓝紫黄昏天空） */ emissiveMap: lead.map, emissiveIntensity: TOD.label === '白昼' ? 0.35 : 0.25, clearcoat: 0.6, clearcoatRoughness: 0.1 });
   M.glassOut.userData.noShadow = true;
   // 黄昏：外立面尖窗按窗格随机亮起暖色灯光（世界坐标哈希），其余保持深色反射
   M.glassOut.onBeforeCompile = (sh) => {
@@ -38,7 +38,7 @@ export function mats() {
         { vec3 cell = floor(vGw / vec3(3.0, 5.0, 3.0)); float on = step(${TOD.label === "白昼" ? "0.80" : "0.55"}, gh(cell));
           float flick = 0.85 + 0.15 * gh(cell + 7.0);
           float grad = 0.6 + 0.4 * smoothstep(0.0, 1.0, fract(vGw.y / 5.0));
-          totalEmissiveRadiance += vec3(1.0, 0.58, 0.26) * on * flick * grad * ${TOD.winLit.toFixed(2)}; }`);
+          totalEmissiveRadiance += vec3(1.0, 0.52, 0.2) * on * flick * grad * ${(TOD.label === '白昼' ? TOD.winLit : TOD.winLit * 0.62).toFixed(2)}; }`);
   };
   M.glassOut.customProgramCacheKey = () => 'glassOut' + TOD.label;
   const sgt = stainedGlassTexture(3); // UV 由 Batch 按每扇窗归一化
