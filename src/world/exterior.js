@@ -491,7 +491,7 @@ async function heroFacade(g, M, world, ctx, add) {
   // R3 批次8：远景 LOD（tools/facade_lod.mjs，Permissive 塌边 2.6M → 0.32M 面）；hi/lo 各自子组，main.js 切块后按格切换
   const gHi = new THREE.Group(); gHi.name = 'facade_hi'; const gLo = new THREE.Group(); gLo.name = 'facade_lo'; g.add(gHi, gLo); ctx.facadeLod = { hi: gHi, lo: gLo };
   await Promise.all([placeHero(gHi, world, './assets/hero/hero_facade.glb', { hide: ['steps'] }), placeHero(gLo, null, './assets/hero/hero_facade_lo.glb', { col: false, hide: ['steps'] })]);
-  facadeBounce(gHi, gLo, Y); // 批次50：下半立面暖反弹光（广场铺地被地埋灯 / 投光照亮后回弹到石墙下段），让远景下半立面石材纹理可读
+  facadeBounce(gHi, gLo, Y); facadeTroughs(g, Y); // 批次50：下半立面暖反弹光（广场铺地被地埋灯 / 投光照亮后回弹到石墙下段），让远景下半立面石材纹理可读
   // 门洞内：敞开的大门门扇——批次30 看 ext_door_near：原深色木 + 亮铜框读成「棕木板 + 霓虹描边」→ 暗古铜门扇 + 浅一档铜芯板 + 哑光铜框 + 铁箍铜泡钉
   const DW = 7, DH = 9;
   for (const sx of [-1, 1]) {
@@ -1124,8 +1124,42 @@ function innerVestibuleDoors(g, M, Y) {
     box(g, woodDk, 0.05, 8.6, dz, x, Y + 4.3, zc);
     for (const [py, ph] of [[1.1, 1.6], [3.75, 3.1], [6.85, 2.5]]) { box(g, wood, 0.03, ph, dz - 0.3, x - sx * 0.035, Y + py, zc); box(g, brass, 0.02, 0.025, dz - 0.24, x - sx * 0.04, Y + py + ph / 2 + 0.03, zc); }
     box(g, brass, 0.06, 8.6, 0.025, x - sx * 0.01, Y + 4.3, zc + dz / 2); }
+  // 批次51：ext_door_mid 米黄平亮面最终定位——按机位 [-4,1.8,18]→[0,13,-5] fov66 反算射线：亮面像素 (645…660, 440…600) 穿门洞后打在
+  // 门廊后墙 Z1=−30 内面 x 4.3…6、y Y+2…Y+15，即「尖拱外侧 + 护墙板以上」的石墙，被门廊顶部面光（buildGate rectLight Y+13.9）平打。
+  // 改：护墙以上整面贴深色花岗岩饰面（沿尖拱外弧留 0.25 m 石券边），每 2.7 m 一根胡桃木壁柱 + 铜压条，Y+11 胡桃木檐板 + 铜线；
+  // 饰面上暖光渐变（下亮上暗，模拟护墙顶线脚处的上照灯），石材深色高粗糙 → 不再反成整块米黄。
+  const dkStone = pbr('Granite003A', { color: 0x4a3f36, roughness: 0.9, env: 0.25, normalScale: 0.8 });
+  const cv2 = document.createElement('canvas'); cv2.width = 4; cv2.height = 128; const g2 = cv2.getContext('2d'); const lg = g2.createLinearGradient(0, 128, 0, 0);
+  lg.addColorStop(0, 'rgba(255,170,90,0.55)'); lg.addColorStop(0.35, 'rgba(255,150,70,0.18)'); lg.addColorStop(1, 'rgba(0,0,0,0)'); g2.fillStyle = lg; g2.fillRect(0, 0, 4, 128);
+  const wash = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv2), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.6 }); wash.map.colorSpace = THREE.SRGBColorSpace;
+  const yB = 4.38, yT = 13.9, aw = 5.25; const sh = new THREE.Shape(); sh.moveTo(-13.85, yB); sh.lineTo(-aw, yB);
+  for (let i = 0; i <= 24; i++) { const x = -aw + i * 2 * aw / 24; sh.lineTo(x, Math.min(10.25, 5.67 + Math.sqrt(Math.max(0, 100 - (5 + Math.abs(x) - 0.25) ** 2))) + 0.25); }
+  sh.lineTo(aw, yB); sh.lineTo(13.85, yB); sh.lineTo(13.85, yT); sh.lineTo(-13.85, yT); sh.lineTo(-13.85, yB);
+  const sgeo = new THREE.ShapeGeometry(sh); { const pa = sgeo.attributes.position, uv = sgeo.attributes.uv; for (let i = 0; i < pa.count; i++) uv.setXY(i, pa.getX(i) / 2.5, pa.getY(i) / 2.5); }
+  const clad = new THREE.Mesh(sgeo, dkStone); clad.position.set(0, Y, -29.5); clad.receiveShadow = true; g.add(clad);
+  const wgeo = sgeo.clone(); { const pa = wgeo.attributes.position, uv = wgeo.attributes.uv; for (let i = 0; i < pa.count; i++) uv.setXY(i, 0.5, (pa.getY(i) - yB) / (yT - yB)); }
+  const wm = new THREE.Mesh(wgeo, wash); wm.position.set(0, Y, -29.47); wm.userData.noShadow = true; g.add(wm);
+  for (const sx of [-1, 1]) { for (let k = 0; k < 4; k++) { const px = sx * (6.3 + k * 2.45);
+      box(g, woodDk, 0.42, 6.5, 0.14, px, Y + yB + 3.25, -29.42); box(g, wood, 0.26, 6.2, 0.05, px, Y + yB + 3.25, -29.33); box(g, brass, 0.03, 6.2, 0.02, px, Y + yB + 3.25, -29.3); }
+    box(g, woodDk, 8.2, 0.32, 0.22, sx * 9.75, Y + 11.05, -29.4); box(g, brass, 8.2, 0.03, 0.24, sx * 9.75, Y + 10.9, -29.39); }
 }
 
+
+// ---------------- 批次51 实体铜灯槽（洗墙） ----------------
+// 勒脚线脚上沿（两翼 x ±15.4…28.6 顶 y2.2 / ±31.8…40.2 顶 y2.0）与中段平台后沿（x ±4.4…15.2，y FLOOR）各一道铜 U 槽：
+// 外壁哑光铜 + 内衬暗铜 + 槽内磨砂暖光灯带（只朝上可见，平视藏在槽唇后）+ 每 1.2 m 一个灯具隔板；对应的洗墙光在 facadeBounce 着色器里按槽口高度计算。
+function facadeTroughs(g, Y) {
+  if (TOD.label === '白昼') return;
+  const cu = new THREE.MeshStandardMaterial({ color: 0x8a5a32, metalness: 0.85, roughness: 0.42 }), cuDk = new THREE.MeshStandardMaterial({ color: 0x3a2414, metalness: 0.7, roughness: 0.6 });
+  const led = new THREE.MeshStandardMaterial({ color: 0x1a120a, emissive: 0xffb466, emissiveIntensity: 2.2, roughness: 0.5 });
+  const b = new Batch();
+  const run = (x0, x1, y, z) => { for (const sx of [-1, 1]) { const L = x1 - x0, cx = sx * (x0 + x1) / 2;
+    b.box('cu', L, 0.16, 0.03, [cx, y + 0.08, z + 0.13]); b.box('cu', L, 0.12, 0.03, [cx, y + 0.06, z - 0.13]); b.box('cuDk', L, 0.025, 0.26, [cx, y + 0.012, z]);
+    b.box('cu', L, 0.012, 0.06, [cx, y + 0.165, z + 0.15]); b.box('led', L - 0.04, 0.012, 0.12, [cx, y + 0.04, z - 0.02]);
+    for (let x = x0 + 0.6; x < x1; x += 1.2) b.box('cuDk', 0.02, 0.12, 0.24, [sx * x, y + 0.07, z]); } };
+  run(4.4, 15.2, Y, -5.32); run(15.4, 28.6, 2.2, -5.62); run(31.8, 40.2, 2.0, -6.52);
+  b.build(g, { cu, cuDk, led });
+}
 
 // ---------------- 批次50 下半立面反弹光 ----------------
 // ext_plaza（56 m 外逆光）下半立面发黑：SpotLight 再加强看不出、只会把近处打爆。改为材质级弱反弹项——
@@ -1145,7 +1179,13 @@ function facadeBounce(gHi, gLo, Y) {
         .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
         { float hgt = smoothstep(${(Y + 16).toFixed(1)}, ${(Y + 0.5).toFixed(1)}, vNbBw.y) * smoothstep(${(Y - 1.5).toFixed(1)}, ${(Y - 0.2).toFixed(1)}, vNbBw.y);
           float reg = smoothstep(-16.0, -12.0, vNbBw.z) * (1.0 - smoothstep(36.0, 40.0, abs(vNbBw.x)));
-          totalEmissiveRadiance += diffuseColor.rgb * vec3(1.0, 0.72, 0.46) * (0.30 * hgt * hgt + 0.06 * hgt) * reg; }`);
+          totalEmissiveRadiance += diffuseColor.rgb * vec3(1.0, 0.72, 0.46) * (0.30 * hgt * hgt + 0.06 * hgt) * reg;
+          /* 批次51：实体铜灯槽洗墙（灯槽见 facadeTroughs）——灯槽口以上墙面掠射光：槽口最亮、向上指数衰减 ≈ 6 m，每 1.2 m 一盏灯的扇贝纹 */
+          float ax = abs(vNbBw.x), yt = ax < 15.2 ? ${(Y + 0.06).toFixed(2)} : (ax < 30.5 ? 2.2 : 2.0);
+          float seg = (step(4.4, ax) * (1.0 - step(15.2, ax))) + (step(15.4, ax) * (1.0 - step(28.6, ax))) + (step(31.8, ax) * (1.0 - step(40.2, ax)));
+          float dy = vNbBw.y - yt, up = smoothstep(-0.02, 0.25, dy) * exp(-max(dy, 0.0) / 6.0);
+          float scal = 0.7 + 0.3 * pow(abs(cos(3.14159 * vNbBw.x / 1.2)), 2.0) * exp(-max(dy, 0.0) / 1.6);
+          totalEmissiveRadiance += diffuseColor.rgb * vec3(1.0, 0.70, 0.40) * 0.85 * up * scal * seg * step(vNbBw.z, -4.8) * step(-12.0, vNbBw.z); }`);
     };
     c.customProgramCacheKey = () => (pk ? pk() : '') + '|bnc50';
     cache.set(m, c); return c;

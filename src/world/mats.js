@@ -45,7 +45,7 @@ export function mats() {
           float fy = fract((vGw.y - 1.8) / 5.0);
           /* 室内暖光：顶部吊灯处最亮的深琥珀，向下渐暗偏橙红（天花→地面的光衰），不再一整块奶白 */
           /* 批次50：再压深——目标出屏约 #d89a4a 琥珀：两端 G/B 压低、整体强度 ×0.44 → ×0.30，ACES 后不再被推向奶白 */
-          vec3 warm = mix(vec3(0.50, 0.16, 0.025), vec3(0.95, 0.42, 0.075), smoothstep(0.05, 0.85, fy)); /* 批次50 补：首轮出屏 (172,129,82) 偏灰 → G/B 再压、强度 0.30 → 0.32，逼近 #d89a4a */
+          vec3 warm = mix(vec3(0.52, 0.13, 0.012), vec3(1.0, 0.38, 0.045), smoothstep(0.05, 0.85, fy)); /* 批次51：出屏 (180,134,79) B/R 0.44 → G/B 再压、R 提、强度 0.32 → 0.36，目标 #d89a4a； 批次50 补：首轮出屏 (172,129,82) 偏灰 → G/B 再压、强度 0.30 → 0.32，逼近 #d89a4a */
           /* 批次50：窗内真实感——下沿 0–22% 为窗台 / 桌面以下的暗带（室内家具 + 窗下墙挡光），上沿 84–100% 为半放百叶（5 cm 叶片暗缝） */
           float sill = mix(0.22, 1.0, smoothstep(0.17, 0.24, fy));
           float blind = 1.0 - smoothstep(0.82, 0.85, fy) * (0.45 + 0.4 * step(0.5, fract(vGw.y / 0.06)));
@@ -56,7 +56,7 @@ export function mats() {
           float dt = (0.5 - abs(fract(vGw.y / 1.6) - 0.5)) * 1.6; float tr = 1.0 - smoothstep(0.03, 0.05, dt);
           float shade = (1.0 - 0.85 * mull) * (1.0 - 0.85 * tr);
           float flick = 0.88 + 0.12 * gh(vec3(bay, fl, 3.0));
-          totalEmissiveRadiance += warm * on * flick * shade * ${(TOD.label === '白昼' ? TOD.winLit : TOD.winLit * 0.32).toFixed(2)}; }`);
+          totalEmissiveRadiance += warm * on * flick * shade * ${(TOD.label === '白昼' ? TOD.winLit : TOD.winLit * 0.36).toFixed(2)}; }`);
   };
   M.glassOut.customProgramCacheKey = () => 'glassOut' + TOD.label;
   const sgt = stainedGlassTexture(3); // UV 由 Batch 按每扇窗归一化
