@@ -2029,3 +2029,18 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 - Drive 快照_分卷 新增 v13_m10_models.tar 1vaVOVHjIcnzTll7X5nLw-gAT5MBVnYL8（m10 glb + 脚本 + m10_seventh.js + 预览），其它卷未动。
 ### 下批先做
 1. 门扇已验（不调）。2. seventh_ops 已到，见 sheet。3. 沙盘铜碗灯蓝顶、东墙军绿油桶。
+
+## 批次 M11 · 12F 局长室 Blender 精建（2026-11-01 00:41 CST 接手，约 35 分钟；与 r3-model-m9 / m10 并行，只动 director）
+- 工作方式：game/ 落后且有他人未跟踪文件 → 独立 worktree（本机整体 checkout 会超时，改 `worktree add --no-checkout` + 分块 `checkout-index`）。
+- 提交 126c83e：tools/blender/m11_director.py（`blender.sh -b -P m11_director.py -- public/assets/models/m11 <prev|-> shell,desk,cred,cab,flag`）→ public/assets/models/m11/*.glb（meshopt；dr_shell 24.8k 三角 472 KB，desk/cred/cab/flag 18–72 KB）。游戏端 src/world/m11_director.js（clone 放置，不做顶点烘焙，所以可以 meshopt），upper.js director 段末尾 jobs.push(buildM11Director)。`?nom11=1` 回旧。
+  - dr_shell（游戏绝对坐标）：东西墙胡桃护墙板 1.5 m（踢脚石 / 凸芯板 / 腰线 + 暗铜条）+ 上段暖灰褐墙布 + 胡桃壁骨（双铜压边）+ 线框分格 + 顶轨；四边三级檐口；格子天花 10×8（底 y+6.55，酒红褐格心 + 暗铜嵌线）；北窗 5 樘丝绒窗帘 + 帘头 + 铜杆 + 束带钩。西墙壁炉/黑布画段留空并加壁柱收口；东墙机要室挂画段上段不做线框。
+  - dr_desk 替换 upper.js 方盒大班台（M11 下原台面/柜体/挡板/皮垫不画；玻璃板、手稿、镇纸、致 K 信锚点原样）：访客面凸芯板 + 铜珠边 + 铜包角 + 局徽圆章，局长侧三屉铜吊环，台面线脚 + 铜边 + 酒红褐皮面嵌心。碰撞 world.box 同尺寸。
+  - 新增：主座背后中窗前矮书柜 dr_cred、局旗 dr_flag（x 2.4 z −106）、机要室隔墙西面文件柜 ×3（暗暖灰搪瓷 + 铜标签框）。均补碰撞盒。
+  - 材质：暗铜 0x8a6238 金属 0.9 / 粗糙 0.5 / env 0.5；无自发光；无蓝绿。
+- 规划：work/r3/m11/plans/director_plan.md（文字版平面功能规划；本机无 matplotlib，未出图）。Blender 预览：work/r3/m11/preview/m11_{shell_0,shell_1,desk_0,desk_1,cred_0,cab_0,flag_0}.png。
+- 剧情锚点 / 触发器 / 无名书 / zone 判定未动。npx vite build 0（126c83e）。
+- 截图 run 41222914846（m11:m11_dir_desk / west / ceil）；walk run 41222916929（均 126c83e）。
+- **未做：abyss_gate 深渊门**（本批时间全给局长室）；南墙 18.8 m 开口门套未做。
+### 下批先做
+1. `bash tools/gh_shots_fetch.sh 41222914846 work/r3/m11/r41222914846` 看局长室三张（天花是否压暗、窗帘离窗、护墙框芯可读、大班台皮面/铜饰）；拼 work/r3/m11/sheet.jpg；取 walk 41222916929（31/31、控制台 0）。
+2. abyss_gate 深渊门（石拱巨门 / 铜铆框 / 台阶 / 石墙穹顶；保留 int_abyss_fold、int_abyss_guard、doc_abyss_gate_plate 位置）。
