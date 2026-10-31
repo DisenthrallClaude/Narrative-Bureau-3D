@@ -1037,6 +1037,20 @@ export function brassPlaqueMaterial(title, lines) {
   c.font = '28px "NB Serif", serif'; c.textAlign = 'left'; lines.forEach((l, i) => c.fillText(l, 50, 170 + i * 52));
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, metalness: 0.7, roughness: 0.35 });
 }
+// 批次37：横向铜牌（画布按牌面比例绘制）——原 brassPlaqueMaterial 是 512×680 竖版画布贴到 0.34×0.12 横牌上，标题被压扁在顶部 14%，cs_r3_c「咨询 · 引导」看不清
+const _plateCache = new Map();
+export function brassPlateMaterial(title, sub = '', pw = 0.34, ph = 0.12) {
+  const key = `${title}|${sub}|${pw}|${ph}`; if (_plateCache.has(key)) return _plateCache.get(key);
+  const h = 256, w = Math.round(h * pw / ph); const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
+  const gr = c.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#a8823e'); gr.addColorStop(0.5, '#dcb86c'); gr.addColorStop(1, '#94702f'); c.fillStyle = gr; c.fillRect(0, 0, w, h);
+  c.strokeStyle = '#4a3210'; c.lineWidth = 10; c.strokeRect(12, 12, w - 24, h - 24); c.strokeStyle = '#f0d8a0'; c.lineWidth = 3; c.strokeRect(26, 26, w - 52, h - 52);
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  const ty = sub ? h * 0.42 : h * 0.52, fs = Math.min(sub ? 104 : 128, (w - 80) / Math.max(1, title.length) * 1.05);
+  c.font = `900 ${fs}px "NB Title", "NB Serif", serif`; c.fillStyle = 'rgba(255,240,200,0.55)'; c.fillText(title, w / 2 + 2, ty + 3); c.fillStyle = '#24170a'; c.fillText(title, w / 2, ty);
+  if (sub) { c.font = `600 ${Math.min(44, (w - 80) / Math.max(1, sub.length) * 1.05)}px "NB Serif", serif`; c.fillStyle = '#34220c'; c.fillText(sub, w / 2, h * 0.76); }
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  const m = new THREE.MeshStandardMaterial({ map: t, metalness: 0.55, roughness: 0.38, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.12 }); _plateCache.set(key, m); return m;
+}
 export function posterMaterial(title, sub) {
   const w = 512, h = 732; const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
   const gr = c.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#0d1838'); gr.addColorStop(1, '#03050c'); c.fillStyle = gr; c.fillRect(0, 0, w, h);

@@ -44,7 +44,7 @@ export function loadModel(name) {
         g.scene.traverse((o) => {
           if (o.isMesh) {
             const m = o.material;
-            if (m && /^(dd|gd)_walnut/.test(m.name || '')) { woodBox(o, m); return; } // 批次36：Blender 精建台体（值班长台 / 引导台）的胡桃木面是无 UV 纯色 → cc_r3_c 看图像橙色塑料；补盒投影 UV + Wood051 木纹
+            if (m && /^(dd|gd|sw)_walnut/.test(m.name || '')) { woodBox(o, m); return; } // 批次36：Blender 精建台体（值班长台 / 引导台）的胡桃木面是无 UV 纯色 → cc_r3_c 看图像橙色塑料；补盒投影 UV + Wood051 木纹
             if (m && /decal_screen/.test(m.name || '')) { o.material = screenUI(0); o.userData.screen = true; o.castShadow = false; return; } // M5：显示器原贴图是粉紫色桌面，换成局内系统界面
             if (m && m.isMeshBasicMaterial) {
               o.material = new THREE.MeshStandardMaterial({ map: m.map, color: m.color, roughness: 0.85, metalness: 0, side: m.side, transparent: m.transparent, alphaTest: m.alphaTest });

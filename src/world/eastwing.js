@@ -8,7 +8,7 @@ import { CanvasScreen, lightShaft, dust } from '../engine/fx.js';
 import { content } from '../engine/content.js';
 import { FLOOR, T } from './exterior.js';
 import { R3, EXAM_R3 } from './r3plan.js';
-import { wallX, wallZ, archPortal, rectLight, spot, point, person, signMaterial, brassPlaqueMaterial, posterMaterial, woodChair, slabWithHole } from './interiors.js';
+import { wallX, wallZ, archPortal, rectLight, spot, point, person, signMaterial, brassPlaqueMaterial, brassPlateMaterial, posterMaterial, woodChair, slabWithHole } from './interiors.js';
 
 const Y = FLOOR, F2 = Y + 7, F3 = Y + 14;
 const X0 = 20, X1 = 56, XS = 50; // 房间 x 20…50，楼梯井列 x 50…56
@@ -111,10 +111,17 @@ export function buildEastWing(scene, world, ctx) {
   const labels = ['1 号　污染举报', '2 号　畸变物上交', '3 号　叙事者备案', '4 号　归档人员查询', '5 号　加试报名咨询'];
   for (let k = 0; k < 5; k++) {
     const x = 23.5 + k * 5.4, z = ZM + 1.6;
+    if (R3.citizen_service) { // 批次37：台体 / 台面 / 铜框由 r3plan 的 Blender 精建 r2/service_window 出，这里只留平玻璃 + 碰撞 + 编号铜牌 + 叫号小灯
+      world.box(x, Y + 0.525, z, 4.6, 1.05, 1.0);
+      b.box('glassClear', 4.36, 1.56, 0.02, [x, Y + 1.95, z - 0.1], { uv: false });
+      const np = new THREE.Mesh(new THREE.PlaneGeometry(0.54, 0.1), brassPlateMaterial(`${k + 1} 号 窗 口`, '', 0.54, 0.1)); np.position.set(x, Y + 2.9, z - 0.1 + 0.084); zone.add(np);
+      for (const dx of [-1.9, 1.9]) { const on = dx < 0 ? (k % 2 === 0) : (k % 2 === 1); const cl = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 0.08), new THREE.MeshStandardMaterial({ color: 0x100804, emissive: dx < 0 ? 0x3aff6a : 0xff3a24, emissiveIntensity: on ? 1.6 : 0.12 })); cl.position.set(x + dx, Y + 2.9, z - 0.1 + 0.122); zone.add(cl); }
+    } else {
     b.box('blackMarble', 4.6, 1.05, 1.0, [x, Y + 0.525, z], { uv: 0.5, collide: true });
     b.box('onyx', 4.8, 0.06, 1.2, [x, Y + 1.08, z], { uv: 0.5 });
     b.box('glassClear', 4.4, 1.6, 0.04, [x, Y + 1.95, z - 0.1], { uv: false });
     b.box('gold', 4.6, 0.05, 0.06, [x, Y + 2.78, z - 0.1], { uv: 1 });
+    }
     b.box('wallPlaster', 4.8, 4.5, 0.2, [x, Y + 2.25, ZM + 0.4], { uv: 0.4 });
     const led = new CanvasScreen(512, 96, (c, t, W, H) => { c.fillStyle = '#04070e'; c.fillRect(0, 0, W, H); c.fillStyle = k === 3 ? '#ffb85a' : '#ff5a3a'; c.font = '700 54px "NB Sans", sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(labels[k], W / 2, H / 2 + 3); }, { fps: 0.2, intensity: 1.6 });
     ctx.screens.push(led);
@@ -125,11 +132,13 @@ export function buildEastWing(scene, world, ctx) {
   }
   ctx.anchors.doc_cit_windows = ctx.citWindows[2].led;
   // 2 号窗：钢制畸变物投放口
-  b.box('steel', 0.9, 0.6, 0.5, [23.5 + 5.4 + 2.6, Y + 0.9, ZM + 1.4], { uv: 1, collide: true });
-  b.box('blackMetal', 0.7, 0.12, 0.06, [23.5 + 5.4 + 2.6, Y + 1.0, ZM + 1.12], { uv: 1 });
-  const hand = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.5), brassPlaqueMaterial('畸变物投放口', ['请勿徒手投放', '投放后请勿回头']));
-  hand.position.set(23.5 + 5.4 + 2.6, Y + 1.6, ZM + 1.16); zone.add(hand); ctx.anchors.doc_cit_handover = hand;
-  ctx.anchors.int_cit_drawer = { box: [23.5 + 5.4 + 2.6, Y + 0.9, ZM + 1.4, 1.0, 0.7, 0.7] };
+  // 批次37：原 0.9 宽、中心 x 31.5 与 2 号窗台（x 26.6–31.2、台面到 31.25）交叠约 0.15 m → 收窄到 0.62 m、居窗间缝中心 x 31.6（31.29–31.91，3 号窗台面从 31.95 起）
+  const DX = 31.6;
+  b.box('steel', 0.62, 0.6, 0.5, [DX, Y + 0.9, ZM + 1.4], { uv: 1, collide: true });
+  b.box('blackMetal', 0.5, 0.12, 0.06, [DX, Y + 1.0, ZM + 1.12], { uv: 1 });
+  const hand = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.45), brassPlaqueMaterial('畸变物投放口', ['请勿徒手投放', '投放后请勿回头']));
+  hand.position.set(DX, Y + 1.6, ZM + 1.16); zone.add(hand); ctx.anchors.doc_cit_handover = hand;
+  ctx.anchors.int_cit_drawer = { box: [DX, Y + 0.9, ZM + 1.4, 0.8, 0.7, 0.7] };
   // 4 号窗公告 + 附表七
   const w4 = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.6), signMaterial('公告', ['归档人员无法被查询', '若您仍来到本窗口', '请填写附表七'], 420, 600));
   w4.position.set(23.5 + 3 * 5.4 + 1.2, Y + 1.8, ZM + 1.52); zone.add(w4); ctx.anchors.doc_cit_window4 = w4;

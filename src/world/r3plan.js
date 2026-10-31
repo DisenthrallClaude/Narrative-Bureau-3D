@@ -2194,7 +2194,7 @@ export function planCitizenService(y) {
     out.push({ fixed: true, m: '固定:引导台', x: cx, y, z: cz, yaw: 0, size: [w, 1.05, d], col: [w, 1.05, d], tag: '引导台', on: 'floor' });
     out.push({ m: 'r2/guide_desk', x: cx, y, z: cz, yaw: 0, h: 1.0, tag: '引导台', on: 'partv' } /* 固定:引导台 的实体，同 vitrine_6080 用 partv */); // 批次36：dz_wain 方盒 + 铜条 → Blender 精建 r2/guide_desk（tools/blender/guide_desk.py：胡桃三联凸芯板 + 铜线脚 / 踢脚 + 中联铜牌框；职员侧抽屉柜 + 文件格 + 容膝洞）
     out.push({ box: 'onyx', x: cx, y: y + 1.025, z: cz - 0.03, w: w + 0.1, h: 0.05, d: d + 0.12, uv: 0.5, tag: '引导台', on: 'partv' });
-    out.push({ sign: '咨询 · 引导', sub: '请先取号，再到对应窗口', x: cx, y: y + 0.58, z: cz - d / 2 - 0.036, yaw: Math.PI, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+    out.push({ sign: '咨询 · 引导', sub: '请先取号，再到对应窗口', x: cx, y: y + 0.58, z: cz - d / 2 - 0.04, yaw: Math.PI, size: [0.38, 0.14, 0.01], tag: '铜牌', on: 'sign' }); // 批次37：铜牌放大到铜框内沿，横版画布字可读
     out.push({ m: 'r2/dining_chair_02', x: cx + 0.2, y, z: cz + 0.75, yaw: Math.PI, h: 0.98, tag: '引导台', on: 'floor' });
     out.push({ m: 'r2/bankers_lamp', x: cx - 0.65, y: y + 1.05, z: cz + 0.1, yaw: Math.PI, h: 0.4, tag: '引导台', on: 'desk' });
     out.push({ m: 'r2/office_phone', x: cx + 0.62, y: y + 1.05, z: cz + 0.08, yaw: Math.PI, w: 0.22, tag: '引导台', on: 'desk' });
@@ -2211,7 +2211,8 @@ export function planCitizenService(y) {
     out.push({ m: 'r2/bankers_lamp', x: x - 1.7, y: y + 1.11, z: ZM + 1.3, yaw: 0, h: 0.4, tag: '窗口', on: 'desk' });
     out.push({ m: 'r2/office_phone', x: x + 1.6, y: y + 1.11, z: ZM + 1.3, yaw: 0, w: 0.22, tag: '窗口', on: 'desk' });
     out.push({ m: 'r2/several_folders', x: x + 0.9, y: y + 1.11, z: ZM + 1.25, yaw: 0.1, h: 0.28, tag: '窗口', on: 'desk' });
-    light(out, x, y + 3.9, ZM + 2.4, 0xeef2ff, 1.3, 6); }
+    out.push({ m: 'r2/service_window', x, y, z: ZM + 1.6, yaw: 0, h: 2.995, tag: '服务窗口', on: 'partv' }); // 批次37：blackMarble 方盒 + 玛瑙板 + 平玻璃 → Blender 精建 r2/service_window（tools/blender/service_window.py：胡桃框芯板柜台 + 黑石台面 + 铜框玻璃隔窗 / 圆格栅传声孔 / 铜传递槽 + 编号铜牌框 + 叫号灯座）
+    light(out, x, y + 3.9, ZM + 2.4, 0xfff0dc, 1.3, 6); } // 批次37：窗口上方冷白 0xeef2ff → 暖白，与顶部主光同色温（冷色只留叫号屏 / LED）
   wear(out, 21.0, 49.8, -49.3, -48.4, y + 0.0005);
   // ③ 候号区屏风（南面两段 + 西、东侧）+ 吊牌 + 吊灯
   lowScreen(out, 'x', -41.95, 24.4, 29.3, y); lowScreen(out, 'x', -41.95, 34.6, 39.6, y);
@@ -2260,6 +2261,15 @@ export function planCitizenService(y) {
   stanchions(out, [[21.45, -35.7], [21.45, -38.6]], y, '取号排队'); stanchions(out, [[22.55, -35.7], [22.55, -38.6]], y, '取号排队');
   hang(out, '取 号', 22.0, y + 3.0, -35.3, 0, 1.0, 0.36, y + H);
   out.push({ m: 'r2/1950s_wall_clock', x: X0 + 0.38, y: y + 3.0, z: -40.0, yaw: ROT.E, h: 0.5, tag: '挂钟', on: 'wall' });
+  // 批次37：3.5 m 以上墙面按功能补——北墙窗口带上方胡桃檐线（把 5 块窗间墙板连成一条）+ 标语铜字；南墙正中大挂钟（候号座椅、填单岛都朝它）+ 两侧公示栏（访客须知 / 办事规章，IMAGE-PLAN 未用图）+ 南墙上部石线脚两道
+  out.push({ box: 'dz_wain', x: 34.3, y: y + 4.58, z: -52.42, w: 27.4, h: 0.18, d: 0.16, uv: 0.5, tag: '檐线', on: 'partv' });
+  out.push({ box: 'dz_brassDim', x: 34.3, y: y + 4.475, z: -52.335, w: 27.4, h: 0.025, d: 0.02, tag: '檐线', on: 'partv' });
+  out.push({ wtext: '全 心 全 意　为 市 民 叙 事 服 务', x: 34.3, y: y + 5.55, z: -52.48, yaw: 0, w: 10.5, h: 0.72, size: [10.9, 0.92, 0.1], tag: '标语', on: 'pic' });
+  out.push({ m: 'r2/old_wall_clock', x: 35, y: y + 4.7, z: -32.5, yaw: ROT.N, h: 0.9, tag: '挂钟', on: 'wall' });
+  pic(out, 'textures/b01/T01_正门大厅告示牌.png', 30, y + 4.55, -32.45, Math.PI, 1.2, 1.6, 'wood', { tag: '公示栏' });
+  pic(out, 'textures/b01/B01_18_档案馆规章铜牌.png', 40, y + 4.55, -32.45, Math.PI, 1.2, 1.6, 'wood', { tag: '公示栏' });
+  for (const x of [30, 40]) light(out, x, y + 5.9, -33.4, 0xfff0dc, 0.7, 4);
+  for (const yy of [3.55, 6.25]) out.push({ box: 'stoneDark', x: 35, y: y + yy, z: -32.47, w: 30.6, h: 0.12, d: 0.1, uv: 0.5, tag: '线脚', on: 'partv' });
   out.push({ m: 'r2/exit_sign', x: X0 + 0.36, y: y + 3.4, z: -48.0, yaw: ROT.E, w: 0.36, tag: '导视', on: 'wall' });
   out.push({ m: 'r4/fireExtinguisher_abc_a03', x: 20.45, y, z: -44.4, yaw: ROT.E, fit: [0.144, 0.545, 0.192], tag: '消防', on: 'floor' });
   for (const [x, z] of [[20.85, -33.0], [44.8, -33.0], [49.0, -51.95]]) out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x, y, z, yaw: 0, h: 0.75, tag: '绿植', on: 'floor' });

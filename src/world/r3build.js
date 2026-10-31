@@ -7,7 +7,7 @@ import { Props } from './dress.js';
 import { PLANS, R3 } from './r3plan.js';
 import { UPPER } from './upper.js';
 import { FLOOR } from './exterior.js';
-import { point, rectLight, spot, brassPlaqueMaterial } from './interiors.js';
+import { point, rectLight, spot, brassPlaqueMaterial, brassPlateMaterial } from './interiors.js';
 import { lightShaft } from '../engine/fx.js';
 import { goldText } from './gothic.js';
 
@@ -133,7 +133,7 @@ export async function buildR3(ctx, world, MAT, late = false) {
         b.box('stoneDark', it.w + 0.2, it.h + 0.16, 0.05, [it.x, it.y, it.z], { uv: 0.5, rot: [0, yaw, 0] });
         b.box('dz_brassDim', it.w + 0.26, it.h + 0.22, 0.03, [it.x - n[0] * 0.012, it.y, it.z - n[1] * 0.012], { uv: 1, rot: [0, yaw, 0] });
         const t = goldText(it.wtext, it.w, it.h, MAT.goldBright ?? MAT.gold, { res: 256, stroke: 0.03 }); t.position.set(it.x + n[0] * 0.03, it.y, it.z + n[1] * 0.03); t.rotation.y = yaw; zone.add(t); continue; }
-      if (it.sign) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.12), brassPlaqueMaterial(it.sign, it.sub ? [it.sub] : [])); m.position.set(it.x, it.y, it.z); m.rotation.y = yaw; zone.add(m); continue; }
+      if (it.sign) { const [pw, ph] = it.size || [0.34, 0.12]; const m = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph), brassPlateMaterial(it.sign, it.sub || '', pw, ph)); /* 批次37：横版画布铜牌 */ m.position.set(it.x, it.y, it.z); m.rotation.y = yaw; zone.add(m); continue; }
       if (it.sconce) { // 铜壁灯：底座 + 弯臂 + 灯罩（自发光）
         const n = [Math.sin(yaw), Math.cos(yaw)], o = (d) => [it.x + n[0] * d, it.z + n[1] * d];
         let [x, z] = o(0.015); b.box('dz_brassDim', 0.1, 0.2, 0.03, [x, it.y, z], { uv: 1, rot: [0, yaw, 0] });
