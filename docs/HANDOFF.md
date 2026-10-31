@@ -1965,3 +1965,16 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 - 机位：m6_eastdoor / m6_ceiling / m6_west / m6_catalog / m6_b1（src/shots.js）。
 - 备份：Drive 分卷文件夹 v09_m6_models（1Rw6Xk98NrM6g7aU0SV3orzgSgbl6mYAC）内 v09_m6_models.tar.gz（169sc1TgDR5V5DhUjksLcQyCPTAg67kHh）：4 个 glb + m6_furniture.py + m2_archive.js + 预览图。
 - 注意：本批中途共享工作区 game/ 被回滚到旧提交 c044993（他人未跟踪文件挡住 pull），后续提交改用 GIT_INDEX_FILE 临时索引 + commit-tree 直接推 origin/main，没有动 game/ 工作区；接手者请先 `git fetch` 再看。
+
+## 批次 M8 · 第七局 作战室 / 杀青室 / 回写台「装裱」（续 M5；2026-11-01 00:10 CST 接手，约 35 分钟；与 r3-model-m6 / m7 并行，只动 seventh_ops / wrap / rewrite）
+- 提交 29eed1b。模型 tools/blender/m8_rooms.py（由 m5_rooms.py 派生；`blender.sh -b -P m8_rooms.py -- public/assets/models/m8 <prev|-> [ops wrap rewrite]`）→ public/assets/models/m8/{ops 4.2 万, wrap 3.6 万, rewrite 4.4 万三角}.glb（2.5–3.1 MB，未 meshopt）。游戏端 buildM5Seventh 改为加载 m8/*（m5/*.glb 保留未删）。
+  - 护墙板加高到 1.2 m（踢脚 0.24 / 框芯 0.32–1.04 / 胡桃腰线 1.12–1.2 + 腰线铜条）。
+  - 护墙以上：胡桃竖向壁骨（每格约 1.75 m，两侧铜压边）把牛皮纸墙分成镶板格，格顶胡桃顶轨 + 铜条接檐口；壁柱处不重复立壁骨；锚点留空段（看板/叛徒墙/镜/排字台）不立。牛皮纸写字墙保留。
+  - 天花：770c47f 纵梁 + 铜角花保留，格心加酒红褐板 + 四边铜嵌线。
+  - 作战室（平面 work/r3/m8/plans/plan_s7_ops_m8.png，61 件 0 错误）：西墙两壁柱间电话台 ×3（z −123.55/−125.65/−127.1，避开柒字与 K 笔记；台柜 + 拨盘电话 + 墙上总机板铜插孔）；南墙西段标图柜 ×3（x −8.75/−7.25/−5.75，平抽 5 层 + 斜面绘图板 + 摊开地图）；沙盘上方改为胡桃横担吊三盏铜碗灯（两根铜链上天花）。白色双层铁床（r3plan r2/simple_bunk_bed）→ Blender 值班行军床 ×2（铁管架 + 帆布 + 酒红褐深色毯），位置同原床；休整角只是陈设，非剧情锚点。顺手修 M5 遗留穿模：储物柜 ×2 z −120.6 与沙盘穿 3 cm → 北移到 −119.0。碰撞：电话台 ×3、标图柜一排、行军床 ×2 world.box。
+  - 杀青室（plan_s7_wrap_m8.png，32 件 0 错误）：书架 depths.js spineShelf 4.4→3.0 m 高、3.6→3.3 m 宽（碰撞同步），壁柱上段与分格墙露出；定稿台与书架无遮挡关系（书架本在 x ±7.4，壁柱在架间 1 m 缝里）。
+  - 回写台：新机位 m8_rewrite_w（西墙北段排字台）；另加 m8_ops_w / m8_ops_lamp / m8_wrap。
+- 剧情锚点 / 传送 / zone 判定未动。npx vite build 0。
+- Blender 预览（亲眼看）：work/r3/m8/preview/m8_ops_0-5、m8_wrap_0-2、m8_rewrite_0-1.png，ops_sheet.jpg。壁骨分格读出建筑感，护墙板明显变高、框芯可读；格心酒红褐在顶视读得出；电话台/标图柜成排靠墙；三盏灯组成形。
+- Drive 分卷：v11_m8_models.tar 1H1I3TfI7HjqMS1EB9X9QFG-3ULt0dNVw（m8 glb + m8_rooms.py + m1_seventh.js + plans + preview）。
+- 截图 run 41220222639 / walk run 41220220735（均 29eed1b）已派，结果见汇报；**游戏内 sheet 待取**（work/r3/m8/sheet.jpg）。
