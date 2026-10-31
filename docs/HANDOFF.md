@@ -1884,3 +1884,10 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 ### 下批先做
 1. 取 41215327273 p60 ext_plaza 亲眼看洗墙（过曝 → 1550→1200）；取 41213859323 d60 ext_door_near。
 2. 门扇 / 叫号机：需用户拍板是否再开（见上方建议）。
+
+## 批次 M3 · M1 遗留修（2026-10-31 23:33 CST 接手，约 35 分钟；与 r3-model-m2 / lead-63 并行，只动第七局入口/回廊）
+- 提交 9454239：m1_bronze → 暗古铜（0xb08250 / 金属 0.85 / 粗糙 0.48 / env 0.5）；m1_burgundy 再提一档（0xa83a2c）；m1_lampGlow 自发光 2.2→0.95；回廊护墙 m1_walnut/Dark、m1_stoneDark 压 env（0.15/0.12/0.2）、提粗糙（原判断：hall 环境贴图掠射反冷）。**复拍 m1_gutter_b 远端地脚仍带蓝灰条——env 不是主因，未修好**；下批查回廊尽头 z≈−105…−112 外侧是否有 ops 冷光/蓝色物件透过来（可加 ?r3off 对比）。r3plan planS7Entry：6 盏煤油灯套组（含 BlueGlass，排长约 2 m 顶到 z −58.6 壁柱）→ 单盏 r2/vintage_oil_lamp；归还档案箱 z −62/−63 → −63.75/−64.3（原与装订机 z −62.1…−59.9 相穿）；N02 局徽 y+5.6 → y+7.75（原宽 1 m 嵌进门套石柱内皮 ±0.35）。r3build glowMat：煤油灯 BlueGlass→琥珀 0x8a5420、Real_Glass→烟褐，vintage_oil_lamp 灯罩→琥珀（全局生效）。shots.js 加 m3_entry_top（俯视，clipY）/ m3_entry_ne。
+- 提交 f3dc231：m1/entry.glb meshopt 2.4 MB→0.67 MB（材质名、UV 范围解码后一致）；gutter_rib/gutter_panel **不压**——bakeInstances 对 position 做 applyMatrix4，量化 Int16 会溢出。未压原件 work/r3/m3/raw/。
+- 截图 run 41215990525（9454239）→ work/r3/m3/shots/r41215990525/m3/。俯视 m3_entry_top：展台/油灯、衣帽架、档案箱、装订机、壁柱、门套挂件两两无穿插。m1_entry_s：局徽已在门楣上方墙面；装订机铜件有暗铜高光但整体仍偏暗；走道毯仍读深褐近黑（Fabric023 贴图本身暗，下批可换贴图或去 map 直给底色）。
+- 疑似小人像（M1 sheet seventh_entry 装订机西北侧，约 x 1.4 z −63.5，棕发深色外套持蓝物的立像）：查遍 r3plan s7_entry / depths.js / m1 模型 / r2 资产名均无对应——filing_box 实测是箱子（54×84×52 原始单位）；来源未查明，见 m3_entry_ne 机位结果。
+- 未做：seventh_ops / seventh_rewrite / seventh_wrap 精建（时间用在遗留修上）；Drive v01/v02 未更新。Drive 新增 v06_m3_models.tar 1AY64jLX0qgAbofQ1fWfj4jLOFPx-gJiQ（m1 glb 压缩版 + 未压原件 + m1_seventh.js）。
