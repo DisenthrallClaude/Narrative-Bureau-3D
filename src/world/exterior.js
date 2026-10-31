@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { TOD } from '../engine/tod.js';
 import { Batch } from '../engine/batch.js';
-import { placeModel, loadModel, pbr } from '../engine/assets.js';
+import { placeModel, loadModel, pbr, loadTex } from '../engine/assets.js';
 import { mats } from './mats.js';
 import { Frame, archRingGeo, archSolidGeo, archShape, archApex, lancetWindow, pinnacle, spire, tower, gableRoof, bayWall, flyingButtress, emblem, goldText } from './gothic.js';
 import { waterMaterial, waterfallMaterial, bannerMaterial, CanvasScreen, time } from '../engine/fx.js';
@@ -747,7 +747,7 @@ function buildCity(g, M, ctx) {
 function streetModules(g, mods, at, Y0) { // 批次33：tools/blender/street_house.py 精建的三种立面模块，按开间实例化
   const MT = { sh_stone: new THREE.MeshStandardMaterial({ color: 0xc9c0ad, roughness: 0.85, envMapIntensity: 0.55 }) /* 批次34：窗套提亮 */, sh_glass: new THREE.MeshStandardMaterial({ color: 0x0b0d10, roughness: 0.22, metalness: 0, envMapIntensity: 0.9 }) /* 批次36：去金属度、粗糙度略升，防远处镜面高光闪点 */,
     sh_frame: new THREE.MeshStandardMaterial({ color: 0x4a1c12, roughness: 0.7 }), sh_iron: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.6, metalness: 0.6 }),
-    sh_conc: new THREE.MeshStandardMaterial({ color: 0xa29d93, roughness: 0.9 }) /* 批次35：阳台板提亮，暗铁栏前读得出 */, sh_canvas: new THREE.MeshStandardMaterial({ color: 0xb2462a, roughness: 0.8, side: THREE.DoubleSide, envMapIntensity: 0.6 }) /* 批次34：帆布提亮 */ };
+    sh_conc: new THREE.MeshStandardMaterial({ color: 0xa29d93, roughness: 0.9 }) /* 批次35：阳台板提亮，暗铁栏前读得出 */, sh_canvas: new THREE.MeshStandardMaterial({ color: 0x5a2a20, roughness: 0.92, side: THREE.DoubleSide, envMapIntensity: 0.4 }) /* 批次59：亮橙红帆布 → 统一深酒红褐帆布（配暗红 / 黑 / 木招牌，不再红配蓝绿） */ };
   const litGlass = new THREE.MeshStandardMaterial({ color: 0x20180f, emissive: 0xffb060, emissiveIntensity: 1.6, roughness: 0.3 });
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), one = new THREE.Vector3(1, 1, 1);
   const plateG = new THREE.BoxGeometry(2.3, 2.1, 0.03); plateG.translate(0, 1.82, 0.0);
@@ -768,7 +768,8 @@ function streetModules(g, mods, at, Y0) { // 批次33：tools/blender/street_hou
 }
 
 // 批次37：街屋店面招牌由平涂色块 → 有字招牌（60–80 年代国营商店：红底金字 / 蓝底白字 / 绿底白字木框招牌），每个店面模块一块，按开间 hash 取店名（稳定，不随机散布）
-const SHOP_NAMES = [['国营百货商店', '#8e1a14', '#f2d27a'], ['副食品商店', '#1c3a6e', '#f4f0e4'], ['红星照相馆', '#8e1a14', '#f2d27a'], ['人民邮电', '#1d5a34', '#f4f0e4'], ['新华书店', '#8e1a14', '#f2d27a'], ['国营饭店', '#1c3a6e', '#f4f0e4'], ['五金交电', '#1d5a34', '#f4f0e4'], ['钟表眼镜', '#5a2a14', '#f2d27a']];
+// 批次59：蓝底 / 绿底招牌（配红雨棚 = 红配蓝 / 红配绿）→ 暗红底金字 / 黑底金字 / 木底刻字（wood）三类
+const SHOP_NAMES = [['国营百货商店', '#5c1510', '#d9b25a'], ['副食品商店', '#15110e', '#d4a94e'], ['红星照相馆', 'wood', '#2a160b'], ['人民邮电', '#15110e', '#d4a94e'], ['新华书店', '#5c1510', '#d9b25a'], ['国营饭店', 'wood', '#2a160b'], ['五金交电', '#15110e', '#d4a94e'], ['钟表眼镜', '#5c1510', '#d9b25a']];
 function shopSigns(g, mods, at, Y0) {
   const hs = (k) => { const x = Math.sin(k * 91.7 + 17.3) * 43758.5453; return x - Math.floor(x); };
   const geo = new THREE.PlaneGeometry(4.3, 0.66), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), one = new THREE.Vector3(1, 1, 1);
@@ -776,10 +777,15 @@ function shopSigns(g, mods, at, Y0) {
   for (const md of mods) { if (md[0] !== 'sh_shop') continue; const [, fr, th, , yaw] = md; const k = Math.floor(hs(Math.round(th * 1e4) + fr) * SHOP_NAMES.length); lists[k].push([fr, th, yaw]); }
   SHOP_NAMES.forEach(([name, bg, fg], k) => { const L = lists[k]; if (!L.length) return;
     const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 172; const c = cv.getContext('2d');
-    c.fillStyle = '#3a2414'; c.fillRect(0, 0, 1024, 172); c.fillStyle = bg; c.fillRect(14, 14, 996, 144);
-    c.strokeStyle = fg; c.globalAlpha = 0.5; c.lineWidth = 3; c.strokeRect(26, 26, 972, 120); c.globalAlpha = 1;
-    c.fillStyle = fg; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `900 ${Math.min(108, 860 / name.length)}px "NB Title", "NB Serif", serif`;
-    const chars = [...name], step = Math.min(150, 860 / chars.length); chars.forEach((ch, i) => c.fillText(ch, 512 + (i - (chars.length - 1) / 2) * step, 90));
+    c.fillStyle = '#2e1c10'; c.fillRect(0, 0, 1024, 172); const wood = bg === 'wood';
+    if (wood) { const gr = c.createLinearGradient(0, 14, 0, 158); gr.addColorStop(0, '#8a5e36'); gr.addColorStop(0.5, '#7a5030'); gr.addColorStop(1, '#5e3c22'); c.fillStyle = gr; c.fillRect(14, 14, 996, 144); // 木纹：横向细纹
+      for (let i = 0; i < 70; i++) { const yy = 16 + ((i * 37.3) % 140), a = 0.05 + ((i * 13) % 7) / 60; c.strokeStyle = `rgba(40,22,10,${a})`; c.lineWidth = 1 + (i % 3); c.beginPath(); c.moveTo(14, yy); for (let x = 14; x <= 1010; x += 40) c.lineTo(x, yy + Math.sin(x * 0.01 + i) * 2.5); c.stroke(); } }
+    else { c.fillStyle = bg; c.fillRect(14, 14, 996, 144); }
+    c.strokeStyle = wood ? '#3a2412' : fg; c.globalAlpha = 0.5; c.lineWidth = 3; c.strokeRect(26, 26, 972, 120); c.globalAlpha = 1;
+    c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `900 ${Math.min(108, 860 / name.length)}px "NB Title", "NB Serif", serif`;
+    const chars = [...name], step = Math.min(150, 860 / chars.length);
+    chars.forEach((ch, i) => { const x = 512 + (i - (chars.length - 1) / 2) * step;
+      c.fillStyle = wood ? 'rgba(255,225,170,0.35)' : 'rgba(0,0,0,0.5)'; c.fillText(ch, x + 2, 92); c.fillStyle = fg; c.fillText(ch, x, 90); }); // 木底：深凹刻字 + 下沿受光；漆底：金字投影
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
     const mat = new THREE.MeshStandardMaterial({ map: t, roughness: 0.6, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: TOD.label === '白昼' ? 0.05 : 0.35 });
     const im = new THREE.InstancedMesh(geo, mat, L.length);
@@ -809,7 +815,12 @@ function buildStreetRows(g, M, place, rnd) {
   const boxG = new THREE.BoxGeometry(1, 1, 1); boxG.translate(0, 0.5, 0);
   const lit = TOD.label === '白昼' ? 0.02 : 0.12;
   const houseMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.86, metalness: 0, envMapIntensity: 0.45 });
+  // 批次59：A 款红褐砖原为平涂粉色 + 7% 细格（ext_house b57 读作粉墙）→ Poly Haven brick_wall_006（CC0）真实砖贴图 + ARM 的 AO 通道作凹凸（屏幕空间求导扰动法线，砖缝凹进）、按色调压成暗红褐；D 款深木竖板 → ambientCG Wood051（CC0）竖纹 + 0.2 m 板缝凹凸
+  const tBrick = loadTex('assets/tex/ph/brick_wall_006_col.webp', { srgb: true }), tBrickA = loadTex('assets/tex/ph/brick_wall_006_arm.webp'), tWood = loadTex('assets/tex/Wood051_color.webp', { srgb: true });
+  for (const t of [tBrick, tBrickA, tWood]) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; }
+  houseMat.customProgramCacheKey = () => 'house59';
   houseMat.onBeforeCompile = (sh) => {
+    Object.assign(sh.uniforms, { uBrick: { value: tBrick }, uBrickA: { value: tBrickA }, uWood: { value: tWood } });
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float aTyp;\nvarying vec3 vLm; varying vec3 vLn; varying float vSd; varying float vH; varying float vW;')
       .replace('#include <begin_vertex>', `#include <begin_vertex>
         vec3 isc = vec3(1.0); vSd = 0.0;
@@ -818,14 +829,25 @@ function buildStreetRows(g, M, place, rnd) {
         if (aTyp > 0.5) vSd = aTyp - 1.0; // 批次57：内圈民居按 ABAC 指定材质（1+0.2 暖灰抹灰 / 1+0.5 红褐砖 / 1+0.8 米灰水刷石）
         #endif
         vLm = transformed * isc; vLn = normal; vH = isc.y; vW = isc.x;`);
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLm; varying vec3 vLn; varying float vSd; varying float vH; varying float vW;\nfloat h2(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5);}')
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLm; varying vec3 vLn; varying float vSd; varying float vH; varying float vW;\nfloat h2(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5);}\nuniform sampler2D uBrick; uniform sampler2D uBrickA; uniform sampler2D uWood;')
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
         { float wall = 1.0 - step(0.5, abs(vLn.y));
           float u = abs(vLn.x) > 0.5 ? vLm.z : vLm.x; float y = vLm.y; float side = abs(vLn.x) > 0.5 ? 1.0 : 0.0;
           vec3 pal = vSd > 0.93 ? vec3(0.27, 0.18, 0.12) /* 批次57：D 深木构 */ : vSd < 0.34 ? vec3(0.47, 0.44, 0.40) /* 批次57：冷灰 → 暖灰抹灰 */ : vSd < 0.67 ? vec3(0.46, 0.27, 0.21) : vec3(0.68, 0.64, 0.57); // 批次32：三色成排——深灰抹灰 / 暗红砖 / 米灰石（去掉偏蓝绿的第四色）
           vec3 col = pal;
-          // 面砖 / 砖缝
-          vec2 tg = fract(vec2(u / 0.6, y / 0.3)); col *= 0.93 + 0.07 * step(0.08, tg.x) * step(0.1, tg.y);
+          // 批次59：贴图在分支外统一采样（屏幕导数在非分歧控制流里才可靠）
+          bool isBrick = vSd >= 0.34 && vSd < 0.67, isWood = vSd > 0.93;
+          vec2 tuv = vec2(u, y) / 2.5 + vec2(vSd * 7.31, 0.0);
+          vec3 bTex = texture2D(uBrick, tuv).rgb; float bAo = texture2D(uBrickA, tuv).r;
+          float bx0 = fract(u / 0.2); vec3 wTex = texture2D(uWood, vec2(y * 0.12, u * 0.9 + floor(u / 0.2) * 0.37)).rgb;
+          float seam = 1.0 - smoothstep(0.0, 0.05, bx0) * smoothstep(1.0, 0.95, bx0);
+          float hgt = isBrick ? bAo : isWood ? (1.0 - seam) * 0.8 + dot(wTex, vec3(0.3)) * 0.2 : 0.5;
+          vec2 dH = vec2(dFdx(hgt), dFdy(hgt)) * (isBrick ? 1.6 : isWood ? 1.2 : 0.0);
+          { vec3 sp = -vViewPosition; vec3 sx = dFdx(sp), sy = dFdy(sp); vec3 r1 = cross(sy, normal), r2 = cross(normal, sx); float fd = dot(sx, r1) * faceDirection;
+            vec3 grd = sign(fd) * (dH.x * r1 + dH.y * r2); vec3 nn = abs(fd) * normal - grd; if (dot(nn, nn) > 1e-12 && wall > 0.5) normal = normalize(nn); }
+          if (isBrick) col = bTex * vec3(0.66, 0.50, 0.46) * (0.75 + 0.25 * bAo); // 贴图均值 sRGB (173,116,83) → 约 (145,83,56) 暗红褐，不粉
+          else if (isWood) col = wTex * vec3(3.2, 2.9, 2.2) * (1.0 - 0.6 * seam) * (0.9 + 0.2 * h2(vec2(floor(u / 0.2), vSd * 5.0))); // Wood051 均值线性 (0.053,0.034,0.027) → 深胡桃
+          else { vec2 tg = fract(vec2(u / 0.6, y / 0.3)); col *= 0.93 + 0.07 * step(0.08, tg.x) * step(0.1, tg.y); } // 面砖 / 砖缝
           vec3 em = vec3(0.0);
           // 批次36：临街正面（局部 ±Z 面）由立面模块覆盖的范围——店面 5 m 开间、楼层 3.4 m 开间，与 buildStreetRows 的模块排布同式；范围外着色器不再画大块暗窗 / 白亮橱窗（ext_tree 看图：模块外的残开间是一整块暗玻璃 + 白光条）
           float front = step(0.5, abs(vLn.z));
@@ -846,6 +868,7 @@ function buildStreetRows(g, M, place, rnd) {
               vec3 base = brick ? vec3(0.50, 0.26, 0.19) : pal * 0.95;
               col = base * (0.86 + 0.24 * h2(floor(bb) + vSd * 9.0)) ;
               col = mix(col, brick ? vec3(0.62, 0.58, 0.52) : pal * 0.7, mort * 0.8);
+              if (isBrick) col = bTex * vec3(0.66, 0.50, 0.46) * (0.75 + 0.25 * bAo); else if (isWood) col = wTex * vec3(3.2, 2.9, 2.2) * (1.0 - 0.6 * seam); // 批次59：山墙底层同用真实贴图
               // 石套窗：每 3.4 m 一樘，窗洞 1.1–2.9 m
               float fx = fract(u / 3.4); float cx = floor(u / 3.4);
               float wn = step(0.3, fx) * step(fx, 0.7) * step(1.15, y) * step(y, 2.85);
@@ -863,7 +886,7 @@ function buildStreetRows(g, M, place, rnd) {
             float bay = floor(u / 5.0 + 0.5 + side * 7.0 + vSd * 13.0); float bx = fract(u / 5.0 + 0.5);
             float glass = step(0.08, bx) * step(bx, 0.92) * step(0.45, y) * step(y, 3.0) * keepShop;
             float sign = step(0.04, bx) * step(bx, 0.96) * step(3.15, y) * step(y, 3.95) * (1.0 - front); /* 批次38：临街正面招牌交给模块招牌框 + shopSigns 有字招牌，着色器不再画平涂色带（ext_house b38：模块外残开间仍见红 / 绿色带） */
-            vec3 sc = h2(vec2(bay, 1.0)) < 0.33 ? vec3(0.62, 0.10, 0.08) : h2(vec2(bay, 1.0)) < 0.66 ? vec3(0.10, 0.22, 0.48) : vec3(0.12, 0.36, 0.22);
+            vec3 sc = h2(vec2(bay, 1.0)) < 0.33 ? vec3(0.30, 0.07, 0.05) : h2(vec2(bay, 1.0)) < 0.66 ? vec3(0.06, 0.05, 0.045) : vec3(0.28, 0.17, 0.09); /* 批次59：去蓝 / 绿招牌色带 → 暗红 / 黑 / 木 */
             col = mix(col * 0.75, vec3(0.05, 0.06, 0.07), glass); col = mix(col, sc, sign);
             float shopOn = step(0.55, h2(vec2(bay, 7.0 + vSd)));
             em += glass * shopOn * (1.0 - front) * vec3(1.0, 0.55, 0.24) * 0.45 /* 批次37：侧面橱窗压暗偏暖 */ /* 批次36：正面橱窗亮光交给模块 litGlass */ + sign * vec3(1.0, 0.9, 0.8) * sc * 1.6 * step(0.4, h2(vec2(bay, 3.0)));
