@@ -392,7 +392,7 @@ function buildHall(zone, world, ctx, M, add) {
   for (const z of [-42.5, -64.5]) for (const sx of [-1, 1]) add(placeModel('cctv', { maxDim: 0.5, pos: [sx * 11.2, Y + 10.5, z], rotY: sx > 0 ? Math.PI / 2 : -Math.PI / 2 }));
   // —— 中央悬挂 LED 大屏（双面）——
   ctx.mainScreenTex = content.tex('tex_sec_main_screen');
-  const hud = new CanvasScreen(2048, 896, (c, t, W, H) => drawMainScreen(c, t, W, H, ctx), { fps: 2, intensity: 1.35 }); ctx.screens.push(hud);
+  const hud = new CanvasScreen(2048, 896, (c, t, W, H) => drawMainScreen(c, t, W, H, ctx), { fps: 2, intensity: 1.15 }); ctx.screens.push(hud); // 批次42：1.35→1.15（琥珀调后不再需要压过蓝光）
   const SW = 15, SH = 6.56, SY = Y + 12.4, SZ = -57;
   bA.box('blackMetal', SW + 0.5, SH + 0.5, 0.5, [0, SY, SZ], { uv: 0.5 });
   bA.box('gold', SW + 0.7, 0.12, 0.6, [0, SY + SH / 2 + 0.3, SZ], { uv: 1 });
@@ -462,7 +462,7 @@ function buildHall(zone, world, ctx, M, add) {
   if (!HH) spot(zone, 0xcfe0ff, 250, [14, Y + 11, -48], [-2, Y, -54], 0.55, true, 40);
   if (!HH) for (const z of [-36.5, -47.5, -58.5, -69.5]) for (const sx of [-1, 1]) point(zone, 0xffcf96, 22, [sx * 14.7, Y + 10.5, z], 10);
   if (!HH) rectLight(zone, 0xffe2c0, 4, 12, 40, [0, crownY - 1, cz], [0, Y, cz]);
-  rectLight(zone, 0x7fb4ff, HH ? 3 : 6, 14, 6, [0, SY - SH / 2 - 0.4, SZ], [0, Y, SZ + 2]);
+  rectLight(zone, 0xffc58a, HH ? 3 : 6, 14, 6, [0, SY - SH / 2 - 0.4, SZ], [0, Y, SZ + 2]); // 批次42：屏下冷蓝面光 0x7fb4ff → 琥珀暖光，与石材同色温
   // 吊灯
   for (const z of [-37, -48, -66, -71]) add(placeModel('chandelier', { height: 2.8, pos: [0, HH ? Y + 14.2 : crownY - 4.8, z] }));
 
@@ -1100,7 +1100,10 @@ export function drawScanAlert(c, t, W, H) {
 }
 function drawMainScreen(c, t, W, H, ctx) {
   const tex = ctx.mainScreenTex;
-  if (tex && tex.image && tex.image.complete) { c.drawImage(tex.image, 0, 0, W, H); }
+  if (tex && tex.image && tex.image.complete) { c.drawImage(tex.image, 0, 0, W, H);
+    // 批次42：原生图冷蓝科幻调与哥特暖石材色温冲突 → 改成旧式琥珀荧光屏：'color' 混合把色相 / 饱和度换成琥珀（保留明度与字形），再 multiply 压蓝
+    c.save(); c.globalCompositeOperation = 'color'; c.globalAlpha = 0.82; c.fillStyle = '#c8862e'; c.fillRect(0, 0, W, H);
+    c.globalCompositeOperation = 'multiply'; c.globalAlpha = 0.35; c.fillStyle = '#ffd9a0'; c.fillRect(0, 0, W, H); c.restore(); }
   else {
     const gr = c.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#061028'); gr.addColorStop(1, '#02040c'); c.fillStyle = gr; c.fillRect(0, 0, W, H);
     c.strokeStyle = '#1d3a7a'; c.lineWidth = 2; for (let x = 0; x < W; x += 64) { c.beginPath(); c.moveTo(x, 120); c.lineTo(x, H); c.stroke(); } for (let y = 120; y < H; y += 64) { c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
