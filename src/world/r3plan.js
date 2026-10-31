@@ -567,7 +567,7 @@ export function planGate(y) {
   // ② 等候区（西侧原扶手椅 2×4）：两张边几 + 台灯、茶几报纸、伞架、西墙告示栏 + 长凳
   for (const z of [-12.1, -16.5]) { out.push({ m: 'r2/side_table_01', x: -9.5, y, z, yaw: 0, h: 0.55, tag: '等候区', on: 'floor' }); out.push({ m: 'r2/bankers_lamp', x: -9.5, y: y + 0.55, z, yaw: ROT.E, h: 0.4, tag: '等候区', on: 'desk' }); }
   out.push({ m: 'r2/cc0_newspaper_stack_ready_to_unity_hdrp', x: -9.5, y: y + 0.55, z: -14.3, yaw: 0.5, w: 0.36, tag: '等候区', on: 'floor' });
-  pic(out, 'textures/b01/T01_访客须知告示牌.png', X0 + 0.06, y + 1.95, -20.15, ROT.E, 0.6, 0.85, 'cork', { cork: [1.5, 1.05] });
+  pic(out, 'textures/b01/T01_访客须知告示牌.png', X0 + 0.06, y + 1.95, -20.15, ROT.E, 0.6, 0.8, 'cork', { cork: [1.5, 1.05] }); // 批次57：3:4
   pic(out, 'textures/b04/B04_入职须知折页.png', X0 + 0.06, y + 1.95, -20.75, ROT.E, 0.42, 0.28, 'none');
   for (const z of [-19.0, -21.3]) out.push({ m: 'r2/18th_century_bench_from_hungarian_opera', x: X0 + 0.55, y, z, yaw: ROT.E, w: 1.9, tag: '等候区', on: 'floor' });
   for (const x of [-4.6, 4.6]) out.push({ m: 'r2/victorian_umbrella_stand', x, y, z: -7.1, yaw: 0, h: 0.85, tag: '入口', on: 'floor' });
@@ -1253,7 +1253,7 @@ export function planDorm(y) {
   out.push({ m: 'r2/potted_plant_01', x: 61.5, y, z: 23.2, yaw: 0, h: 1.2, tag: '绿植', on: 'floor' });
   out.push({ m: 'r2/wooden_display_shelves_01', x: 60.7, y, z: 25.6, yaw: Math.PI, h: 1.2, tag: '报刊架', on: 'floor', col: [0.9, 1.2, 0.4] });
   // ④ 挂图（IMAGE-PLAN）：西墙信箱上方员工公告栏（软木）、会客角西墙 N11 座钟复刻品配图（金框）、窗口上方局旗
-  pic(out, 'textures/b07/B07_员工公告栏.png', X0 + 0.03, y + 2.45, 16.0, ROT.E, 1.1, 0.82, 'cork', { cork: [1.25, 0.95] });
+  pic(out, 'textures/b07/B07_员工公告栏.png', X0 + 0.03, y + 2.45, 16.0, ROT.E, 1.1, 0.62, 'cork', { cork: [1.25, 0.76] }); // 批次57：16:9
   pic(out, 'textures/emblems/N11.jpg', X0 + 0.03, y + 1.75, 24.6, ROT.E, 0.7, 0.7, 'gold');
   pic(out, 'textures/b05/B05_宿舍分配表.png', X0 + 0.03, y + 1.6, 22.6, ROT.E, 0.45, 0.6, 'wood');
   // ⑤ 灯光层次：西墙铜壁灯 ×3、候办区与门厅补光
@@ -1477,7 +1477,7 @@ const X6 = {
       out.push({ box: 'dz_wain2', x, y: yp + 1.12, z, w, h: 0.06, d: d + 0.03, tag: '墙面', on: 'partv' });
       out.push({ box: 'dz_damaskGreen', x, y: yp + 2.6, z, w, h: 2.9, d, tag: '墙面', on: 'partv' });
       out.push({ box: 'dz_wain', x, y: yp + 4.1, z, w, h: 0.14, d: d + 0.04, tag: '墙面', on: 'partv' }); }
-    pic(out, 'textures/b07/B07_预警发布流程.png', 45.4, yp + 1.85, Z0 + 0.2, 0, 0.75, 1.0, 'black');
+    pic(out, 'textures/b07/B07_预警发布流程.png', 45.4, yp + 1.85, Z0 + 0.2, 0, 0.9, 0.9, 'black'); // 批次57：方图
     sconce(out, 44.4, yp + 2.2, Z0 + 0.19, 0); sconce(out, X1 - 0.19, yp + 2.2, -57.6, ROT.W);
     for (const x of [25.3, 32.2, 39.1, 46.0]) for (const z of [-42.5, -49.5]) light(out, x, y + 3.8, z, 0xfff0dc, 1.6, 9);
     for (const x of [26, 35, 44]) light(out, x, y + 3.2, -55.0, 0xffe2c0, 1.4, 8); },
@@ -1603,7 +1603,7 @@ export function planTraining(y) {
     out.push({ m: 'r2/several_folders', x: x + sx * 0.1, y: y + 0.76, z: z + 0.05, yaw: yaw, h: 0.3, tag: '检录台', on: 'desk' });
     out.push({ m: 'r2/bankers_lamp', x: x + sx * 0.25, y: y + 0.76, z: z - 0.15, yaw: yaw + Math.PI, h: 0.4, tag: '检录台', on: 'desk' });
     out.push({ m: 'r2/plastic_crate_01', x: x + sx * 1.0, y, z: z - 0.9, yaw: 0.1, h: 0.3, tag: '检录台', on: 'floor' });
-    pic(out, 'textures/b07/B07_副本投放调度单.png', x - sx * 0.0, y + 1.7, -92.25, Math.PI, 0.6, 0.8, 'black'); light(out, x, y + 3.2, z, 0xfff0d8, 1.6, 7); }
+    pic(out, 'textures/b07/B07_副本投放调度单.png', x - sx * 0.0, y + 1.7, -92.25, Math.PI, 0.8, 0.6, 'black'); /* 批次57：4:3 横版 */ light(out, x, y + 3.2, z, 0xfff0d8, 1.6, 7); }
   stanchions(out, [[-2.9, -98.0], [-2.9, -101.0], [-2.9, -104.0]], y, '分流'); stanchions(out, [[2.9, -98.0], [2.9, -101.0], [2.9, -104.0]], y, '分流');
   // ② 战术简报区：控制塔成绩榜（南面）前 4 排 × 4 课桌（中间过道 x −22），讲台 + 立式黑板 + 投放调度单
   { let k = 0; for (const z of [-106.4, -108.2, -110.0, -111.8]) for (const x of [-25.9, -24.5, -19.5, -18.1]) { out.push({ m: 'r2/schooldesk_01', x, y, z, yaw: Math.PI, w: 0.7, tag: '简报区', on: 'floor', col: [0.7, 0.75, 0.5] }); if (k % 5 !== 3) out.push({ m: 'r2/schoolchair_01', x: x + (hash(x, z) - 0.5) * 0.08, y, z: z - 0.5, yaw: (hash(z, x) - 0.5) * 0.12, h: 0.82, tag: '简报区', on: 'floor' }); k++; } }
@@ -1757,7 +1757,7 @@ export function planS7Ops(y) {
   // 西墙：衣帽架（礼帽）+ 立式黑板（K 的推演）+ 第七局徽 N02 + 地堡灯
   out.push({ m: 'r2/coat_rack_bowler_hat', x: -9.2, y, z: -120.4, yaw: ROT.E, h: 1.85, tag: '西墙', on: 'floor' });
   out.push({ m: 'r2/standing_chalkboard_01', x: -8.0, y, z: -130.6, yaw: 0.7, h: 1.8, tag: '西墙', on: 'floor' });
-  pic(out, 'textures/b06/B06_K的工作笔记.png', -9.77, y + 1.7, -128.4, ROT.E, 0.6, 0.8, 'cork', { cork: [0.8, 1.0] });
+  pic(out, 'textures/b06/B06_K的工作笔记.png', -9.77, y + 1.7, -128.4, ROT.E, 0.8, 0.6, 'cork', { cork: [1.0, 0.8] }); // 批次57：4:3 横版
   pic(out, 'textures/emblems/N02.jpg', -4.6, y + 4.2, Z0 + 0.22, 0, 1.0, 1.0, 'black');
   for (const [x, z, yaw] of [[X1 - 0.18, -117.8, ROT.W], [X1 - 0.18, -126.2, ROT.W], [X0 + 0.18, -122.6, ROT.E], [X0 + 0.18, -131.2, ROT.E]]) out.push({ m: 'r2/bunker_lamps', x, y: y + 2.8, z, yaw, h: 0.3, tag: '地堡灯', on: 'wall' });
   for (const [x, z] of [[8.4, -115], [8.4, -129.6], [2.3, -128.4], [-8.4, -129.0]]) light(out, x, y + 2.8, z, 0xffd0a0, 1.6, 7);
@@ -1781,7 +1781,7 @@ export function planS7Wrap(y) {
   for (const x of [-1.4, 1.4]) light(out, x, y + 1.6, -146.3, 0xffd49a, 1.2, 5);
   // 南墙：镜旁 N27（橡皮擦）、杀青室档案墙；北门内 柒字徽
   pic(out, 'textures/emblems/N27.jpg', 2.6, y + 1.7, Z0 + 0.03, 0, 1.2, 0.68, 'black');
-  pic(out, 'textures/b06/B06_杀青室档案墙.png', -2.6, y + 1.7, Z0 + 0.03, 0, 0.9, 1.2, 'wood');
+  pic(out, 'textures/b06/B06_杀青室档案墙.png', -2.6, y + 1.7, Z0 + 0.03, 0, 1.4, 0.79, 'wood'); // 批次57：16:9 原比例
   for (const z of [-140, -152]) light(out, 0, y + 4.2, z, 0xe8d8b8, 1.6, 9);
   return { room, items: out };
 }
@@ -1836,7 +1836,7 @@ export function planB5Deep(y) {
   out.push({ m: 'r2/bankers_lamp', x: 4.15, y: y + 0.76, z: -103.25, yaw: ROT.E, h: 0.4, tag: '值守台', on: 'desk' });
   out.push({ m: 'r2/metal_storage_cabinet', x: -4.4, y, z: -100.75, yaw: 0, h: 1.9, tag: '值守台', on: 'floor', col: [1.0, 1.9, 0.65] });
   pic(out, 'textures/b07/B07_分级收容制度.png', -2.9, y + 1.8, Z1 - 0.42, Math.PI, 0.6, 0.8, 'black');
-  pic(out, 'textures/b07/B07_畸变物上交须知.png', 2.9, y + 1.8, Z1 - 0.42, Math.PI, 0.6, 0.8, 'black');
+  pic(out, 'textures/b07/B07_畸变物上交须知.png', 2.9, y + 1.8, Z1 - 0.42, Math.PI, 0.8, 0.6, 'black'); // 批次57：4:3 横版
   // 法阵四周铜立柱隔离带（八角）
   { const pts = []; for (let k = 0; k < 8; k++) { const a = (k / 8) * Math.PI * 2 + Math.PI / 8; pts.push([Math.cos(a) * 4.3, -117 + Math.sin(a) * 4.3]); } stanchions(out, pts, y, '法阵隔离带'); }
   // 北墙：装甲柜 / 保险柜列（正面朝南）+ 转运车 + 气体灭火瓶
@@ -1875,7 +1875,7 @@ const X8 = {
     for (const x of [-12.5, 12.5]) { out.push({ box: 'iron', x, y: y + 12.9, z: -124, w: 0.6, h: 0.06, d: 62, tag: '电缆桥架', on: 'ceil' }); for (const s of [-1, 1]) out.push({ box: 'iron', x: x + s * 0.3, y: y + 12.98, z: -124, w: 0.03, h: 0.14, d: 62, tag: '电缆桥架', on: 'ceil' });
       for (let k = 0; k < 6; k++) out.push({ box: 'dz_bakelite', x: x + (k - 2.5) * 0.08, y: y + 12.96, z: -124, w: 0.05, h: 0.05, d: 61.6, tag: '电缆', on: 'ceil' }); }
     // ③ 局旗吊挂：主通道两侧（面朝电梯厅），桁架下 3.2 m 高的竖幅
-    for (const z of [-104, -112]) for (const sx of [-1, 1]) { out.push({ box: 'blackMetal', x: sx * 4.6, y: y + 12.4, z, w: 1.5, h: 0.05, d: 0.05, tag: '局旗', on: 'ceil' }); pic(out, 'textures/b01/B01_02_局旗深蓝.png', sx * 4.6, y + 10.7, z, 0, 1.4, 3.2, 'none', { side: 2, tag: '局旗', on: 'ceil' }); }
+    for (const z of [-104, -112]) for (const sx of [-1, 1]) { out.push({ box: 'blackMetal', x: sx * 4.6, y: y + 12.4, z, w: 1.5, h: 0.05, d: 0.05, tag: '局旗', on: 'ceil' }); pic(out, 'textures/b01/B01_02_局旗深蓝.png', sx * 4.6, y + 11.3, z, 0, 1.4, 2.1, /* 批次57：2:3 原比例，上沿贴吊杆 */ 'none', { side: 2, tag: '局旗', on: 'ceil' }); }
     // ④ 地面标线：副本门区安全弧线（r = 26，黄白相间短段）、ABY 门前斜纹警示、射击线后黄线
     for (let a = -1.08; a <= 1.08; a += 0.06) { const r = 25.6, x = Math.sin(a) * r, z = -102 - Math.cos(a) * r; if (Math.abs(x) < 2.8 && z > -128.5) continue; if (Math.round(a / 0.06) % 2) continue; out.push({ box: 'r3_paintYellow', x, y: y + 0.006, z, w: 1.4, h: 0.012, d: 0.14, yaw: -a, tag: '安全线', on: 'partv' }); }
     { const a = -0.95 + 5 * 0.38, gx = Math.sin(a) * 30, gz = -102 - Math.cos(a) * 30, dx = -Math.sin(a), dz = Math.cos(a), tx = Math.cos(a), tz = Math.sin(a);
@@ -1897,7 +1897,7 @@ const X8 = {
     // ① 路灯两列（x = ±11，每 12 m 左右，避让报亭/单车/便利店/公交站）+ 灯杆竖幅（局旗 / 规则之泉）
     const L = [[-11, 104], [-11, 116], [-11, 136], [-11, 148], [-11, 160], [11, 104], [11, 115.6], [11, 136], [11, 152], [11, 160]];
     L.forEach(([x, z], i) => { out.push({ m: 'street_lamp_02', x, y, z, yaw: x < 0 ? ROT.E : ROT.W, h: 4.8, tag: '路灯', on: 'floor', col: [0.4, 4.8, 0.4] });
-      pic(out, i % 2 ? 'textures/b01/B01_08_海报_规则之泉.png' : 'textures/b01/B01_02_局旗深蓝.png', x, y + 3.0, z + 0.22, 0, 0.55, 1.3, 'none', { side: 2, tag: '灯杆竖幅', on: 'pic' }); });
+      pic(out, i % 2 ? 'textures/b01/B01_08_海报_规则之泉.png' : 'textures/b01/B01_02_局旗深蓝.png', x, y + 3.25, z + 0.22, 0, 0.55, 0.825, 'none', { side: 2, tag: '灯杆竖幅', on: 'pic' }); /* 批次57：2:3 原比例 */ });
     for (const [x, z] of L) light(out, x * 0.85, y + 4.4, z, 0xffd8a0, 0.8, 9);
     // ② 广场边缘护柱（x = ±18.4，每 2.4 m；便利店段让开）+ 黑石收边带
     for (const sx of [-1, 1]) { for (let z = 101.5; z < 168.5; z += 2.4) { if (sx > 0 && z > 124.5 && z < 131.5) continue; out.push({ m: 'bollard', x: sx * 18.4, y, z, yaw: 0, h: 0.95, tag: '护柱', on: 'floor', col: [0.25, 0.95, 0.25] }); }
@@ -1907,7 +1907,7 @@ const X8 = {
     // ④ 公交候车亭（钢柱 + 玻璃顶 + 背板广告），罩在原两张长椅上
     { const cx = 10.0, cz = 166.4; for (const dx of [-2.4, 2.4]) for (const dz of [-0.9, 0.9]) wallBox(out, 'blackMetal', cx + dx, cz + dz, 0.1, 0.1, y, 2.6, '候车亭');
       out.push({ box: 'blackMetal', x: cx, y: y + 2.65, z: cz, w: 5.2, h: 0.1, d: 2.2, tag: '候车亭', on: 'partv' }); out.push({ box: 'glassClear', x: cx, y: y + 2.72, z: cz, w: 5.0, h: 0.03, d: 2.0, tag: '候车亭', on: 'partv' });
-      out.push({ box: 'blackMetal', x: cx, y: y + 1.5, z: cz + 0.95, w: 5.0, h: 1.9, d: 0.06, tag: '候车亭', on: 'partv' }); pic(out, 'textures/b05/B05_海报_篇幅补充剂.png', cx + 1.2, y + 1.5, cz + 0.91, Math.PI, 1.1, 1.6, 'none', { tag: '候车亭' }); pic(out, 'textures/b01/B01_07_海报_叙事高考.png', cx - 1.2, y + 1.5, cz + 0.91, Math.PI, 1.1, 1.6, 'none', { tag: '候车亭' });
+      out.push({ box: 'blackMetal', x: cx, y: y + 1.5, z: cz + 0.95, w: 5.0, h: 1.9, d: 0.06, tag: '候车亭', on: 'partv' }); pic(out, 'textures/b05/B05_海报_篇幅补充剂.png', cx + 1.2, y + 1.5, cz + 0.91, Math.PI, 1.067, 1.6, 'none', { tag: '候车亭' }); pic(out, 'textures/b01/B01_07_海报_叙事高考.png', cx - 1.2, y + 1.5, cz + 0.91, Math.PI, 1.067, 1.6, 'none', { tag: '候车亭' });
       light(out, cx, y + 2.4, cz, 0xfff0d8, 0.8, 5); }
     // ⑤ 单车停放架（共享单车区两侧）+ 出站口两侧导向立牌
     for (const z of [124.6, 130.6]) out.push({ box: 'steel', x: -11.75, y: y + 0.4, z, w: 5.2, h: 0.05, d: 0.05, tag: '单车架', on: 'partv' });
@@ -2110,7 +2110,7 @@ export function planEastCloister(y) {
   [-86, -92, -98, -104].forEach((z, i) => {
     vitrine(out, XW + 0.36, z, y, 1.6, ROT.E, '局史展柜', { glassH: 0.34, felt: 'r3_feltGreen' });
     ecExhibit(out, i, [XW + 0.36, z], y + 0.871);
-    pic(out, 'textures/' + EMB[i][0], XW + 0.035, y + 2.15, z, ROT.E, 0.8, 1.0, 'gold', { tag: '局史挂框' });
+    pic(out, 'textures/' + EMB[i][0], XW + 0.035, y + 2.15, z, ROT.E, 1.6, 0.9, 'gold', { tag: '局史挂框' }); // 批次57：原 0.8×1.0 把 16:9 图压扁 55% → 按原比例
     out.push({ sign: '局史陈列', sub: EMB[i][1], x: XW + 0.035, y: y + 1.45, z: z + 0.62, yaw: ROT.E, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
     light(out, XW + 1.1, y + 2.0, z, 0xe8eeff, 0.7, 3.2);
   });
@@ -2272,8 +2272,8 @@ export function planCitizenService(y) {
   // 批次43：cs_r3_b（批次41 回图）挂钟 / 公示栏在南墙仍偏小 → 挂钟 1.35 → 1.6 m（再大挂钟模型进深超墙，r3plan 越界 / 离墙二选一）、公示栏 1.7×2.25 → 2.1×2.5（中心 x 28.9 / 41.1，夹在 3.55 / 6.25 两道线脚之间），画灯随之上移加宽
   // 批次39：cs_r3_b 看图——挂钟 / 公示栏远看偏小偏暗 → 挂钟 0.9 → 1.35 m、公示栏 1.2×1.6 → 1.7×2.25（中心 x 29.2 / 40.8 让开挂钟），各补一盏洗墙射灯 + 挂钟顶灯；石线脚改米灰石灰岩
   out.push({ m: 'r2/old_wall_clock', x: 35, y: y + 4.85, z: -32.59, yaw: ROT.N, h: 1.6, tag: '挂钟', on: 'wall' });
-  pic(out, 'textures/b01/T01_正门大厅告示牌.png', 28.9, y + 4.9, -32.45, Math.PI, 2.1, 2.5, 'wood', { tag: '公示栏' });
-  pic(out, 'textures/b01/B01_18_档案馆规章铜牌.png', 41.1, y + 4.9, -32.45, Math.PI, 2.1, 2.5, 'wood', { tag: '公示栏' });
+  pic(out, 'textures/b01/T01_正门大厅告示牌.png', 28.9, y + 4.9, -32.45, Math.PI, 1.875, 2.5, 'wood', { tag: '公示栏' }); // 批次57：3:4
+  pic(out, 'textures/b01/B01_18_档案馆规章铜牌.png', 41.1, y + 4.9, -32.45, Math.PI, 1.875, 2.5, 'wood', { tag: '公示栏' });
   for (const x of [28.9, 41.1]) { light(out, x, y + 6.1, -33.6, 0xfff0dc, 1.8, 5.5); out.push({ box: 'dz_brassDim', x, y: y + 6.02 + 0.1, z: -32.62, w: 1.1, h: 0.05, d: 0.22, tag: '画灯', on: 'partv' }); out.push({ box: 'r3_globe', x, y: y + 5.98 + 0.1, z: -32.72, w: 1.0, h: 0.025, d: 0.05, tag: '画灯', on: 'partv' }); }
   light(out, 35, y + 6.0, -33.8, 0xfff0dc, 1.4, 5);
   for (const yy of [3.55, 6.25]) out.push({ box: 'r3_limestone', x: 35, y: y + yy, z: -32.47, w: 30.6, h: 0.12, d: 0.1, uv: 0.5, tag: '线脚', on: 'partv' });
@@ -2571,7 +2571,7 @@ export function planExamCenter(y) {
       for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) { const [[t, red], lines] = NOTE[(r * 3 + c + (sx > 0 ? 3 : 0)) % 6];
         out.push({ notice: t, red, lines, x: bx - 0.5 + c * 0.5, y: by + 0.22 - r * 0.44, z: -75.937, yaw: 0, w: 0.3, h: 0.4, size: [0.3, 0.4, 0.004], tag: '③ 告示', on: 'sign' }); } }
     out.push({ wtext: sx < 0 ? '公 正 严 明' : '一 丝 不 苟', x: 35 + sx * 7.5, y: y + 3.75, z: -75.95, yaw: 0, w: 3.0, h: 0.5, size: [3.26, 0.72, 0.05], tag: '③ 标语', on: 'sign' });
-    pic(out, sx < 0 ? 'textures/b07/B07_高考真题卷.png' : 'textures/b06/B06_考场母本试卷.png', 35 + sx * 9.0, y + 2.2, -75.95, 0, 0.9, 1.27, 'gold', { tag: '③ 样张' });
+    pic(out, sx < 0 ? 'textures/b07/B07_高考真题卷.png' : 'textures/b06/B06_考场母本试卷.png', 35 + sx * 9.0, y + 2.2, -75.95, 0, 0.9, 1.2, 'gold', { tag: '③ 样张' }); /* 批次57：3:4 */
     out.push({ sign: sx < 0 ? '阅 卷 纪 律' : '评 分 细 则', sub: sx < 0 ? '一人一卷 · 双评复核 · 不得涂改' : '分差逾五分须三评', x: 35 + sx * 6.0, y: y + 1.0, z: -75.9, yaw: 0, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
     light(out, 35 + sx * 7.5, y + 3.0, -74.8, 0xffe6c8, 0.9, 5);
   }
