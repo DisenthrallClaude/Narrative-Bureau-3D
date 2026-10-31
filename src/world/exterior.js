@@ -517,6 +517,13 @@ function buildRingWall(b, g, M, world, ctx) {
   // 南门门楼（两座）
   for (const sx of [-1, 1]) { const [x, z] = P(sx * gap + (sx < 0 ? Math.PI * 2 : 0)); tower(b, x, z, 10, 22, { y0: 0, spireH: 18, levels: 2 }); world.box(x, 11, z, 11, 22, 11); }
   ctx.wallTowers = towers;
+  // 批次40：城墙脚（墙外皮 r 121.5 → 街心绿地内缘路缘 r 124.4）原是一圈暗色素地坪（ext_sky 看图）→ 南侧两段弧（门楼外 ~110°，正对迎宾大道两片绿地 + 环路）按 规则 成列：
+  //   墙基花岗岩勒脚（墙身 y0 以下到墙外地坪 −4.4，外挑 0.35 m + 冠石）→ 1.3 m 浅色石材散水（每 2.4 m 一道分缝）+ 外沿立砌路缘 → 0.2 m 土沟 → 1.0 m 宽 0.9 m 高修剪绿篱（每段 4.0 m、留 0.8 m 检修口，等距成列）。避开塔楼 / 门楼脚（±6.5 m）。
+  { const Yg = -4.4, inT = (deg) => towers.some((t) => Math.abs(THREE.MathUtils.radToDeg(Math.atan2(t.x - cx, t.z - cz)) - deg) < 3.4) || Math.abs(Math.abs(deg) - THREE.MathUtils.radToDeg(gap)) < 3.6;
+    const ring = (r0, r1, step, fn) => { for (const sgn of [1, -1]) for (let s = R * gap + 0.01; s / r0 < THREE.MathUtils.degToRad(112); s += step) { const a = sgn * (s + step / 2) / r0; if (inT(THREE.MathUtils.radToDeg(a))) continue; fn(a, (r0 + r1) / 2, step); } };
+    ring(121.5, 121.5, 2.4, (a, r, st) => { const [x, z] = P(a, 121.35); b.add('stone', new THREE.BoxGeometry(st + 0.02, 4.6, 0.75), { pos: [x, Yg + 2.3, z], rot: [0, a, 0] }, { uv: 0.5, collide: true }); const [x2, z2] = P(a, 121.62); b.add('stone', new THREE.BoxGeometry(st + 0.02, 0.18, 0.42), { pos: [x2, Yg + 4.0, z2], rot: [0, a, 0] }, { uv: 0.5 }); });
+    ring(121.7, 123.0, 2.4, (a, r, st) => { const [x, z] = P(a, r); b.add('plazaTile', new THREE.BoxGeometry(st * (r / 121.7) - 0.03, 0.1, 1.3), { pos: [x, Yg + 0.05, z], rot: [0, a, 0] }, { uv: 0.6 }); const [xk, zk] = P(a, 123.08); b.add('stone', new THREE.BoxGeometry(st * (123.08 / 121.7) + 0.01, 0.2, 0.16), { pos: [xk, Yg + 0.1, zk], rot: [0, a, 0] }, { uv: 0.5 }); });
+    ring(123.65, 123.65, 4.8, (a, r) => { const [x, z] = P(a, r); b.add('hedge', new THREE.BoxGeometry(4.0, 0.9, 1.0), { pos: [x, Yg + 0.45, z], rot: [0, a, 0] }, { uv: 0.6, collide: true }); b.add('hedge', new THREE.BoxGeometry(3.8, 0.12, 0.8), { pos: [x, Yg + 0.96, z], rot: [0, a, 0] }, { uv: 0.6 }); }); }
 }
 
 // ---------------- 远景巨城 ----------------
