@@ -82,7 +82,7 @@ rc('o',cx-14,dY-196,28,36); L['o'].append(f'M{cx-18:.1f} {dY-196:.1f}Q{cx:.1f} {
 # —— 题字与比例尺
 ln('t',cx-120,G+42,cx+120,G+42)
 for i in range(7): ln('t',cx-120+i*40,G+38,cx-120+i*40,G+46)
-style={'k':('#a8743a',.6,'u-k'),'o':('#3a2616',1.35,'u-o'),'c':('#4a3220',.8,'u-c'),'d':('#4a3220',.8,'u-d'),'h':('#6b4f35',.5,'u-h'),'w':('#4a3220',.7,'u-w'),'t':('#3a2616',.8,'u-t')}
+style={'k':('#a8743a',.8,'u-k'),'o':('#2e1d10',2.0,'u-o'),'c':('#3a2616',1.15,'u-c'),'d':('#3a2616',1.15,'u-d'),'h':('#5a3f28',.8,'u-h'),'w':('#3a2616',1.0,'u-w'),'t':('#2e1d10',1.1,'u-t')}
 out=[f'<svg class="etch" viewBox="0 0 {W} {H}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">']
 for g in ['k','h','o','c','d','w','t']:
     col,sw,cl=style[g]
