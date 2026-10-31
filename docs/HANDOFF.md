@@ -181,7 +181,7 @@
 ### 提交
 b579016 菜单实时 3D 机位 + menu_hero 机位；dc5a93d（羊皮纸手机 / HUD，已被覆盖）+ 截图 `&menu=k` 复现首页构图；**6b43cdf U2 暗色全套**（style.css 重写、index.html 首页 / 齿轮层、ui.js 开始流程、tools/ui_gears.py、字体子集重做）；e535ccf 修正（齿轮居中、文字列收窄、暂停罩加深）；12608a9 首页兜底图换 1920×1440 实拍；**d22258c 齿轮层中心压暗（最终 UI 代码）**。每次提交前 `npx vite build --outDir /tmp/u2dist` 返回 0（用独立 outDir，避免与场景代理同时 build 抢 dist 目录——22:44 一次直接 build 因此 rmdir 报错）。
 ### 各块（详见 UI-REDESIGN.md）
-- 首页：整屏实时 3D（加载完 `#loading.live` 淡出静图）；main.js `menuCamera` MENU_A [12,9,94]→MENU_B [-3,6.5,80] 注视 [0,40,-13] FOV 56，90 s 余弦往返；`setViewOffset` 画面中心右移 11%。左 1/4 斜切磨砂 `.veil`（blur 18px，95° 渐变 mask 羽化）+ 暗金斜线；NARRATIVE BUREAU（Cinzel）/ 叙 事 管 理 局 / 两行介绍 / 开始游戏 BEGIN。
+- 首页：整屏实时 3D（加载完 `#loading.live` 淡出静图）；main.js `menuCamera` MENU_A [5,9,92]→MENU_B [-3,6.5,80] 注视 [0,40,-13] FOV 56，90 s 余弦往返；`setViewOffset` 画面中心右移 11%。左 1/4 斜切磨砂 `.veil`（blur 18px，95° 渐变 mask 羽化）+ 暗金斜线；NARRATIVE BUREAU（Cinzel）/ 叙 事 管 理 局 / 两行介绍 / 开始游戏 BEGIN。
 - 开始游戏 → `#loading.go` 齿轮层：三齿轮 32/20/14 齿精确咬合（转速按齿数比、初相位按啮合计算）+ 120 刻度慢转环 + 真实进度弧；加载完且至少转 2.4 s → 淡出 1.4 s，相机 1.6 s smoothstep 滑到玩家视角（main.js enterBlend）。加载未完成时也可点，显示真实进度。注意：若加载很久，pointer lock 可能因超出用户激活时效而失败，点画面即可锁定（原有逻辑）。
 - HUD 只留准星点 / 交互小签 / 目标（平时 62% 不透明，更新亮 5 s）/ 区域标题（无底大字）/ 物品格（55%）；对话 = 底部羽化字幕带；文档 = 暗玻璃纸页；终端琥珀；手机 = 暗玻璃机身短信卡；暂停 = 虚化 + PAUSED 左栏；章节卡 = 压暗虚化非黑场。
 ### 验收
@@ -191,7 +191,7 @@ b579016 菜单实时 3D 机位 + menu_hero 机位；dc5a93d（羊皮纸手机 / 
 - 走查：6b43cdf run 41211460387 **31/31、控制台 0**（dc5a93d run 41210962058 亦 31/31/0）。Pages：e535ccf ✔ 41211819244、12608a9 ✔ 41211984336。
 - Drive「快照_分卷」：本节提交前 v03 1mUcDETuN3NL-BhAxkJeZYmu72kSBUGuv、v04 1fnBQmyep2w0Vn2JpyhuRCsih_8XmLMb1（先删同名旧卷）；v01/v02 本节提交后传，ID 见 PROGRESS-LOG。
 ### 没做完 / 下批
-1. 取回 41211440155（首页真实 3D 构图 + 齿轮层叠 3D）亲眼看：尖塔是否完整、左侧磨砂区与画面是否融合、文字可读。
+1. 41211440155 已回（work/r3/u2/r41211440155/，截图工具只抓 canvas、不含 HTML 层）：右移构图 ✔、尖塔全部入画 ✔、暖调黄昏 ✔；但 k=0.2（近 MENU_A [12,9,94]）画面右下有一块近景黑色板材入镜 → 23:05 MENU_A 改 [5,9,92]（**未复拍**，下批用 `menu_hero:&menu=0.05` 验）。天空仍带紫蓝（场景天空，非 UI）。
 2. 首页静态兜底图在 16:9 下按宽 cover，喷泉下半被裁；如需可另拍 16:9 版。
 3. 动效（齿轮转动、相机推近、进入过渡）只能真机看，截图是静帧。
 

@@ -181,7 +181,7 @@ async function boot() {
 }
 
 // —— U2：主菜单实时广场机位（右侧 59% 区域；setViewOffset 把画面中心移到右栏中心）——
-const MENU_A = new THREE.Vector3(12, 9, 94), MENU_B = new THREE.Vector3(-3, 6.5, 80), MENU_LOOK = new THREE.Vector3(0, 40, -13), MENU_FOV = 56;
+const MENU_A = new THREE.Vector3(5, 9, 92), MENU_B = new THREE.Vector3(-3, 6.5, 80), MENU_LOOK = new THREE.Vector3(0, 40, -13), MENU_FOV = 56;
 let menuOn = false, menuT = 0, playerFov = 70, enterK = 1; const enterFrom = { pos: new THREE.Vector3(), q: new THREE.Quaternion(), fov: 56, off: 0 };
 const menuOffset = () => (innerWidth > innerHeight * 1.1 ? -0.11 : 0); // U2：左 1/4 磨砂区，画面中心右移
 function menuLive() { if (SHOT || TEST) return; playerFov = camera.fov; menuOn = true; menuT = 0; document.getElementById('loading').classList.add('live'); }
