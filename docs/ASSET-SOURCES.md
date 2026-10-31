@@ -20,3 +20,11 @@
 | models/s1/book_encyclopedia_set_01.glb | https://polyhaven.com/a/book_encyclopedia_set_01 | John Malcolm | CC0 | 1k webp + meshopt，减面 25%（6.7 万→约 1.7 万面） | 536 KB |
 | models/s1/vintage_grandfather_clock_01.glb | https://polyhaven.com/a/vintage_grandfather_clock_01 | Yann Kervran, James Ray Cock | CC0 | 1k webp + meshopt | 342 KB |
 已下载但弃用：vintage_stapler（青绿漆，违反禁蓝绿）、stationery_supplies（蓝色笔杆）。
+
+## 批次 S3（资源第二轮，2026-11-01）
+| 文件 | 来源 | 作者 | 许可 | 处理 | 大小 |
+|---|---|---|---|---|---|
+| models/s3/side_table_tall_01.glb | https://polyhaven.com/a/side_table_tall_01 | James Ray Cock | CC0 | 1k webp + meshopt | 163 KB |
+| models/s3/mantel_clock_01.glb | https://polyhaven.com/a/mantel_clock_01 | Yann Kervran, Rico Cilliers | CC0 | 1k webp + meshopt | 326 KB |
+
+已下载、核过许可但本批未入库：tea_set_01 / wooden_display_shelves_01（Poly Haven CC0，未找到经核实的空位）、round_spectacles（深色墨镜片，不合时代）、Khronos glTF-Sample-Assets Lantern（CC0，中世纪木杆路灯不合风格）。弃用：Khronos AntiqueCamera（CC0 但含 UX3D 商标，LICENSE 明确排除商标）。

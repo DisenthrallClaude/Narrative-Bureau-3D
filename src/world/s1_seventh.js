@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 import { Props } from './dress.js';
 
+export const NO_S3 = typeof location !== 'undefined' && /[?&]nos3=1/.test(location.search);
 export const NO_S1 = typeof location !== 'undefined' && /[?&]nos1=1/.test(location.search);
 
 export function buildS1Seventh(zone, world, Y) {
@@ -28,11 +29,15 @@ export function buildS1Seventh(zone, world, Y) {
     P.add('r2/rotary_telephone', [x - sx * 0.75, Y + 0.79, -157.45], { h: 0.13, yaw: sx * 0.25 });
     P.add('m10/oldchair', [x, Y, -156.2], { h: 1.0, yaw: Math.PI });
     lamp(x, Y + 1.7, -156.9, 1.6, 3.6);
+    // 批次 S3：桌外侧（x ±6.45，离桌端 0.26 m、离北墙 0.25 m）高脚胡桃花几 + 壁炉台座钟（Poly Haven CC0，models/s3/）
+    if (!NO_S3) { P.add('s3/side_table_tall_01', [sx * 6.45, Y, -157.25], { h: 0.76, yaw: 0 }); world.box(sx * 6.45, Y + 0.38, -157.25, 0.4, 0.76, 0.4);
+    P.add('s3/mantel_clock_01', [sx * 6.45, Y + 0.76, -157.27], { w: 0.34, yaw: 0 }); }
   }
   // ③ 作战室会商长桌北段（桌心 x = k·2.6，z −118…−122；纸堆 z −119.5、地图页 −120.3、台灯 x−0.8 z −121.5）
   for (let k = 0; k < 4; k++) {
     if (k % 2) P.add('s1/book_encyclopedia_set_01', [k * 2.6 + 0.35, Y + 0.79, -121.4], { w: 0.55, yaw: 0 });
     else P.add('s1/binder_notebook', [k * 2.6 + 0.4, Y + 0.79, -121.35], { w: 0.5, yaw: 0.05 });
   }
-  return P.build(zone);
+  // 批次 S3：钢桌冷灰 → 暗铜褐漆（克隆材质，只动钢桌；不改桌面摆件）
+  return P.build(zone).then((ms) => { for (const m of ms || []) if (m.name === 'props:s1/metal_office_desk') { m.material = m.material.clone(); m.material.color.setHex(NO_S3 ? 0xffffff : 0x8a6446); m.material.metalness = Math.min(m.material.metalness ?? 0, 0.35); m.material.roughness = Math.max(m.material.roughness ?? 0.5, 0.55); m.material.envMapIntensity = 0.35; } return ms; });
 }

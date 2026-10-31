@@ -102,3 +102,7 @@ Kenney（www.kenney.nl）音效包，CC0 1.0（http://creativecommons.org/public
 - binder_notebook.glb — "Binder Notebook" by DaDrood, https://polyhaven.com/a/binder_notebook — CC0 1.0
 - book_encyclopedia_set_01.glb — "Book Encyclopedia Set 01" by John Malcolm, https://polyhaven.com/a/book_encyclopedia_set_01 — CC0 1.0（减面至约 25%）
 - vintage_grandfather_clock_01.glb — "Vintage Grandfather Clock 01" by Yann Kervran, James Ray Cock, https://polyhaven.com/a/vintage_grandfather_clock_01 — CC0 1.0
+
+[批次 S3 · 第七局杀青室 · Poly Haven CC0] public/assets/models/s3/
+- side_table_tall_01.glb — "Side Table Tall 01" by James Ray Cock, https://polyhaven.com/a/side_table_tall_01 — CC0 1.0
+- mantel_clock_01.glb — "Mantel Clock 01" by Yann Kervran, Rico Cilliers, https://polyhaven.com/a/mantel_clock_01 — CC0 1.0
