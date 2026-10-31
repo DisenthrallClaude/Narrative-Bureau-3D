@@ -31,7 +31,7 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 /* ————— 首页：整屏 3D（加载前静态图兜底），左 1/4 斜切磨砂暗区 ————— */
 #loading { position: fixed; inset: 0; z-index: 50; transition: opacity 1.4s ease; }
 #loading .hero { position: absolute; inset: 0; margin: 0; overflow: hidden; background: #140e0a; transition: opacity 2s ease; }
-#loading .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 62% 40%; animation: kenburns 40s ease-in-out infinite alternate, fadeIn 1.6s ease both; }
+#loading .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 6%; animation: kenburns 40s ease-in-out infinite alternate, fadeIn 1.6s ease both; }
 @keyframes kenburns { from { transform: scale(1.03); } to { transform: scale(1.1) translate(-1%, -.6%); } }
 #loading.live .hero { opacity: 0; pointer-events: none; }
 #loading::before { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1; /* 整屏极轻暗角，让左区与画面同一光感 */
