@@ -202,9 +202,11 @@
 - 走查：144f5ad run 41162139958 **通过 31 / 失败 0 / 控制台错误 0**（work/r3/b38/r41162139958/walk/WALKTHROUGH.md）。Pages：144f5ad Deploy success（41161949215）。
 - Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删同名旧卷再传 v03 1cIzJM_CBkiIaLCNn7piyhhoFmKTvPDk9、v04 1ez928o7xeyCezU2GnbssGP9_iN3JqG5h（含 bus_shelter_6080.glb / lib_vitrine.glb）；v01 / v02 在本 HANDOFF 提交后重传（见 PROGRESS-LOG）。
 - 对比图 `python3 work/r3/b38/cmp38.py` → work/r3/cmp38_*.jpg + 总拼图 work/r3/b38/sheet.jpg（未回的机位补跑即可）。
-- 截止本节未回：cs_r3（41162672134 s38r）、cs_r3_e（41161733475 e38）、ext_sky（41161573707 s38）、ext_street（41161809988 t38）。
+- **补看 cs_r3_e**（work/r3/b38/r41161733475/e38/cs_r3_e.png，8da02e5）：东墙尖拱彩窗 + 来信摘录墙入镜，**新加的窗台 / 贴脸 / 滴水檐 / 线脚用 stoneDark，在黑大理石墙上几乎看不出（中下）**→ 下批改浅色石（stone / 米灰）或加金线收边再拍；另见资料架呈白色线框状（原模型材质，同旋转报架）。
+- **补看 ext_street**（work/r3/b38/r41161809988/t38/ext_street.png，18df142）：大道行道树 / 地铁口亭 / 两侧街屋成排，底层不再有平涂色带（中上）；路口候车亭不在此机位画框内。
+- 截止本节未回：cs_r3（41162672134 s38r，144f5ad）、ext_sky（41161573707 s38，cd77ca0）。
 ### 下批先做
-1. 取回上面 4 个机位；★查人视角地面全是弹石、R160 环路车道 / 人行道不可见的原因。
+1. 取回 cs_r3 / ext_sky；东墙线脚改浅色石；★查人视角地面全是弹石、R160 环路车道 / 人行道不可见的原因。
 2. 报刊亭入镜（机位或位置）、旋转报架材质；讲经台精建（藏书阁焦点）。
 3. 铜相框顶框再磨亮一档；陈列柜补低位暖光。
 
