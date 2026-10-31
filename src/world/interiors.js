@@ -886,7 +886,7 @@ let _oldBronze = null;
 function dossierStand(g, M, name, x, z, flip = false) { // flip：相框朝 −Z（周闻：椅前是值班长台，玩家从椅后平台过来）
   const k = IDPHOTO[name]; if (!k) return;
   const wood = M.wood ?? new THREE.MeshStandardMaterial({ color: 0x4a3020, roughness: 0.6 });
-  const brass = (_oldBronze ??= new THREE.MeshStandardMaterial({ color: 0x5a4630, metalness: 0.8, roughness: 0.6 })); // 批次33：旧铜（原 M.brass 偏亮橙）
+  const brass = (_oldBronze ??= new THREE.MeshStandardMaterial({ color: 0x6b4a2a, metalness: 0.92, roughness: 0.4, envMapIntensity: 1.2 })); // 批次34：旧铜金属（0x6b4a2a / metal 0.92 / rough 0.4；批次33 的 rough 0.6 像木头）
   const kraft = new THREE.MeshStandardMaterial({ color: 0xa47e4e, roughness: 0.9 });
   const add = (geo, m, px, py, pz, rx = 0, ry = 0, rz = 0) => { const me = new THREE.Mesh(geo, m); me.position.set(x + px, py, z + pz); me.rotation.set(rx, ry, rz); me.castShadow = me.receiveShadow = true; g.add(me); return me; };
   const TOP = 0.62; // 批次32：几面放大 0.56×0.42 → 0.62×0.52，后半放立式铜框相片座，前半摊档案夹
@@ -929,11 +929,11 @@ function framePhotoMat(name) { // 只裁源图头像框（48,25,289×400，比�
 }
 function frameTagMat(name) { // 铜牌刻字名签：暗铜底 + 深色刻字（打字机等宽体）
   const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128; const c = cv.getContext('2d');
-  const gr = c.createLinearGradient(0, 0, 0, 128); gr.addColorStop(0, '#c9a463'); gr.addColorStop(0.5, '#a9844a'); gr.addColorStop(1, '#8a6a36'); c.fillStyle = gr; c.fillRect(0, 0, 512, 128);
-  c.strokeStyle = '#5a4020'; c.lineWidth = 5; c.strokeRect(8, 8, 496, 112);
-  c.fillStyle = '#21160a'; c.font = '700 84px "NB Mono","Courier New",monospace'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, 256, 68);
+  const gr = c.createLinearGradient(0, 0, 0, 128); gr.addColorStop(0, '#7e5a34'); gr.addColorStop(0.5, '#6b4a2a'); gr.addColorStop(1, '#583c22'); /* 批次34：名签铜牌与框统一旧铜 */ c.fillStyle = gr; c.fillRect(0, 0, 512, 128);
+  c.strokeStyle = '#3e2a16'; c.lineWidth = 5; c.strokeRect(8, 8, 496, 112);
+  c.fillStyle = 'rgba(20,12,4,0.85)'; c.font = '700 84px "NB Mono","Courier New",monospace'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, 258, 71); c.fillStyle = '#e2c288'; c.font = '700 84px "NB Mono","Courier New",monospace'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, 256, 68);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
-  return new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.6, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.06 });
+  return new THREE.MeshStandardMaterial({ map: t, roughness: 0.4, metalness: 0.85, envMapIntensity: 1.2, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.08 }); // 批次34：抛光凸字 + 暗铜底
 }
 function namePlateMat(name) {
   const cv = document.createElement('canvas'); cv.width = 256; cv.height = 72; const c = cv.getContext('2d');
