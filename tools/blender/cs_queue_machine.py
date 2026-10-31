@@ -33,9 +33,19 @@ for sx in (-1, 1):
 box('enamelD', W - 0.1, 0.42, 0.01, 0, 0.34, ZF + 0.004); box('enamel', W - 0.16, 0.34, 0.01, 0, 0.34, ZF + 0.01, bev=0.003)
 cyl('brass', 0.014, 0.012, 0.13, 0.48, ZF + 0.016, v=16); cyl('rubber', 0.004, 0.014, 0.13, 0.48, ZF + 0.018, v=8)
 # 中段斜面操作板（约 25°）
-ang = math.radians(25); box('enamel', W, 0.1, 0.1, 0, 0.93, ZF + 0.03, bev=0.006)
-box('enamelD', W - 0.04, 0.012, 0.24, 0, 0.955, ZF + 0.07 - 0.08, rx=ang)
-box('brass', W - 0.03, 0.014, 0.012, 0, 0.92, ZF + 0.065, rx=ang)
+# 批次53：原「方块托 + 斜板」两件拼 → 与柜身一体的倒角楔形斜台（侧面轮廓下沿圆弧收进柜身）+ 斜面内嵌深色面板 + 前沿铜圆棍
+ang = math.radians(25)
+import bmesh
+prof = [(ZF - 0.02, 0.78)] + [(ZF + 0.11 * math.sin(t * math.pi / 2), 0.78 + 0.10 * (1 - math.cos(t * math.pi / 2))) for t in (0.25, 0.5, 0.75, 1.0)] + [(ZF + 0.11, 0.90), (ZF - 0.12, 1.005), (ZF - 0.12, 0.78)]
+me = bpy.data.meshes.new('wedge'); bm = bmesh.new(); n = len(prof)
+vs = [bm.verts.new(G(x, y, z)) for x in (-W / 2 + 0.006, W / 2 - 0.006) for (z, y) in prof]
+bm.faces.new(vs[:n][::-1]); bm.faces.new(vs[n:])
+for i in range(n): j = (i + 1) % n; bm.faces.new((vs[i], vs[j], vs[n + j], vs[n + i]))
+bmesh.ops.recalc_face_normals(bm, faces=bm.faces); bm.to_mesh(me); bm.free()
+o = bpy.data.objects.new('wedge', me); S.collection.objects.link(o); add(o, 'enamel')
+md = o.modifiers.new('b', 'BEVEL'); md.width = 0.014; md.segments = 4; md.limit_method = 'ANGLE'; md.angle_limit = math.radians(30); md.harden_normals = False
+box('enamelD', W - 0.07, 0.010, 0.21, 0, 0.955, ZF - 0.012, rx=ang, bev=0.004)
+cyl('brass', 0.009, W - 0.02, 0, 0.895, ZF + 0.112, v=16, rot=(0, math.pi / 2, 0))
 cyl('brassD', 0.055, 0.012, -0.08, 0.965, ZF + 0.07 - 0.07, v=32, rot=(math.pi / 2 - ang, 0, 0))
 cyl('red', 0.04, 0.03, -0.08, 0.975, ZF + 0.07 - 0.065, v=32, rot=(math.pi / 2 - ang, 0, 0))
 cyl('brass', 0.043, 0.006, -0.08, 0.988, ZF + 0.07 - 0.058, v=32, rot=(math.pi / 2 - ang, 0, 0))
