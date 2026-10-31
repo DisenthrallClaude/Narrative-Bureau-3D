@@ -1758,7 +1758,7 @@ export function planS7Ops(y) {
   out.push({ m: 'r2/coat_rack_bowler_hat', x: -9.2, y, z: -120.4, yaw: ROT.E, h: 1.85, tag: '西墙', on: 'floor' });
   out.push({ m: 'r2/standing_chalkboard_01', x: -8.0, y, z: -130.6, yaw: 0.7, h: 1.8, tag: '西墙', on: 'floor' });
   pic(out, 'textures/b06/B06_K的工作笔记.png', -9.77, y + 1.7, -128.4, ROT.E, 0.8, 0.6, 'cork', { cork: [1.0, 0.8] }); // 批次57：4:3 横版
-  pic(out, 'textures/emblems/N02.jpg', -4.6, y + 4.2, Z0 + 0.22, 0, 1.0, 1.0, 'black');
+  pic(out, 'textures/emblems/N02.jpg', -4.6, y + 4.2, Z0 + 0.04, 0, 1.0, 1.0, 'black'); // 批次59：pick 41213978757 框背离牛皮纸墙 23 cm（悬空）→ 贴墙 4 cm
   for (const [x, z, yaw] of [[X1 - 0.18, -117.8, ROT.W], [X1 - 0.18, -126.2, ROT.W], [X0 + 0.18, -122.6, ROT.E], [X0 + 0.18, -131.2, ROT.E]]) out.push({ m: 'r2/bunker_lamps', x, y: y + 2.8, z, yaw, h: 0.3, tag: '地堡灯', on: 'wall' });
   for (const [x, z] of [[8.4, -115], [8.4, -129.6], [2.3, -128.4], [-8.4, -129.0]]) light(out, x, y + 2.8, z, 0xffd0a0, 1.6, 7);
   floorZ(out, 'dz_rugRed', -0.9, 5.5, -130.2, -126.6, y, {}); out[out.length - 1].box = 'r3_carpetBrown';
