@@ -19,8 +19,8 @@ for (const st of states) {
   await page.evaluate(({ st, bg }) => {
     const $ = (i) => document.getElementById(i);
     const tk = document.getElementById('tk'); if (tk && !tk.childElementCount) for (let k = 0; k < 48; k++) { const a = k / 48 * Math.PI * 2, r0 = k % 4 ? 41 : 38; tk.insertAdjacentHTML('beforeend', `<line x1="${Math.sin(a) * r0}" y1="${-Math.cos(a) * r0}" x2="${Math.sin(a) * 45}" y2="${-Math.cos(a) * 45}"/>`); } // 同 ui.js
-    document.body.style.background = `#000 url(${bg}) center/cover`; $('c').style.visibility = 'hidden';
-    if (st === 'loading') { $('loadbar').style.width = '62%'; if ($('loadpct')) $('loadpct').textContent = '62%'; $('loadtip').textContent = '正在装订页面……'; return; }
+    document.body.style.background = `#000 url(${bg}) center/cover`; $('obj').classList.add('flash'); $('c').style.visibility = 'hidden';
+    if (st === 'loading') { $('loading').classList.add('go'); $('loadbar').style.width = '62%'; $('loadpct').textContent = '62%'; $('gearArc').style.strokeDasharray = '62 100'; $('loadtip').textContent = '正在建造主楼……'; return; } // U2：点开始后的齿轮加载层
     if (st === 'menu') { $('loadbar').style.width = '100%'; if ($('loadpct')) $('loadpct').textContent = '100%'; $('loadtip').textContent = '点击「进入」开始（建议佩戴耳机）'; $('start').classList.remove('hidden'); return; }
     $('loading').classList.add('hidden'); $('hud').classList.remove('hidden');
     $('objm').textContent = '前往西翼人事档案馆，向管理员领取本人入职档案'; $('objo').textContent = '';

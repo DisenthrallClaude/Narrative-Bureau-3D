@@ -183,7 +183,7 @@ async function boot() {
 // —— U2：主菜单实时广场机位（右侧 59% 区域；setViewOffset 把画面中心移到右栏中心）——
 const MENU_A = new THREE.Vector3(12, 9, 94), MENU_B = new THREE.Vector3(-3, 6.5, 80), MENU_LOOK = new THREE.Vector3(0, 40, -13), MENU_FOV = 56;
 let menuOn = false, menuT = 0, playerFov = 70, enterK = 1; const enterFrom = { pos: new THREE.Vector3(), q: new THREE.Quaternion(), fov: 56, off: 0 };
-const menuOffset = () => (innerWidth > innerHeight * 1.1 ? -0.205 : 0);
+const menuOffset = () => (innerWidth > innerHeight * 1.1 ? -0.11 : 0); // U2：左 1/4 磨砂区，画面中心右移
 function menuLive() { if (SHOT || TEST) return; playerFov = camera.fov; menuOn = true; menuT = 0; document.getElementById('loading').classList.add('live'); }
 function menuCamera(dt) {
   menuT += dt; const k = 0.5 - 0.5 * Math.cos(menuT * Math.PI * 2 / 90); // 90 s 往返，余弦缓入缓出
@@ -459,8 +459,7 @@ function applyShot(name) {
   if (s.target) { scene.updateMatrixWorld(true); const fo = scene.getObjectByName(s.target); // 批次32：证件照相片座机位按场景里实际相框位置算（相框局部：正前 + 略高）
     if (fo) { const V = THREE.Vector3; const c = fo.localToWorld(new V(...(s.tcam ?? [0, 0.17, 0.5]))), l = fo.localToWorld(new V(0, 0.115, 0)); camera.position.copy(c); camera.lookAt(l); LOG('target', s.target, c.toArray().map((v) => v.toFixed(2)).join(',')); } else LOG('target missing', s.target); }
   if (params.get('menu')) { // U2：截图复现主菜单实时构图（加载层 .live + 右栏 viewOffset）
-    const L = document.getElementById('loading'); L.classList.remove('hidden'); L.classList.add('live'); document.getElementById('start').classList.remove('hidden');
-    document.getElementById('loadbar').style.width = '100%'; document.getElementById('loadtip').textContent = '点击「进入」开始（建议佩戴耳机）'; const pc = document.getElementById('loadpct'); if (pc) pc.textContent = '100%';
+    const L = document.getElementById('loading'); L.classList.remove('hidden'); L.classList.add('live'); if (params.get('gears')) { L.classList.add('go'); document.getElementById('gearArc').style.strokeDasharray = '68 100'; document.getElementById('loadpct').textContent = '68%'; document.getElementById('loadbar').style.width = '68%'; }
     camera.position.lerpVectors(MENU_A, MENU_B, Number(params.get('menu')) || 0.5); camera.lookAt(MENU_LOOK); camera.fov = MENU_FOV; camera.setViewOffset(innerWidth, innerHeight, menuOffset() * innerWidth, 0, innerWidth, innerHeight); }
   if (s.expMul) targetExp *= s.expMul; // 批次29：个别机位单独提曝光（plaza_top 黄昏俯视偏暗）
   curExp = targetExp; time.value = s.t ?? 12;

@@ -9,12 +9,15 @@ export const ui = {
 };
 
 { const tk = document.getElementById('tk'); if (tk) for (let k = 0; k < 48; k++) { const a = k / 48 * Math.PI * 2, r0 = k % 4 ? 41 : 38; tk.insertAdjacentHTML('beforeend', `<line x1="${(Math.sin(a) * r0).toFixed(2)}" y1="${(-Math.cos(a) * r0).toFixed(2)}" x2="${(Math.sin(a) * 45).toFixed(2)}" y2="${(-Math.cos(a) * 45).toFixed(2)}"/>`); } } // 批次46：局徽刻度环
-export function loadProgress(p, tip) { $('loadbar').style.width = `${Math.round(p * 100)}%`; const pc = $('loadpct'); if (pc) pc.textContent = `${Math.round(p * 100)}%`; if (tip) $('loadtip').textContent = tip; }
-export function loadDone(onStart) {
-  $('loadtip').textContent = '点击「进入」开始（建议佩戴耳机）';
-  const b = $('start'); b.classList.remove('hidden'); const pc = $('loadpct'); if (pc) pc.textContent = '100%';
-  b.onclick = () => { $('loading').classList.add('open'); setTimeout(() => $('loading').classList.add('hidden'), 1500); $('hud').classList.remove('hidden'); onStart(); };
+// U2：首页按钮一开始就可点；点「开始游戏」→ 齿轮加载层（真实进度），加载完且齿轮至少转满 2.4 s 后淡出进游戏
+let loadP = 0, loaded = false, wantStart = false, t0 = 0, onStartFn = null;
+export function loadProgress(p, tip) { loadP = p; const pc = Math.round(p * 100); $('loadbar').style.width = `${pc}%`; $('loadpct').textContent = `${pc}%`; const arc = $('gearArc'); if (arc) arc.style.strokeDasharray = `${pc} 100`; if (tip) $('loadtip').textContent = tip; }
+function enterGame() {
+  const wait = Math.max(0, 2400 - (performance.now() - t0));
+  setTimeout(() => { loadProgress(1, '就绪'); setTimeout(() => { $('loading').classList.add('open'); setTimeout(() => $('loading').classList.add('hidden'), 1500); $('hud').classList.remove('hidden'); onStartFn?.(); }, 450); }, wait);
 }
+$('start').onclick = () => { if (wantStart) return; wantStart = true; t0 = performance.now(); $('loading').classList.add('go'); loadProgress(loadP); if (loaded) enterGame(); };
+export function loadDone(onStart) { loaded = true; onStartFn = onStart; if (wantStart) enterGame(); }
 
 export function setPrompt(text, key = 'E') { $('prompt').innerHTML = text ? (key ? `<b class="key">${key}</b><span class="pt">${text.replace(/^按\s*E\s*/, '')}</span>` : `<span class="pt">${text}</span>`) : ''; $('cross').classList.toggle('on', !!text); }
 
@@ -32,7 +35,9 @@ export function updateObjective() {
   if (m.includes('0/3')) { const n = ['q4_read_1', 'q4_read_2', 'q4_read_3'].filter((f) => content.has(f)).length; m = m.replace('0/3', `${n}/3`); }
   $('objm').textContent = m || (opt[0]?.text ?? '自由探索');
   $('objo').textContent = main ? '' : opt.slice(1).map((o) => o.text).join('\n');
+  const ob = $('obj'); if (ob.dataset.m !== m) { ob.dataset.m = m; ob.classList.add('flash'); clearTimeout(objT); objT = setTimeout(() => ob.classList.remove('flash'), 5000); } // U2：目标平时半隐，更新时亮起 5 s
 }
+let objT = 0;
 
 export function updateInventory() {
   $('inv').innerHTML = content.itemsList().map((it) => { const u = it.texture && content.texUrl(it.texture); return `<div class="it" style="${u ? `background-image:url('${u}')` : ''}" title="${it.desc ?? ''}">${u ? '' : '<div style="font-size:22px;text-align:center;line-height:54px;color:#d8b469">' + (it.name?.[0] ?? '?') + '</div>'}<span>${it.name}</span></div>`; }).join('');
