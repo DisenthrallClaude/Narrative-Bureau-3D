@@ -122,6 +122,15 @@ export async function applyM14Training(ctx) {
       const t = new THREE.SpotLight(0xffc896, 120, 10, 1.0, 0.7, 1.6); t.name = 'm17_range_top'; // 二拍：y+7 / 70 几乎看不出 → 降到 y+4.2、120（靶面约 13 lx）
       t.position.set(0, y + 4.2, -150.6); t.target.position.set(0, y + 1.2, -151.4); t.castShadow = false; zone.add(t, t.target);
     }
+    if (!new URLSearchParams(location.search).has('nom18')) { // 批次 M18：M17 顶光两拍都看不出 → 不再加灯，改烘焙式暖色光斑：靶档墙前脸 + 靶位地面各一片加色贴片（径向渐变 emissive ≤0.35，不受灯数 / 灯光裁剪影响）
+      const cv = document.createElement('canvas'); cv.width = cv.height = 256; const c2 = cv.getContext('2d'); const gr = c2.createRadialGradient(128, 128, 0, 128, 128, 128);
+      gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.45, 'rgba(255,255,255,0.55)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); c2.fillStyle = gr; c2.fillRect(0, 0, 256, 256);
+      const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+      const wash = (w, h, I) => new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ name: 'm18_range_wash', color: new THREE.Color(0xffb878).multiplyScalar(I), map: tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, fog: false }));
+      const wall = wash(17, 3.6, 0.32); wall.position.set(0, y + 1.75, -155.08); wall.name = 'm18_range_wash_wall';
+      const flo = wash(15, 8, 0.22); flo.rotation.x = -Math.PI / 2; flo.position.set(0, y + 0.015, -151.4); flo.name = 'm18_range_wash_floor';
+      for (const m of [wall, flo]) { m.castShadow = m.receiveShadow = false; m.renderOrder = 2; m.userData.m14skip = true; zone.add(m); }
+    }
   }
   await Promise.all(jobs);
 }

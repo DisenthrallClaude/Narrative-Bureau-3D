@@ -448,6 +448,7 @@ function loop() {
   perf.last = { calls: R.gl.info.render.calls, tris: R.gl.info.render.triangles, zone: G.zone };
   if (showFps) { fpsAcc += dt; fpsN++; perf.max = Math.max(perf.max, dt); if (fpsAcc > 0.5) { const i = R.gl.info; UI.setFpsText(`${Math.round(fpsN / fpsAcc)} fps · ${(fpsAcc / fpsN * 1000).toFixed(1)} ms（峰 ${(perf.max * 1000).toFixed(0)}）\n${i.render.calls} drawcall · ${(i.render.triangles / 1e6).toFixed(2)}M 三角面\n程序 ${i.programs?.length ?? 0} · 几何 ${i.memory.geometries} · 贴图 ${i.memory.textures}\n区域 ${G.zone ?? '-'} · 画质 ${R.q.label ?? ''}`); fpsAcc = 0; fpsN = 0; perf.max = 0; } }
   if (SHOT && shotStarted) { shotN++; LOG('frame', shotN, (performance.now() / 1000).toFixed(1)); if (shotN === shotFrames) window.__READY__ = true; }
+  if (SHOT && shotStarted && shotN === 2 && params.get('lightdbg')) try { lightDbg(params.get('lightdbg')); } catch (e) { LOG('lightdbg fail', e.message); } // 批次 M18：查证某盏灯是否进了着色器
 }
 let shotFrames = 30, shotStarted = false, shotN = 0, shotLite = false; const liteOff = [];
 window.__setShot = (name) => { window.__READY__ = false; shotN = 0; applyShot(name); requestAnimationFrame(loop); };
@@ -520,4 +521,19 @@ function tameHDR(t, maxL) {
     if (L > maxL) { const k = maxL / L; r *= k; g *= k; b *= k; cut++; if (half) { d[o] = F.toHalfFloat(r); d[o + 1] = F.toHalfFloat(g); d[o + 2] = F.toHalfFloat(b); } else { d[o] = r; d[o + 1] = g; d[o + 2] = b; } }
   }
   t.needsUpdate = true; LOG(`hdr tame peak ${peak.toFixed(1)} cut ${(cut / n * 100).toFixed(2)}%`);
+}
+
+// 批次 M18：?lightdbg=name1,name2 → 第 2 帧打印：场景可见灯数（按类型、过图层）、指定灯的可见链 / 图层 / 强度 / 世界坐标、画面中下拾取面材质实际上传的点光 / 聚光数组长度、GPU 片元 uniform 上限
+function lightDbg(q) {
+  const cnt = { point: 0, spot: 0, rect: 0, dir: 0, hemi: 0, amb: 0 };
+  scene.traverseVisible((o) => { if (!o.isLight || !o.layers.test(camera.layers)) return; if (o.isPointLight) cnt.point++; else if (o.isSpotLight) cnt.spot++; else if (o.isRectAreaLight) cnt.rect++; else if (o.isDirectionalLight) cnt.dir++; else if (o.isHemisphereLight) cnt.hemi++; else cnt.amb++; });
+  LOG('lightdbg scene', JSON.stringify(cnt));
+  for (const n of q.split(',')) { const os = []; scene.traverse((o) => { if (o.name === n) os.push(o); }); if (!os.length) LOG('lightdbg missing', n);
+    for (const o of os) { let hid = ''; for (let a = o; a; a = a.parent) if (!a.visible) { hid = a.name || a.type; break; } const p = o.getWorldPosition(new THREE.Vector3());
+      LOG('lightdbg', n, 'hiddenBy', hid || '-', 'layers', o.layers.mask, 'I', o.intensity, 'd', o.distance, 'pos', p.toArray().map((v) => v.toFixed(2)).join(','), 'parent', o.parent?.name, o.parent?.parent?.name); } }
+  const props = R.gl.properties;
+  for (const [x, y] of [[0, -0.15], [0.3, -0.3], [-0.2, 0.05]]) { const rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(x, y), camera); const h = rc.intersectObjects(scene.children, true).find((i) => i.object.visible && i.object.material && !/m18_range_wash/.test(i.object.name));
+    if (!h) continue; const m = Array.isArray(h.object.material) ? h.object.material[0] : h.object.material; const u = props?.get?.(m)?.uniforms;
+    LOG('lightdbg pick', h.object.name, h.object.parent?.name, m.name || m.type, h.point.toArray().map((v) => v.toFixed(2)).join(','), 'uSpot', u?.spotLights?.value?.length ?? '?', 'uPoint', u?.pointLights?.value?.length ?? '?', 'lights', m.lights); }
+  const gl = R.gl.getContext?.(); if (gl) LOG('lightdbg maxFragUniformVec', gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS), 'programs', R.gl.info.programs?.length);
 }
