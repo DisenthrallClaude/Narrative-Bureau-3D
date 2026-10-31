@@ -785,7 +785,7 @@ function buildStreetRows(g, M, place, rnd) {
           } else if (y < 4.2) { // 底层商铺
             float bay = floor(u / 5.0 + 0.5 + side * 7.0 + vSd * 13.0); float bx = fract(u / 5.0 + 0.5);
             float glass = step(0.08, bx) * step(bx, 0.92) * step(0.45, y) * step(y, 3.0) * keepShop;
-            float sign = step(0.04, bx) * step(bx, 0.96) * step(3.15, y) * step(y, 3.95);
+            float sign = step(0.04, bx) * step(bx, 0.96) * step(3.15, y) * step(y, 3.95) * (1.0 - front); /* 批次38：临街正面招牌交给模块招牌框 + shopSigns 有字招牌，着色器不再画平涂色带（ext_house b38：模块外残开间仍见红 / 绿色带） */
             vec3 sc = h2(vec2(bay, 1.0)) < 0.33 ? vec3(0.62, 0.10, 0.08) : h2(vec2(bay, 1.0)) < 0.66 ? vec3(0.10, 0.22, 0.48) : vec3(0.12, 0.36, 0.22);
             col = mix(col * 0.75, vec3(0.05, 0.06, 0.07), glass); col = mix(col, sc, sign);
             float shopOn = step(0.55, h2(vec2(bay, 7.0 + vSd)));
