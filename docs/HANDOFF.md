@@ -200,6 +200,42 @@
 - 区域标题金箔字在亮场景上对比依赖投影；手机消息样式（phone）未重做。
 - **Drive 上传未做**（按分工由 lead-58 做）。
 
+## R3 批次55（2026-10-31 22:07 CST 接手，约 35 分钟；与 UI 子代理 U1、审计 b56 并行，只动场景文件）
+### 提交
+ede2af4 左门扇下半偏紫根因修；d3bdad5 填单台 / 叫号机胡桃木再压深偏冷；308f0d7 报刊架 / 毛毡垫去墨绿；**7bf68f4 市民大厅窗口台面精修 + cs_win 机位（最终场景代码）**。每次提交前本机 `npx vite build` 返回 0。
+### 1 左门扇下半偏紫（按根因修，未再盲调门扇底色）
+- pick（run 41208753549，`pick:ext_door_mid:-0.1172 -0.611 …` 6 点，日志 work/r3/b55/pick/pick/ext_door_mid.log）：下半像素首个命中 = **正门门扇本体**（exterior.js 门扇组，x≈−2.8，z −7.2…−9，dM 铜材 Metal048A）+ 下 / 中两道**铁箍 M.iron**（Metal046A 冷蓝灰 0x2b2d33、金属度 1、环境反射全量——批52/53 只改了 dM 三种铜材，铁箍从没动过）。不是门后 / 地面的其他网格。
+- 根因：门扇转 72° 后立在门廊深处，下半落在券口 / 雕像阴影里，暖色直射灯到不了，只剩**黄昏半球光天色 0x9a96c8（淡紫 ×1.45）+ 天空环境反射**——深色表面上这两项占主导 → 紫。上半有洗墙 / 门厅暖光所以已暖。
+- 修（ede2af4）：门扇全部材质加常量 aoMap（1×1 黑，aoMapIntensity 0.78）= 「门廊券顶挡住天空」，只把间接光（半球光 + 环境反射）压到 22%，直射灯不变；铁箍改用暖黑铁克隆 0x2a2420（共享 M.iron 不动，路灯杆等不受影响）。
+- 验收：d55 ext_door_mid / d55n ext_door_near（run 41209487342，308f0d7）：**紫色消失**（下半原 (64,52,66)/(43,40,59) → 现 (2,0,0) 左右，无 B>G），但**左门扇整扇压成近黑**——上半原 (93,52,34) 也降到 (4,0,0) 一带，只剩铜框边一点暖光，读成黑板而不是暗古铜（对比 work/r3/b55/crop_leaf_54vs55.jpg 左批54 右批55）。说明这扇门的亮度几乎全靠间接光，直射暖灯照不到它的外表面。右门扇深红古铜正常。**结论：根因找对、去紫成功，但遮蔽过量，质量中下。**
+### 2 填单台 / 叫号机深胡桃（d3bdad5）
+- eastwing.js walnutTone 乘色 (0.52,0.42,0.36) → (0.22,0.205,0.27)（按 k54a 实测像素对 #4a3022 反推，B 相对抬高防偏橙）。
+- f55 cs_fd（run 41209487342）：凸芯板实测 (80,51,33)、台面 (106,74,52)，目标 (74,48,34) ✔ 深胡桃、Wood051 木纹仍清楚 ✔（work/r3/b55/r41209487342/f55/cs_fd.png）。q55 cs_qm：柜身 (72,38,22) 深胡桃 ✔、047 可读 ✔；**顶部铜壳显示头仍是亮铜 / 浅橙**（是铜材不是木材，本批未动；若要更沉可压 qm 铜色）。
+### 3 去墨绿（308f0d7）
+- r2/news_rack_6080：nr_greenPaint / nr_greenDark → 暗铜褐烤漆 (0.060,0.030,0.015)/(0.028,0.014,0.007) 线性、金属度 0.35（材质名保留）。**共享模型，外景报刊亭旁、宣传处记者等候、地铁口出站集散、市民大厅两处同时变**。
+- r2/cs_form_desk：fd_felt 灰绿 → 深酒红呢面 (0.12,0.018,0.022)、粗糙 0.95。
+- 方法：tools/_recolor55.mjs 直接改 GLB 材质因子（原件备份 work/r3/b55/bak/），Blender 源脚本 tools/blender/news_rack_6080.py / cs_form_desk.py 同步改色。Blender 预览亲眼看过：work/r3/b55/prev/news_rack.png（暗铜褐、报纸 / 红檐牌不变 ✔）、form_desk_felt.png（酒红呢垫 ✔）。游戏内 cs_fd 图：左侧取阅架棕色 ✔、台面两端酒红垫 ✔。
+- 未动植物 / 草坪 / 绿植。
+- **其余明显墨绿的人造器物材质清单**（注意：并行的批次56 fa76cb3 已全局改掉其中一部分——灰绿墙、绿台呢、绿墙布 / 绿地毯 / 绿呢等，下批以 docs/AUDIT-56.md 为准复核；脚本 work/r3/b55/greenscan.py → greenscan.txt，已排除植物类，本批未改）：
+  - mats.js：M.paintedGreen 0x3d4a40（绿漆铁件）、M.baize 0x1d3a28（台球 / 桌面绿呢）、M.lampGreen 0x0d4a2a（银行家台灯绿罩，发光，属经典样式，建议保留或改琥珀）
+  - dress.js：dz_damaskGreen 0x355a44（绿墙布）、dz_paintLow 0x2c3a34（墙裙绿漆）、r3_carpetGreen 0x46564a（绿地毯）、r3_feltGreen 0x2c4a34（局史展柜绒布衬底）、r3_rackGreen 0x3b463f（钢架绿漆）、r3_labWain 0x7d8f80（实验室灰绿护墙）、r3_screen 0x0a1a12 / 发光 0x4ad08a（绿屏终端）
+  - dorm.js：dm_frame 0x3e4a44（宿舍床架）、dm_deskTop 0x3e5a48（绿呢台面垫）
+  - eastwing.js:368 skirtMat 0x2c3a30（裙板）、:162 / :405 文件夹 / 书脊色之一 0x2a3a2a / 0x1e2a1a；dressing.js:74 0x203a2a（三色之一）
+  - r3build.js:21 green_glass 发光 0x2c7a3c（银行家台灯）；mats.js M.wallPlaster 0x6a7a72（灰绿抹灰，偏灰）
+  - Blender 精建：bus_shelter.py bs_greenPaint（候车亭绿漆）、guard_booth.py booth_roofTile（岗亭屋瓦灰绿）、hall_props.py hp_baize、lib_nook.py nk_lampGreen / nk_felt、lib_pulpit_lamp.py pl_felt
+### 4 市民大厅精修（7bf68f4）
+- 5 个服务窗口职员侧台面（灯 / 电话 / 文件夹之外）补：左手 document_letter_tray 文件盘（待办件，w 0.3）、右手 old_victorian_rubber_stamp 橡皮章（h 0.1）；中间 0.8 m 留作递件面。订书机 paper_stapler 包围盒轴向异常（0.15×0.15×0.067 立方）已弃用。
+- r3plan citizen_service **482 件 0 错 0 警**（work/r3/b55/plan_cs.png）。新机位 cs_win（3 号窗口近景）。验收：cs_win / cs_fd2 / cs_r3（run 41209846555 / 41209487342）截止未回，**窗口小物尚未亲眼游戏内验收**（下批 `bash tools/gh_shots_fetch.sh 41209846555 …` 看 w55/cs_win.png）。
+### 收尾
+- 走查：**7bf68f4 run 41209846555 通过 31 / 失败 0 / 控制台 0**。
+- Pages：7bf68f4 Deploy success（41209846709）；HANDOFF 提交的部署见 PROGRESS-LOG。
+- Drive「快照_分卷」（1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq）：先删旧卷再传 v03 1NxhxBUvpuDPyc-MyXTOL-VT1GnsSZK-q、v04 1STQbd2sSnmq_MRvXDZeb-nx7WgOPx85X；v01 / v02 在本 HANDOFF 提交后传（ID 见 PROGRESS-LOG）。
+- 拼图 work/r3/b55/sheet.jpg（游戏内改后图）。
+### 下批先做
+1. 左门扇近黑：aoMapIntensity 0.78 → 0.45 左右（间接光留 55%）**并**给门廊补一处模拟券内石面反弹的暖色不投影点光 / 半球光替代（照左门扇外表面），而不是改门扇底色；先拍 ext_door_mid 单机位验收。注意这是本问题的第 2 轮，若仍不行按规则停手。
+2. 视用户意见按上面清单继续去墨绿（优先：r3_feltGreen 展柜绒布、dm_deskTop、bus_shelter 绿漆、r3_rackGreen）。
+3. 叫号机铜壳显示头是否压暗。
+
 ## R3 批次54（2026-10-31 17:47 CST 接手，约 35 分钟）
 ### 提交
 f5c3b79 UI 全套墨绿 → 人文主义棕；de7970c 叫号机柜身胡桃木；cc0716f cs_fd 抬高 + cs_fd2；**59aacc0 填单台 / 叫号机胡桃木游戏内压深偏冷（最终游戏代码）**。每次提交前本机 `npx vite build` 返回 0。r3plan 未改动（叫号机占地不变 0.5×0.52×1.4）。
