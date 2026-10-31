@@ -458,6 +458,10 @@ function applyShot(name) {
   setZone(s.zone ?? zoneAt(new THREE.Vector3(s.pos[0], s.pos[1] - 1.6, s.pos[2])), true);
   if (s.target) { scene.updateMatrixWorld(true); const fo = scene.getObjectByName(s.target); // 批次32：证件照相片座机位按场景里实际相框位置算（相框局部：正前 + 略高）
     if (fo) { const V = THREE.Vector3; const c = fo.localToWorld(new V(...(s.tcam ?? [0, 0.17, 0.5]))), l = fo.localToWorld(new V(0, 0.115, 0)); camera.position.copy(c); camera.lookAt(l); LOG('target', s.target, c.toArray().map((v) => v.toFixed(2)).join(',')); } else LOG('target missing', s.target); }
+  if (params.get('menu')) { // U2：截图复现主菜单实时构图（加载层 .live + 右栏 viewOffset）
+    const L = document.getElementById('loading'); L.classList.remove('hidden'); L.classList.add('live'); document.getElementById('start').classList.remove('hidden');
+    document.getElementById('loadbar').style.width = '100%'; document.getElementById('loadtip').textContent = '点击「进入」开始（建议佩戴耳机）'; const pc = document.getElementById('loadpct'); if (pc) pc.textContent = '100%';
+    camera.position.lerpVectors(MENU_A, MENU_B, Number(params.get('menu')) || 0.5); camera.lookAt(MENU_LOOK); camera.fov = MENU_FOV; camera.setViewOffset(innerWidth, innerHeight, menuOffset() * innerWidth, 0, innerWidth, innerHeight); }
   if (s.expMul) targetExp *= s.expMul; // 批次29：个别机位单独提曝光（plaza_top 黄昏俯视偏暗）
   curExp = targetExp; time.value = s.t ?? 12;
   if (/^b5(?!_door)/.test(name) && ctx.vault?.door) { ctx.vault.door.opened = true; for (const ac of ctx.vault.door.acts) ac.play(); ctx.vault.door.mixer.setTime(10); }

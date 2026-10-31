@@ -95,6 +95,11 @@ function renderPage() {
   const p = pages[pi]; const el = $('paper');
   el.className = 'paper ' + (p.style ?? '');
   const txt = (p.text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/「本条不存在。」/g, '<span class="red">「本条不存在。」</span>');
+  if (p.style === 'phone') { // U2：手机消息 = 胡桃木壳 + 黄铜边框 + 象牙纸屏，短信为页边批注式纸条
+    const m = /^【(.+?)】(.*)$/.exec(p.title ?? ''); const from = m ? m[1] : '叙事管理局'; const subj = m ? m[2] : (p.title ?? '');
+    el.innerHTML = `<div class="sb"><span>09:00</span><span class="op">NB · 局内网</span><span class="bt"><i></i><i></i><i></i><i></i></span></div><div class="from"><b class="av">${from.replace(/^叙事管理局/, '').slice(0, 2) || '局'}</b><div><strong>${from}</strong><em>短信 · 今天 08:12 · NVNTIVS</em></div></div><div class="bub">${subj ? `<h2>${subj}</h2>` : ''}<div class="txt">${txt}</div></div>${pages.length > 1 ? `<div class="pg">${pi + 1} / ${pages.length}</div>` : ''}<div class="home"></div>`;
+    replay(el); p.onShow?.(); return;
+  }
   el.innerHTML = `${p.title ? `<h2>${p.title}</h2>` : ''}${p.img ? `<img class="full" src="${p.img}">` : ''}${p.text ? `<div class="txt">${txt}</div>` : ''}${p.stamp ? `<div class="stamp">${p.stamp}</div>` : ''}${!p.style && !p.img ? '<div class="seal">叙事管理局<br>档案专用</div>' : ''}${pages.length > 1 ? `<div class="pg">${pi + 1} / ${pages.length}</div>` : ''}`;
   replay(el);
   p.onShow?.();
