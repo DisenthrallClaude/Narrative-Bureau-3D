@@ -193,16 +193,17 @@
 - 目录柜台面（x X0+5.15，柜前沿后 0.24 m）放实体银行家台灯（bankerLamp：铜座 + 铜杆 + 绿玻璃罩 + 暖灯条），配不投影暖点光 0xffd29a。首档 5 cd 贴近上段抽屉面过曝（work/r3/b47/r41176050795/a47/archive_cat.png）→ 光源前移 0.75 m、上移 0.55 m、3.2 cd / 6.5 m。
 - 看图 b45bf53（work/r3/b47/r41176412315/a47b/archive_cat.png）：台灯落在台面上、绿罩读得清，上段抽屉一圈暖光池、下段卡片抽屉铜框也亮起来，柜体胡桃木纹从近乌木变为可读 ✔（**中上**）；远端左半柜仍偏暗（距台灯 >3 m，可接受）。
 ### 4 外观复查（未完成验收）
-- 派了 ext_door_near（41176231223，组 e47a）、ext_door_mid（41176257463，组 e47c）；**shots.js 没有 ext_plaza 机位**（同 run 组 e47b 会空跑），用 ext_door_mid（广场中段斜看正门）代替。**ext_door_mid 已回**（work/r3/b47/r41176257463/e47c/ext_door_mid.png，a82055b）；ext_door_near（41176231223）截止 14:40 仍在拍，未亲眼验收。
-- ext_door_mid 看图列出最显眼问题（按严重度）：① **机位前景一根铸铁路灯杆 + 灯笼正挡在画面中线**，把「叙事管理局」匾额右半与门楣遮住（机位问题，[10, 2.2, 21] 正好站在路灯后；改机位或挪灯）；② 立面上层高窗玻璃读成**冷钴蓝**，与整体暖褐 / 夕照不协调（同大厅大屏旧问题，疑窗玻璃反射天空 HDR，建议窗玻璃改暖琥珀 / 降 envMapIntensity）；③ 门洞内是一整块平亮米黄面，无纵深（门厅内部看不到柱 / 灯，像贴图）；④ 门前台阶 + 基座一圈很暗，台阶踏面边缘读不出；⑤ 左侧附楼一列窗是纯白平面，无窗格无内景。门侧石雕人像按规则暂留。
+- 派了 ext_door_near（41176231223，组 e47a）、ext_door_mid（41176257463，组 e47c）；**shots.js 没有 ext_plaza 机位**（同 run 组 e47b 会空跑），用 ext_door_mid（广场中段斜看正门）代替。**ext_door_mid 已回**（work/r3/b47/r41176257463/e47c/ext_door_mid.png，a82055b）；**ext_door_near / ext_plaza 也已回**（41176231223，work/r3/b47/r41176231223/e47a/ext_door_near.png、e47b/ext_plaza.png；ext_plaza 机位其实存在，不在 shots.js 主表的 ext_* 段，单机位 848 s）。
+- ext_door_mid 看图列出最显眼问题（按严重度）：① **机位前景一根铸铁路灯杆 + 灯笼正挡在画面中线**，把「叙事管理局」匾额右半与门楣遮住（机位问题，[10, 2.2, 21] 正好站在路灯后；改机位或挪灯）；② 立面上层高窗玻璃读成**冷钴蓝**，与整体暖褐 / 夕照不协调（同大厅大屏旧问题，疑窗玻璃反射天空 HDR，建议窗玻璃改暖琥珀 / 降 envMapIntensity）；③ 门洞内是一整块平亮米黄面，无纵深（门厅内部看不到柱 / 灯，像贴图）；④ 门前台阶 + 基座一圈很暗，台阶踏面边缘读不出；⑤ 左侧附楼一列窗是纯白平面，无窗格无内景。⑥ **ext_door_near：画面下 1/4 是门前平台 / 顶级台阶的立面，一整条光滑均匀深褐带，没有石材分缝、没有踏步边线**（人视角最显眼）；门洞内能看到大厅大屏与拱廊 ✔。⑦ **ext_plaza：主楼下半立面在夕照逆光里整体发黑**，只剩窗与匾额可读；高窗玻璃偏蓝紫；地面铜罗盘徽、喷泉、旗杆横幅读得好 ✔（中）。门侧石雕人像按规则暂留。
+- **外观下批建议顺序**：门前台阶 / 平台立面加石材分缝与踏步铜防滑条 → 立面窗玻璃去冷蓝（暖琥珀内透）→ 主楼立面补暖色洗墙灯（夕照逆光下下半立面太黑）→ ext_door_mid 机位挪离路灯。
 ### 收尾
 - 走查：b45bf53 run **41176422578 通过 31 / 失败 0 / 控制台错误 0**（work/r3/b47/r41176422578/walk/WALKTHROUGH.md）。
 - Pages：**b45bf53 Deploy success（41176412880）**。
 - Drive「快照_分卷」：先删同名旧卷再传 v03 1HgyQuNNA2xUF2lS6ZXiuL7Z1DqWFEi7x、v04 1Fp5JVtb7EfMfzVUjVccyyIUPae084g46；v01 / v02 在本 HANDOFF 提交后传（见 PROGRESS-LOG）。
 - 对比图 `python3 work/r3/b47/cmp47.py` → work/r3/cmp47_hud / reader / loading / dialog / terminal / chapter / catalog(.jpg)（hall_gates 回来后重跑即生成 cmp47_hall_gates.jpg）+ 总拼图 work/r3/b47/sheet.jpg。
 ### 下批先做
-1. 取 41175969170（hall_gates）确认深蓝带消失；取 41176231223 / 41176257463（ext_door_near / ext_door_mid）：`rm -rf /tmp/afz; bash tools/gh_shots_fetch.sh <run> work/r3/b48/r<run>`，列外观最显眼问题。
-2. 若要 ext_plaza 机位：shots.js 新增（广场人视角，例如 [0, 1.7, 40] 看 [0, 8, -5]）。
+1. 外观：按上面「外观下批建议顺序」做，重拍 ext_door_near / ext_plaza / ext_door_mid。
+2. （批次47 已全部取回，无待取 run。）
 3. 档案纸页眉档号字号 11 → 12 px、颜色加深；文档阅读 dark（第 3 页）样式未统一。
 
 ## R3 批次46（2026-10-31 13:55 CST 接手，约 35 分钟）
