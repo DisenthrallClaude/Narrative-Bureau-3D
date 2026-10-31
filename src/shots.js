@@ -233,6 +233,10 @@ export const SHOTS = {
   memorial: { pos: [-60.5, 1.7, 44], look: [-66, 1.0, 20], fov: 72 },
   metro: { pos: [-10, -2.3, 108], look: [2, -1, 140], fov: 72 },
   east_cloister: { pos: [26.1, 3.45, -78], look: [26.1, 3.8, -110], fov: 72 },
+  // 批次59：AUDIT-56 表4 疑似悬空图斜侧近看（看框背与墙的缝）
+  ec_pic59: { pos: [25.9, 3.9, -95.0], look: [24.2, 3.95, -98.2], fov: 50 },
+  sec_emb59: { pos: [5.5, 12.0, -71.0], look: [0, 13.8, -75.1], fov: 45, zone: 'security_hall' },
+  s7_n02_59: { pos: [-1.6, -496.1, -131.0], look: [-4.6, -495.8, -133.6], fov: 50, zone: 'seventh_ops' },
   courtyard_aerial: { pos: [140, 70, 70], look: [40, 0, -30], fov: 55 },
   abyss_gate: { pos: [0, -298.3, -60], look: [0, -294, -82], fov: 75 },
   abyss_city: { pos: [3, -298.3, -94], look: [0, -292, -160], fov: 75 },
