@@ -2097,6 +2097,23 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 1. 折页面目前是平白纸面（emissive 0.18）在暗石门里过曝 → 特效批换星纹之门/漩涡。
 2. 局长室蓝色藏青挂幅/地毯/桌上蓝件换色。
 
+## 批次 M16 · 训练场尾巴 + 档案馆借阅柜台 / 阅览长桌 hero（2026-11-01 01:49 CST 接手，约 35 分钟；与 M15 并行，未碰局长室 / 深渊门 / UI / game-intranet；独立 worktree /tmp/m16wt）
+- 提交：309b4f2（训练场：器材柜 / 射灯 / 木横档）、93ab39b（档案馆柜台 + 长桌 hero + 机位）、00adeed（高窗采光井格栅）、eeb4f0d（射灯 42→130、柜台石面压深）、08d50eb（器材柜再压、长桌皮面提棕、台灯光板）。每次提交前 `npx vite build --outDir /tmp/m16dist` = 0，build 后即删。`?nom16=1` 关闭本批（器材柜色在 m9_training.js 里跟 `?nom9`，高窗格栅是 tr_bay 模型本身，无开关）。
+- A1 核对：run 41226229241（87bcb94）m14_tr_crate / m9_tr_wall 亲眼看——墙脚两只蓝色周转箱已变成暗色木箱，画面里不再有蓝箱 ✔，不需再修。
+- A2 器材柜：m9_training.js LOCKER 0x5c5248 → 0x423b35（run 41227158198 复拍只略暗）→ 0x302a25 / 0x1e1a17、粗糙 0.72、env 0.35、金属 0.05。训练场整体曝光高，立面读得比色值亮很多；末版复拍 run 41228134180（m16c）亲眼看：柜体读成暖深灰褐、不再发白米色 ✔。
+- A3 射击区：m14_training.js 末尾加两盏暖射灯 `m16_range_spot`（0xffc68c，x ±9、y+6.4、z −143.2 → 靶位 y+1.3、z −151.2；左盏投影 1024、右盏不投影）。首版强度 42 在截图里几乎看不出 → eeb4f0d 改 130 / 26 m / 0.7 rad，复拍 run 41227927785（m16b）亲眼看：靶档后墙出现两片暖光、靶架 / 隔板比改前亮且可读 ✔（提升幅度中等，仍偏暗可再加一盏靶档顶光）。
+- A4 木横档：dress_m5.js 射击区 M5 旧木横档（y+2.52，非剧情件，只是 Batch 里的 'wood' 方条）在 M14 靶架开启时不画；滑车吊线由 3.4 m 改 3.41 m、中心 y+4.045，下端正好落到 m14/tr_target 顶部挂钩（y+2.34）。悬空 = 0。
+- A5 高窗：tools/blender/m9_training.py bay 的铁窗棂方格 → 采光井格栅（铁内框 + 两根竖梃 + 中腰横档 + 17 条 40° 斜百叶），重出 public/assets/models/m9/tr_bay.glb（3156 三角；烘焙件 bake() 合并世界坐标，**不 meshopt**）。run 41227324886 m9_tr_wall 亲眼看：高窗从白框方格窗读成深色百叶通风格栅 ✔。
+- B 档案馆：tools/blender/m16_archive.py（`blender.sh -b -P m16_archive.py -- <outdir> <prev|-> counter,table`）→ public/assets/models/m16/{loan_counter 10.4k 三角 199 KB, reading_table 6.5k 三角 131 KB}.glb（gltf-transform meshopt，EXT_meshopt_compression 已核对；原始件 729 / 431 KB）。外包与旧件一致（柜台 7.21 × 1.4，台面顶 1.13 → 放置后 Y+1.11；长桌 5.61 × 1.51，桌面 0.82）。
+  - 柜台：石踢脚 + 铜踢脚板 / 上沿铜线、7 间胡桃框芯（凸芯斜面 + 压线框 + 铜菱形钮）、两端胡桃壁柱（三道凹槽 + 柱头柱础）、四角竖向 L 形铜包角 + 底角帽、台面下两级线脚、深色石台面 + 铜前缘、两块嵌皮写字垫（登记簿下 / 文具端，铜压边）、借阅窗口（本地 x −0.05…1.15，世界 z kz−0.05…kz−1.15：胡桃立柱 + 铜柱础 / 铜箍、上段铜格栅 + 菱形扣、楣板 + 檐口 + 铜铭牌、递物沿）、铜扶脚杆、职员侧格架。窗口位置避开便签（kz+0.84）/ 检索屏（kz+0.6）/ 登记簿 / 印章 / 订书机。
+  - 长桌：厚胡桃桌面 + 两级线脚、深棕皮面嵌心 + 铜压条、四角铜护角（侧板 + 顶板 + 铜钉）、牙板双圆线雕 + 中央铜圆饰、6 只方锥腿（方颈块 + 刻线环 + 铜方靴）、H 形枨；桌上两盏暗铜罩台灯（x ±1.4：铸铜座 / 立杆 / 半筒暗铜罩 / 暖光板自发光 0.95 / 拉链开关）。
+  - 接入：src/world/m16_archive.js（M16_ARCH、m16Mats 按名换 pbr：Wood051 胡桃、Marble021 深石台面 0x2a2420、Granite003A 基座、Metal046A 暗铜 粗糙 0.5 / 铜线 0.45 env 0.5、Leather026 皮面 0x9a5434）；interiors.js 两处 placeModel 换成 m16/*（同 width / pos / rotY），M16 下不画程序化 bankerLamp（ctx.archiveLamps 坐标照旧，点光不变）。world.box 碰撞、琥珀检索屏 loan_scr59、ctx.stickyNote、登记簿 ctx.ledger、剧情触发器全部原位未动。新机位 m16_table / m16_loan_win（src/shots.js）。
+- Blender 预览（亲眼看）：work/r3/m16/preview/prev_sheet.jpg（柜台 4 角度 + 长桌 4 角度）、m9_bay_a_0.png（格栅窗）。
+- 游戏内（run 41227158198，93ab39b；改前用 `&nom16=1` 同 run 拍）：archive_loan / m16_loan_win——柜台读成深胡桃框芯 + 借阅窗口格栅铭牌 ✔，便签与琥珀检索屏仍在原位可见 ✔；石台面读成浅灰 → eeb4f0d 压深，复拍 41227927785 已读成深色石面 ✔。m16_table——长桌厚腿 / 深色桌体 hero 感比旧件强 ✔，但皮面读成灰、台灯罩暗看不出光 → 08d50eb 修，复拍 41228134180。archive_r3 远景正常、无穿插。m14_tr_range 改前改后几乎一样（射灯太弱）→ eeb4f0d。
+- 走查：run 41227161410（93ab39b）通过 31 / 失败 0 / 控制台 0（work/r3/m16/walk/walk/WALKTHROUGH.md）；末版 08d50eb 复跑 41228145871 同样 31 / 0 / 0（work/r3/m16/walk2/walk/WALKTHROUGH.md）。
+- 拼图：work/r3/m16/sheet.jpg（6 行，左改前 / 右改后；脚本 work/r3/m16/sheet.py，新图回来重跑即可）。
+- Drive：分卷 1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq 下新建 v19_m16_models（1tZr7GaRbfaGxM4Khhl1xwXdDoBr1Eewn）内 v19_m16_models.tar.gz（1UKGQmc0PwhZ3nB-0R2qO3vhfKUtGs6e2：m16 两个 glb + m9/tr_bay.glb + m16_archive.py / m9_training.py + m16_archive.js / m14_training.js / m9_training.js / dress_m5.js + 预览）。未删任何旧卷。
+
 ## 批次 M15 · 局长室去蓝 + 深渊门第二轮（续 M11/M13；2026-11-01 01:44 CST 接手，约 35 分钟；与 r3-model-m14 并行，未碰训练场 / UI / game-intranet；独立 worktree /tmp/m15wt）
 - **A 局长室禁蓝**（65b521a）：dressing.js 机要室隔墙西面局徽挂毯 M.navy → 酒红褐呢 0x4a1a14（局徽底同色）；壁炉角地毯 + r3plan 会客区地毯 dz_rugNavy → dz_rugGreen（批次57 已重染为酒红褐底驼纹）；upper.js 镇纸局徽底 navy → 酒红褐；密码键盘绿光 0x30ff70 → 琥珀 0xff9a40。
   - m11_director.js 新增 `warmSweepDirector(zone)`：局长室所有 Props 实例（'props:*'，dressing 与 r3build 两处 P.build 完成后调用）克隆材质 + shader 把蓝/青/绿像素映射成酒红褐（保留明暗），蓝绿自发光改琥珀；玻璃防风烛台 candle_holder（透射玻璃反天光成蓝）改不透射暖琥珀釉。壳体/窗/天空盒不受影响。`?nom15=1` 关。
