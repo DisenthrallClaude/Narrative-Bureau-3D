@@ -84,3 +84,8 @@ assets/tex/ph/asphalt_02 — Poly Haven「Asphalt 02」by Rob Tuytel（CC0，批
 r2/sh_bay_win.glb, r2/sh_bay_bal.glb, r2/sh_shop.glb — 本项目 Blender 自建街屋立面模块（tools/blender/street_house.py，批次33）
 r2/news_rack_6080.glb — 本项目 Blender 脚本原创建模（tools/blender/news_rack_6080.py，批次41 墨绿铁皮报刊架）
 r2/fern_02.glb — Poly Haven「Fern 02」（CC0）；批次41 用作街心草坪内缘草丛
+
+—— 批次 E1 特效 ——
+00GameDevs Three.js 特效库（https://00gamedevs.com/，MIT License，Copyright (c) 2026 00GameDevs (@00vchannel)）：
+  「星紋之門 astral-gate」（深渊门门洞星纹膜）、「貼地薄霧 ground-fog」（档案馆 B1 薄雾）、「浮符矩陣 arcane-matrix」（第七局回写台浮符）。
+  运行时代码 src/vendor/gdevs-vfx.js 保留原 MIT 与 Three.js 许可声明；颜色 / 速度 / 密度按本游戏改为暗金琥珀低亮度。

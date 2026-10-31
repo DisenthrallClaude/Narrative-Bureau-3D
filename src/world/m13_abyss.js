@@ -18,11 +18,13 @@ function mats() {
     m13_bronzeRelief: pbr('Metal046A', { color: new THREE.Color().setRGB(0.47, 0.32, 0.17), metalness: 0.35, roughness: 0.52, env: 0.5 }), // 左门座符刻板同思路
   };
 }
+// 批次 E1：铜框 / 符刻板近黑——第三次只试这一次：很弱的暗金自发光描边（0.12），不改底色
+function e1Glow(MAT) { if (/[?&]noe1glow=1/.test(location.search)) return MAT; for (const k of ['m2_bronze', 'm13_bronzeRelief']) { MAT[k].emissive = new THREE.Color(0x8a5a22); MAT[k].emissiveIntensity = 0.12; } return MAT; }
 const pick = (MAT, m) => MAT[(m?.name || '').replace(/\.\d+$/, '')] ?? m;
 
 export function buildM13Abyss(zone, world, Y) {
   if (!M13_ABYSS || !zone) return Promise.resolve();
-  const MAT = mats();
+  const MAT = e1Glow(mats());
   const job = loadModel('m13/abyss_gate').then((src) => {
     const g = src.clone(true); g.name = 'm13_abyss_gate'; g.position.set(0, Y, 0);
     g.traverse((o) => { if (!o.isMesh) return; o.material = pick(MAT, o.material); o.receiveShadow = true; o.castShadow = false; });

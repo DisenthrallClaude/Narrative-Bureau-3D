@@ -1,5 +1,6 @@
 // 《叙事管理局》入口：渲染、加载、分区、控制、交互、剧情
 import * as THREE from 'three';
+import { initE1FX } from './world/e1_fx.js';
 import { chunkGroup, LodCells, DistCull, PortalCull } from './engine/chunk.js';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { Renderer, QUALITY } from './engine/renderer.js';
@@ -149,6 +150,7 @@ async function boot() {
   UI.onResume(() => lock());
   // 出生点
   player.pos.set(0, 0.05, 72); player.yaw = 0; player.pitch = 0.02; player.spawn = player.pos.clone();
+  await initE1FX(G, { quality: savedQ }); // 批次 E1：特效（深渊门星纹 / B1 薄雾 / 回写台浮符），在预编译前入场景一起预热
   // 预编译
   UI.loadProgress(0.95, '点亮灯光……');
   for (const z of Object.values(ctx.zones)) z.visible = true;
@@ -431,7 +433,7 @@ function loop() {
   curExp += (targetExp - curExp) * Math.min(1, dt * 1.5);
   R.setExposure(curExp);
   for (const s of ctx.screens) s.update(dt, t);
-  updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t); updateDressing(ctx, dt, t); updateDepths(ctx, dt, t);
+  updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t); updateDressing(ctx, dt, t); updateDepths(ctx, dt, t); G.e1fx?.update(dt);
   if (G.lod && !/[?&]nolod=1/.test(location.search)) G.lod.update(camera); if (G.distCull && !/[?&]nocull=1/.test(location.search)) G.distCull.update(camera); if (G.metroCull) G.metroCull.update(camera, G.zone === 'metro_exit' && !/[?&]nometrocull=1/.test(location.search) ? 1 : 1e9); G.portal?.update(camera);
   if (TEST) { frames++; return; }
   R.gl.info.autoReset = false; R.gl.info.reset(); // M6：统计整帧（反射 + 阴影 + 后期全部 pass）
