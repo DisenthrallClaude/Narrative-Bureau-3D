@@ -909,14 +909,28 @@ function buildStreetRows(g, M, place, rnd) {
         s += w + 0.4; k++; if (k % 6 === 0) s += 10; }
     }
   }
+  const lawnTufts = [];
   // 批次37：城墙外南侧（大道两侧 |x| 26–68 m、墙外 125–149 m）= 环路内侧街心绿地：修剪草坪扇形 + 两列高干行道树（每 12 m 等距）+ 石材路缘，不再是平褐空地
   { const gm = M.grass.clone(); for (const k of ['map', 'normalMap', 'roughnessMap']) if (gm[k]) { gm[k] = gm[k].clone(); gm[k].wrapS = gm[k].wrapT = THREE.RepeatWrapping; gm[k].repeat.set(80, 80); gm[k].needsUpdate = true; }
+    /* 批次41：ext_green 看图草坪像地毯（单一贴图 80× 重复、色相均匀）→ 世界坐标两级值噪声：大尺度 18 m 斑块（深绿 / 黄绿 / 微枯）+ 3 m 细斑 + 近路缘 1.2 m 内略深（踩踏 / 水汽）；法线加强 1.6 */
+    gm.normalScale?.set(1.6, 1.6); gm.customProgramCacheKey = () => 'lawn41';
+    gm.onBeforeCompile = (sh) => { sh.vertexShader = 'varying vec3 vLw;\n' + sh.vertexShader.replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvLw = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+      sh.fragmentShader = 'varying vec3 vLw;\nfloat lh(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}\nfloat ln(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(lh(i),lh(i+vec2(1,0)),f.x),mix(lh(i+vec2(0,1)),lh(i+vec2(1,1)),f.x),f.y);}\n' + sh.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+        { vec2 q = vLw.xz; float big = ln(q / 18.0) * 0.65 + ln(q / 7.0) * 0.35, fine = ln(q / 3.0), r = length(vec2(q.x, q.y + 35.0)), edge = 1.0 - smoothstep(0.0, 1.2, min(abs(r - 125.0), abs(r - 149.0)));
+          vec3 tint = mix(vec3(0.78, 0.92, 0.70), vec3(1.10, 1.04, 0.74), smoothstep(0.35, 0.75, big)); tint = mix(tint, vec3(1.08, 0.98, 0.78), smoothstep(0.72, 0.9, fine) * 0.45);
+          diffuseColor.rgb *= tint * (0.9 + 0.2 * fine) * (1.0 - 0.18 * edge); }`); };
     const T0 = 0.21, T1 = 0.474;
     for (const sgn of [1, -1]) { const st = sgn > 0 ? -Math.PI / 2 + T0 : -Math.PI / 2 - T1;
       const lawn = new THREE.Mesh(new THREE.RingGeometry(125, 149, 48, 1, st, T1 - T0), gm); lawn.rotation.x = -Math.PI / 2; lawn.position.set(0, Y0 + 0.08, -35); lawn.receiveShadow = true; lawn.userData.noCull = true; g.add(lawn);
       for (const r of [124.7, 149.3]) { const kerb = new THREE.Mesh(new THREE.RingGeometry(r - 0.3, r + 0.3, 48, 1, st, T1 - T0), curbMat); kerb.rotation.x = -Math.PI / 2; kerb.position.set(0, Y0 + 0.12, -35); kerb.userData.noCull = true; g.add(kerb); }
-      for (const r of [129, 145]) for (let a = T0 + 6 / r; a <= T1 - 4 / r; a += 12 / r) { const th = sgn * a; const [x, z] = at(r, th); tallTrees.push([x, z, th]); } } }
+      for (const r of [129, 145]) for (let a = T0 + 6 / r; a <= T1 - 4 / r; a += 12 / r) { const th = sgn * a; const [x, z] = at(r, th); tallTrees.push([x, z, th]); }
+      for (const r of [125.6, 148.4]) for (let a = T0 + 1.5 / r; a <= T1 - 1.5 / r; a += 3 / r) { const th = sgn * a; const [x, z] = at(r, th); lawnTufts.push([x, z, th]); } } } /* 批次41：草坪内缘贴路缘 0.6 m 一圈蕨类草丛，每 3 m 等距成列（边缘草丛，打破地毯感） */
   streetModules(g, mods, at, Y0); shopSigns(g, mods, at, Y0); busStops(g, at, Y0); console.log('[NB] 街屋模块实例', mods.length, '高干行道树', tallTrees.length);
+  if (lawnTufts.length) loadModel('r2/fern_02').then((src) => { src.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(src); const sc = 0.55 / Math.max(0.01, bb.max.y - bb.min.y), tq = new THREE.Quaternion();
+    src.traverse((o) => { if (!o.isMesh) return; const geo = o.geometry.clone(); for (const n of ['position', 'normal']) { const a = geo.getAttribute(n); if (!a || (a.array instanceof Float32Array && !a.normalized && !a.isInterleavedBufferAttribute)) continue; const f = new Float32Array(a.count * 3); for (let i = 0; i < a.count; i++) { f[i * 3] = a.getX(i); f[i * 3 + 1] = a.getY(i); f[i * 3 + 2] = a.getZ(i); } geo.setAttribute(n, new THREE.BufferAttribute(f, 3)); } geo.applyMatrix4(o.matrixWorld); geo.translate(0, -bb.min.y, 0);
+      const im = new THREE.InstancedMesh(geo, o.material, lawnTufts.length);
+      lawnTufts.forEach(([x, z, yaw], i) => { const s2 = sc * (0.9 + 0.2 * ((i * 0.618) % 1)); tq.setFromAxisAngle(up, yaw + i * 2.4); m4.compose(new THREE.Vector3(x, Y0 + 0.08, z), tq, new THREE.Vector3(s2 * 1.3, s2, s2 * 1.3)); im.setMatrixAt(i, m4); });
+      im.computeBoundingSphere(); im.userData.noCull = true; im.frustumCulled = false; im.castShadow = false; im.receiveShadow = true; g.add(im); }); });
   if (tallTrees.length) loadModel('r2/street_tree_tall').then((src) => { src.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(src); const sc = 9.5 / Math.max(0.01, bb.max.y - bb.min.y), S = new THREE.Vector3(sc, sc, sc), tq = new THREE.Quaternion();
     src.traverse((o) => { if (!o.isMesh) return; const geo = o.geometry.clone(); for (const n of ['position', 'normal']) { const a = geo.getAttribute(n); if (!a || (a.array instanceof Float32Array && !a.normalized && !a.isInterleavedBufferAttribute)) continue; const f = new Float32Array(a.count * 3); for (let i = 0; i < a.count; i++) { f[i * 3] = a.getX(i); f[i * 3 + 1] = a.getY(i); f[i * 3 + 2] = a.getZ(i); } geo.setAttribute(n, new THREE.BufferAttribute(f, 3)); } /* 批次34 修：street_tree_tall 是 meshopt 量化 glb（Int16 归一化坐标），直接 applyMatrix4 会把米制坐标截断到 ±1 → 树缩成地上一团（ext_house 看图）；先解量化成 Float32 */ geo.applyMatrix4(o.matrixWorld); geo.translate(0, -bb.min.y, 0);
       let mat = o.material; if (/trunk/.test(mat?.name || '')) { // 批次35：树干原贴图纵向拉伸、偏红 → ambientCG Bark007（CC0）按真实米制柱面重映射：u = 角度 × 半径 / 0.6 m、v = 高度 / 0.9 m（树高 9.5 m 缩放后）
