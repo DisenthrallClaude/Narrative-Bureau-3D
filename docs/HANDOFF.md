@@ -2112,6 +2112,8 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 - 游戏内（run 41227158198，93ab39b；改前用 `&nom16=1` 同 run 拍）：archive_loan / m16_loan_win——柜台读成深胡桃框芯 + 借阅窗口格栅铭牌 ✔，便签与琥珀检索屏仍在原位可见 ✔；石台面读成浅灰 → eeb4f0d 压深，复拍 41227927785 已读成深色石面 ✔。m16_table——长桌厚腿 / 深色桌体 hero 感比旧件强 ✔，但皮面读成灰、台灯罩暗看不出光 → 08d50eb 修，复拍 41228134180。archive_r3 远景正常、无穿插。m14_tr_range 改前改后几乎一样（射灯太弱）→ eeb4f0d。
 - 走查：run 41227161410（93ab39b）通过 31 / 失败 0 / 控制台 0（work/r3/m16/walk/walk/WALKTHROUGH.md）；末版 08d50eb 复跑 41228145871 同样 31 / 0 / 0（work/r3/m16/walk2/walk/WALKTHROUGH.md）。
 - 拼图：work/r3/m16/sheet.jpg（6 行，左改前 / 右改后；脚本 work/r3/m16/sheet.py，新图回来重跑即可）。
+- 末版 m16_table（run 41228134180，08d50eb）亲眼看：**皮面仍读成暗灰而不是深棕、胡桃桌体偏近黑、两盏暗铜台灯在远处只是小黑影、暖光板几乎看不出**（两次调色未解决，按规则停）。下批建议：皮面改不带贴图的纯色 MeshStandardMaterial 0x6a3a22（Leather026 贴图本身偏灰）、胡桃提到 0x8a5a3c、台灯罩内侧加 0.6 自发光内衬或在每盏灯下补一盏 1.5 m 不投影暖点光；柜台前脸同样偏暗，铜踢脚 / 扶脚杆在 archive_loan 里不显。
+- 未完成：上条长桌调色；射击区仍偏暗（可再加一盏靶档顶光）；穿模 / 越界只按尺寸核对（外包、碰撞与旧件一致，窗口避让桌面物件），未跑 audit56。
 - Drive：分卷 1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq 下新建 v19_m16_models（1tZr7GaRbfaGxM4Khhl1xwXdDoBr1Eewn）内 v19_m16_models.tar.gz（1UKGQmc0PwhZ3nB-0R2qO3vhfKUtGs6e2：m16 两个 glb + m9/tr_bay.glb + m16_archive.py / m9_training.py + m16_archive.js / m14_training.js / m9_training.js / dress_m5.js + 预览）。未删任何旧卷。
 
 ## 批次 M15 · 局长室去蓝 + 深渊门第二轮（续 M11/M13；2026-11-01 01:44 CST 接手，约 35 分钟；与 r3-model-m14 并行，未碰训练场 / UI / game-intranet；独立 worktree /tmp/m15wt）
