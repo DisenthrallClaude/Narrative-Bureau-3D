@@ -143,15 +143,17 @@ export function buildEastWing(scene, world, ctx) {
   const w4 = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.6), signMaterial('公告', ['归档人员无法被查询', '若您仍来到本窗口', '请填写附表七'], 420, 600));
   w4.position.set(23.5 + 3 * 5.4 + 1.2, Y + 1.8, ZM + 1.52); zone.add(w4); ctx.anchors.doc_cit_window4 = w4;
   const f7 = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.003, 0.3), new THREE.MeshStandardMaterial({ color: 0xf2efe6, roughness: 0.8 })); f7.position.set(23.5 + 3 * 5.4 - 0.8, Y + 1.115, ZM + 1.9); zone.add(f7); ctx.anchors.doc_cit_form7 = f7;
+  // 批次54：游戏内 Wood051 调色版读成浅橡木 → 胡桃木材质整体压深偏冷（setRGB 幂等，两张填单台共享材质不会重复压暗）
+  const walnutTone = (o) => { o?.traverse?.((m) => { if (!m.isMesh) return; for (const mt of [].concat(m.material)) if (mt && /^(fd|qm)_walnut/.test(mt.name)) mt.color.setRGB(0.52, 0.42, 0.36); }); return o; };
   // 叫号机
   if (R3.citizen_service) { // 批次52：方盒 + 蓝发光片 → Blender 精建 r2/cs_queue_machine（胡桃木柜身（批次54 去墨绿） + 铜壳三位七段码显示头 + 取号铜按钮 / 出票口，tools/blender/cs_queue_machine.py），正面朝 −Z
-    add(placeModel('r2/cs_queue_machine', { height: 1.4, pos: [22, Y, ZA - 3], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.95); return o; }));
+    add(placeModel('r2/cs_queue_machine', { height: 1.4, pos: [22, Y, ZA - 3], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.95); return walnutTone(o); }));
   } else {
   b.box('blackMetal', 0.5, 1.4, 0.4, [22, Y + 0.7, ZA - 3], { uv: 1, collide: true });
   const qn = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.3), new THREE.MeshStandardMaterial({ color: 0, emissive: 0x3a8cff, emissiveIntensity: 1.2 })); qn.position.set(22, Y + 1.2, ZA - 3 - 0.21); qn.rotation.y = Math.PI; zone.add(qn); }
   // 填单台（中央）
   // 批次52：R3 下 wood 方盒 + onyx 板 → Blender 精建 r2/cs_form_desk（双面胡桃木斜面填单台 + 铜框玻璃压板下表格样张 + 端头铜笔架，tools/blender/cs_form_desk.py）；中央平带 y 1.055 承接剧情表格锚点
-  for (const x of [30, 40]) { if (R3.citizen_service) { add(placeModel('r2/cs_form_desk', { width: 3.4, pos: [x, Y, ZA - 7] })); world.box(x, Y + 0.5, ZA - 7, 3.3, 1.0, 1.3); continue; } b.box('wood', 3.2, 1.0, 1.2, [x, Y + 0.5, ZA - 7], { uv: 0.6, collide: true }); b.box('onyx', 3.4, 0.06, 1.4, [x, Y + 1.03, ZA - 7], { uv: 0.5 }); }
+  for (const x of [30, 40]) { if (R3.citizen_service) { add(placeModel('r2/cs_form_desk', { width: 3.4, pos: [x, Y, ZA - 7] }).then(walnutTone)); world.box(x, Y + 0.5, ZA - 7, 3.3, 1.0, 1.3); continue; } b.box('wood', 3.2, 1.0, 1.2, [x, Y + 0.5, ZA - 7], { uv: 0.6, collide: true }); b.box('onyx', 3.4, 0.06, 1.4, [x, Y + 1.03, ZA - 7], { uv: 0.5 }); }
   const rf = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.003, 0.3), new THREE.MeshStandardMaterial({ color: 0xf6f2e8, roughness: 0.8 })); rf.position.set(30, Y + 1.065, ZA - 7); rf.rotation.y = 0.2; zone.add(rf); ctx.anchors.doc_cit_report_form = rf;
   // 排队座椅（三排）
   for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) add(placeModel('street_seating', { width: 4.2, pos: [27 + k * 10, Y, ZA - 11 - r * 2.4], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.85); return o; }));
