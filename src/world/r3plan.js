@@ -1756,7 +1756,7 @@ export function planS7Ops(y) {
   for (const x of [-7.2, -6.1]) out.push({ m: 'r2/locker_equipment', x, y, z: -119.0, /* M8：原 −120.6 与 M5 沙盘穿 3 cm → 北移 */ yaw: 0, h: 1.9, tag: '休整角', on: 'floor', col: [1.1, 1.9, 0.47] });
   out.push({ m: 'r2/small_wooden_table_01', x: -4.6, y, z: -117.4, yaw: 0.1, h: 0.72, tag: '休整角', on: 'floor', col: [0.8, 0.72, 0.6] });
   out.push({ m: 'r2/vintage_radio', x: -4.75, y: y + 0.72, z: -117.45, yaw: 0.2, w: 0.36, tag: '休整角', on: 'shelf' });
-  out.push({ m: 'r2/modified_thermos', x: -4.3, y: y + 0.72, z: -117.3, yaw: 0, h: 0.3, tag: '休整角', on: 'shelf' });
+  // 批次M10：绿色保温壶（桌面绿色陈设，红配绿）撤掉
   for (const [x, z, r] of [[-5.3, -116.6, 0.6], [-3.9, -118.1, 2.6]]) out.push({ m: 'r2/folding_wooden_stool', x, y, z, yaw: r, h: 0.45, tag: '休整角', on: 'floor' });
   light(out, -5.6, y + 2.6, -116.0, 0xffcf98, 1.4, 6);
   // 西墙：衣帽架（礼帽）+ 立式黑板（K 的推演）+ 第七局徽 N02 + 地堡灯
