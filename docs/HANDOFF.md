@@ -1955,3 +1955,13 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 - Drive：快照_分卷 新增 v06_m4_models.tar 1QN3GGu0NZ_qnn7ZIcMyXCt_5U0hHxyFf（m4 glb + 脚本 + 重染旗贴图 + 预览 + 对比图）；v01–v05 未动。
 ### 下批先做
 1. 取 41218178525 门扇两机位验收色相锁。2. 叫号机亮段调红、铜壳加一点高光。3. 正门门廊石门套 / 尖拱线脚 / 柱头 / 台阶 hero 模型（本批未做）。
+
+## 批次 M6 · 档案馆 / B1 家具 hero + M2 遗留快修（2026-11-01 00:00 CST 接手，约 35 分钟；与 r3-model-m4 / m5 并行，只动 archive / archive_b1）
+- 提交：fcdfed6（快修 + 卡片目录柜 + 密集架端板）、600714d（机位）、a2df50d（B1 档案铁柜 + 东墙铁门）、0cc5cb9（B1 烤漆改素色暖灰）。`?nom2=1` 同时关闭 M2 与 M6（M6_CAT 也读 nom2）。
+- 快修：①西墙高窗 interiors.js 的 glassIn 在 M2_ARCHIVE 下关闭，m2_archive.js 自建 4 樘拱窗，贴图 = stainedGlassTexture(3) 按像素把蓝色菱格/纹章底重映射为琥珀/酒红/暗金（emissive 1.35）——**游戏内已确认变暖、无蓝**；②planArchive 全部 globe 加 dim（r3_globeDim 自发光 0.5）——**游戏内 archive_r3 东门机位上方那颗白球仍然过曝，未解决**（推测是球体正下方 light(-23.8,y+2.8) 与柜台 spot 把白色漫反射打爆 + bloom，下一步：档案馆球灯单独换烟琥珀玻璃材质 color≈0x5a3a20 或换铜罩吊灯模型，并降低那盏点光）；③m1_burgundy 0x8a3428 → 0xc25a40（藻井格心/楣带/楣板，仰拍机位已读成红褐不再是深褐）；④阅览台灯绿罩 → 暗铜罩（M6_LAMP，只覆盖 lampGreen）。
+- 模型（tools/blender/m6_furniture.py，`blender.sh -b -P m6_furniture.py -- public/assets/models/m6 <prev> catalog,compact,cabinet,door`；立方投影 UV 1 m）：card_catalog（0.86×1.40×0.42，3×7 抽屉 + 铜标签框/卡签/铜拉手，7248 三角）×8 西墙 x −55.45 原 drawer_cabinet 同位；compact_end（2.0×3.0 端板，凹芯板压框/铸铁把手座/手摇轮轴座/铜铆钉，正面 ≤0.125 不挡原铜卡框/编号/手摇轮/第 7 排拨盘）挂进每排 compactRows[i].grp 随架移动，原 paintedSteel 端板/分格线/把手/踢脚在 M2_ARCHIVE 下关；b1_cabinet（四斗铁柜）×16 替换 rusty_filing_cabinet，整排一个 world.box；b1_door（1.2×2.2 防火铁门）东墙 z −39.6。
+- 借阅柜台 / 阅览长桌：现有 r2/loan_counter_6080、r2/reading_table_6080 已是批次 32 的 Blender 精建，本批**未重建**；检索屏 / ctx.stickyNote / 触发器未动。
+- 截图（Actions run 41218207888、41219017392、41219165246；本地 work/r3/m6/shots/、拼图 work/r3/m6/sheet.jpg、Blender 预览 work/r3/m6/preview/）：彩窗 OK；藻井提亮 OK；卡片目录柜到位但整体偏暗（胡桃 pbr 在西南角暗区，抽屉标签看不清）；密集架端板第一版（Metal046A + 金属度）在 B1 读成黑漆 → 0cc5cb9 改素色 0xa79b8b。
+- 机位：m6_eastdoor / m6_ceiling / m6_west / m6_catalog / m6_b1（src/shots.js）。
+- 备份：Drive 分卷文件夹 v09_m6_models（1Rw6Xk98NrM6g7aU0SV3orzgSgbl6mYAC）内 v09_m6_models.tar.gz（169sc1TgDR5V5DhUjksLcQyCPTAg67kHh）：4 个 glb + m6_furniture.py + m2_archive.js + 预览图。
+- 注意：本批中途共享工作区 game/ 被回滚到旧提交 c044993（他人未跟踪文件挡住 pull），后续提交改用 GIT_INDEX_FILE 临时索引 + commit-tree 直接推 origin/main，没有动 game/ 工作区；接手者请先 `git fetch` 再看。
