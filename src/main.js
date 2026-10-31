@@ -409,14 +409,18 @@ function loop() {
   if (G.lod && !/[?&]nolod=1/.test(location.search)) G.lod.update(camera); if (G.distCull && !/[?&]nocull=1/.test(location.search)) G.distCull.update(camera); if (G.metroCull) G.metroCull.update(camera, G.zone === 'metro_exit' && !/[?&]nometrocull=1/.test(location.search) ? 1 : 1e9); G.portal?.update(camera);
   if (TEST) { frames++; return; }
   R.gl.info.autoReset = false; R.gl.info.reset(); // M6：统计整帧（反射 + 阴影 + 后期全部 pass）
-  reflector.setY(FLOOR); reflector.update(scene, camera, R.q.reflect);
+  // 批次44：截图专用「静帧冻结」——机位静止、场景静止，第 3 帧起阴影贴图与平面反射与前帧逐像素相同，
+  // 不再重渲（SwiftShader 下大厅每帧数十秒主要耗在多盏投影点光 6 面立方阴影 + 反射整场景再渲一遍）。仅截图模式生效，游戏画面不变。
+  const frozen = SHOT && shotStarted && shotLite && shotN >= 2;
+  R.gl.shadowMap.autoUpdate = !frozen;
+  reflector.setY(FLOOR); if (!frozen) reflector.update(scene, camera, R.q.reflect);
   R.render(dt);
   frames++;
   perf.last = { calls: R.gl.info.render.calls, tris: R.gl.info.render.triangles, zone: G.zone };
   if (showFps) { fpsAcc += dt; fpsN++; perf.max = Math.max(perf.max, dt); if (fpsAcc > 0.5) { const i = R.gl.info; UI.setFpsText(`${Math.round(fpsN / fpsAcc)} fps · ${(fpsAcc / fpsN * 1000).toFixed(1)} ms（峰 ${(perf.max * 1000).toFixed(0)}）\n${i.render.calls} drawcall · ${(i.render.triangles / 1e6).toFixed(2)}M 三角面\n程序 ${i.programs?.length ?? 0} · 几何 ${i.memory.geometries} · 贴图 ${i.memory.textures}\n区域 ${G.zone ?? '-'} · 画质 ${R.q.label ?? ''}`); fpsAcc = 0; fpsN = 0; perf.max = 0; } }
   if (SHOT && shotStarted) { shotN++; LOG('frame', shotN, (performance.now() / 1000).toFixed(1)); if (shotN === shotFrames) window.__READY__ = true; }
 }
-let shotFrames = 30, shotStarted = false, shotN = 0;
+let shotFrames = 30, shotStarted = false, shotN = 0, shotLite = false; const liteOff = [];
 window.__setShot = (name) => { window.__READY__ = false; shotN = 0; applyShot(name); requestAnimationFrame(loop); };
 function startShot() { applyShot(SHOT); }
 function applyShot(name) {
@@ -434,6 +438,18 @@ function applyShot(name) {
   curExp = targetExp; time.value = s.t ?? 12;
   if (/^b5(?!_door)/.test(name) && ctx.vault?.door) { ctx.vault.door.opened = true; for (const ac of ctx.vault.door.acts) ac.play(); ctx.vault.door.mixer.setTime(10); }
   shotFrames = Number(params.get('frames') || 8);
+  // 批次44：截图低开销（SHOTS 里 lite: 1 或 URL lite=1；lite=0 强制关）——
+  // ①静帧冻结（见 loop）；②关掉照不到画面的有限射程点光 / 聚光：光球（位置 + distance）与主视锥、及其关于反射地面的镜像都不相交时，
+  //   它对任何可见像素（含地面反射里的像素）贡献恒为 0，关掉后着色器光源循环变短、编译与逐像素开销都降，成片逐像素不变。
+  for (const l of liteOff.splice(0)) l.visible = true;
+  shotLite = params.get('lite') === '0' ? false : !!(s.lite || params.get('lite') === '1');
+  if (shotLite) {
+    scene.updateMatrixWorld(true); camera.updateMatrixWorld(); const fr = new THREE.Frustum(), m4 = new THREE.Matrix4(), sp = new THREE.Sphere(), p = new THREE.Vector3(); let n = 0, off = 0;
+    m4.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); fr.setFromProjectionMatrix(m4);
+    scene.traverseVisible((o) => { if (!(o.isPointLight || o.isSpotLight) || !(o.distance > 0)) return; n++; o.getWorldPosition(p); sp.set(p, o.distance * 1.05);
+      if (fr.intersectsSphere(sp)) return; sp.center.y = 2 * FLOOR - sp.center.y; if (fr.intersectsSphere(sp)) return; o.visible = false; liteOff.push(o); off++; });
+    LOG('lite: 关闭不入镜点光', off, '/', n);
+  }
   shotStarted = true;
   window.__SHOT_INFO__ = () => ({ calls: R.gl.info.render.calls, tris: R.gl.info.render.triangles, zone: G.zone });
   window.__PICK__ = (x, y) => { const rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(x, y), camera); const h = rc.intersectObjects(scene.children, true).find((i) => i.object.visible && i.object.material); if (!h) return null; const m = Array.isArray(h.object.material) ? h.object.material[0] : h.object.material; const tx = (t) => t ? { img: !!t.image, w: t.image?.width, ver: t.version } : null;
