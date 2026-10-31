@@ -144,7 +144,7 @@ export function buildEastWing(scene, world, ctx) {
   w4.position.set(23.5 + 3 * 5.4 + 1.2, Y + 1.8, ZM + 1.52); zone.add(w4); ctx.anchors.doc_cit_window4 = w4;
   const f7 = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.003, 0.3), new THREE.MeshStandardMaterial({ color: 0xf2efe6, roughness: 0.8 })); f7.position.set(23.5 + 3 * 5.4 - 0.8, Y + 1.115, ZM + 1.9); zone.add(f7); ctx.anchors.doc_cit_form7 = f7;
   // 批次54：游戏内 Wood051 调色版读成浅橡木 → 胡桃木材质整体压深偏冷（setRGB 幂等，两张填单台共享材质不会重复压暗）
-  const walnutTone = (o) => { o?.traverse?.((m) => { if (!m.isMesh) return; for (const mt of [].concat(m.material)) if (mt && /^(fd|qm)_walnut/.test(mt.name)) mt.color.setRGB(0.52, 0.42, 0.36); }); return o; };
+  const walnutTone = (o) => { o?.traverse?.((m) => { if (!m.isMesh) return; for (const mt of [].concat(m.material)) if (mt && /^(fd|qm)_walnut/.test(mt.name)) mt.color.setRGB(0.22, 0.205, 0.27); }); /* 批次55：0.52/0.42/0.36 读成中深偏橙 → 压成深胡桃偏冷（目标 #4a3022 一带，B 相对抬高防偏橙） */ return o; };
   // 叫号机
   if (R3.citizen_service) { // 批次52：方盒 + 蓝发光片 → Blender 精建 r2/cs_queue_machine（胡桃木柜身（批次54 去墨绿） + 铜壳三位七段码显示头 + 取号铜按钮 / 出票口，tools/blender/cs_queue_machine.py），正面朝 −Z
     add(placeModel('r2/cs_queue_machine', { height: 1.4, pos: [22, Y, ZA - 3], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.95); return walnutTone(o); }));
