@@ -310,7 +310,7 @@ def security_line():
             for zz in (GZ + 2.4, GZ + 4.2):
                 Mq = G(xx, Y, zz)
                 v, f = revolve([(0.17, 0), (0.18, 0.02), (0.16, 0.045), (0.035, 0.06), (0.028, 0.1), (0.028, 0.92), (0.04, 0.94), (0.045, 0.98), (0.0, 1.0)], 12); A.add('brass', v, f, Mq, smooth=True)
-            v, f = cbox(0.02, 1.8, 0.055, 0.005); A.add('navyBelt', v, f, G(xx, Y + 0.88, GZ + 3.3))
+            v, f = cbox(0.02, 1.8, 0.055, 0.005); pass  # 批次47 去伸缩带；原 A.add('navyBelt', v, f, G(xx, Y + 0.88, GZ + 3.3))
     for sx in (-1, 1):
         gbox('steel', sx * 15, Y + 0.55, GZ, 4.8, 1.1, 0.12, 0.02); col(sx * 15, Y + 0.6, GZ, 4.8, 1.2, 0.4)
         # X 光行李机：机身 + 通道铅帘 + 滚筒输送

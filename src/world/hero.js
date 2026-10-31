@@ -179,6 +179,7 @@ export async function placeHero(group, world, url, opts = {}) {
   g.scene.traverse((o) => {
     if (!o.isMesh) return;
     const mn = (o.material?.name || '').replace(/\.\d+$/, '');
+    if (opts.hide?.includes(mn)) { o.visible = false; return; } // 批次47：烘焙进 GLB 的旧件整体去掉（大厅深蓝伸缩带 navyBelt，批次43 已换天鹅绒拉绳）
     if (opts.cut) for (const c of opts.cut) if (c.mats.includes(mn)) cutTris(o, c.box); // 批次33：按世界包围盒删掉烘焙进 GLB 的某些摆件三角
     let m = table[mn];
     if (!m) { missing.add(mn); m = table.trim ?? o.material; }

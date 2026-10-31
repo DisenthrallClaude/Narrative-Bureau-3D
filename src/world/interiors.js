@@ -477,7 +477,7 @@ function buildHall(zone, world, ctx, M, add) {
 // ---------------- R2 精修安检大厅（tools/blender/hall.py → bake_lm.py：Cycles 烘焙光照贴图 + 反射探针）----------------
 function heroHall(zone, world, ctx, M) {
   const Y = FLOOR;
-  ctx.heroHallJob = placeHero(zone, world, './assets/hero/hero_hall.glb', { mats: hallMats(), lm: './assets/hero/hero_hall_lm.webp', lmInPlace: true, lmOpts: { intensity: 1.0, rgbmRange: 8.0 }, castShadow: false, cut: [-1, 1].map((sx) => ({ mats: ['leatherBlack', 'steel'], box: [sx > 0 ? 14.2 : -15.6, Y - 0.2, -64.2, sx > 0 ? 15.6 : -14.2, Y + 1.3, -56.8] })) /* 批次33：两侧廊黑皮机场排椅（hall.py beam_seating ±14.9, z −59/−62）删掉，换 wait_bench_6080 */ });
+  ctx.heroHallJob = placeHero(zone, world, './assets/hero/hero_hall.glb', { mats: hallMats(), hide: ['navyBelt'], lm: './assets/hero/hero_hall_lm.webp', lmInPlace: true, lmOpts: { intensity: 1.0, rgbmRange: 8.0 }, castShadow: false, cut: [-1, 1].map((sx) => ({ mats: ['leatherBlack', 'steel'], box: [sx > 0 ? 14.2 : -15.6, Y - 0.2, -64.2, sx > 0 ? 15.6 : -14.2, Y + 1.3, -56.8] })) /* 批次33：两侧廊黑皮机场排椅（hall.py beam_seating ±14.9, z −59/−62）删掉，换 wait_bench_6080 */ });
   for (const sx of [-1, 1]) for (const z of [-59.0, -62.2]) placeModel('r2/wait_bench_6080', { width: 2.9, rotY: -sx * Math.PI / 2, pos: [sx * 14.95, Y, z] }).then((o) => { zone.add(o); world.boundsOf?.(o, 0.85); }); // 坐面朝中殿，两张成排
   ctx.hallFloorMats = [hallMats().floorNave, hallMats().marbleDark, hallMats().floorAisle];
   // 批次44：两侧拱廊（侧廊 x ±12…±17.4）在烘焙光照里近乎全黑，主机位 hall 左右拱券下读成黑洞 → 每侧 3 盏暖色低强度补光（不投影，射程 9 m，挂在侧廊拱顶下 5.2 m）
