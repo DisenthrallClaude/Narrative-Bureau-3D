@@ -21,9 +21,11 @@ function mats() {
     m1_paper: pbr('Fabric023', { color: 0xe0d2b4, roughness: 0.9, env: 0.2 }),
     m6_enamel: new THREE.MeshStandardMaterial({ color: 0xa79b8b, metalness: 0.12, roughness: 0.5, envMapIntensity: 0.5 }),
     m6_enamelDark: new THREE.MeshStandardMaterial({ color: 0x6f665a, metalness: 0.12, roughness: 0.52, envMapIntensity: 0.5 }),
-    m9_glow: (() => { const m = new THREE.MeshStandardMaterial({ color: 0x1a1008, emissive: 0xe0903e, emissiveIntensity: 0.7, roughness: 0.9 }); m.userData.noShadow = true; return m; })(), // 高窗暖琥珀内透，自发光 <1
+    m9_glow: (() => { const m = new THREE.MeshStandardMaterial({ color: 0x14100c, emissive: 0xf0d8b4, emissiveIntensity: 0.45, roughness: 0.9 }); m.userData.noShadow = true; return m; })(), // 高窗（采光井）暖白内透；M12：0.7 奶黄 → 0.45 暖白
   };
 }
+// M12：器材柜单独一套暖灰烤漆（原 0xa79b8b 在游戏里读成白色现代铁柜）
+const LOCKER = { m6_enamel: new THREE.MeshStandardMaterial({ color: 0x766b5e, metalness: 0.15, roughness: 0.55, envMapIntensity: 0.5 }), m6_enamelDark: new THREE.MeshStandardMaterial({ color: 0x463e35, metalness: 0.15, roughness: 0.55, envMapIntensity: 0.5 }) };
 const pick = (MAT, m) => MAT[(m?.name || '').replace(/\.\d+$/, '')] ?? m;
 function bake(src, mxs, MAT) {
   const byMat = new Map(); src.updateMatrixWorld(true);
@@ -45,7 +47,7 @@ export function buildM9Training(zone, world, y) {
   const jobs = [];
   jobs.push(loadModel('m9/tr_bay').then((s) => { const g = bake(s, bays, MAT); g.name = 'm9_tr_bay'; zone.add(g); }));
   jobs.push(loadModel('m9/tr_lectern').then((s) => { const g = bake(s, [MX(-22, y, -104.0, Math.PI)], MAT); g.name = 'm9_tr_lectern'; g.traverse((o) => { if (o.isMesh) o.castShadow = true; }); zone.add(g); }));
-  jobs.push(loadModel('m9/tr_locker').then((s) => { const I = []; for (let k = 0; k < 5; k++) I.push(MX(12.7, y, -103.6 - k * 1.02, -Math.PI / 2)); const g = bake(s, I, MAT); g.name = 'm9_tr_locker'; g.traverse((o) => { if (o.isMesh) o.castShadow = true; }); zone.add(g); }));
+  jobs.push(loadModel('m9/tr_locker').then((s) => { const I = []; for (let k = 0; k < 5; k++) I.push(MX(12.7, y, -103.6 - k * 1.02, -Math.PI / 2)); const g = bake(s, I, { ...MAT, ...LOCKER }); g.name = 'm9_tr_locker'; g.traverse((o) => { if (o.isMesh) o.castShadow = true; }); zone.add(g); }));
   if (world) { world.box(-22, y + 0.58, -104.0, 0.8, 1.15, 0.6); world.box(12.7, y + 0.95, -105.64, 0.5, 1.9, 5.1); }
   return Promise.all(jobs).catch((e) => console.warn('M9 training', e));
 }
