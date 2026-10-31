@@ -175,6 +175,37 @@
 - **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
 - 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
 
+## R3 批次36（2026-10-31 09:42 CST 接手，约 35 分钟）
+### 提交
+9db5eac 街屋模块翻正 + 树皮 + 相框 + 新机位 cc_r3_c / ext_tree；4e91f3e 市民服务大厅引导台 Blender 精建 + cs_r3_c；eb48edf 街屋模块外残开间 / 正面亮窗；ab2ff5d 山墙亮窗压暗 + 相框去橙；b107a79 值班长台背墙挂图 / 壁灯出墙 + Blender 台体木纹 + cs_r3_c 机位修正；966522a 相框磨亮点（**最终游戏代码**）。每次提交前本机 `npx vite build` 返回 0；r3plan citizen_service 438 件 0 错 0 警（work/r3/b36/plan_cs.png）、command_center 324 件 0 错（3 条旧 cctv 离墙警告，work/r3/b36/plan_command.png）。
+### 0 截图任务能否正常结束（52c446c 验证）✔
+- 本批所有 job 都在“拍”步骤自己结束、conclusion success，没有再挂到取消：外景 ext_house / ext_street / ext_tree ≈3 分钟，id_yinze ≈10 分钟，室内 cc / cs 机位 12–20 分钟。walk 组 ≈3 分钟。
+### 1 外观街屋（9db5eac → eb48edf → ab2ff5d）
+- **★ 三批改不动的根因**：tools/blender/street_house.py 注释写“Blender +Y 朝街 → glTF +Z”，实际 glTF 导出 Y-up 换算是 Blender +Y → **glTF −Z**（读 glb accessor：sh_shop 玻璃 z = +0.08、雨棚全在 z < 0）。于是阳台板 / 铁栏 / 雨棚 / 窗套 / 窗台全部朝楼内长进墙里，只有本应退进的玻璃和木窗框凸在墙外——这就是“只见落地门 + 细横线、雨棚不明显”。修：streetModules 里 geometry 克隆后 `rotateY(π)`；出挑倍率按真出挑重定（窗 ×1.5、阳台 ×1.35 ≈ 1.28 m、雨棚 ×1.9 ≈ 2.1 m，人行道 4 m）。本机缺 libatk 时 _pick.mjs 要 `LD_LIBRARY_PATH=/workspace/work/tools/libs/usr/lib/aarch64-linux-gnu`；本批没用上拾取（读 glb 已定位），下批如需仍可用。
+- 白闪点：正面（局部 ±Z 面）着色器不再画亮窗 / 亮橱窗，改由模块 litGlass 出稳定少量暖窗（窗 12%、店面约 45%，都按户 hash）；模块玻璃去金属度、粗糙度 0.22。模块覆盖范围外的残开间（实例宽 12 / 18 m 的楼两端）着色器不再画大块暗窗 / 白亮橱窗（shader 里按实例宽复算模块排布 shopCov / winCov）。山墙亮窗 2.0 → 0.75、侧面橱窗 1.4 → 0.8 偏暖。
+- 树皮：按 0.4 m 高度分层求各层中心再做柱面 UV（原整棵树均值中心，分叉枝干绕错中心被拉平）+ Bark007 压暗 0x8f8574 + 法线 ×1.8。
+- **看图**：ext_house（work/r3/b36/r41157881861/h36c/ext_house.png，对比 cmp36_ext_house.jpg）：**阳台板 + 黑铁栏 + 落地门、窗套 / 窗楣 / 窗台、红帆布雨棚全部读得出，白闪点消失**（上）；山墙侧面亮窗 / 侧面橱窗仍是偏奶白的几块（中，已压暗一档；ab2ff5d 后 h36c 仍见）；招牌带是平涂色块（中下，留后）。ext_tree（r41157487926/t36b/ext_tree.png）：树干近景看得出纵向树皮沟纹、颜色褐灰（中上）；残开间成干净墙面 + 招牌带（中）。ext_street（r41156994874/x36/ext_street.png）：同批次35（中上）。
+- ext_sky / ext_bird（批次35 图 work/r3/b35/r41154157778/b35s、b35b，拼图 work/r3/b36/sky_bird.jpg）细看：主楼 + 城墙 + 尖塔轮廓雄伟 ✔；**城墙与第一圈街屋之间是一大片平褐空地**、两片街屋在画面左右像孤立方块（下）；ext_bird 前景尖塔挡画面上部、墙外同样平地（中下）→ 下批：墙外 0–150 m 用绿化带 / 停车场 / 低层附属院落按功能填（不随机）。
+### 2 指挥中心（9db5eac 机位，b107a79 修）
+- 新机位 **cc_r3_c**（平台前沿看北）。第一张图（r41156994874/c36/cc_r3_c.png）：值班长台朝向对（芯板立面朝主屏、周闻椅在后），未见穿模，平台前沿到台前约 2 m 不挡道 ✔；问题：① 胡桃木面是无 UV 纯色，暖光下像橙色塑料；② **背墙三联挂图整幅埋在墙里、铜壁灯只露灯罩像浮空**——北墙 wallZ(−61, 厚 0.3) 墙面在 −60.85，挂图放在 Z0+0.03。修：挂图 / 壁灯 → Z0+0.18 / +0.17；assets.js loadModel 对 `dd_walnut*` / `gd_walnut*` 材质补物体空间盒投影 UV + Wood051 木纹（值班长台、引导台共用）。改后图见下方“截止本节”。
+### 3 铜相框（9db5eac → ab2ff5d → 966522a）
+- _oldBronze → oldBronzeMat()：canvas 旧铜贴图（氧化暗斑 + 少量铜绿 + 细碎磨亮点）+ 粗糙度噪声图 + MeshPhysical 清漆 + envMap 2.6。
+- **看图**（work/r3/b36/yinze3.jpg：左 b35 / 中 9db5eac / 右 ab2ff5d）：框条有明显亮边高光，比 b35 更亮更像铜；**但首版横向擦痕在框面上读成木纹（下）**→ 966522a 改成各向同性磨亮点、粗糙度 0.4、清漆 0.8。966522a 的 id_yinze 见“截止本节”。
+### 4 市民服务大厅排查清单（依据 eastwing.js 112–145 行 + r3plan planCitizenService + cs_r3_c 图）
+1. **廉价方块件**：① **5 个服务窗口台** = blackMarble 方盒 4.6×1.05×1.0 + 玛瑙板 + 一块平玻璃 + wallPlaster 方板墙 + LED 黑底盒（北墙一整排，最显眼，下批首选精建：柜台立面芯板 / 铜包边 / 窗口玻璃隔断带铜框和传递槽）；② **填单台 ×2** = wood 方盒 3.2×1.0×1.2 + 玛瑙板（大厅正中）；③ 叫号机 = blackMetal 方盒 + 蓝色平面；④ 2 号窗畸变物投放口 = steel 方盒；⑤ ~~引导台~~（本批已换）。
+2. **穿模（疑）**：投放口方盒 x 31.1–32.0 与 2 号窗台 x 26.6–31.2 在 z 同段，约 0.1 m 交叠（代码推算，未入镜验证）；窗口玻璃 z−0.1 与玛瑙台面后沿贴得近，需近景看。
+3. **空旷**：层高 6.7 m，3.5 m 以上四面墙几乎空白（只有南墙标题与东墙来信墙）；南侧通道与南墙之间、东区北段大片空地面。
+4. **灯光**：顶部 3 盏 14 强度点光 + 整厅 rectLight（暖白）与窗口上方 5 盏冷白 0xeef2ff 点光混用，色温打架；候号区球吊灯偏暖，层次靠球灯但顶棚本身无灯具造型（只有 lampWarm 方条）。
+- **精建 1 件（4e91f3e）**：① 引导台 dz_wain 方盒 + 两条铜条 → **r2/guide_desk**（tools/blender/guide_desk.py：胡桃正面三联凸起芯板 + 铜线脚 / 铜踢脚 + 中联铜牌框（游戏铜牌「咨询 · 引导」移到框上 y+0.58）；两侧芯板；职员侧 3 屉抽屉柜（铜卡片框 + 拉手）+ 文件格 + 容膝洞）。玛瑙台面 / 台灯 / 电话 / 文件盘 / 椅子不动，碰撞盒（固定:引导台）不变，r3plan 用 partv。预览 work/r3/b36/prev/gd_front.png、gd_back.png 合格。新机位 cs_r3_c（西门内进门通道看引导台正面）。第一张 cs_r3_c（r41157277743/s36/cs_r3_c.png，机位误在候号区磨砂屏风后）：三联芯板 + 铜牌框朝向正确（朝北迎进门人流）✔、隔着磨砂玻璃发白；b107a79 机位移到 x 23.5 重拍。
+### 收尾
+- 走查：b107a79 run 41158213353 **通过 31 / 失败 0 / 控制台错误 0**（work/r3/b36/r41158213353/walk/WALKTHROUGH.md）；最终 966522a 见 PROGRESS-LOG。
+- Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删同名旧卷再传 v03 1MG-dtWT6eWVrELpxZvO7-4ROrZhW2Nhi、v04 1O6tYfDnYuDQ3FGvwywEh73tYZ1Ygb_B2（含 guide_desk.glb）；v01 / v02 在本 HANDOFF 提交后重传（见 PROGRESS-LOG）。
+- 对比图 `python3 work/r3/b36/cmp36.py` → work/r3/cmp36_*.jpg。
+### 下批先做
+1. 取回本批未回的图（见 PROGRESS-LOG）看：cc_r3_c 木纹 + 挂图出墙、cs_r3_c 引导台、id_yinze 磨亮点版。
+2. 市民服务大厅 5 个服务窗口台 Blender 精建（清单 1-①），并近景核投放口穿模。
+3. 外景墙外空地（ext_sky）按功能填；山墙亮窗 / 招牌带平涂再处理。
+
 ## R3 批次35（2026-10-31 09:10 CST 接手，约 35 分钟）
 ### 提交
 13ed3a6 截图工作流取图超时；ea7b69a 指挥中心；f2ab923 外观街屋 / 树皮；123d67b 宿舍衣柜 + dorm_r3_c + 相框倒圆（**最终游戏代码**）；52c446c 截图脚本 browser.close 挂死修复（只动 tools/shot.mjs）。每次提交前本机 `npx vite build` 返回 0；r3plan command_center 324 件 0 错（3 条旧 cctv 离墙警告，work/r3/b35/plan_command.png），dorm3 468 件 0 错 0 警（work/r3/b35/plan_dorm3.png）。
