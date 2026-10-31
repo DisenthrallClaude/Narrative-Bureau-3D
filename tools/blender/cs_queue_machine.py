@@ -12,8 +12,8 @@ def mat(name, col, rough=0.5, metal=0.0, emit=None, es=0.0):
     return m
 M = dict(enamel=mat('qm_enamelGreen', (0.045, 0.085, 0.06), 0.42), enamelD=mat('qm_enamelDark', (0.02, 0.04, 0.03), 0.5),
          brass=mat('qm_brass', (0.80, 0.60, 0.30), 0.28, 1.0), brassD=mat('qm_brassDim', (0.48, 0.35, 0.18), 0.42, 1.0),
-         glass=mat('qm_glassDark', (0.02, 0.015, 0.012), 0.08), seg=mat('qm_segGlow', (1.0, 0.25, 0.08), 0.4, 0, (1.0, 0.22, 0.06), 8.0),
-         segOff=mat('qm_segOff', (0.10, 0.03, 0.02), 0.5), paper=mat('qm_ticket', (0.86, 0.82, 0.70), 0.8), rubber=mat('qm_rubber', (0.02, 0.02, 0.02), 0.8),
+         glass=mat('qm_glassDark', (0.02, 0.015, 0.012), 0.08), seg=mat('qm_segGlow', (1.0, 0.25, 0.08), 0.4, 0, (1.0, 0.22, 0.06), 3.5),
+         segOff=mat('qm_segOff', (0.035, 0.012, 0.008), 0.6), paper=mat('qm_ticket', (0.86, 0.82, 0.70), 0.8), rubber=mat('qm_rubber', (0.02, 0.02, 0.02), 0.8),
          red=mat('qm_btnRed', (0.45, 0.05, 0.03), 0.35))
 def G(x, y, z): return (x, -z, y)
 def add(o, m): o.data.materials.append(M[m]); return o
@@ -64,7 +64,7 @@ SEGS = {'0': 'abcdef', '4': 'bcfg', '7': 'abc'}
 def digit(ch, cx):
     w, h, t = 0.075, 0.13, 0.012; zz = ZF + 0.004; y0 = 1.16
     P = {'a': (0, h / 2, w, t), 'g': (0, 0, w, t), 'd': (0, -h / 2, w, t), 'f': (-w / 2, h / 4, t, h / 2), 'b': (w / 2, h / 4, t, h / 2), 'e': (-w / 2, -h / 4, t, h / 2), 'c': (w / 2, -h / 4, t, h / 2)}
-    for k, (dx, dy, sw, sh) in P.items(): box('seg' if k in SEGS[ch] else 'segOff', sw * 0.9, sh * 0.9, 0.003, cx + dx, y0 + dy, zz)
+    for k, (dx, dy, sw, sh) in P.items(): box('seg' if k in SEGS[ch] else 'segOff', sw * 0.82, sh * 0.82, 0.003, cx + dx, y0 + dy, zz)
 for i, ch in enumerate('047'): digit(ch, (i - 1) * 0.12)
 box('brassD', 0.2, 0.035, 0.004, 0, 1.30, ZF + 0.012); box('rubber', 0.17, 0.012, 0.003, 0, 1.30, ZF + 0.015)  # 铭牌
 for o in list(S.objects):

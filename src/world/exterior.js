@@ -495,7 +495,7 @@ async function heroFacade(g, M, world, ctx, add) {
   // 门洞内：敞开的大门门扇——批次30 看 ext_door_near：原深色木 + 亮铜框读成「棕木板 + 霓虹描边」→ 暗古铜门扇 + 浅一档铜芯板 + 哑光铜框 + 铁箍铜泡钉
   const DW = 7, DH = 9;
   // 批次52：ext_door_mid 左门扇（转 72° 后正对西偏机位）金属环境反射映出天空 → 偏蓝竖面；门扇三种铜材克隆后环境反射压到 0.25 倍、底色略暖，读成暖深古铜
-  const dM = {}; for (const k of ['bronzeDoor', 'bronzePanel', 'bronzeFrame']) { const c = M[k].clone(); if (Object.prototype.hasOwnProperty.call(M[k], 'onBeforeCompile')) c.onBeforeCompile = M[k].onBeforeCompile; if (Object.prototype.hasOwnProperty.call(M[k], 'customProgramCacheKey')) c.customProgramCacheKey = M[k].customProgramCacheKey; c.envMapIntensity = (M[k].envMapIntensity ?? 1) * 0.25; c.color.multiply(new THREE.Color(1.08, 1.0, 0.88)); dM[k] = c; }
+  const dM = {}; for (const k of ['bronzeDoor', 'bronzePanel', 'bronzeFrame']) { const c = M[k].clone(); if (Object.prototype.hasOwnProperty.call(M[k], 'onBeforeCompile')) c.onBeforeCompile = M[k].onBeforeCompile; if (Object.prototype.hasOwnProperty.call(M[k], 'customProgramCacheKey')) c.customProgramCacheKey = M[k].customProgramCacheKey; c.envMapIntensity = (M[k].envMapIntensity ?? 1) * 0.12; c.metalness = Math.min(c.metalness, 0.55); c.color.multiply(new THREE.Color(1.15, 1.0, 0.8)); /* 批次53：×0.25 后 e52b 左门扇仍偏紫蓝 (85,62,69) → 金属度压到 0.55（让暖色漫反射占主导）、环境反射 ×0.12 */ dM[k] = c; }
   for (const sx of [-1, 1]) {
     const leaf = new THREE.Group(); const w = DW / 2, h = DH;
     const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), dM.bronzeDoor); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
