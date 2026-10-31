@@ -97,7 +97,7 @@ async function boot() {
   UI.loadProgress(0.02, '读取剧情与档案……');
   try { await Promise.all([document.fonts.load('900 40px \"NB Title\", \"NB Serif\"', '叙事管理局'), document.fonts.load('400 40px "NB Serif"', '叙'), document.fonts.load('40px "NB Sans"', '叙'), document.fonts.load('900 40px "NB Title"', '叙事管理局'), document.fonts.load('600 40px "NB Serif"', '叙'), document.fonts.load('500 40px "NB Sans"', '叙'), document.fonts.load('600 40px "NB Latin Title"', 'BUREAU'), document.fonts.load('500 40px "NB Latin"', 'Bureau'), document.fonts.load('italic 500 40px "NB Latin"', 'Bureau')]); } catch { /* */ }
   await content.load();
-  await audio.init();
+  await audio.init(); audio.bindUI();
   const pm = new THREE.PMREMGenerator(R.gl);
   const [sky, hall] = await Promise.all([new THREE.TextureLoader(manager).loadAsync('./assets/tex/' + TOD.sky).catch(() => null), loadHDR(HALL_PROBE ? 'hall_probe' : 'hall_1k')]);
   if (sky) { sky.mapping = THREE.EquirectangularReflectionMapping; sky.colorSpace = THREE.SRGBColorSpace; sky.generateMipmaps = true; sky.minFilter = THREE.LinearMipmapLinearFilter; sky.anisotropy = 4; }
@@ -362,7 +362,7 @@ addEventListener('keydown', (e) => {
   if (e.code === 'KeyE') {
     if (UI.ui.state === 'dialog') return UI.dialogNext();
     if (UI.ui.state === 'reader') return UI.readerNextOrClose();
-    if (UI.ui.state === 'play' && !G.frozen && inter.current) { audio.sfx('S15', 0.5); inter.current.use(); }
+    if (UI.ui.state === 'play' && !G.frozen && inter.current) { audio.interact(inter.current); inter.current.use(); }
   }
   if (UI.ui.state === 'reader') {
     if (e.code === 'ArrowRight' || e.code === 'KeyD') UI.readerFlip(1);
