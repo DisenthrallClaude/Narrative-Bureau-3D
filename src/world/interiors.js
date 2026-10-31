@@ -884,17 +884,28 @@ function tagMat(name) {
 }
 /** 边几 + 摊开档案夹 + 回形针证件照 + 打字机名签；(x, z) 为边几中心（person 局部坐标，面朝 +Z） */
 let _oldBronze = null;
+let _frameEnv = null;
+function frameEnv() { // 批次37：相框专用小环境贴图（等距柱面 canvas，渲染器自动转 PMREM）：暗暖灰底 + 上方两条亮窗 + 几盏暖灯 + 浅色天花，让黄铜框读出金属的明暗反差
+  if (_frameEnv) return _frameEnv;
+  const W = 512, H = 256, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#e8e2d6'); g.addColorStop(0.3, '#8a7c68'); g.addColorStop(0.55, '#3a3028'); g.addColorStop(1, '#14100c'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#fff6e4'; for (const u of [0.08, 0.33, 0.58, 0.83]) x.fillRect(u * W, H * 0.2, W * 0.07, H * 0.2);
+  for (const u of [0.2, 0.45, 0.7, 0.95]) { const r = x.createRadialGradient(u * W, H * 0.12, 0, u * W, H * 0.12, 18); r.addColorStop(0, '#fff1c8'); r.addColorStop(1, 'rgba(255,220,160,0)'); x.fillStyle = r; x.fillRect(u * W - 18, H * 0.12 - 18, 36, 36); }
+  const t = new THREE.CanvasTexture(c); t.mapping = THREE.EquirectangularReflectionMapping; t.colorSpace = THREE.SRGBColorSpace; return (_frameEnv = t);
+}
+let _brassPolish = null;
+const brassPolishMat = () => (_brassPolish ??= new THREE.MeshPhysicalMaterial({ name: 'brassPolish37', color: 0xf2d48e, metalness: 1.0, roughness: 0.14, clearcoat: 1, clearcoatRoughness: 0.05, envMap: frameEnv(), envMapIntensity: 1.9 }));
 function oldBronzeMat() { // 批次36：两批来仍像深色木框 → 带少量噪声的旧铜贴图（暗斑 + 细擦痕 + 少量铜绿）+ 粗糙度噪声图 + 清漆层 + 提高环境反射，让框条吃出金属高光对比
   const N = 256, mk = () => { const c = document.createElement('canvas'); c.width = c.height = N; return c; };
   let sd = 7; const rnd = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
-  const cc = mk(), x = cc.getContext('2d'); x.fillStyle = '#b08350'; x.fillRect(0, 0, N, N);
+  const cc = mk(), x = cc.getContext('2d'); x.fillStyle = '#c9a061'; x.fillRect(0, 0, N, N); // 批次37：偏黄亮黄铜底色（原 #b08350 在暗褐环境反射下读成漆木）
   for (let i = 0; i < 260; i++) { const r = 2 + rnd() * 10; x.fillStyle = `rgba(${60 + rnd() * 30 | 0},${38 + rnd() * 20 | 0},${18 + rnd() * 10 | 0},${0.12 + rnd() * 0.2})`; x.beginPath(); x.arc(rnd() * N, rnd() * N, r, 0, 7); x.fill(); } // 氧化暗斑
   for (let i = 0; i < 900; i++) { x.fillStyle = `rgba(245,215,165,${0.06 + rnd() * 0.12})`; x.fillRect(rnd() * N, rnd() * N, 1 + rnd() * 1.5, 1 + rnd() * 1.5); } // 细碎磨亮点（各向同性；批次36 首版横向擦痕在 id_yinze 里读成木纹，改掉）
   for (let i = 0; i < 14; i++) { x.fillStyle = `rgba(70,110,85,${0.1 + rnd() * 0.12})`; x.beginPath(); x.arc(rnd() * N, rnd() * N, 2 + rnd() * 5, 0, 7); x.fill(); } // 少量铜绿
   const rc = mk(), y = rc.getContext('2d'); y.fillStyle = '#5a5a5a'; y.fillRect(0, 0, N, N);
   for (let i = 0; i < 400; i++) { const v = 50 + rnd() * 90 | 0; y.fillStyle = `rgba(${v},${v},${v},0.25)`; y.beginPath(); y.arc(rnd() * N, rnd() * N, 1 + rnd() * 8, 0, 7); y.fill(); }
   const tex = (c, srgb) => { const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2, 2); if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
-  return new THREE.MeshPhysicalMaterial({ name: 'oldBronze36', color: 0xd2bfa6 /* 去一点橙，偏旧铜 */, map: tex(cc, true), roughnessMap: tex(rc, false), metalness: 1.0, roughness: 0.4, clearcoat: 0.8, clearcoatRoughness: 0.08, envMapIntensity: 2.6 }); // 粗糙度降、清漆加，让框条吃锐利高光
+  return new THREE.MeshPhysicalMaterial({ name: 'oldBronze37', color: 0xffffff, map: tex(cc, true), roughnessMap: tex(rc, false), metalness: 1.0, roughness: 0.32, clearcoat: 0.6, clearcoatRoughness: 0.1, envMap: frameEnv(), envMapIntensity: 1.6 }); // 批次37：单配小环境（亮窗 + 暖灯），不再吃大厅暗褐 HDR // 粗糙度降、清漆加，让框条吃锐利高光
 }
 function dossierStand(g, M, name, x, z, flip = false) { // flip：相框朝 −Z（周闻：椅前是值班长台，玩家从椅后平台过来）
   const k = IDPHOTO[name]; if (!k) return;
@@ -925,7 +936,12 @@ function dossierStand(g, M, name, x, z, flip = false) { // flip：相框朝 −Z
   fa(RB(PW + 2 * B, B, D), brass, 0, BOT + PH + B / 2, 0); // 顶框
   for (const sx of [-1, 1]) fa(RB(B, PH + 0.004, D), brass, sx * (PW / 2 + B / 2), BOT + PH / 2, 0);
   fa(new THREE.BoxGeometry(PW + 2 * B - 0.004, PH + BOT + B - 0.004, 0.004), new THREE.MeshStandardMaterial({ color: 0x2a1c12, roughness: 0.7 }), 0, (PH + BOT + B) / 2, -D / 2 - 0.001); // 背板
-  fa(new THREE.BoxGeometry(PW + 0.006, 0.004, 0.002), brass, 0, BOT + PH + 0.002, D / 2 - 0.002); // 内口铜线
+  const pol = brassPolishMat(); // 批次37：框边亮倒角——正面外沿一圈 2 mm 磨亮铜边 + 内口亮线
+  fa(new THREE.BoxGeometry(PW + 0.006, 0.004, 0.002), pol, 0, BOT + PH + 0.002, D / 2 - 0.002); // 内口铜线
+  { const OW = PW + 2 * B, OH = PH + BOT + B, e = 0.0022, zf = D / 2 + 0.0004;
+    fa(new THREE.BoxGeometry(OW - 0.004, e, 0.0016), pol, 0, OH - 0.0018, zf); fa(new THREE.BoxGeometry(OW - 0.004, e, 0.0016), pol, 0, 0.0018, zf);
+    for (const sx of [-1, 1]) fa(new THREE.BoxGeometry(e, OH - 0.004, 0.0016), pol, sx * (OW / 2 - 0.0018), OH / 2, zf);
+    for (const sx of [-1, 1]) fa(new THREE.BoxGeometry(e, PH, 0.0016), pol, sx * (PW / 2 + 0.0012), BOT + PH / 2, zf); }
   const pm = fa(new THREE.PlaneGeometry(PW, PH), framePhotoMat(name), 0, BOT + PH / 2, 0.002); pm.castShadow = false;
   const gl = fa(new THREE.PlaneGeometry(PW, PH), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.05, metalness: 0, transparent: true, opacity: 0.06, depthWrite: false }), 0, BOT + PH / 2, 0.006); gl.castShadow = false; // 玻璃
   const nt = fa(new THREE.PlaneGeometry(PW - 0.004, 0.032), frameTagMat(name), 0, BOT / 2, D / 2 + 0.0006); nt.castShadow = false;
