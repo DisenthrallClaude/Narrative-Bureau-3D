@@ -104,19 +104,28 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #reader .help { position: absolute; bottom: 4vh; left: 0; right: 0; text-align: center; color: #99a; font-size: 13px; letter-spacing: .2em; }
 .red { color: #a3262a; }
 
-/* 暂停菜单 */
-#pause { position: fixed; inset: 0; z-index: 40; background: rgba(3,4,8,.82); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
-#pause .panel { width: min(720px, 92vw); font-family: var(--serif); }
-#pause h1 { text-align: center; color: var(--gold2); letter-spacing: .6em; font-size: 30px; margin: 0 0 6px .6em; }
-#pause .sub { text-align: center; color: #7f889c; letter-spacing: .3em; font-size: 12px; margin-bottom: 30px; }
-#pause .row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(216,180,105,.15); font-size: 15px; color: #ddd; }
+/* 暂停菜单（批次46：与加载画面同风格——深墨绿纸纹底、暗铜双线框、米白衬线） */
+#pause { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(6px) saturate(.7);
+  background: radial-gradient(ellipse at 50% 45%, rgba(18,33,26,.86) 0%, rgba(6,11,8,.94) 70%); }
+#pause .panel { position: relative; width: min(720px, 92vw); font-family: var(--serif-zh); padding: 40px 56px 34px;
+  background: linear-gradient(180deg, rgba(16,28,22,.92), rgba(9,16,12,.95)), url('/assets/tex/Paper006_color.webp') center/520px;
+  background-blend-mode: normal, luminosity; border: 1px solid rgba(176,129,74,.6); outline: 1px solid rgba(176,129,74,.18); outline-offset: 6px; box-shadow: 0 30px 80px rgba(0,0,0,.6), inset 0 0 60px rgba(0,0,0,.45); }
+#pause .panel::before, #pause .panel::after { content: ''; position: absolute; width: 18px; height: 18px; border: solid #e2bf86; opacity: .8; }
+#pause .panel::before { left: -4px; top: -4px; border-width: 2px 0 0 2px; } #pause .panel::after { right: -4px; bottom: -4px; border-width: 0 2px 2px 0; }
+#pause h1 { text-align: center; font-family: 'NB Serif', var(--title); font-weight: 700; color: #ece3cc; letter-spacing: .7em; font-size: 30px; margin: 0 0 8px .7em; }
+#pause .sub { text-align: center; color: #b0814a; font-family: var(--latin); letter-spacing: .34em; font-size: 12px; margin-bottom: 26px; }
+#pause .sub::after { content: ''; display: block; width: 180px; height: 1px; margin: 14px auto 0; background: linear-gradient(90deg, transparent, #b0814a, transparent); }
+#pause .row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid rgba(176,129,74,.16); font-size: 15px; letter-spacing: .12em; color: #d9cfb8; }
 #pause .seg { display: flex; gap: 6px; }
-#pause .seg span { padding: 6px 14px; border: 1px solid rgba(216,180,105,.35); cursor: pointer; font-size: 14px; color: #ccc; }
-#pause .seg span.on { background: rgba(216,180,105,.2); color: var(--gold2); border-color: var(--gold); }
-#pause input[type=range] { width: 220px; accent-color: #d8b469; }
+#pause .seg span { padding: 5px 14px; border: 1px solid rgba(176,129,74,.38); cursor: pointer; font-size: 13px; color: #b9ae96; letter-spacing: .1em; transition: background .2s, color .2s; }
+#pause .seg span:hover { color: #ece3cc; border-color: rgba(226,191,134,.7); }
+#pause .seg span.on { background: linear-gradient(180deg, rgba(176,129,74,.32), rgba(110,74,38,.28)); color: #f3dfb4; border-color: #c79a5e; box-shadow: inset 0 1px 0 rgba(255,230,180,.18); }
+#pause input[type=range] { width: 220px; accent-color: #b0814a; }
 #pause .btns { display: flex; justify-content: center; gap: 18px; margin-top: 26px; }
-#pause .keys { color: #99a; font-size: 13px; line-height: 2; margin-top: 18px; text-align: center; letter-spacing: .08em; }
-#credits { max-height: 50vh; overflow: auto; font-size: 12px; color: #aab; line-height: 1.8; white-space: pre-wrap; font-family: var(--sans); }
+#pause .btn { margin-top: 0; border-color: rgba(176,129,74,.75); color: #ece3cc; font-family: var(--serif-zh); font-size: 15px; letter-spacing: .5em; padding: 10px 34px 10px 40px; box-shadow: inset 0 0 0 3px rgba(9,16,12,.9), inset 0 0 0 4px rgba(226,191,134,.25); }
+#pause .btn:hover { background: rgba(226,191,134,.10); }
+#pause .keys { color: #8f866f; font-size: 12px; line-height: 2; margin-top: 18px; text-align: center; letter-spacing: .1em; }
+#credits { max-height: 50vh; overflow: auto; font-size: 12px; color: #a99f88; line-height: 1.8; white-space: pre-wrap; font-family: var(--sans); }
 
 /* 章节卡 */
 #chapter { position: fixed; inset: 0; z-index: 35; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--serif); opacity: 0; transition: opacity 2s; pointer-events: none; }

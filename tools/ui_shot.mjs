@@ -13,22 +13,23 @@ const browser = await chromium.launch({ executablePath: process.env.CHROME, args
 for (const st of states) {
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   // 阻断 3D：不加载 GLB / HDR，世界构建停在加载画面（只截 HTML）
-  await page.route(/\.(glb|hdr|bin)(\?|$)/, (r) => r.abort());
+  await page.route(/\.(glb|hdr|bin|js)(\?|$)/, (r) => r.abort()); // 不跑游戏 JS（世界构建会占满主线程，page.screenshot 超时）；CSS 由 index.html <link> 加载
   await page.goto(`http://localhost:${port}/`);
-  await page.waitForTimeout(st === 'loading' ? 2500 : 4000);
+  await page.waitForTimeout(2500);
   await page.evaluate(({ st, bg }) => {
     const $ = (i) => document.getElementById(i);
+    const tk = document.getElementById('tk'); if (tk && !tk.childElementCount) for (let k = 0; k < 48; k++) { const a = k / 48 * Math.PI * 2, r0 = k % 4 ? 41 : 38; tk.insertAdjacentHTML('beforeend', `<line x1="${Math.sin(a) * r0}" y1="${-Math.cos(a) * r0}" x2="${Math.sin(a) * 45}" y2="${-Math.cos(a) * 45}"/>`); } // 同 ui.js
     document.body.style.background = `#000 url(${bg}) center/cover`; $('c').style.visibility = 'hidden';
     if (st === 'loading') { $('loadbar').style.width = '62%'; if ($('loadpct')) $('loadpct').textContent = '62%'; $('loadtip').textContent = '正在装订页面……'; return; }
     if (st === 'menu') { $('loadbar').style.width = '100%'; $('loadtip').textContent = '点击「进入」开始（建议佩戴耳机）'; $('start').classList.remove('hidden'); return; }
     $('loading').classList.add('hidden'); $('hud').classList.remove('hidden');
     $('objm').textContent = '前往西翼人事档案馆，向管理员领取本人入职档案'; $('objo').textContent = '';
-    if (st === 'hud') { $('prompt').innerHTML = '<b>E</b>查阅 卡片目录柜 · 甲字 07 屉'; $('cross').classList.add('on'); $('arean').textContent = '人事档案馆'; $('areae').textContent = 'PERSONNEL ARCHIVE'; $('area').classList.add('on'); return; }
+    if (st === 'hud') { $('prompt').innerHTML = '<b class="key">E</b><span class="pt">查阅 卡片目录柜 · 甲字 07 屉</span>'; $('cross').classList.add('on'); $('arean').textContent = '人事档案馆'; $('areae').textContent = 'PERSONNEL ARCHIVE'; $('area').classList.add('on'); return; }
     if (st === 'reader') { $('reader').classList.remove('hidden'); $('paper').className = 'paper'; $('paper').innerHTML = '<h2>入职登记表 · 第一页</h2><div class="txt">姓名：＿＿＿＿　　编号：NB-0731\n所属：叙事管理局 京城总部 · 监测指挥中心（实习）\n\n凡本局在编人员，所经手之一切文本，须如实登记、逐页装订、按期归档。\n任何未经登记之叙事，视同不存在。\n\n<span class="red">「本条不存在。」</span></div><div class="pg">1 / 3</div>'; return; }
     if (st === 'pause') { $('pause').classList.remove('hidden'); $('qseg').innerHTML = '<span>低</span><span class="on">中</span><span>高</span>'; $('todseg').firstElementChild.classList.add('on'); }
   }, { st, bg });
   await page.waitForTimeout(1200);
-  await page.screenshot({ path: path.join(out, `${st}.png`) }); console.log('ui shot', st);
+  try { await page.screenshot({ path: path.join(out, `${st}.png`), timeout: 90000 }); console.log('ui shot', st); } catch (e) { console.log('ui shot fail', st, e.message.slice(0, 120)); }
   await page.close();
 }
 await Promise.race([browser.close().catch(() => {}), new Promise((r) => setTimeout(r, 10000))]); srv.close(); process.exit(0);
