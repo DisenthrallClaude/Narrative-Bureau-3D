@@ -91,7 +91,7 @@ for e in (-1, 1):
     for f in (-1, 1): sph('brass', 0.009, e * (W - 0.02) / 2, 1.17 + f * 0.105, ZF + 0.02)
 SEGS = {'0': 'abcdef', '4': 'bcfg', '7': 'abc'}
 def digit(ch, cx):
-    w, h, t = 0.075, 0.13, 0.012; zz = ZF + 0.0075; y0 = 1.17
+    w, h, t = 0.075, 0.13, 0.012; zz = ZF + 0.0115; y0 = 1.17  # 批次M4 修：原 ZF+0.0075 与玻璃前表面共面 → 游戏内 z-fight 数码管花屏
     P = {'a': (0, h / 2, w, t), 'g': (0, 0, w, t), 'd': (0, -h / 2, w, t), 'f': (-w / 2, h / 4, t, h / 2), 'b': (w / 2, h / 4, t, h / 2), 'e': (-w / 2, -h / 4, t, h / 2), 'c': (w / 2, -h / 4, t, h / 2)}
     for k, (dx, dy, sw, sh) in P.items(): box('seg' if k in SEGS[ch] else 'segOff', sw * 0.82, sh * 0.82, 0.003, cx + dx, y0 + dy, zz)
 for i, ch in enumerate('047'): digit(ch, (i - 1) * 0.12)
