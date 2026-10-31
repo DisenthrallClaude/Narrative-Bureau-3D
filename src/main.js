@@ -450,6 +450,7 @@ function applyShot(name) {
       if (fr.intersectsSphere(sp)) return; sp.center.y = 2 * FLOOR - sp.center.y; if (fr.intersectsSphere(sp)) return; o.visible = false; liteOff.push(o); off++; });
     LOG('lite: 关闭不入镜点光', off, '/', n);
   }
+  debugTint(); // 批次53：调试假色定位
   shotStarted = true;
   window.__SHOT_INFO__ = () => ({ calls: R.gl.info.render.calls, tris: R.gl.info.render.triangles, zone: G.zone });
   window.__PICK__ = (x, y) => { const rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(x, y), camera); const h = rc.intersectObjects(scene.children, true).find((i) => i.object.visible && i.object.material); if (!h) return null; const m = Array.isArray(h.object.material) ? h.object.material[0] : h.object.material; const tx = (t) => t ? { img: !!t.image, w: t.image?.width, ver: t.version } : null;
@@ -457,6 +458,25 @@ function applyShot(name) {
 }
 loop();
 boot().catch((e) => { console.error(e); UI.loadProgress(1, '加载失败：' + e.message); });
+
+// 批次53：截图调试——?dbgid=x0,x1,z0,z1 把世界包围盒与该 XZ 区相交的网格换成各自不同的纯色（不受光、不吃雾），日志打印 序号 颜色 名字 / 父级 / 材质，
+// 用来按像素颜色反查画面里某块面属于哪个网格；?dbgmat=a,b 把名字 / 父名 / 材质名含关键字的网格染品红；?dbghide=a,b 隐藏它们。
+function debugTint() {
+  const id = params.get('dbgid'), dm = params.get('dbgmat'), dh = params.get('dbghide'); if (!id && !dm && !dh) return;
+  scene.updateMatrixWorld(true); const box = new THREE.Box3(); const kw = (str) => (str || '').split(',').filter(Boolean);
+  const nm = (o) => [o.name, o.parent?.name, o.parent?.parent?.name, ...(Array.isArray(o.material) ? o.material : [o.material]).map((m) => m?.name)].join('|');
+  const hit = (o, ks) => { const n = nm(o); return ks.some((k) => n.includes(k)); };
+  let r = null; if (id) { const v = id.split(',').map(Number); r = { x0: v[0], x1: v[1], z0: v[2], z1: v[3] }; }
+  const meshes = []; scene.traverse((o) => { if (o.isMesh && o.visible) meshes.push(o); }); let k = 0;
+  for (const o of meshes) {
+    if (dh && hit(o, kw(dh))) { o.visible = false; LOG('dbghide', nm(o)); continue; }
+    if (dm && hit(o, kw(dm))) { o.material = new THREE.MeshBasicMaterial({ color: 0xff00ff, fog: false, toneMapped: false, side: THREE.DoubleSide }); LOG('dbgmat', nm(o)); continue; }
+    if (r) { if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); box.copy(o.geometry.boundingBox).applyMatrix4(o.matrixWorld);
+      if (o.isInstancedMesh || box.max.x < r.x0 || box.min.x > r.x1 || box.max.z < r.z0 || box.min.z > r.z1) continue;
+      const c = new THREE.Color().setHSL((k * 0.61803) % 1, 1, k % 2 ? 0.35 : 0.6); o.material = new THREE.MeshBasicMaterial({ color: c, fog: false, toneMapped: false, side: THREE.DoubleSide });
+      LOG('dbgid', k, '#' + c.getHexString(), nm(o), box.min.toArray().map((v) => v.toFixed(1)).join(','), box.max.toArray().map((v) => v.toFixed(1)).join(',')); k++; }
+  }
+}
 
 // 室内环境贴图限亮：把超过 maxL 的像素按亮度等比压回 maxL（保留色相），避免粗糙地面映出整片白斑
 function tameHDR(t, maxL) {
