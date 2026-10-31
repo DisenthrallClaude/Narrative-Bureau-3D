@@ -337,8 +337,9 @@ export function planFloor2Liaison(y) {
     for (const [lx, lz, m, w] of [[-0.58, -0.12, 'r2/bankers_lamp', 0.36], [0.55, -0.12, ['r2/rotary_telephone', 'r2/phone_vef_ta_68'][k], 0.24], [0.12, -0.14, 'r2/document_letter_tray_documents_organizer', 0.3], [-0.2, -0.26, 'r2/name_plate', 0.24]]) { const [x, z] = at([cx, cz], yaw, lx, lz); out.push({ m, x, y: top, z, yaw: yaw + Math.PI, w, tag: '联络官室', on: 'desk' }); }
     if (k === 0) { const [x, z] = at([cx, cz], yaw, -0.1, 0.05); out.push({ m: 'r2/1930s_style_typewriter_w_o_branding', x, y: top, z, yaw, w: 0.42, tag: '联络官室', on: 'desk' }); }
     out.push({ m: 'r2/paper_waste_bin', x: cx + 0.6, y, z: cz + 0.95, yaw: 0, h: 0.33, tag: '联络官室', on: 'floor' });
-    out.push({ m: 'file_cabinet', x: 21.0, y, z: cz + (k ? -2.05 : 2.05), yaw: ROT.E, h: 1.32, tag: '联络官室', on: 'floor', col: [0.5, 1.32, 0.7] });
-    out.push({ m: 'r2/coat_rack', x: 21.0, y, z: cz + (k ? 1.9 : -1.95), yaw: 0, h: 1.85, tag: '联络官室', on: 'floor' });
+    // 批次57：AUDIT-56 表1——A 室衣帽架 / B 室文件柜原在门洞（z −101.7 / −106.7）门扇 72° 扫掠区内 → 两件都挪到远离门的一端（柜 + 衣帽架成组靠隔断）
+    out.push({ m: 'file_cabinet', x: 21.0, y, z: cz + (k ? 0.95 : 2.05), yaw: ROT.E, h: 1.32, tag: '联络官室', on: 'floor', col: [0.5, 1.32, 0.7] });
+    out.push({ m: 'r2/coat_rack', x: 21.0, y, z: cz + (k ? 1.95 : 1.15), yaw: 0, h: 1.85, tag: '联络官室', on: 'floor' });
     light(out, 23.4, y + 2.5, cz, 0xffd8a8, 2.8, 5.5); k++; }
   // ③ 翻译 · 电报组：一对背靠背工位，每席打字机（电报译稿）
   pair(out, 11.0, -107.8, y, 50, { typewriter: true, tag: '翻译组' }); pair(out, 6.2, -107.8, y, 52, { tag: '翻译组' }); pendant(out, 6.2, -107.8, y, H); pendant(out, 11.0, -107.8, y, H); light(out, 11.0, y + 2.4, -107.8, 0xffdcb0, 2.8, 6);
