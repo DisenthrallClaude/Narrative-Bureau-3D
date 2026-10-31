@@ -30,15 +30,28 @@ export function mats() {
   const lead = leadedGlassTexture();
   const DAYG = TOD.label === '白昼'; M.glassOut = new THREE.MeshPhysicalMaterial({ color: DAYG ? 0x6f8fe0 : 0x3a3028, map: lead.map, roughnessMap: lead.rough, metalness: 0.25, roughness: 0.9, envMapIntensity: DAYG ? 1.6 : 0.55, emissive: DAYG ? 0x2440a0 : 0x5a3412, /* 批次48：黄昏高窗玻璃冷钴蓝 / 蓝紫（ext_plaza、ext_door_mid）→ 深暖褐反射 + 微弱琥珀底光，环境反射 1.1 → 0.55（反射的是蓝紫黄昏天空） */ emissiveMap: lead.map, emissiveIntensity: TOD.label === '白昼' ? 0.35 : 0.25, clearcoat: 0.6, clearcoatRoughness: 0.1 });
   M.glassOut.userData.noShadow = true;
-  // 黄昏：外立面尖窗按窗格随机亮起暖色灯光（世界坐标哈希），其余保持深色反射
+  // 黄昏：外立面尖窗按楼层功能规律亮起暖琥珀内透（批次49 起不再随机），带竖棂 / 横档阴影，其余保持深色反射
   M.glassOut.onBeforeCompile = (sh) => {
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vGw;').replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvGw = (modelMatrix * vec4(transformed, 1.0)).xyz;');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vGw; float gh(vec3 p){ p = fract(p * 0.1031); p += dot(p, p.yzx + 33.33); return fract((p.x + p.y) * p.z); }')
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
-        { vec3 cell = floor(vGw / vec3(3.0, 5.0, 3.0)); float on = step(${TOD.label === "白昼" ? "0.80" : "0.55"}, gh(cell));
-          float flick = 0.85 + 0.15 * gh(cell + 7.0);
-          float grad = 0.6 + 0.4 * smoothstep(0.0, 1.0, fract(vGw.y / 5.0));
-          totalEmissiveRadiance += vec3(1.0, 0.52, 0.2) * on * flick * grad * ${(TOD.label === '白昼' ? TOD.winLit : TOD.winLit * 0.62).toFixed(2)}; }`);
+        { /* 批次49：亮窗按楼层功能规律（不随机）：层高 5 m、开间 3 m（x+z 合成横向坐标，正立面 / 侧立面通用）
+             1F 门厅 / 接待（y<${(1.8 + 5).toFixed(1)}）全亮；2–3F 办公：每 4 开间第 4 间楼梯间暗、隔层再错 1 间值班暗；
+             4–6F 档案库：只有每 3 开间的走廊端灯亮；>30 m 塔身 / 钟楼：仅每 6 开间一扇值守灯 */
+          float fl = floor((vGw.y - 1.8) / 5.0); float bay = floor((vGw.x + vGw.z) / 3.0);
+          float b4 = mod(bay, 4.0);
+          float on = fl < 1.0 ? 1.0 : (fl < 3.0 ? (1.0 - step(2.5, b4)) * (1.0 - step(1.5, fl) * step(0.5, b4) * (1.0 - step(1.5, b4))) : (fl < 6.0 ? 1.0 - step(0.5, mod(bay + fl, 3.0)) : 1.0 - step(0.5, mod(bay + fl * 2.0, 6.0))));
+          ${TOD.label === "白昼" ? "on *= step(0.5, mod(bay + fl, 2.0));" : ""}
+          float fy = fract((vGw.y - 1.8) / 5.0);
+          /* 室内暖光：顶部吊灯处最亮的深琥珀，向下渐暗偏橙红（天花→地面的光衰），不再一整块奶白 */
+          vec3 warm = mix(vec3(0.62, 0.24, 0.06), vec3(1.0, 0.50, 0.17), smoothstep(0.05, 0.85, fy));
+          /* 窗格阴影：竖棂每 0.75 m（8 cm 宽）、横档每 1.6 m（7 cm 宽），内透光被窗框挡住 */
+          float h = vGw.x + vGw.z;
+          float dm = (0.5 - abs(fract(h / 0.75) - 0.5)) * 0.75; float mull = 1.0 - smoothstep(0.035, 0.055, dm);
+          float dt = (0.5 - abs(fract(vGw.y / 1.6) - 0.5)) * 1.6; float tr = 1.0 - smoothstep(0.03, 0.05, dt);
+          float shade = (1.0 - 0.85 * mull) * (1.0 - 0.85 * tr);
+          float flick = 0.88 + 0.12 * gh(vec3(bay, fl, 3.0));
+          totalEmissiveRadiance += warm * on * flick * shade * ${(TOD.label === '白昼' ? TOD.winLit : TOD.winLit * 0.44).toFixed(2)}; }`);
   };
   M.glassOut.customProgramCacheKey = () => 'glassOut' + TOD.label;
   const sgt = stainedGlassTexture(3); // UV 由 Batch 按每扇窗归一化

@@ -431,12 +431,12 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
     for (const x of [-27, -15.5, -6.2, 6.2, 15.5, 27]) { // 地埋灯：石框 + 铜面 + 发光透镜，前沿 z 4.2（台阶外），对准立面 30 m 高处
       const f = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 0.5), fix); f.position.set(x, 0.04, 5.6); g.add(f);
       const ln = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.02, 0.3), lens); ln.position.set(x, 0.09, 5.6); g.add(ln);
-      spot([x, 0.3, 5.6], [x * 0.92, Y + 20, -8], 1250, 0.5); } // 批次48：台阶前移到 z 4.5 → 地埋灯退到 5.6；对准点 Y+26 → Y+20、锥角 0.42 → 0.5，让下半立面也进光池（ext_plaza 下半立面发黑）
+      spot([x, 0.3, 5.6], [x * 0.92, Y + 17, -8], 1550, 0.56); } // 批次49：下半立面再提一档——1250 → 1550、锥角 0.5 → 0.56、对准 Y+20 → Y+17（光池下移覆盖门廊雕像列与一层窗台） // 批次48：台阶前移到 z 4.5 → 地埋灯退到 5.6；对准点 Y+26 → Y+20、锥角 0.42 → 0.5，让下半立面也进光池（ext_plaza 下半立面发黑）
     // 批次48：下半立面补光——实体铜投光器 ×4：台阶两侧石栏端墩顶（打门洞两侧墩柱 / 雕像列）+ 双塔脚石座前沿（贴墙掠射塔身下段），暖 2900K，不投影
     const proj = (p, t, i, ang) => { const h = new THREE.Group(); const body = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.16, 0.34, 14), fix); body.rotation.x = Math.PI / 2; h.add(body);
       const le = new THREE.Mesh(new THREE.CircleGeometry(0.12, 14), lens); le.position.z = 0.175; h.add(le); const yoke = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.05, 0.12), fix); yoke.position.y = -0.2; h.add(yoke);
       h.position.set(...p); h.lookAt(...t); g.add(h); spot([p[0], p[1], p[2]], t, i * 1, ang); };
-    for (const sx of [-1, 1]) { proj([sx * 17.6, 1.62, 5.1], [sx * 7.5, Y + 8, -4.5], 900, 0.42); proj([sx * 22, 2.4, -5.9], [sx * 22, Y + 16, -8], 700, 0.55); }
+    for (const sx of [-1, 1]) { proj([sx * 17.6, 1.62, 5.1], [sx * 7.5, Y + 8, -4.5], 1250, 0.48); proj([sx * 22, 2.4, -5.9], [sx * 22, Y + 14, -8], 1000, 0.62); /* 批次49：投光器 900/700 → 1250/1000，锥角放宽（洗墙覆盖到塔脚两侧开间），不加灯数（外景渲染时长） */ }
     for (const sx of [-1, 1]) spot([sx * 30, 0.4, 36], [sx * 22, Y + 52, -13], 2600, 0.16); // 尖塔投光（广场两侧路灯列外的灯座处）
     spot([0, 0.4, 24], [0, Y + 36, -5], 1200, 0.13); // 玫瑰窗 / 局徽
   }
@@ -503,6 +503,7 @@ async function heroFacade(g, M, world, ctx, add) {
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 8, 24), M.gold); ring.position.set(sx * -(w - 0.5), h * 0.45, 0.2); leaf.add(ring);
     leaf.position.set(sx * DW / 2, Y, -6.2); leaf.rotation.y = sx * -1.25; g.add(leaf);
   }
+  innerVestibuleDoors(g, M, Y); // 批次49：门洞纵深——门厅尽头内门（铜饰胡桃木门半开）+ 门厅暖光渐变
   // 文字带「叙事管理局」（黑色抛光石板上的鎏金字）
   const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + 31.2, -4.99); g.add(txt);
   // 玫瑰窗中心局徽、鼓室局徽
@@ -1065,4 +1066,44 @@ export function updateExterior(ctx, dt, t) {
     a.o.rotation.y = ang + (a.sp > 0 ? Math.PI : 0);
   }
   if (ctx.fountainEmblem) ctx.fountainEmblem.rotation.y = t * 0.3;
+}
+
+
+// ---------------- 批次49 门厅内门 + 暖光渐变 ----------------
+// 门厅 z −6.2（正门门扇）… −30（大厅南墙 10 m 门洞，hall.py end_wall）。原先从门洞斜看进去只有一整块平亮米黄面（ext_door_mid），无纵深。
+// 在南墙门洞内侧装一樘对开内门：胡桃木框 + 铜包边芯板 + 上部铜格栅玻璃亮子 + 铜推板，半开约 50°（向门厅开，中缝净宽 ≈ 4.6 m，不加碰撞，玩家照常通过）；
+// 门套：胡桃木贴脸 + 铜线；门后大厅方向放一张加法混合的暖光渐变卡（深处亮、近处淡，营造「门厅深处有光」的透视），再加 1 盏不投影暖点光照亮门扇与门厅地面。
+function innerVestibuleDoors(g, M, Y) {
+  const ZW = -29.3, OW = 9.6, OH = 7.2;
+  const wood = pbr('Wood051', { color: 0x5a3a24, roughness: 0.5, env: 0.35 }), woodDk = pbr('Wood051', { color: 0x3a2416, roughness: 0.6, env: 0.3 });
+  const brass = M.brassNosing, glow = new THREE.MeshStandardMaterial({ color: 0x1a120a, emissive: 0xffb860, emissiveIntensity: 0.9, roughness: 0.3 });
+  const box = (par, mat, w, h, d, x, y, z) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; par.add(m); return m; };
+  // 门套贴脸（两侧 + 门楣）
+  for (const sx of [-1, 1]) { box(g, woodDk, 0.35, OH + 0.35, 0.5, sx * (OW / 2 + 0.17), Y + (OH + 0.35) / 2, ZW); box(g, brass, 0.04, OH + 0.3, 0.52, sx * (OW / 2 + 0.01), Y + (OH + 0.3) / 2, ZW); }
+  box(g, woodDk, OW + 0.7, 0.35, 0.5, 0, Y + OH + 0.17, ZW); box(g, brass, OW + 0.6, 0.04, 0.52, 0, Y + OH + 0.01, ZW);
+  const w = OW / 2, doorH = OH - 1.6; // 门扇 5.6 m 高，上方 1.6 m 铜格栅亮子
+  // 亮子：铜格栅 + 暖光内透
+  box(g, glow, OW, 1.5, 0.04, 0, Y + doorH + 0.8, ZW - 0.05);
+  for (let i = 1; i < 12; i++) box(g, brass, 0.05, 1.5, 0.08, -OW / 2 + i * OW / 12, Y + doorH + 0.8, ZW);
+  box(g, woodDk, OW, 0.18, 0.3, 0, Y + doorH + 0.05, ZW);
+  for (const sx of [-1, 1]) {
+    const leaf = new THREE.Group();
+    box(leaf, wood, w, doorH, 0.12, sx * -w / 2, doorH / 2, 0);
+    for (const fz of [-1, 1]) for (let r = 0; r < 3; r++) { // 每扇 2 列 × 3 行凸芯板 + 铜包边
+      const ph = r === 0 ? 1.1 : 1.85, py = 0.35 + [0, 1.25, 3.25][r] + ph / 2;
+      for (let c = 0; c < 2; c++) { const px = sx * -(w * 0.27 + c * w * 0.46), pw = w * 0.38;
+        box(leaf, woodDk, pw, ph, 0.04, px, py, fz * 0.075); box(leaf, brass, pw + 0.08, 0.035, 0.02, px, py + ph / 2 + 0.02, fz * 0.07); box(leaf, brass, pw + 0.08, 0.035, 0.02, px, py - ph / 2 - 0.02, fz * 0.07);
+        for (const e of [-1, 1]) box(leaf, brass, 0.035, ph + 0.08, 0.02, px + e * (pw / 2 + 0.02), py, fz * 0.07); }
+    }
+    box(leaf, brass, 0.16, 0.9, 0.03, sx * -(w - 0.35), 1.35, 0.08); box(leaf, brass, 0.16, 0.9, 0.03, sx * -(w - 0.35), 1.35, -0.08); // 铜推板
+    box(leaf, brass, w, 0.22, 0.13, sx * -w / 2, 0.11, 0); // 铜踢板
+    leaf.position.set(sx * w, Y, ZW + 0.1); leaf.rotation.y = sx * 0.87; g.add(leaf); // 向门厅（+z）半开 ≈ 50°
+  }
+  // 暖光渐变卡（大厅深处 → 门洞）：竖向卡，中心暖、四周透明，加法混合不写深度
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 256; const c2 = cv.getContext('2d');
+  const gr = c2.createRadialGradient(128, 150, 10, 128, 150, 140); gr.addColorStop(0, 'rgba(255,196,120,0.85)'); gr.addColorStop(0.45, 'rgba(255,150,70,0.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+  c2.fillStyle = gr; c2.fillRect(0, 0, 256, 256); const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+  const cardM = new THREE.MeshBasicMaterial({ map: tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: true, opacity: 0.55 });
+  for (const [z, s, o] of [[-31.5, 1.0, 0.55], [-24, 0.8, 0.28], [-16, 0.62, 0.14]]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(OW * 1.3 * s + 2, OH * 1.2 * s + 1), cardM.clone()); m.material.opacity = o; m.position.set(0, Y + OH * 0.5, z); m.userData.noShadow = true; m.castShadow = false; g.add(m); }
+  const pl = new THREE.PointLight(0xffc68a, 60, 16, 1.6); pl.position.set(0, Y + 4.5, -25); pl.castShadow = false; g.add(pl);
 }
