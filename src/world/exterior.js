@@ -491,6 +491,7 @@ async function heroFacade(g, M, world, ctx, add) {
   // R3 批次8：远景 LOD（tools/facade_lod.mjs，Permissive 塌边 2.6M → 0.32M 面）；hi/lo 各自子组，main.js 切块后按格切换
   const gHi = new THREE.Group(); gHi.name = 'facade_hi'; const gLo = new THREE.Group(); gLo.name = 'facade_lo'; g.add(gHi, gLo); ctx.facadeLod = { hi: gHi, lo: gLo };
   await Promise.all([placeHero(gHi, world, './assets/hero/hero_facade.glb', { hide: ['steps'] }), placeHero(gLo, null, './assets/hero/hero_facade_lo.glb', { col: false, hide: ['steps'] })]);
+  facadeBounce(gHi, gLo, Y); // 批次50：下半立面暖反弹光（广场铺地被地埋灯 / 投光照亮后回弹到石墙下段），让远景下半立面石材纹理可读
   // 门洞内：敞开的大门门扇——批次30 看 ext_door_near：原深色木 + 亮铜框读成「棕木板 + 霓虹描边」→ 暗古铜门扇 + 浅一档铜芯板 + 哑光铜框 + 铁箍铜泡钉
   const DW = 7, DH = 9;
   for (const sx of [-1, 1]) {
@@ -1106,4 +1107,52 @@ function innerVestibuleDoors(g, M, Y) {
   const cardM = new THREE.MeshBasicMaterial({ map: tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: true, opacity: 0.55 });
   for (const [z, s, o] of [[-31.5, 1.0, 0.55], [-24, 0.8, 0.28], [-16, 0.62, 0.14]]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(OW * 1.3 * s + 2, OH * 1.2 * s + 1), cardM.clone()); m.material.opacity = o; m.position.set(0, Y + OH * 0.5, z); m.userData.noShadow = true; m.castShadow = false; g.add(m); }
   const pl = new THREE.PointLight(0xffc68a, 60, 16, 1.6); pl.position.set(0, Y + 4.5, -25); pl.castShadow = false; g.add(pl);
+  // 批次50：尖拱鼓室（门楣 Y+7.55 以上到门洞顶 Y+10）——胡桃木框 + 暖光内透 + 铜竖格栅 + 中央铜圆花；轮廓贴 archPortal 内弧（w 10、起拱 5.67）
+  const archTop = (x) => Math.min(10, 5.67 + Math.sqrt(Math.max(0, 100 - (5 + Math.abs(x)) ** 2)));
+  const y0 = OH + 0.35, ty = new THREE.Shape(); const xs = []; for (let i = 0; i <= 16; i++) xs.push(-4.82 + i * 9.64 / 16);
+  ty.moveTo(-4.82, y0); for (const x of xs) ty.lineTo(x, archTop(x)); ty.lineTo(4.82, y0); ty.lineTo(-4.82, y0);
+  const tyM = new THREE.Mesh(new THREE.ShapeGeometry(ty), glow); tyM.position.set(0, Y, ZW - 0.12); g.add(tyM);
+  for (let i = 1; i < 16; i++) { const x = -4.82 + i * 9.64 / 16, hh = archTop(x) - y0; box(g, brass, 0.045, hh, 0.07, x, Y + y0 + hh / 2, ZW - 0.06); }
+  for (const yy of [y0 + 0.75, y0 + 1.6]) { const hw = Math.min(4.82, 5 - (5 - Math.sqrt(Math.max(0, 100 - (yy - 5.67) ** 2)))) - 0.05; box(g, woodDk, hw * 2, 0.07, 0.09, 0, Y + yy, ZW - 0.05); }
+  const ros = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.05, 8, 40), brass); ros.position.set(0, Y + y0 + 1.15, ZW); g.add(ros);
+  const ros2 = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.035, 8, 32), brass); ros2.position.set(0, Y + y0 + 1.15, ZW); g.add(ros2);
+  for (let a = 0; a < 8; a++) { const sp = box(g, brass, 0.035, 0.62, 0.04, 0, Y + y0 + 1.15, ZW); sp.rotation.z = a * Math.PI / 8; }
+  // 批次50：门廊后墙（Z1 −30 内面 z −29.6）内门两侧胡桃木护墙板 4.2 m 高（ext_door_mid 门洞内右侧那块被面光平打的米黄墙）——2 行凸芯板 + 铜压线 + 顶部线脚；上段石墙乘护墙阴影后不再整块平亮
+  for (const sx of [-1, 1]) {
+    const x0 = 5.6, x1 = 13.7, wd = x1 - x0, cx = sx * (x0 + x1) / 2, zz = -29.55;
+    box(g, woodDk, wd, 4.2, 0.08, cx, Y + 2.1, zz); box(g, woodDk, wd, 0.22, 0.16, cx, Y + 4.25, zz + 0.04); box(g, brass, wd, 0.03, 0.17, cx, Y + 4.13, zz + 0.05);
+    box(g, woodDk, wd, 0.25, 0.12, cx, Y + 0.12, zz + 0.02); box(g, brass, wd, 0.025, 0.13, cx, Y + 1.25, zz + 0.04);
+    const n = 5, pw = wd / n;
+    for (let i = 0; i < n; i++) { const px = sx * (x0 + pw * (i + 0.5));
+      for (const [py, ph] of [[0.72, 0.8], [2.75, 2.3]]) { box(g, wood, pw - 0.36, ph, 0.05, px, Y + py, zz + 0.06); box(g, brass, pw - 0.3, 0.02, 0.02, px, Y + py + ph / 2 + 0.02, zz + 0.09); } }
+  }
+  // 批次50：门廊前墙门洞侧壁（x ±3.5，z −6.4…−6.7，高 9）胡桃木门套衬板 + 铜收边，压掉 ext_door_mid 门洞右侧那条平亮竖面
+  for (const sx of [-1, 1]) { box(g, woodDk, 0.06, 9, 0.42, sx * 3.47, Y + 4.5, -6.55); box(g, brass, 0.07, 9, 0.03, sx * 3.47, Y + 4.5, -6.33); }
+}
+
+
+// ---------------- 批次50 下半立面反弹光 ----------------
+// ext_plaza（56 m 外逆光）下半立面发黑：SpotLight 再加强看不出、只会把近处打爆。改为材质级弱反弹项——
+// 只作用于主楼正立面（z > −16、|x| < 40）、Y−1…Y+16 高度，强度随高度衰减，乘石材自身反照率（纹理 / 分缝仍可读，不是平涂发光）。
+// GLB 材质与附楼 / 广场共用 extMats 表 → 这里 clone 一份并承接原有 onBeforeCompile 链（vao / 光照贴图），不影响其它建筑。
+function facadeBounce(gHi, gLo, Y) {
+  if (TOD.label === '白昼') return;
+  const cache = new Map();
+  const patch = (m) => {
+    if (cache.has(m)) return cache.get(m);
+    if (!m || !m.isMeshStandardMaterial || /glass|gold|brass|bronze|emit|lamp|light|water|COL|screen/i.test(m.name || '')) { cache.set(m, m); return m; }
+    const c = m.clone(); const prev = m.onBeforeCompile; const pk = m.customProgramCacheKey?.bind(m);
+    c.onBeforeCompile = (sh, r) => {
+      prev?.call(m, sh, r);
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vNbBw;').replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvNbBw = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vNbBw;')
+        .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+        { float hgt = smoothstep(${(Y + 16).toFixed(1)}, ${(Y + 0.5).toFixed(1)}, vNbBw.y) * smoothstep(${(Y - 1.5).toFixed(1)}, ${(Y - 0.2).toFixed(1)}, vNbBw.y);
+          float reg = smoothstep(-16.0, -12.0, vNbBw.z) * (1.0 - smoothstep(36.0, 40.0, abs(vNbBw.x)));
+          totalEmissiveRadiance += diffuseColor.rgb * vec3(1.0, 0.72, 0.46) * (0.30 * hgt * hgt + 0.06 * hgt) * reg; }`);
+    };
+    c.customProgramCacheKey = () => (pk ? pk() : '') + '|bnc50';
+    cache.set(m, c); return c;
+  };
+  for (const gr of [gHi, gLo]) gr.traverse((o) => { if (o.isMesh && o.material && !Array.isArray(o.material)) o.material = patch(o.material); });
 }
