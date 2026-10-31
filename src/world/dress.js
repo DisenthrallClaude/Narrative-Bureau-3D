@@ -91,6 +91,7 @@ export function dressMats(M) {
     r3_wear: new THREE.MeshStandardMaterial({ map: wearTex(), transparent: true, depthWrite: false, roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -2, color: 0xffffff }),
     r3_steelOld: W(new THREE.MeshStandardMaterial({ color: 0x5c5e58, roughness: 0.6, metalness: 0.7, envMapIntensity: 0.5 }), { macro: 0.25, tarnish: 0.5, grime: 0.3, ground: 0 }),
     r3_steelGrey: W(new THREE.MeshStandardMaterial({ color: 0x77786f, roughness: 0.55, metalness: 0.55, envMapIntensity: 0.5 }), { macro: 0.2, tarnish: 0.3 }),
+    r3_limestone: W(pbr('Concrete034', { color: 0xcfc6b2, roughness: 0.62, env: 0.55 }), { macro: 0.12, dust: 0.08, grime: 0.12, ground: 0 }), // 批次39：米灰石灰岩线脚（黑大理石墙上读得出）
     r3_glassCase: new THREE.MeshPhysicalMaterial({ color: 0xdfe8e4, roughness: 0.05, metalness: 0, transmission: 0, transparent: true, opacity: 0.18, envMapIntensity: 0.8, depthWrite: false }),
     r3_globe: new THREE.MeshStandardMaterial({ color: 0xfff4e0, emissive: 0xffe2b8, emissiveIntensity: 2.4, roughness: 0.4 }),
     r3_globeDim: new THREE.MeshStandardMaterial({ color: 0xf2e8d6, emissive: 0xffe2b8, emissiveIntensity: 0.5, roughness: 0.4 }), // 批次16 再压 0.95→0.5；批次15：近机位低悬球灯防过曝

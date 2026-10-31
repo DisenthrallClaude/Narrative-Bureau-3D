@@ -45,6 +45,10 @@ export function loadModel(name) {
           if (o.isMesh) {
             const m = o.material;
             if (m && /^(dd|gd|sw)_walnut/.test(m.name || '')) { woodBox(o, m); return; } // 批次36：Blender 精建台体（值班长台 / 引导台）的胡桃木面是无 UV 纯色 → cc_r3_c 看图像橙色塑料；补盒投影 UV + Wood051 木纹
+            if (name === 'r2/44_pocket_rotating_newspaper_stand' && m) { // 批次39：旋转报架原模型 FrontColor 纯白无贴图 + 双面薄片 → 黄昏 / 室内都发白、像半透明线框（ext_busstop、cs 表格取阅架）；改旧新闻纸灰米色 + 阳极铝真金属
+              if (m.name === 'FrontColor') o.material = new THREE.MeshStandardMaterial({ name: 'np_paper', color: 0x8c8474, roughness: 0.92, side: THREE.DoubleSide });
+              else if (/Alumin/.test(m.name || '')) o.material = new THREE.MeshStandardMaterial({ name: 'np_alu', color: 0x8d939a, roughness: 0.38, metalness: 0.85, side: THREE.DoubleSide });
+            }
             if (m && /decal_screen/.test(m.name || '')) { o.material = screenUI(0); o.userData.screen = true; o.castShadow = false; return; } // M5：显示器原贴图是粉紫色桌面，换成局内系统界面
             if (m && m.isMeshBasicMaterial) {
               o.material = new THREE.MeshStandardMaterial({ map: m.map, color: m.color, roughness: 0.85, metalness: 0, side: m.side, transparent: m.transparent, alphaTest: m.alphaTest });
