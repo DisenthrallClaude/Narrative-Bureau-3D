@@ -108,8 +108,8 @@ export async function buildExterior(scene, world, ctx) {
   for (const p of [[12, 46], [-12, 14], [5, 74], [-26, 30], [26, 30]]) add(placeModel('manhole', { width: 0.8, pos: [p[0], 0.02, p[1]] }));
   for (const sx of [-1, 1]) add(placeModel('planter', { height: 1.0, pos: [sx * 15.2, FLOOR, -3.2] }));
   // 旗杆阵列（12 面局旗）
-  const flagTex = content.tex('tex_flag_bureau');
-  const flagMat = bannerMaterial(flagTex ?? null, flagTex ? 0xffffff : 0x14244d);
+  const flagTex = flagTexM4();
+  const flagMat = bannerMaterial(flagTex ?? null, flagTex ? 0xffffff : 0x3e1a14);
   for (let i = 0; i < 12; i++) {
     const sx = i < 6 ? -1 : 1, k = i % 6;
     const x = sx * 14.5, z = 8 + k * 12;
@@ -246,7 +246,7 @@ function buildFountain(b, g, M, world, ctx) {
   const goldSpire = M.goldBright;
   placeModel('spire', { height: 9.5, pos: [C[0], 6.75, C[2]], material: goldSpire }).then((o) => g.add(o));
   // 尖塔顶部罗盘
-  const em = emblem(0.55, M.goldBright, M.navy); em.position.set(C[0], 16.9, C[2]); em.rotation.y = 0; g.add(em); ctx.fountainEmblem = em;
+  const em = emblem(0.55, M.goldBright, embBackM4()); em.position.set(C[0], 16.9, C[2]); em.rotation.y = 0; g.add(em); ctx.fountainEmblem = em;
   // 铭牌（南侧）
   if (!HERO) {
   b.add('stoneDark', new THREE.BoxGeometry(1.6, 1.0, 0.5), { pos: [C[0], 0.5, C[2] + 15.4] }, { uv: 1, collide: true });
@@ -299,7 +299,7 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
     const e1 = new THREE.Shape(); e1.moveTo(-hw - 0.1, -0.1); e1.lineTo(0, 9.15); e1.lineTo(hw + 0.1, -0.1); e1.lineTo(hw - 0.2, -0.1); e1.lineTo(0, 8.7); e1.lineTo(-hw + 0.2, -0.1);
     b.add('gold', new THREE.ExtrudeGeometry(e1, { depth: 0.56, bevelEnabled: false }), front.at(0, archApex(pW, hs) - 3.2, pDepth - 0.23), { uv: 1 });
     // 山花内金色小罗盘
-    const em = emblem(1.1, M.gold, M.navy); em.position.set(0, Y + archApex(pW, hs) + 0.9, -5 + pDepth + 0.25); g.add(em);
+    const em = emblem(1.1, M.gold, embBackM4()); em.position.set(0, Y + archApex(pW, hs) + 0.9, -5 + pDepth + 0.25); g.add(em);
     // 山花两斜边卷叶饰
     for (let k = 1; k < 9; k++) { const t = k / 9; for (const sx of [-1, 1]) b.add('stone', new THREE.ConeGeometry(0.14, 0.5, 4), front.at(sx * hw * (1 - t), archApex(pW, hs) - 3.2 + 9 * t + 0.25, pDepth), { uv: 1 }); }
     // M5：删去山花顶尖顶（曾穿过招牌「管」字）
@@ -307,7 +307,7 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
   // 门洞内：鼓室（tympanum）与局徽浮雕
   b.add('stoneDark', archSolidGeo(DW, 0.01, 0.3), front.at(0, hs, 0.1), { uv: 0.4 });
   b.add('gold', new THREE.BoxGeometry(DW + 0.2, 0.25, 0.5), front.at(0, hs, 0.25), { uv: 1 });
-  { const em = emblem(1.8, M.goldBright, M.navy); em.position.set(0, Y + hs + 2.6, -5 + 0.35); g.add(em); }
+  { const em = emblem(1.8, M.goldBright, embBackM4()); em.position.set(0, Y + hs + 2.6, -5 + 0.35); g.add(em); }
   // 敞开的大门门扇（深色木 + 铁箍 + 金色铆钉）
   for (const sx of [-1, 1]) {
     const leaf = new THREE.Group();
@@ -327,7 +327,7 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
   b.add('gold', new THREE.BoxGeometry(17.4, 0.14, 0.6), front.at(0, textBandY + 1.85, 0.2), { uv: 1 });
   b.add('gold', new THREE.BoxGeometry(17.4, 0.14, 0.6), front.at(0, textBandY - 1.85, 0.2), { uv: 1 });
   const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + textBandY, -5 + 0.5); g.add(txt);
-  const big = emblem(3.8, M.goldBright, M.navy); big.position.set(0, Y + 37.8, -5 + 0.5); g.add(big); ctx.facadeEmblem = big; big.traverse((o) => { o.userData.noCull = true; }); // 批次9：玫瑰窗中心局徽半径 1.05 m 被 DistCull（r<1.5 → 60 m）剔掉，plaza 主机位看不到金色窗花中心
+  const big = emblem(3.8, M.goldBright, embBackM4()); big.position.set(0, Y + 37.8, -5 + 0.5); g.add(big); ctx.facadeEmblem = big; big.traverse((o) => { o.userData.noCull = true; }); // 批次9：玫瑰窗中心局徽半径 1.05 m 被 DistCull（r<1.5 → 60 m）剔掉，plaza 主机位看不到金色窗花中心
   b.add('stoneDark', new THREE.CylinderGeometry(4.75, 4.75, 0.3, 48), { pos: [0, Y + 37.8, -5 + 0.2], rot: [Math.PI / 2, 0, 0] }, { uv: 0.5 });
   lancetWindow(b, front, -10.0, 31.5, 0.42, 2.2, 8.5);
   lancetWindow(b, front, 10.0, 31.5, 0.42, 2.2, 8.5);
@@ -346,7 +346,7 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
 
   // —— 正面双塔（x ±22）——
   const towerBanner = (ff, w) => {
-    const fm = bannerMaterial(content.tex('tex_flag_bureau'), content.tex('tex_flag_bureau') ? 0xffffff : 0x14244d);
+    const fm = bannerMaterial(flagTexM4(), flagTexM4() ? 0xffffff : 0x3e1a14);
     const fl = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 13, 6, 18), fm);
     fl.applyMatrix4(ff.at(0, 30, w / 2 + 0.35)); fl.castShadow = true; g.add(fl);
   };
@@ -410,7 +410,7 @@ function buildMainBuilding(b, g, M, world, ctx, add) {
     spire(b, f, 0, hh, 0, r * 0.92, 108, { bands: [0, 0.22, 0.45, 0.66, 0.84] }); }
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const f = new Frame([sx * 11.8, Y + 122, -98 + sz * 11.8], 0); b.add('stone', new THREE.CylinderGeometry(1.3, 1.5, 6, 8), f.at(0, 3, 0), { uv: 0.4 }); spire(b, f, 0, 6, 0, 1.5, 20, { lucarnes: false, bands: [0, 0.5] }); }
   // 主塔南面巨型局徽
-  const te = emblem(6.5, M.goldBright, M.navy); te.position.set(0, Y + 80, -98 + 14 + 0.6); g.add(te);
+  const te = emblem(6.5, M.goldBright, embBackM4()); te.position.set(0, Y + 80, -98 + 14 + 0.6); g.add(te);
   b.add('stoneDark', new THREE.CylinderGeometry(8, 8, 0.4, 48), { pos: [0, Y + 80, -98 + 14 + 0.2], rot: [Math.PI / 2, 0, 0] }, { uv: 0.5 });
   // 主塔四角高耸副尖塔
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const f = new Frame([sx * 16.5, Y + 92, -98 + sz * 16.5], 0); b.add('stone', new THREE.CylinderGeometry(1.8, 2.0, 10, 8), f.at(0, 5, 0), { uv: 0.4 }); spire(b, f, 0, 10, 0, 2.0, 22, { lucarnes: false, bands: [0, 0.5] }); }
@@ -506,8 +506,18 @@ async function heroFacade(g, M, world, ctx, add) {
   ironD.color.set(0x2a2420); occ(ironD); // 铁箍：冷蓝灰 → 暖黑铁（共享 M.iron 不动）
   // 批次60：右门扇实测 (64–103,10–37,0) 牛血红（G、B 极低）——右扇单独克隆三种铜材，底色乘 (0.80,1.30,1.55) 回暖棕 / 暗古铜，金属度 ≤0.45 让暖漫反射主导；左扇不变
   const dMR = {}; for (const k in dM) { const c = dM[k].clone(); if (Object.prototype.hasOwnProperty.call(dM[k], 'onBeforeCompile')) c.onBeforeCompile = dM[k].onBeforeCompile; if (Object.prototype.hasOwnProperty.call(dM[k], 'customProgramCacheKey')) c.customProgramCacheKey = dM[k].customProgramCacheKey; c.color.multiply(new THREE.Color(0.80, 1.30, 1.55)); c.metalness = Math.min(c.metalness, 0.45); c.needsUpdate = true; dMR[k] = c; }
+  // 批次M4：门扇色相锁——批55–60 三轮查明：左扇底部紫 = 黄昏半球光 0x9a96c8 + 天空反射，右扇牛血红 = 门厅 / 门廊 2850K 暖光照在铜色金属上（金属反射 = 光色 × 底色，橙光 × 铜 = 深红）。
+  // 再改底色乘数无效（批60 右扇乘 (0.8,1.3,1.55) G 只抬 0.09）。新做法：门扇三种铜材在着色器末端按「亮度保留、色相锁定」重映射——
+  // 每个像素取出射光亮度 L，换成统一暗古铜色相 ×L（混合 0.85），各路光的明暗照常起作用，但哪路光的色偏都改不了色相 → 左右两扇、上下两端同色。
+  const HUE_M4 = new THREE.Vector3(0.62, 0.42, 0.24); // 暗古铜（sRGB 色相向量）
+  const hueLock = (c) => { const prev = c.onBeforeCompile, prevKey = c.customProgramCacheKey;
+    c.onBeforeCompile = function (sh, r) { if (prev) prev.call(this, sh, r); sh.uniforms.uHueM4 = { value: HUE_M4 };
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 uHueM4;')
+        .replace('#include <dithering_fragment>', '#include <dithering_fragment>\n  { float Lm4 = dot(gl_FragColor.rgb, vec3(0.299, 0.587, 0.114)); vec3 hm4 = uHueM4 / dot(uHueM4, vec3(0.299, 0.587, 0.114)); gl_FragColor.rgb = mix(gl_FragColor.rgb, hm4 * Lm4, 0.85); }'); };
+    c.customProgramCacheKey = function () { return (prevKey ? prevKey.call(this) : '') + '|hueM4'; }; c.needsUpdate = true; return c; };
+  for (const k in dM) hueLock(dM[k]); hueLock(ironD);
   for (const sx of [-1, 1]) {
-    const dM_ = sx > 0 ? dMR : dM;
+    const dM_ = dM; // 批次M4：两扇共享同一份门扇材质（弃用批60 右扇克隆 dMR）
     const leaf = new THREE.Group(); const w = DW / 2, h = DH;
     const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), dM_.bronzeDoor); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
     for (const fz of [-1, 1]) {
@@ -522,10 +532,12 @@ async function heroFacade(g, M, world, ctx, add) {
   for (const [py, nm] of [[1.6, 'porch_bounce60_lo'], [6.6, 'porch_bounce60_hi']]) { const pb = new THREE.PointLight(0xffb26e, 18, 6.5, 2); pb.position.set(-1.0, Y + py, -7.8); pb.castShadow = false; pb.name = nm; g.add(pb); }
   innerVestibuleDoors(g, M, Y); // 批次49：门洞纵深——门厅尽头内门（铜饰胡桃木门半开）+ 门厅暖光渐变
   // 文字带「叙事管理局」（黑色抛光石板上的鎏金字）
-  const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + 31.2, -4.99); g.add(txt);
+  // 批次M4：招牌底板原是 F_marbleDark 抛光黑石映出黄昏蓝天 → 读成蓝底；文字后加暗铜底板（金属 0.6 / 粗糙 0.5 / env 0.5，哑光暗古铜）= 暗铜底金字
+  { const pl = new THREE.Mesh(new THREE.PlaneGeometry(15.6, 3.3), new THREE.MeshStandardMaterial({ color: 0x3a2716, metalness: 0.6, roughness: 0.5, envMapIntensity: 0.5 })); pl.position.set(0, Y + 31.2, -4.988); pl.receiveShadow = true; g.add(pl); }
+  const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + 31.2, -4.972); g.add(txt);
   // 玫瑰窗中心局徽、鼓室局徽
-  const big = emblem(1.05, M.goldBright, M.navy); big.position.set(0, Y + 37.6, -5.35); g.add(big); ctx.facadeEmblem = big; big.traverse((o) => { o.userData.noCull = true; }); // 批次9：玫瑰窗中心局徽半径 1.05 m 被 DistCull（r<1.5 → 60 m）剔掉，plaza 主机位看不到金色窗花中心
-  { const em = emblem(1.7, M.goldBright, M.navy); em.position.set(0, Y + DH + 2.4, -5.25); g.add(em); em.traverse((o) => { o.userData.noCull = true; }); }
+  const big = emblem(1.05, M.goldBright, embBackM4()); big.position.set(0, Y + 37.6, -5.35); g.add(big); ctx.facadeEmblem = big; big.traverse((o) => { o.userData.noCull = true; }); // 批次9：玫瑰窗中心局徽半径 1.05 m 被 DistCull（r<1.5 → 60 m）剔掉，plaza 主机位看不到金色窗花中心
+  { const em = emblem(1.7, M.goldBright, embBackM4()); em.position.set(0, Y + DH + 2.4, -5.25); g.add(em); em.traverse((o) => { o.userData.noCull = true; }); }
   // 雕像：门洞五重退缩券的门柱托座（每侧 5 尊）、列王廊 11 龛、门廊墩柱壁龛、两侧盲龛
   for (let k = 1; k <= 5; k++) { const wi = DW + k, yk = -k * 0.55; for (const sx of [-1, 1]) add(placeModel('gothic_statue', { height: 2.55, pos: [sx * (wi / 2 - 0.22), Y + 2.36, -5 - (yk - 0.17)], rotY: sx * -0.35 })); }
   for (let i = 0; i < 11; i++) add(placeModel('gothic_statue', { height: 3.0, pos: [-14 + 1.27 + i * 2.546, Y + 18.71, -5.3] }));
@@ -537,8 +549,8 @@ async function heroFacade(g, M, world, ctx, add) {
     const px = cx + (fx ? fx * 6.5 + fx * 1.4 : s * 5.6), pz = -13 + (fz ? fz * 6.5 + fz * 1.4 : s * 5.6);
     add(placeModel(s > 0 ? 'gargoyle_a' : 'gargoyle_b', { maxDim: 1.7, pos: [px, Y + 58.6, pz], rotY: ry }));
   }
-  // 塔身深蓝局旗（竖幅，挂在一层盲拱段）
-  const fm = bannerMaterial(content.tex('tex_flag_bureau'), content.tex('tex_flag_bureau') ? 0xffffff : 0x14244d);
+  // 塔身酒红褐局旗（竖幅，挂在一层盲拱段）
+  const fm = bannerMaterial(flagTexM4(), flagTexM4() ? 0xffffff : 0x3e1a14);
   for (const sx of [-1, 1]) { const fl = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 12, 6, 18), fm); fl.position.set(sx * 22, Y + 10.2, -6.5 + 0.55); fl.castShadow = true; g.add(fl); }
   ctx.doorZ = -5;
 }
@@ -773,6 +785,12 @@ function streetModules(g, mods, at, Y0) { // 批次33：tools/blender/street_hou
 
 // 批次37：街屋店面招牌由平涂色块 → 有字招牌（60–80 年代国营商店：红底金字 / 蓝底白字 / 绿底白字木框招牌），每个店面模块一块，按开间 hash 取店名（稳定，不随机散布）
 // 批次59：蓝底 / 绿底招牌（配红雨棚 = 红配蓝 / 红配绿）→ 暗红底金字 / 黑底金字 / 木底刻字（wood）三类
+
+// 批次M4：外观禁蓝——局旗深蓝贴图 → 酒红褐重染版（B01_02_局旗酒红.png，金线 / 金字保留）；局徽底衬 navy → 酒红褐呢；仅外观用，室内大厅垂旗不动
+let _flagM4 = null;
+const flagTexM4 = () => (_flagM4 ??= loadTex('content/textures/b01/B01_02_局旗酒红.png', { srgb: true }));
+let _embM4 = null;
+const embBackM4 = () => (_embM4 ??= new THREE.MeshStandardMaterial({ color: 0x3e1a14, roughness: 0.8, metalness: 0, envMapIntensity: 0.5 }));
 const SHOP_NAMES = [['国营百货商店', '#5c1510', '#d9b25a'], ['副食品商店', '#15110e', '#d4a94e'], ['红星照相馆', 'wood', '#2a160b'], ['人民邮电', '#15110e', '#d4a94e'], ['新华书店', '#5c1510', '#d9b25a'], ['国营饭店', 'wood', '#2a160b'], ['五金交电', '#15110e', '#d4a94e'], ['钟表眼镜', '#5c1510', '#d9b25a']];
 function shopSigns(g, mods, at, Y0) {
   const hs = (k) => { const x = Math.sin(k * 91.7 + 17.3) * 43758.5453; return x - Math.floor(x); };
@@ -1054,7 +1072,7 @@ function buildStreetRows(g, M, place, rnd) {
 
 function aircraft(M, s) {
   const g = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CapsuleGeometry(1.6, 11, 6, 12), M.navy); body.rotation.z = Math.PI / 2; g.add(body);
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(1.6, 11, 6, 12), embBackM4()); body.rotation.z = Math.PI / 2; g.add(body);
   const wing = new THREE.Mesh(new THREE.BoxGeometry(5, 0.3, 16), M.slate); wing.position.x = -1; g.add(wing);
   const fin = new THREE.Mesh(new THREE.BoxGeometry(3, 3.2, 0.25), M.slate); fin.position.set(-6, 1.8, 0); g.add(fin);
   for (const sz of [-1, 1]) { const eng = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 1.0, 16), M.blackMetal); eng.position.set(-1, 0.4, sz * 7); g.add(eng); }

@@ -86,12 +86,12 @@ export function extMats() {
   // 雕饰线脚：同石种、较细腻（ambientCG Granite003A 无砌缝）
   EXT.trim = weather(pbr('Granite003A', { color: 0x3c3a38, roughness: 0.78, env: 0.55, normalScale: 0.9 }), { macro: 0.14, streak: 0.35, grime: 0.3, ground: 1.8, rough: 0.12 });
   EXT.plinth = weather(phMat('granite_tile', { color: 0x6a6866, roughness: 0.9, env: 0.6 }), { macro: 0.12, grime: 0.45, ground: 0.2 });
-  EXT.marble = weather(pbr('Marble016', { color: 0x9a9aa2, roughness: 0.32, env: 1.0, physical: true, clearcoat: 0.5, clearcoatRoughness: 0.15 }), { macro: 0.1, streak: 0.2, rough: 0.08 });
-  EXT.marbleDark = weather(pbr('Marble016', { color: 0x2a2b30, roughness: 0.36, env: 0.9 }), { macro: 0.16, streak: 0.4, grime: 0.3, rough: 0.12 });
+  EXT.marble = weather(pbr('Marble016', { color: 0x9c9790, roughness: 0.32, env: 0.6, /* 批次M4：冷灰 → 暖灰、反射压（映蓝天） */ physical: true, clearcoat: 0.5, clearcoatRoughness: 0.15 }), { macro: 0.1, streak: 0.2, rough: 0.08 });
+  EXT.marbleDark = weather(pbr('Marble016', { color: 0x28211b, roughness: 0.5, env: 0.45 } /* 批次M4：冷蓝黑抛光 → 暖黑哑光（立面黑石带映蓝天） */), { macro: 0.16, streak: 0.4, grime: 0.3, rough: 0.12 });
   EXT.steps = weather(pbr('Marble016', { rn: true, color: 0x8a8a90, roughness: 0.42, env: 0.8 }), { macro: 0.1, dust: 0.25, rough: 0.12 });
   EXT.gold = weather(pbr('Metal048A', { color: 0xffdc96, metalness: 1, roughness: 0.3, env: 1.3 }), { macro: 0.1, tarnish: 0.3, rough: 0.12, scale: 2.0 });
-  EXT.slate = weather(phMat('roof_slates_02', { color: 0x3c4250, roughness: 0.85, env: 0.9, normalScale: 1.2 }), { macro: 0.18, streak: 0.25, tarnish: 0.1 });
-  EXT.lead = weather(pbr('Metal027', { color: 0x3a3e46, metalness: 0.7, roughness: 0.5, env: 0.9 }), { macro: 0.2, streak: 0.4, tarnish: 0.3 });
+  EXT.slate = weather(phMat('roof_slates_02', { color: 0x403b38, roughness: 0.85, env: 0.6, normalScale: 1.2 /* 批次M4：冷蓝灰石板 → 暖灰 */ }), { macro: 0.18, streak: 0.25, tarnish: 0.1 });
+  EXT.lead = weather(pbr('Metal027', { color: 0x3d3a37, metalness: 0.6, roughness: 0.5, env: 0.5 /* 批次M4：铅皮去蓝 */ }), { macro: 0.2, streak: 0.4, tarnish: 0.3 });
   EXT.glass = M.glassOut;
   EXT.louver = pbr('Wood051', { color: 0x2a1e16, roughness: 0.7 });
   // 广场
@@ -102,7 +102,7 @@ export function extMats() {
   EXT.water = M.water ?? new THREE.MeshPhysicalMaterial({ color: 0x0d1a1e, roughness: 0.05, metalness: 0, transmission: 0, envMapIntensity: 1.2 });
   EXT.bronze = new THREE.MeshStandardMaterial({ color: 0x5a4632, metalness: 1, roughness: 0.45, envMapIntensity: 1.0 });
   weather(EXT.bronze, { macro: 0.2, tarnish: 0.6, scale: 1.5 });
-  EXT.iron = weather(pbr('Metal046A', { color: 0x2b2d33, metalness: 1, roughness: 0.42 }), { macro: 0.15, tarnish: 0.5, rough: 0.2, scale: 1.5 });
+  EXT.iron = weather(pbr('Metal046A', { color: 0x2c2723, /* 批次M4：冷蓝灰铁 → 暖黑铁 */ metalness: 1, roughness: 0.42 }), { macro: 0.15, tarnish: 0.5, rough: 0.2, scale: 1.5 });
   EXT.lawn = M.grass.clone(); EXT.hedge = M.hedge.clone(); // 共享材质不能直接打补丁（老几何没有 color 属性 → AO=0 全黑）
   for (const k of Object.keys(EXT)) if (k !== 'glass' && k !== 'water') vaoPatch(EXT[k], { direct: k === 'gold' ? 0.5 : 0.35 });
   return EXT;
