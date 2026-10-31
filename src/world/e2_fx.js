@@ -91,8 +91,9 @@ export function amberize(group) {
   let n = 0;
   group.traverse((o) => {
     if (!o.isMesh || !o.material?.isShaderMaterial || o.userData.e2a) return; o.userData.e2a = true;
-    const m = o.material; const fs = m.fragmentShader; const k = fs.lastIndexOf('}'); if (k < 0) return;
-    m.fragmentShader = fs.slice(0, k) + `{ float l2 = dot(gl_FragColor.rgb, vec3(.299, .587, .114)); gl_FragColor.rgb = min(l2 * vec3(1.0, .64, .26) * 0.9, vec3(.9)); }\n` + fs.slice(k);
+    // 库的 main() 在持续段（uLifeStage==1）会提前 return，尾部插入不会执行 → 把原 main 改名 e2Main，外包一层再乘色
+    const m = o.material; const fs = m.fragmentShader; const k = fs.lastIndexOf('void main()'); if (k < 0) return;
+    m.fragmentShader = fs.slice(0, k) + 'void e2Main()' + fs.slice(k + 11) + `\nvoid main(){ e2Main(); float l2 = dot(gl_FragColor.rgb, vec3(.299, .587, .114)); gl_FragColor.rgb = min(l2 * vec3(1.0, .64, .26) * 0.9, vec3(.9)); }\n`;
     m.needsUpdate = true; n++;
   });
   return n;
