@@ -2230,6 +2230,7 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 - walk：run 41233194761（f0e87b3）31/31、控制台 0；run 41233883838（e122b90）31/31、控制台 0。
 - 截图（1280×720 high，Actions）：改前 = E2 末版（work/r3/e2/r41231792235/e2g、r41230989821/e2a）；改后 run 41233194761（组 i1：ab1_r3 / m6_b1）、41233883838（组 i1b：铜框修正后 m13_gate_front / side）。拼图 work/r3/i1/sheet.jpg（改前 | 改后）；脚本 work/r3/i1/sheet.py、fetch.sh。
 - Pages：线上 content/audio/K_ui_hover.ogg 200、index.json 含 K_*（f25ae39 Deploy 41233032805 success）。
+- Drive：分卷 1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq 下新建 v24_i1_audio（1YxNoMJXJT1VfHZNnl1kX0841z8umkGsC）内 v24_i1_audio.tar.gz（1LaXf5xSiFnp0v1rOGInVz20ut1Bsu08N：audio.js / e2_fx.js / diff、29 个 K_*.ogg、Kenney 原 zip、转码脚本、拼图、全部截图与 walk 报告）。未删任何旧卷。
 - 未验证：音效听感无法在无头 CI 里实听（只验证了加载 / 无报错 / 音量链路）；low 档未单独拍（B 项不分档）。
 ### 下批建议
 1. 在 physics 登记真正的 'grate'/'metal' 地面（东楼梯 / 书脊井钢梯），替代按区域近似。2. 门关闭、阅读器关闭（K_door_close / K_ui_back / K_paper_open 已入仓未接）。3. 如需更强存在感可把 KALIAS / KINTER 里的音量系数上调，统一在 audio.js 顶部。
