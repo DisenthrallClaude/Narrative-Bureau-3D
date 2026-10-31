@@ -889,12 +889,12 @@ function oldBronzeMat() { // 批次36：两批来仍像深色木框 → 带少�
   let sd = 7; const rnd = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
   const cc = mk(), x = cc.getContext('2d'); x.fillStyle = '#b08350'; x.fillRect(0, 0, N, N);
   for (let i = 0; i < 260; i++) { const r = 2 + rnd() * 10; x.fillStyle = `rgba(${60 + rnd() * 30 | 0},${38 + rnd() * 20 | 0},${18 + rnd() * 10 | 0},${0.12 + rnd() * 0.2})`; x.beginPath(); x.arc(rnd() * N, rnd() * N, r, 0, 7); x.fill(); } // 氧化暗斑
-  for (let i = 0; i < 120; i++) { x.strokeStyle = `rgba(240,205,150,${0.08 + rnd() * 0.15})`; x.lineWidth = 0.6; const a = rnd() * N, b = rnd() * N; x.beginPath(); x.moveTo(a, b); x.lineTo(a + (rnd() - 0.5) * 40, b + (rnd() - 0.5) * 6); x.stroke(); } // 细擦痕（磨亮）
+  for (let i = 0; i < 900; i++) { x.fillStyle = `rgba(245,215,165,${0.06 + rnd() * 0.12})`; x.fillRect(rnd() * N, rnd() * N, 1 + rnd() * 1.5, 1 + rnd() * 1.5); } // 细碎磨亮点（各向同性；批次36 首版横向擦痕在 id_yinze 里读成木纹，改掉）
   for (let i = 0; i < 14; i++) { x.fillStyle = `rgba(70,110,85,${0.1 + rnd() * 0.12})`; x.beginPath(); x.arc(rnd() * N, rnd() * N, 2 + rnd() * 5, 0, 7); x.fill(); } // 少量铜绿
   const rc = mk(), y = rc.getContext('2d'); y.fillStyle = '#5a5a5a'; y.fillRect(0, 0, N, N);
   for (let i = 0; i < 400; i++) { const v = 50 + rnd() * 90 | 0; y.fillStyle = `rgba(${v},${v},${v},0.25)`; y.beginPath(); y.arc(rnd() * N, rnd() * N, 1 + rnd() * 8, 0, 7); y.fill(); }
   const tex = (c, srgb) => { const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2, 2); if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
-  return new THREE.MeshPhysicalMaterial({ name: 'oldBronze36', color: 0xd2bfa6 /* 去一点橙，偏旧铜 */, map: tex(cc, true), roughnessMap: tex(rc, false), metalness: 1.0, roughness: 0.55, clearcoat: 0.5, clearcoatRoughness: 0.18, envMapIntensity: 2.2 });
+  return new THREE.MeshPhysicalMaterial({ name: 'oldBronze36', color: 0xd2bfa6 /* 去一点橙，偏旧铜 */, map: tex(cc, true), roughnessMap: tex(rc, false), metalness: 1.0, roughness: 0.4, clearcoat: 0.8, clearcoatRoughness: 0.08, envMapIntensity: 2.6 }); // 粗糙度降、清漆加，让框条吃锐利高光
 }
 function dossierStand(g, M, name, x, z, flip = false) { // flip：相框朝 −Z（周闻：椅前是值班长台，玩家从椅后平台过来）
   const k = IDPHOTO[name]; if (!k) return;
