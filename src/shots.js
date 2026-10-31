@@ -67,6 +67,7 @@ export const SHOTS = {
   cc_comm: { pos: [47.6, 8.8 + 1.8 + 1.6, -57.0], look: [43.6, 8.8 + 1.8 + 0.9, -60.7], fov: 78, zone: 'command_center' },
   cs_r3: { pos: [24.2, 1.8 + 1.7, -33.0], look: [37, 1.8 + 1.2, -50.5], fov: 74, zone: 'citizen_service' }, // 批次11：市民服务大厅（西南角看窗口）
   cs_r3_c: { pos: [23.5, 1.8 + 1.6, -46.1], look: [22.3, 1.8 + 0.6, -43.2], fov: 60, zone: 'citizen_service' }, // 批次36：西门内看引导台正面（Blender 精建 guide_desk 验收）
+  cs_r3_e: { pos: [38.5, 1.8 + 1.7, -40.3], look: [56, 1.8 + 3.6, -40.3], fov: 72, zone: 'citizen_service' }, // 批次38：东墙两樘高窗线脚 + 来信投递验收
   cs_r3_b: { pos: [47.5, 1.8 + 1.7, -49.6], look: [27, 1.8 + 1.0, -37], fov: 74, zone: 'citizen_service' }, // 东北角回看候号区/填单台
   // 批次13：人物图片（通缉海报 / 证件照小卡）特写
   hall_wanted: { pos: [12.6, 1.8 + 2.0, -64], look: [17.4, 1.8 + 2.2, -64], fov: 70 },

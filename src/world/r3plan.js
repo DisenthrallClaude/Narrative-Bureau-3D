@@ -2270,6 +2270,15 @@ export function planCitizenService(y) {
   pic(out, 'textures/b01/B01_18_档案馆规章铜牌.png', 40, y + 4.55, -32.45, Math.PI, 1.2, 1.6, 'wood', { tag: '公示栏' });
   for (const x of [30, 40]) light(out, x, y + 5.9, -33.4, 0xfff0dc, 0.7, 4);
   for (const yy of [3.55, 6.25]) out.push({ box: 'stoneDark', x: 35, y: y + yy, z: -32.47, w: 30.6, h: 0.12, d: 0.1, uv: 0.5, tag: '线脚', on: 'partv' });
+  // 批次38：东墙两樘尖拱高窗（z −36 / −44.6，窗洞 y+2.0…4.6，eastwing.js）补线脚——石窗台 + 两侧石贴脸 + 拱顶滴水檐 + 拱心石；墙面 y+4.95（拱顶上）/ 6.25 两道通长石线脚，与南墙同高同料
+  for (const z of [-36, -44.6]) {
+    out.push({ box: 'stoneDark', x: 55.79, y: y + 1.94, z, w: 0.22, h: 0.09, d: 2.1, uv: 0.5, tag: '窗台', on: 'partv' });
+    out.push({ box: 'stoneDark', x: 55.84, y: y + 1.86, z, w: 0.12, h: 0.08, d: 1.86, uv: 0.5, tag: '窗台', on: 'partv' });
+    for (const dz of [-0.98, 0.98]) out.push({ box: 'stoneDark', x: 55.84, y: y + 3.3, z: z + dz, w: 0.12, h: 2.6, d: 0.14, uv: 0.5, tag: '窗贴脸', on: 'partv' });
+    out.push({ box: 'stoneDark', x: 55.82, y: y + 4.74, z, w: 0.16, h: 0.1, d: 2.3, uv: 0.5, tag: '滴水檐', on: 'partv' });
+    out.push({ box: 'stoneDark', x: 55.83, y: y + 4.6, z, w: 0.14, h: 0.24, d: 0.2, uv: 0.5, tag: '拱心石', on: 'partv' });
+  }
+  for (const yy of [4.95, 6.25]) out.push({ box: 'stoneDark', x: 55.85, y: y + yy, z: -42.45, w: 0.1, h: 0.12, d: 19.9, uv: 0.5, tag: '线脚', on: 'partv' });
   out.push({ m: 'r2/exit_sign', x: X0 + 0.36, y: y + 3.4, z: -48.0, yaw: ROT.E, w: 0.36, tag: '导视', on: 'wall' });
   out.push({ m: 'r4/fireExtinguisher_abc_a03', x: 20.45, y, z: -44.4, yaw: ROT.E, fit: [0.144, 0.545, 0.192], tag: '消防', on: 'floor' });
   for (const [x, z] of [[20.85, -33.0], [44.8, -33.0], [49.0, -51.95]]) out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x, y, z, yaw: 0, h: 0.75, tag: '绿植', on: 'floor' });
