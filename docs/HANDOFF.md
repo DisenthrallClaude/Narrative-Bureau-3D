@@ -2176,5 +2176,7 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 - walk：run 41230989821（4db52bf）31/31、控制台 0；run 41231792235（a32f239）31/31、控制台 0。截图 log 无 error / warn。Pages：4db52bf Deploy success（41230978337）。
 - 截图（1280×720 high，Actions）：改前 m6_b1 run 41230693267（e2b，旧 main），其余改前取 E1 末版（work/r3/e1/r41228978369/e1c、r41229744326/e1d2）；改后 run 41230989821（e2a）、41231511732（e2r 浮晶二拍）、41231792235（e2g 门二拍 + B1 无雾 + 连帧 e2g2/e2g4）。拼图 work/r3/e2/sheet.jpg（改前 | 改后）、work/r3/e2/frames.jpg（深渊门 t+0 / 2 / 4 s）；脚本 work/r3/e2/sheet.py、fetch.sh。
 - 性能：B1 去蓝 = 克隆材质（约数十个，多一组着色器变体，只在 B1 用；预编译阶段一起编译），无新增 draw call；雾已删（−4 draw call 相对 E1）；门 +4 盏不投影点光（只在 abyss 分组可见时计入）、星纹 detail 1.5 略增片元开销（门膜近全屏半透明，low 档已降）。
+- Drive：分卷 1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq 下新建 v22_e2_fx（1DLOHgP3suwfApeUZA_nVxuoy-4la17SR）内 v22_e2_fx.tar.gz（1tHSTQaoJqS9uTwckhb0BJ7P68WzCekCW：e2_fx.js / e1_fx.js / src diff + 拼图 / 连帧 / 全部 E2 截图 / walk 报告）。未删任何旧卷。
+- 未验证：low 档未单独实拍（同批 `e2g:ab1_r3:&q=low` 与 high 同名 artifact 冲突，未取到）。
 ### 下批建议
 1. 门洞竖向铜框：点光照不到朝内的竖带 → 建议改材质（铜框单独暖自发光 0.3 描边贴图）或在 Blender 里给门框加倒角高光面。2. B1 雾：需先在管线里提供深度纹理再做软粒子。3. B1 墙面中性转暖系数 0.55 可降到 0.4。4. B1 推车 storage_cart 是橄榄绿（非本批范围，属禁蓝绿边缘，可另批改暖灰）。
