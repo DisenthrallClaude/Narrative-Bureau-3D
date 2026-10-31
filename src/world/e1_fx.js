@@ -7,7 +7,7 @@
 // 画质：low 档（核显）降密度 / 降细节 / 雾只放 3 团；只在对应区域（G.zone）可见时 update，其余时间 group.visible=false。
 // 预热：在主循环 compileAsync 之前加入场景并推进一帧，让着色器随全场景一起预编译（同 kit/warm.js 思路），首次进入不卡。
 import * as THREE from 'three';
-import { E2, warmB1, buildFogBand, amberize, gateRim } from './e2_fx.js'; // 批次 E2
+import { E2, warmB1, amberize, gateRim } from './e2_fx.js'; // 批次 E2
 
 const P = typeof location !== 'undefined' ? new URLSearchParams(location.search) : new URLSearchParams();
 const OFF = new Set((P.get('e1off') || '').split(',').filter(Boolean));
@@ -49,7 +49,7 @@ export async function initE1FX(G, { AY = -300, SY = -500, quality = 'high' } = {
 
   // 2. 档案馆 B1 贴地薄雾（地坪 −4.2；变体 1 粒子在原点下 1.12…0.67 → 原点抬 1.12×缩放）
   add('fog', 'archive_b1', (root) => {
-    if (E2) return [buildFogBand(root, { low })]; // E2：E1 三次雾团失败 → 改通道中线贴地体积雾带（e2_fx.js）
+    if (E2) return []; // E2：E1 雾团三次失败 + E2 体积雾带一次失败（不可读、推车罩白斑）→ B1 不放雾（?noe2=1 回 E1 雾团）
     const pts = [[-40, -38.6], [-46, -40.4], [-52, -42.2], [-35, -39.2]].slice(0, low ? 2 : 4); // E1：一拍点位在密集架后看不见；二拍沿通道 5 团 ×1.8 太浓成土墙、贴墙出硬边、挡住尽头桌椅 → 三拍离墙 ≥7 m、缩 1.4、降密度
     const s = 1.4;
     return pts.map(([x, z], i) => {

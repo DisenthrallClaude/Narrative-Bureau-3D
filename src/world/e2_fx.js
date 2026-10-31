@@ -1,7 +1,6 @@
 // 批次 E2：特效批第二轮 + B1 冷色治理（续 E1，全部暖色，禁蓝绿；新增自发光 / 输出峰值 < 1.0）。
 //   1. b1warm：archive_b1 分区内灯光改 3000K 暖白（0xffb46e），冷色自发光灯管改暖，所有受光材质在片元里去蓝 → 暖灰（克隆材质，不影响其它分区）。
-//   2. fog（替换 E1 雾团）：沿前通道中线的低矮贴地雾带——自写体积着色器（盒内解析求交 + 步进 3D 噪声），密度 ≈0.3、高 0.6 m，
-//      六个方向边界全部平滑淡出（无深度缓冲可读，用体积边界淡出代替软粒子，避免贴墙 / 贴物硬边），暖灰、缓慢流动。
+//   2. fog：E1 雾团在 E2 下关闭；E2 体积雾带试一次失败（不可读 + 推车上罩白斑）已删除，B1 现在无雾。
 //   3. runes：回写台浮晶片元输出改琥珀（按亮度乘琥珀色，峰值 0.9）。
 //   4. gate：星纹提细节 / 密度；门洞内侧竖向铜框加贴边暖光（PointLight 不投影，挂在 abyss 分区组上，跟随分区可见性）。
 // 开关沿用 E1：?nofx=1 全关；?e1off=gate,fog,runes；新增 ?e1off=b1warm,gaterim；?noe2=1 只关 E2 改动（回到 E1 状态）。
@@ -45,46 +44,10 @@ export function warmB1(G) {
   return nm;
 }
 
-// —— 2. 贴地雾带（体积） ——
-const FOG_VS = `varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position,1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`;
-const FOG_FS = `
-uniform float uTime, uDensity; uniform vec3 uColor, uMin, uMax; uniform vec4 uFade; varying vec3 vW;
-float h3(vec3 p){ p = fract(p * .3183099 + .1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
-float n3(vec3 x){ vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);
-  return mix(mix(mix(h3(i), h3(i + vec3(1,0,0)), f.x), mix(h3(i + vec3(0,1,0)), h3(i + vec3(1,1,0)), f.x), f.y),
-             mix(mix(h3(i + vec3(0,0,1)), h3(i + vec3(1,0,1)), f.x), mix(h3(i + vec3(0,1,1)), h3(i + vec3(1,1,1)), f.x), f.y), f.z); }
-float dens(vec3 p){
-  // 边界软淡出：两端 uFade.x、两侧 uFade.y、顶部（高度指数衰减）；底面 = 地坪
-  float fx = smoothstep(uMin.x, uMin.x + uFade.x, p.x) * (1.0 - smoothstep(uMax.x - uFade.x, uMax.x, p.x));
-  float zc = (uMin.z + uMax.z) * .5, zh = (uMax.z - uMin.z) * .5; float fz = 1.0 - smoothstep(zh - uFade.y, zh, abs(p.z - zc));
-  float hy = clamp((p.y - uMin.y) / (uMax.y - uMin.y), 0.0, 1.0); float fy = exp(-hy * 3.2) * (1.0 - smoothstep(.75, 1.0, hy));
-  vec3 q = p * vec3(.55, 1.6, .9) + vec3(uTime * .10, 0.0, uTime * .035);
-  float n = n3(q) * .6 + n3(q * 2.1 + vec3(3.1, uTime * .05, 1.7)) * .4;
-  return fx * fz * fy * smoothstep(.28, .85, n);
-}
-void main(){
-  vec3 ro = cameraPosition, rd = normalize(vW - cameraPosition);
-  vec3 t0 = (uMin - ro) / rd, t1 = (uMax - ro) / rd; vec3 tn = min(t0, t1), tf = max(t0, t1);
-  float a = max(max(max(tn.x, tn.y), tn.z), 0.0), b = min(min(tf.x, tf.y), tf.z); if (b <= a) discard;
-  float st = (b - a) / float(STEPS), acc = 0.0; float j = h3(vW * 7.0 + uTime);
-  for (int i = 0; i < STEPS; i++) { acc += dens(ro + rd * (a + (float(i) + j) * st)) * st; }
-  float alpha = (1.0 - exp(-acc * 2.2)) * uDensity / 0.3 * 0.3; // uDensity 0.3 → 峰值不透明度约 0.3
-  alpha = min(alpha, uDensity); if (alpha < .004) discard;
-  gl_FragColor = vec4(uColor, alpha);
-  #include <tonemapping_fragment>
-  #include <colorspace_fragment>
-}`;
-export function buildFogBand(root, { low = false, x0 = -52, x1 = -36.2, zc = -36.6, hw = 1.35, y0 = -4.2, h = 0.6, density = 0.3 } = {}) {
-  const mn = new THREE.Vector3(x0, y0 + 0.01, zc - hw), mx = new THREE.Vector3(x1, y0 + h, zc + hw);
-  const mat = new THREE.ShaderMaterial({
-    vertexShader: FOG_VS, fragmentShader: FOG_FS, defines: { STEPS: low ? 6 : 12 }, transparent: true, depthWrite: false, depthTest: true,
-    uniforms: { uTime: { value: 0 }, uDensity: { value: low ? density * 0.8 : density }, uColor: { value: new THREE.Color(0x8a7c68) }, uMin: { value: mn }, uMax: { value: mx }, uFade: { value: new THREE.Vector4(3.0, 0.9, 0, 0) } },
-  });
-  const geo = new THREE.BoxGeometry(mx.x - mn.x, mx.y - mn.y, mx.z - mn.z);
-  const mesh = new THREE.Mesh(geo, mat); mesh.position.copy(mn).add(mx).multiplyScalar(0.5); mesh.name = 'e2_fogband'; mesh.renderOrder = 5;
-  root.add(mesh);
-  return { group: mesh, update(dt) { mat.uniforms.uTime.value += dt * 0.6; }, dispose() { geo.dispose(); mat.dispose(); } };
-}
+// —— 2. B1 雾带：已删除 ——
+// E2 只试一次的方案（通道中线 x −52…−36.2、z −36.6±1.35、高 0.6 m、密度 0.3 的盒内步进体积雾，边界软淡出）实拍 run 41230989821 ab1_r3：
+// 通道里几乎看不见，且雾盒与推车相交处在推车下半截罩出一块发白方斑（无深度缓冲可读，推车在体积内被整体覆盖）→ 按规则删除、不再尝试。
+// 若将来要做，需要先在渲染管线里提供场景深度纹理（soft particle），再谈贴地雾。
 
 // —— 3. 浮晶琥珀：片元输出按亮度乘琥珀色（库 color 参数对晶体主体基本不生效） ——
 export function amberize(group) {
