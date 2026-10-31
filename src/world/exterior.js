@@ -1112,7 +1112,7 @@ function innerVestibuleDoors(g, M, Y) {
   for (let a = 0; a < 8; a++) { const sp = box(g, brass, 0.035, 0.62, 0.04, 0, Y + y0 + 1.15, ZW); sp.rotation.z = a * Math.PI / 8; }
   // 批次50：门廊后墙（Z1 −30 内面 z −29.6）内门两侧胡桃木护墙板 4.2 m 高（ext_door_mid 门洞内右侧那块被面光平打的米黄墙）——2 行凸芯板 + 铜压线 + 顶部线脚；上段石墙乘护墙阴影后不再整块平亮
   for (const sx of [-1, 1]) {
-    const x0 = 5.6, x1 = 13.7, wd = x1 - x0, cx = sx * (x0 + x1) / 2, zz = -29.55;
+    const x0 = 5.6, x1 = 13.7, wd = x1 - x0, cx = sx * (x0 + x1) / 2, zz = -29.4; // 批次53：−29.55 → −29.4（见下「批次53 pick 定位」）
     box(g, woodDk, wd, 4.2, 0.08, cx, Y + 2.1, zz); box(g, woodDk, wd, 0.22, 0.16, cx, Y + 4.25, zz + 0.04); box(g, brass, wd, 0.03, 0.17, cx, Y + 4.13, zz + 0.05);
     box(g, woodDk, wd, 0.25, 0.12, cx, Y + 0.12, zz + 0.02); box(g, brass, wd, 0.025, 0.13, cx, Y + 1.25, zz + 0.04);
     const n = 5, pw = wd / n;
@@ -1138,12 +1138,15 @@ function innerVestibuleDoors(g, M, Y) {
   for (let i = 0; i <= 24; i++) { const x = -aw + i * 2 * aw / 24; sh.lineTo(x, Math.min(10.25, 5.67 + Math.sqrt(Math.max(0, 100 - (5 + Math.abs(x) - 0.25) ** 2))) + 0.25); }
   sh.lineTo(aw, yB); sh.lineTo(13.85, yB); sh.lineTo(13.85, yT); sh.lineTo(-13.85, yT); sh.lineTo(-13.85, yB);
   const sgeo = new THREE.ShapeGeometry(sh); { const pa = sgeo.attributes.position, uv = sgeo.attributes.uv; for (let i = 0; i < pa.count; i++) uv.setXY(i, pa.getX(i) / 2.5, pa.getY(i) / 2.5); }
-  const clad = new THREE.Mesh(sgeo, dkStone); clad.position.set(0, Y, -29.5); clad.receiveShadow = true; g.add(clad);
+  const clad = new THREE.Mesh(sgeo, dkStone); clad.position.set(0, Y, -29.36); clad.receiveShadow = true; g.add(clad);
   const wgeo = sgeo.clone(); { const pa = wgeo.attributes.position, uv = wgeo.attributes.uv; for (let i = 0; i < pa.count; i++) uv.setXY(i, 0.5, (pa.getY(i) - yB) / (yT - yB)); }
-  const wm = new THREE.Mesh(wgeo, wash); wm.position.set(0, Y, -29.47); wm.userData.noShadow = true; g.add(wm);
+  const wm = new THREE.Mesh(wgeo, wash); wm.position.set(0, Y, -29.33); wm.userData.noShadow = true; g.add(wm);
   for (const sx of [-1, 1]) { for (let k = 0; k < 4; k++) { const px = sx * (6.3 + k * 2.45);
-      box(g, woodDk, 0.42, 6.5, 0.14, px, Y + yB + 3.25, -29.42); box(g, wood, 0.26, 6.2, 0.05, px, Y + yB + 3.25, -29.33); box(g, brass, 0.03, 6.2, 0.02, px, Y + yB + 3.25, -29.3); }
-    box(g, woodDk, 8.2, 0.32, 0.22, sx * 9.75, Y + 11.05, -29.4); box(g, brass, 8.2, 0.03, 0.24, sx * 9.75, Y + 10.9, -29.39); }
+      box(g, woodDk, 0.42, 6.5, 0.14, px, Y + yB + 3.25, -29.29); box(g, wood, 0.26, 6.2, 0.05, px, Y + yB + 3.25, -29.2); box(g, brass, 0.03, 6.2, 0.02, px, Y + yB + 3.25, -29.17); }
+    box(g, woodDk, 8.2, 0.32, 0.22, sx * 9.75, Y + 11.05, -29.27); box(g, brass, 8.2, 0.03, 0.24, sx * 9.75, Y + 10.9, -29.26); }
+  // 批次53 pick 定位（run 41188772134，ext_door_mid NDC 射线，前 4 个命中）：米黄竖带 = 主楼室内 GLB security_hall 的 H_wall（浅色砂岩 sandstone_blocks_08，#e7e2da）
+  // 南墙外表面在 z −29.4，比门廊后墙的花岗岩饰面（−29.5）/ 护墙板（−29.465）都靠前，于是在内门门洞右缘与第一根壁柱之间（x 5.1…6.2）穿出来被门廊面光打亮。
+  // → 饰面 / 渐变卡 / 护墙板 / 壁柱 / 檐板整体前移 0.13–0.15 m，全部压到 −29.4 之前。
   // 批次51 补：e51b 看图——饰面后仍剩「尖拱与右门扇之间」一条米黄竖带 = 后墙门洞内侧券面（x=+5 竖向侧壁，法线 −x 正对西偏机位）+ archPortal 浅色石券环。
   // → 胡桃木门洞券套：内宽 9.94（盖住侧壁）、外宽 11.4（盖住浅色券环）、进深 1.6（z −30.5…−28.9）+ 铜内口线
   const lin = new THREE.Mesh(archRingGeo(11.4, 5.67, 9.94, 5.67, 1.6), woodDk); lin.position.set(0, Y, -29.7); lin.castShadow = lin.receiveShadow = true; g.add(lin);
