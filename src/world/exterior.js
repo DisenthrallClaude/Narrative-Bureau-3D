@@ -482,7 +482,16 @@ function buildFrontSteps(g, world) {
     world.box(xc, 0.6, 3.1, 1.2, 1.2, 3.4);
   }
   world.box(0, FLOOR / 2, -3, W, FLOOR, 5);
-  b.build(g, MT);
+  // 批次M17：可见几何换 Blender 重建（tools/blender/m17_portal.py → m17/steps.glb：磨损圆角前沿 + 踏面中段 ≤1 cm 凹陷 + 嵌入暗铜防滑条、平台错缝铺装、斜压顶颊墙 + 凹框、带檐柱墩）；
+  // 尺寸与上面逐级相同，碰撞仍是本函数的 world.box（未改），玩家上下不变。石材深灰（禁蓝），暗铜金属 0.6 / 粗糙 0.5 / env 0.5。?nom17=1 回旧
+  if (/[?&]nom17=1/.test(location.search)) { b.build(g, MT); return; }
+  const sm = (c, r) => weather(pbr('Granite003A', { color: c, roughness: r, env: 0.5, normalScale: 0.9 }), { macro: 0.14, dust: 0.18, grime: 0.28, ground: 0.4, rough: 0.12 });
+  const SM = { m17_tread: sm(0x8a8276, 0.74), m17_riser: sm(0x6e675e, 0.8), m17_coping: sm(0x948b7e, 0.66), m17_cheek: sm(0x7a7268, 0.78), m17_stoneDark: sm(0x55504a, 0.85),
+    m17_joint: MT.joint, m17_bronze: new THREE.MeshStandardMaterial({ color: 0x4a3420, metalness: 0.6, roughness: 0.5, envMapIntensity: 0.5 }) };
+  loadModel('m17/steps').then((src) => {
+    src.traverse((o) => { if (!o.isMesh) return; o.material = [].concat(o.material).map((mt) => SM[mt?.name] || mt); if (o.material.length === 1) o.material = o.material[0]; o.castShadow = true; o.receiveShadow = true; });
+    src.name = 'm17_steps'; g.add(src);
+  }).catch((e) => { console.warn('[NB] m17 steps', e); b.build(g, MT); });
 }
 
 // ---------------- R2 精修主楼（tools/blender/facade.py → hero_facade.glb）----------------
@@ -538,6 +547,14 @@ async function heroFacade(g, M, world, ctx, add) {
     src.traverse((o) => { if (!o.isMesh) return; o.material = [].concat(o.material).map((mt) => MM[mt?.name] || mt); if (o.material.length === 1) o.material = o.material[0]; o.castShadow = false; o.receiveShadow = true; });
     src.position.set(0, Y, -5); src.name = 'm7_portico'; gHi.add(src);
   }).catch((e) => console.warn('[NB] m7 portico', e));
+  // 批次M17：尖拱五重券面重建（分块券石 + 圆棍 / 凹槽 / 平带线脚 + 暗灰缝、奇数重犬齿饰带、最外重卷叶 + 暗铜嵌线、各重拱心石）+ 门楣本体（错缝平拱 + 中央拱心块 + 檐口）。
+  // tools/blender/m17_portal.py → m17/portal.glb，截面包住原 hero_facade portal() 的方截面券（原券落在新截面内）；不加碰撞（全部在门洞净空 x ±3.34 / y 8.55 以上），触发器 / 门扇不动。?nom17=1 关
+  if (!/[?&]nom17=1/.test(location.search)) loadModel('m17/portal').then((src) => {
+    const st = (c, r) => weather(pbr('Granite003A', { color: c, roughness: r, env: 0.35, normalScale: 0.9 }), { macro: 0.14, dust: 0.15, grime: 0.3, ground: 0.4, rough: 0.1 });
+    const MM = { m17_stone: st(0x6a645c, 0.8), m17_stoneDark: st(0x4a453f, 0.85), m17_joint: new THREE.MeshStandardMaterial({ color: 0x1a1816, roughness: 1 }), m17_bronze: new THREE.MeshStandardMaterial({ color: 0x4a3420, metalness: 0.6, roughness: 0.5, envMapIntensity: 0.5 }) };
+    src.traverse((o) => { if (!o.isMesh) return; o.material = [].concat(o.material).map((mt) => MM[mt?.name] || mt); if (o.material.length === 1) o.material = o.material[0]; o.castShadow = false; o.receiveShadow = true; });
+    src.position.set(0, Y, -5); src.name = 'm17_portal'; gHi.add(src);
+  }).catch((e) => console.warn('[NB] m17 portal', e));
   innerVestibuleDoors(g, M, Y); // 批次49：门洞纵深——门厅尽头内门（铜饰胡桃木门半开）+ 门厅暖光渐变
   // 文字带「叙事管理局」（黑色抛光石板上的鎏金字）
   // 批次M4：招牌底板原是 F_marbleDark 抛光黑石映出黄昏蓝天 → 读成蓝底；文字后加暗铜底板（金属 0.6 / 粗糙 0.5 / env 0.5，哑光暗古铜）= 暗铜底金字
