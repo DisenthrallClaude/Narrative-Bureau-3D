@@ -124,7 +124,7 @@ export function hallMats() {
   H.vault = weather(pbr('Concrete036', { color: c(0.9, 0.82, 0.68), roughness: 1, env: 0.4, normalScale: 0.6 }), { macro: 0.2, rough: 0.1 });
   H.wallDark = pbr('Marble006', { rn: true, color: c(0.6, 0.6, 0.62), roughness: 0.35, env: 0.6 });
   // 地面：中殿黑米棋盘抛光大理石（清漆层 + 平面反射），侧廊米色大板
-  H.floorNave = weather(pbr('Tiles074', { rn: true, color: c(0.95, 0.92, 0.86), roughness: 0.12, env: 1.0, physical: true, clearcoat: 0.35, clearcoatRoughness: 0.05, normalScale: 0.35 }), { macro: 0.08, dust: 0.08, rough: 0.06 });
+  H.floorNave = weather(pbr('Tiles074', { rn: true, color: c(0.95, 0.92, 0.86), roughness: 0.24, env: 0.85, physical: true, clearcoat: 0.18, clearcoatRoughness: 0.14, normalScale: 0.45 }), { macro: 0.1, dust: 0.1, rough: 0.1 }); // 批次42：hall_gates 看图棋盘格镜面反射过强、像塑料 → 亚光抛光石：粗糙 0.12→0.24、清漆 0.35/0.05→0.18/0.14、env 1.0→0.85，粗糙度斑驳 0.06→0.1
   H.floorAisle = weather(phMat('marble_01', { color: c(0.9, 0.86, 0.8), roughness: 0.45, env: 0.8, physical: true, clearcoat: 0.2, clearcoatRoughness: 0.1, normalScale: 0.5 }), { macro: 0.1, dust: 0.1, rough: 0.08 });
   H.marbleDark = pbr('Marble016', { rn: true, color: 0xffffff, roughness: 0.1, env: 1.0, physical: true, clearcoat: 0.5, clearcoatRoughness: 0.04, normalScale: 0.3 });
   H.marbleLight = pbr('Marble021', { rn: true, color: c(0.95, 0.93, 0.9), roughness: 0.16, env: 1.0, physical: true, clearcoat: 0.4, clearcoatRoughness: 0.05 });
