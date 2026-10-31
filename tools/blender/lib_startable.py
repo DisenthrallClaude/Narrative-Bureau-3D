@@ -83,11 +83,11 @@ for (u, v, w, d) in [(0, CD / 2 + 0.012, CW + 0.05, 0.024), (0, -CD / 2 - 0.012,
 # 星图贴图
 TW, TH = 1024, 640; img = np.zeros((TH, TW, 4), np.float32); img[..., 3] = 1
 yy, xx = np.mgrid[0:TH, 0:TW].astype(np.float32)
-img[..., 0] = 0.03; img[..., 1] = 0.05; img[..., 2] = 0.15
+img[..., 0] = 0.10; img[..., 1] = 0.15; img[..., 2] = 0.32  # 批次44：底色 0.03/0.05/0.15 → 提亮的普鲁士蓝（预览里原底读成近黑橄榄）
 vign = 1 - 0.35 * (((xx - TW / 2) / (TW / 2)) ** 2 + ((yy - TH / 2) / (TH / 2)) ** 2); img[..., :3] *= vign[..., None]
 def stroke(mask, col, a):
     for c in range(3): img[..., c] = np.where(mask, img[..., c] * (1 - a) + col[c] * a, img[..., c])
-GOLD = (0.55, 0.40, 0.16)
+GOLD = (0.80, 0.62, 0.30)
 ccx, ccy = TW * 0.5, TH * 0.5; rr = np.hypot(xx - ccx, yy - ccy); th = np.arctan2(yy - ccy, xx - ccx)
 for R in (90, 170, 250, 300): stroke(np.abs(rr - R) < 0.9, GOLD, 0.55)
 stroke(np.abs(rr - 302) < 2.2, GOLD, 0.9)
@@ -112,8 +112,8 @@ for ch in cons:
 cm = (np.minimum(xx, TW - xx) < 14) | (np.minimum(yy, TH - yy) < 14); stroke(cm, (0.30, 0.22, 0.10), 0.9)
 im = bpy.data.images.new('st_chartTex', TW, TH); im.pixels.foreach_set(np.flipud(img).ravel()); im.filepath_raw = PREV + '/lib_startable_chart.png'; im.file_format = 'PNG'; im.save(); im.pack()
 cm_ = bpy.data.materials.new('st_chart'); cm_.use_nodes = True; nt = cm_.node_tree; bs = nt.nodes['Principled BSDF']; tn = nt.nodes.new('ShaderNodeTexImage'); tn.image = im
-nt.links.new(tn.outputs['Color'], bs.inputs['Base Color']); bs.inputs['Roughness'].default_value = 0.85; bs.inputs['Specular IOR Level'].default_value = 0.2
-me = bpy.data.meshes.new('chart'); bm = bmesh.new(); uvl = bm.loops.layers.uv.new()
+nt.links.new(tn.outputs['Color'], bs.inputs['Base Color']); nt.links.new(tn.outputs['Color'], bs.inputs['Emission Color']); bs.inputs['Emission Strength'].default_value = 0.18; bs.inputs['Roughness'].default_value = 0.85; bs.inputs['Specular IOR Level'].default_value = 0.2
+me = bpy.data.meshes.new('chart'); bm = bmesh.new(); uvl = bm.loops.layers.uv.new('UVMap')
 vs = [bm.verts.new(onslope(u, v, 0.003)) for (u, v) in [(-CW / 2, -CD / 2), (CW / 2, -CD / 2), (CW / 2, CD / 2), (-CW / 2, CD / 2)]]
 f = bm.faces.new(vs)
 for lp, uv in zip(f.loops, [(0, 0), (1, 0), (1, 1), (0, 1)]): lp[uvl].uv = uv
@@ -149,6 +149,9 @@ cyl('glow', 0.095, 0.004, lx, ly + 0.27, sz_, v=32)
 # —— 合并导出 ——
 for o in list(S.objects):
     for md in list(o.modifiers): bpy.context.view_layer.objects.active = o; bpy.ops.object.modifier_apply(modifier=md.name)
+# 批次44：join 只保留活动物体的 UV 层——其余部件无 UV 时星图板 UV 全归零，只采到贴图角上的褐边（预览里读成近黑橄榄色的真因）→ 合并前给每个网格补同名 UVMap
+for o in S.objects:
+    if o.type == 'MESH' and 'UVMap' not in o.data.uv_layers: o.data.uv_layers.new(name='UVMap')
 bpy.ops.object.select_all(action='SELECT'); bpy.context.view_layer.objects.active = S.objects[0]
 bpy.ops.object.transform_apply(location=False, rotation=True, scale=True); bpy.ops.object.join(); S.objects[0].name = 'lib_startable'
 bpy.ops.export_scene.gltf(filepath=OUT, export_format='GLB', export_apply=True)

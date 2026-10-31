@@ -16,8 +16,8 @@ M = dict(walnut=mat('sw_walnut', (0.20, 0.10, 0.05), 0.45), walnutD=mat('sw_waln
          glow=mat('nk_lampGlow', (1.0, 0.92, 0.75), 0.4, 0.0, (1.0, 0.84, 0.58), 6.0),
          leather=mat('nk_leather', (0.30, 0.07, 0.05), 0.55), leatherD=mat('nk_leatherDark', (0.18, 0.04, 0.03), 0.6),
          felt=mat('nk_felt', (0.07, 0.17, 0.10), 0.92),
-         b0=mat('nk_book0', (0.34, 0.08, 0.06), 0.6), b1=mat('nk_book1', (0.08, 0.20, 0.12), 0.6), b2=mat('nk_book2', (0.30, 0.18, 0.08), 0.6),
-         b3=mat('nk_book3', (0.07, 0.10, 0.22), 0.6), b4=mat('nk_book4', (0.55, 0.45, 0.30), 0.65), gilt=mat('nk_gilt', (0.85, 0.66, 0.30), 0.3, 1.0))
+         b0=mat('nk_book0', (0.15, 0.055, 0.045), 0.62), b1=mat('nk_book1', (0.055, 0.085, 0.065), 0.62), b2=mat('nk_book2', (0.15, 0.095, 0.055), 0.62),
+         b3=mat('nk_book3', (0.055, 0.06, 0.095), 0.62), b4=mat('nk_book4', (0.30, 0.25, 0.18), 0.68), gilt=mat('nk_gilt', (0.85, 0.66, 0.30), 0.3, 1.0))
 def G(x, y, z): return (x, -z, y)
 def box(m, w, h, d, x, y, z, bev=0.0):
     bpy.ops.mesh.primitive_cube_add(size=1, location=G(x, y, z)); o = bpy.context.object; o.scale = (w, d, h)

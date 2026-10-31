@@ -50,7 +50,7 @@ export function loadModel(name) {
               if (m.name === 'FrontColor') o.material = new THREE.MeshStandardMaterial({ name: 'np_paper', color: 0x8c8474, roughness: 0.92, side: THREE.DoubleSide });
               else if (/Alumin/.test(m.name || '')) o.material = new THREE.MeshStandardMaterial({ name: 'np_alu', color: 0x8d939a, roughness: 0.38, metalness: 0.85, side: THREE.DoubleSide });
             }
-            if (m && /^nk_book\d/.test(m.name || '') && !m.userData.nb43) { m.color.multiplyScalar(/book4/.test(m.name) ? 0.6 : 0.5); m.userData.nb43 = 1; } // 批次43：lib_nook 书脊在游戏里偏粉 / 青（线性色值直出偏浅）→ 压暗一半，读成旧精装深红 / 墨绿 / 藏青
+            /* 批次44：书脊压暗改在 tools/blender/lib_nook.py 里降饱和重导，运行时 ×0.5 去掉 */ // 批次43：lib_nook 书脊在游戏里偏粉 / 青（线性色值直出偏浅）→ 压暗一半，读成旧精装深红 / 墨绿 / 藏青
             if (m && /decal_screen/.test(m.name || '')) { o.material = screenUI(0); o.userData.screen = true; o.castShadow = false; return; } // M5：显示器原贴图是粉紫色桌面，换成局内系统界面
             if (m && m.isMeshBasicMaterial) {
               o.material = new THREE.MeshStandardMaterial({ map: m.map, color: m.color, roughness: 0.85, metalness: 0, side: m.side, transparent: m.transparent, alphaTest: m.alphaTest });

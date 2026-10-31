@@ -909,6 +909,15 @@ function buildStreetRows(g, M, place, rnd) {
         s += w + 0.4; k++; if (k % 6 === 0) s += 10; }
     }
   }
+  // 批次44：城墙外背街（墙外皮 r 121.5 → 内圈街屋背面 r ≥132）原是城市底板暗紫灰素地（ext_wallfoot 看图）→ 南侧两段弧（与墙脚散水 / 绿篱同范围，31°–112°，
+  //   街心绿地扇区内不铺）按规则成列：墙脚散水 + 绿篱之外，花岗岩分缝人行道 r 124.2–128.1（与环路同料 walkMat）→ 浅花岗岩立砌路缘 r 128.25 → 单车道沥青背街 r 128.3–131.9（同 roadMat）+ 路边白实线。
+  //   塔楼外皮在 r 124（12 m 方台），人行道内缘让开 0.2 m，不穿模。每 6 m 一段弧长（与环路分段一致）。
+  { const { cx: rx, cz: rz } = RING; const atW = (r, a) => [rx + Math.sin(a) * r, rz + Math.cos(a) * r];
+    for (const sgn of [1, -1]) for (let s = 0; ; s += 6) { const a = sgn * (THREE.MathUtils.degToRad(31) + s / 130); if (Math.abs(a) > THREE.MathUtils.degToRad(112)) break;
+      const [gx, gz] = atW(128, a); if (Math.abs(gx) < 70 && gz > 90) continue; q.setFromAxisAngle(up, a);
+      const seg = (r, h, w, im, y = Y0) => { const [x, z] = atW(r, a); m4.compose(new THREE.Vector3(x, y, z), q, new THREE.Vector3(6.3 * r / 130, h, w)); im.setMatrixAt(im === roads ? nr++ : im === walks ? nw++ : nc++, m4); };
+      if (nr < NSEG) seg(130.1, 0.06, 3.6, roads); if (nw < NSEG * 2) seg(126.15, 0.2, 3.9, walks); if (nc < NSEG * 2) seg(128.2, 0.24, 0.26, curbs);
+      if (nlw < NSEG * 4) { const [lx, lz] = atW(128.75, a); m4.compose(new THREE.Vector3(lx, Y0 + 0.062, lz), q, new THREE.Vector3(6.3 * 128.75 / 130, 1, 0.15)); linesW.setMatrixAt(nlw++, m4); } } }
   const lawnTufts = [];
   // 批次37：城墙外南侧（大道两侧 |x| 26–68 m、墙外 125–149 m）= 环路内侧街心绿地：修剪草坪扇形 + 两列高干行道树（每 12 m 等距）+ 石材路缘，不再是平褐空地
   { const gm = M.grass.clone(); for (const k of ['map', 'normalMap', 'roughnessMap']) if (gm[k]) { gm[k] = gm[k].clone(); gm[k].wrapS = gm[k].wrapT = THREE.RepeatWrapping; gm[k].repeat.set(80, 80); gm[k].needsUpdate = true; }

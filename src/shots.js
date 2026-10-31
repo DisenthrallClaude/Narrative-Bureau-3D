@@ -97,6 +97,7 @@ export const SHOTS = {
   lib_lec_s: { pos: [-2.4, 22.8 + 1.8, -110.0], look: [0, 22.8 + 0.95, -106.8], fov: 58, zone: 'library' }, // 批次40：讲经台北侧（诵读者视角）看两级诵读台阶 + 斜面书托
   lib_vit: { pos: [-2.9, 22.8 + 1.55, -94.5], look: [-4.4, 22.8 + 1.0, -97.4], fov: 60, zone: 'library' }, // 批次38：入口西侧限阅陈列柜（Blender 精建 lib_vitrine）
   lib_nook: { pos: [1.7, 22.8 + 1.55, -112.3], look: [0, 22.8 + 1.0, -115.3], fov: 55, zone: 'library' }, // 批次42：北阅读龛近景（Blender 精建 lib_nook）
+  lib_star: { pos: [-1.55, 22.8 + 1.9, -111.0], look: [-2.39, 22.8 + 0.95, -112.58], fov: 55, zone: 'library' }, // 批次44：星图台台面近景（lib_startable 星图板 UV 修复 + 提亮）
   lib_globe: { pos: [4.6, 22.8 + 1.6, -110.2], look: [2.39, 22.8 + 0.85, -112.58], fov: 55, zone: 'library' }, // 批次41：北区东侧地球仪近景（Blender 精建 lib_globe）
   lib_r3: { pos: [0.4, 22.8 + 1.65, -94.4], look: [0, 22.8 + 1.0, -106], fov: 76, zone: 'library' }, // 批次12：藏书阁底层（入口看讲经台、借阅台/限阅柜）
   lib_r3_b: { pos: [8.6, 22.8 + 1.65, -111.8], look: [-3.0, 22.8 + 1.0, -100.5], fov: 76, zone: 'library' }, // 东北阅览桌旁回看入口
