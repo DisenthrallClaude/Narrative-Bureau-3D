@@ -13,7 +13,7 @@ export function m16Mats() {
   MM = {
     m16_walnut: pbr('Wood051', { color: 0x74492f, roughness: 0.55, env: 0.4 }),
     m16_walnutD: pbr('Wood051', { color: 0x40291c, roughness: 0.52, env: 0.35 }),
-    m16_stoneTop: pbr('Marble021', { color: 0x3a322c, roughness: 0.32, env: 0.5, rn: true }),
+    m16_stoneTop: pbr('Marble021', { color: 0x2a2420, roughness: 0.36, env: 0.5, rn: true }),
     m16_stoneBase: pbr('Granite003A', { color: 0x4a4038, roughness: 0.7, env: 0.35, rn: true }),
     m16_bronze: pbr('Metal046A', { color: 0x8a6038, metalness: 1, roughness: 0.5, env: 0.5 }),   // 大面暗铜：粗糙 ≥0.45 / env 0.5
     m16_brass: pbr('Metal046A', { color: 0xb08250, metalness: 1, roughness: 0.45, env: 0.5 }),   // 小件铜线 / 铭牌
