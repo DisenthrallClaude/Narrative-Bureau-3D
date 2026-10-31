@@ -182,13 +182,14 @@
 - id_yexun 删 tcam 回默认机位（fov 30）。**看图 run 41148728331 → work/r3/b33/r41148728331/b33a/id_yexun.png**：相框占画面约 2/3 高、名签「叶寻」清楚 ✔（比批次32 俯看好）。
 - 相片座全部铜件改独立旧铜材质 `_oldBronze`（0x5a4630，metal 0.8，rough 0.6；interiors.js dossierStand）——看图：不再亮橙 ✔，但偏深褐、金属感弱，像木框（中）；名签铜牌仍是原贴图亮铜。
 - 周闻（flipDossier）边几从椅子局部 z+0.05 后移到 −0.14（离值班台立面 ≈9 → ≈28 cm）。
-- 六处边几俯视：新增 top_yinze / top_zhouye / top_qichou / top_qilingyun / top_yexun / top_zhouwen（相框局部上方 3.2 m，fov 60）。原 run 41148728331 九个机位串行，25 分钟只出 1 张已取消；拆组重派 41150328176（b33t / b33t2）、41150518765（b33t3 / b33t4）——**截止本节未回，堵路未用俯视图确认**（边几本身无碰撞体，不挡人）。
+- 六处边几俯视：新增 top_yinze / top_zhouye / top_qichou / top_qilingyun / top_yexun / top_zhouwen（相框局部上方 3.2 m，fov 60）。原 run 41148728331 九个机位串行，25 分钟只出 1 张已取消；拆组重派 41150328176（b33t / b33t2）、41150518765（b33t3 / b33t4）——**已回 top_zhouye / top_qichou（work/r3/b33/top_sheet1.jpg）**：周也边几 + 衣帽架在军械库空地，离木箱 ≈1 m、不压黄线通道 ✔；齐仇边几在长桌北侧空地 ✔。殷泽 / 齐凌云 / 叶寻 / 周闻四张俯视截止未回（边几本身无碰撞体，不挡人）。
 ### 2 外观大道 / 街屋（29b81d6、c59a0c5）
 - 行道树：手头 CC BY 树（trees_of_paris = 0 三角点云不能用；tree_3dst13 是螺旋造型绿雕；sf_tree 是枯枝）都不合适，Poly Haven 也无法桐 / 国槐 → **tools/tree_lift.mjs 把 Poly Haven jacaranda（CC0）抬冠收冠**：冠下整体抬 0.31H、树冠水平收 0.6 → r2/street_tree_tall.glb（Blender 预览 work/r3/b33/prev/street_tree_tall.png：高干窄冠 ✔），游戏 h 9.5 → 枝下高 ≈3.0 m、冠幅 ≈4.6 m。surface.js 大道 12 株替换（碰撞体不变）。树干是拉伸出来的，近看树皮纹理被纵向拉长（下批可换真法桐模型）。
 - 车道：大道中间 x ±6、z 100.6–135.4 改 **Poly Haven asphalt_02（CC0，Rob Tuytel）沥青**，3 m/张，法线 1.6；两侧 22 cm 花岗岩立缘（1 m 分缝）；白色标线：车道 / 停车带分界线（x ±3.6）、3 m 虚线分道线、两侧路边停车位横线（5.5 m 一位）、z 129.6 停止线、z 132.6 斑马线（0.45 m 条 / 0.9 m 距）。北段黄色盲道（100.2–134.2）随之删掉，出站口南侧那段保留。
 - 花岗岩人行道：normalScale 2.4 + ARM 的 AO 通道作 aoMap（强度 1.8）压板缝，色压到 0x8e8a82。
 - 街屋：**tools/blender/street_house.py 精建三种立面模块**（r2/sh_bay_win 168 三角：水刷石窗套 + 窗楣压顶 + 带滴水窗台 + 枣红木框十字分格 + 退进玻璃；r2/sh_bay_bal 600 三角：落地门 + 阳台板滴水 + 铁栏立杆 0.14 m 距 + 扶手 / 下横档 / 腰条；r2/sh_shop 240 三角：勒脚 + 壁柱 + 橱窗分格 + 招牌框 + 斜帆布雨棚铁骨 + 店面檐板）。预览 work/r3/b33/prev/street_house.png 合格。exterior.js streetModules()：**最内圈 R160 两侧街屋**按着色器开间网格（窗 3.4 m、店 5 m）成排 InstancedMesh，三种户型（全窗 / 中轴阳台 / 隔开间隔层阳台，按户 hash 定，非散布）；阳台开间加同墙色背板遮住着色器窄窗；约 12% 窗玻璃用暖光自发光（同原夜窗比例）。外两圈仍是着色器立面 + 程序坡顶。
-- 重拍：ext_street / ext_sky / ext_bird = run 41150099173（c59a0c5，含树 + 车道 + 街屋）；新增 ext_house（R160 路心看外侧街屋）= 41150328176 b33h——**截止本节未回**。
+- 重拍：ext_street / ext_sky / ext_bird = run 41150099173（c59a0c5，含树 + 车道 + 街屋）；新增 ext_house（R160 路心看外侧街屋）= 41150328176 b33h。
+- **亲眼看图 ext_house（work/r3/b33/r41150328176/b33h/ext_house.png）**：模块已上墙、与着色器窗格对齐、无错位 / 悬空 ✔，店面模块（深色橱窗 + 枣红框）读得出；但**窗套 / 窗台在 20 m 外偏弱，雨棚几乎看不出，画面里未见阳台**（中下）——下批窗套加厚加亮、雨棚加大出挑并抬亮帆布色、确认阳台户型落在机位里。另：这一圈的程序行道树（二十面体树冠）很廉价，下批换 street_tree_tall。ext_street / ext_sky / ext_bird（41150099173）截止未回。
 ### 3 安检大厅（0e553e7）
 - hero.js placeHero 新 `opts.cut`（按世界包围盒删三角，非索引化后重建，保留 UV1 光照贴图）：hero_hall 两侧廊 hall.py beam_seating（x ±14.9，z −59 / −62）的 leatherBlack + steel 三角删掉；原位放 r2/wait_bench_6080 ×4（宽 2.9 m，坐面朝中殿，两张成排，boundsOf 碰撞）。hero_hall_col 里的旧排椅碰撞盒保留（与新长椅同位）。hall_wanted 改后 = 41150518765 b33w——**截止本节未回**。
 ### 4 档案馆（d7e3ddc）
@@ -197,8 +198,8 @@
 ### 5 宿舍 / 指挥中心（4b2d590，只做了一项）
 - dorm3 墙裙 r3_labWain → r3_dormWain（dress.js chippedPaint() 确定性 canvas：刷痕色差 + 掉漆斑露米灰底灰（越往下越多）+ 踢脚擦痕）。改后 dorm_r3_b = 41150328176 b33d，截止未回。**铁床毯子褶皱 / 枕头、门扇质感、上部墙面斑驳未做**；「指挥中心」排查清单未做。
 ### 收尾
-- 走查（4b2d590 = 最终代码）= run 41150328176 walk 组，截止本节未回。
-- Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删同名旧卷再传 v03 1j_TKjwS7XkJrXKOOqobwa4GdINM-D4XT（136.8 MB）、v04 1gVtB-hZ7Fbr7n8cM-udMtDZ7EIvM4-2T（286.3 MB，含 street_tree_tall / sh_* glb）；v01 / v02 见下行（文档提交后打包，脚本 work/r3/b33/vol.sh）。
+- 走查（4b2d590 = 最终代码）run 41150328176：**通过 31 / 失败 0 / 控制台错误 0** ✔（work/r3/b33/r41150328176/walk/WALKTHROUGH.md）。Pages 4b2d590 success（最终代码）。
+- Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删同名旧卷再传 v03 1j_TKjwS7XkJrXKOOqobwa4GdINM-D4XT（136.8 MB）、v04 1gVtB-hZ7Fbr7n8cM-udMtDZ7EIvM4-2T（286.3 MB，含 street_tree_tall / sh_* glb）；v01 1F-8i2uRNN5_sUM1OJaK8KYc5dnkJIzWZ（2.6 MB，打包于 695bb3c）、v02 1zsN5kQ3La2N6Qh3ewhZjn51TSOfBOfIc（22.9 MB）；Drive 大小与本地一致（脚本 work/r3/b33/vol.sh）。对比图 work/r3/cmp33_archive.jpg、cmp33_id_yexun.jpg（其余待改后图）。
 ### 下批先做
 1. 取 41150328176（walk / dorm_r3_b / ext_house / 四张俯视）、41150099173（ext_street / ext_sky / ext_bird）、41150518765（hall_wanted / 两张俯视）；`python3 work/r3/b33/cmp33.py` 重跑对比图。
 2. 若 ext_house 里模块错位（开间没对上着色器窗、朝向反）先修 streetModules；外两圈也上模块（注意三角数）。
