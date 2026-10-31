@@ -440,7 +440,7 @@ export function planFloor2Pub(y) {
   out.push({ m: 'r2/coffee_table_round_01', x: -11.2, y, z: -101.6, yaw: 0, h: 0.5, tag: '记者等候', on: 'floor', col: [0.8, 0.5, 0.8] });
   for (const [dx, dz, yaw] of [[-0.85, 0.15, ROT.E], [0.85, 0.15, ROT.W], [0, -0.85, 0]]) out.push({ m: 'r2/dining_chair_02', x: -11.2 + dx, y, z: -101.6 + dz, yaw: yaw + dx * 0.1, h: 0.98, tag: '记者等候', on: 'floor' });
   out.push({ m: 'r2/cc0_newspaper_stack_ready_to_unity_hdrp', x: -11.1, y: y + 0.5, z: -101.6, yaw: 0.4, w: 0.36, tag: '记者等候', on: 'desk' });
-  out.push({ m: 'r2/44_pocket_rotating_newspaper_stand', x: -8.7, y, z: -101.2, yaw: 0.3, h: 1.6, tag: '记者等候', on: 'floor' });
+  out.push({ m: 'r2/news_rack_6080', x: -8.7, y, z: -101.2, yaw: 0.3, h: 1.48, tag: '记者等候', on: 'floor' });
   out.push({ m: 'r2/coat_rack', x: -20.4, y, z: -101.6, yaw: 0, h: 1.85, tag: '前厅', on: 'floor' });
   for (const x of [-20.4, -8.6]) out.push({ m: 'r2/free_pothos_potted_plant_money_plant', x, y, z: -100.1, yaw: 0, h: 0.7, tag: '前厅', on: 'floor' });
   light(out, -14.5, y + 2.6, -101.4, 0xffdcb0, 2.5, 6);
@@ -1654,7 +1654,7 @@ export function planMetro(y) {
   floorZ(out, 'r3_paintYellow', -0.2, 0.2, 145.6, 169.8, y); // 批次33：北段 100.2–134.2 已成沥青车道，盲道只留出站口南侧
   out.push({ m: 'r2/garbage_bin', x: -3.6, y, z: 147.2, yaw: 0, h: 1.0, tag: '出站集散', on: 'floor', col: [0.6, 1.0, 0.6] });
   out.push({ m: 'r2/concrete_trash_bin', x: 3.6, y, z: 147.6, yaw: 0, h: 0.9, tag: '出站集散', on: 'floor', col: [0.6, 0.9, 0.6] });
-  out.push({ m: 'r2/44_pocket_rotating_newspaper_stand', x: 4.6, y, z: 151.0, yaw: 0, h: 1.6, tag: '出站集散', on: 'floor', col: [0.6, 1.6, 0.6] });
+  out.push({ m: 'r2/news_rack_6080', x: 4.6, y, z: 151.0, yaw: 0, h: 1.48, tag: '出站集散', on: 'floor', col: [0.9, 1.48, 0.55] });
   pic(out, 'textures/b05/B05_地铁站名牌.png', 0, y + 3.7, 145.47, 0, 2.6, 0.96, 'black');
   // ② 机构安检亭（出站口西北）：岗亭 + 道闸路障 + 双人值守长凳 + 监控杆 + 门禁
   out.push({ m: 'r2/simple_90_s_kiosk', x: -10.2, y, z: 154.0, yaw: ROT.E, h: 2.6, tag: '安检亭', on: 'floor', col: [3.4, 2.6, 3.6] });
