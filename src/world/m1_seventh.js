@@ -15,7 +15,7 @@ function m1Mats(D, M) {
     m1_stone: pbr('Concrete034', { color: 0xa09484, roughness: 0.78, env: 0.4 }),
     m1_stoneDark: pbr('Concrete034', { color: 0x5e554c, roughness: 0.75, env: 0.2 }),
     m1_bronze: pbr('Metal046A', { color: 0xb08250, metalness: 0.85, roughness: 0.48, env: 0.5 }), // M3：暗古铜——粗糙 ≥0.45 / env≈0.5，靠底色 + 金属 0.85 留漫反射不发黑
-    m1_burgundy: pbr('Fabric023', { color: 0xa83a2c, roughness: 0.9, env: 0.15 }), // 首拍走道毯近黑 → 提亮（M3 再提一档）
+    m1_burgundy: new THREE.MeshStandardMaterial({ color: 0x6a2a20, roughness: 0.85, envMapIntensity: 0.15 }), // M5：Fabric023 贴图本身暗、走道毯读近黑 → 去贴图直给酒红褐底色
     m1_kraft: D.dp_kraft,
     m1_iron: M.blackMetal,
     m1_thread: D.dp_red,
@@ -64,4 +64,19 @@ export function buildM1Seventh(zone, world, Y, gcur, D, M) {
   jobs.push(loadModel('m1/gutter_panel').then((src) => { const g = bakeInstances(src, panels, MAT); g.name = 'm1_gutter_panel'; zone.add(g); }));
   jobs.push(loadModel('m1/gutter_rib').then((src) => { const g = bakeInstances(src, ribs, MAT); g.name = 'm1_gutter_rib'; zone.add(g); }));
   return Promise.all(jobs);
+}
+
+// ---------- 批次 M5：作战室 / 杀青室 / 回写台 精建壳（public/assets/models/m5/{ops,wrap,rewrite}.glb，tools/blender/m5_rooms.py）----------
+// 原牛皮纸房间、全部锚点（看板/叛徒墙/K 笔记/档案袋/落地镜/巨书）、传送与 zone 判定不动；凸出件（壁柱/沙盘/排字台）补碰撞。
+export function buildM5Seventh(zone, world, Y, D, M) {
+  const MAT = m1Mats(D, M);
+  const pil = (x, z, alongX) => world.box(x, Y + 3, z, alongX ? 0.66 : 0.2, 6, alongX ? 0.2 : 0.66);
+  for (const z of [-124.6, -128.8]) pil(-9.7, z); for (const z of [-118.6, -128.6]) pil(9.7, z);              // 作战室壁柱
+  world.box(-4.3, Y + 0.5, -121.3, 2.56, 1.0, 3.16);                                                          // 作战沙盘
+  for (const z of [-140.3, -144.9, -149.5, -154.3]) { pil(-7.7, z); pil(7.7, z); }                            // 杀青室壁柱
+  for (const z of [-168.2, -173.6, -179.0, -183.4]) pil(-8.7, z); for (const z of [-163.0, -168.2, -173.6, -179.0, -183.4]) pil(8.7, z);
+  for (const x of [-5, -1, 1, 5]) pil(x, -185.7, true);                                                       // 回写台壁柱
+  world.box(-8.35, Y + 0.8, -163.3, 0.9, 1.6, 5.3);                                                           // 回写排字台
+  point(zone, 0xffc890, 3, [-4.3, Y + 3.0, -121.3], 6);                                                       // 沙盘碗灯
+  return Promise.all(['ops', 'wrap', 'rewrite'].map((n) => loadModel('m5/' + n).then((src) => { const o = src.clone(true); o.traverse((m) => { if (m.isMesh) { m.material = pick(MAT, m.material); m.castShadow = false; m.receiveShadow = true; } }); o.position.set(0, Y, 0); o.name = 'm5_' + n; zone.add(o); })));
 }

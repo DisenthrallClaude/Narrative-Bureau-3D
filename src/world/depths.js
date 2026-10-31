@@ -13,7 +13,7 @@ import { vaultMats, tagMaterial } from './vault.js';
 import { dressMats, Props, hangingSign, paperStack, folderStack, greenLamp, spineMaterial, spineShelf } from './dress.js';
 import { m5Mats } from './dress_m5.js';
 import { UNDER } from './rooms.js';
-import { buildM1Seventh } from './m1_seventh.js';
+import { buildM1Seventh, buildM5Seventh } from './m1_seventh.js';
 
 export const AY = -300, SY = -500; // 墨渊 / 装订线 地坪
 const rnd = (() => { let s = 23; return () => ((s = (s * 16807) % 2147483647) / 2147483647); })();
@@ -228,11 +228,11 @@ export async function buildDepths(scene, world, ctx) {
       const bm = new THREE.MeshStandardMaterial({ color: 0, emissive: 0xffffff, emissiveIntensity: 0.6, map: bt, emissiveMap: bt });
       const bd = plane(zone, docMat('doc_ops_board', bm), 8, 4, 0, Y + 3.2, -133.6, 0); anchor('doc_ops_board', bd, 9); }
     { const tw = plane(zone, docMat('doc_ops_traitor_wall', new THREE.MeshStandardMaterial({ map: cvTex(768, 512, (c, w, h) => { c.fillStyle = '#8a6a44'; c.fillRect(0, 0, w, h); const pts = []; for (let i = 0; i < 9; i++) { const x = 60 + (i % 3) * 250, y = 60 + Math.floor(i / 3) * 150; pts.push([x + 60, y + 50]); c.fillStyle = '#e8e0cc'; c.fillRect(x, y, 120, 100); c.fillStyle = '#2a2420'; c.fillRect(x + 20, y + 14, 80, 60); } c.strokeStyle = '#b01010'; c.lineWidth = 3; for (let i = 0; i < 12; i++) { const a = pts[(i * 4) % 9], bq = pts[(i * 7 + 2) % 9]; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(bq[0], bq[1]); c.stroke(); } c.fillStyle = '#f0e8d0'; c.font = '900 36px "NB Title", "NB Serif", serif'; c.fillText('内鬼？', 330, 490); }), roughness: 0.9 })), 6, 4, 9.75, Y + 3, -123, -Math.PI / 2); anchor('doc_ops_traitor_wall', tw, 7); }
-    { const dx = -6, dz = -126; b.box('wood', 2.6, 0.06, 1.2, [dx, Y + 0.76, dz], { uv: 0.6, collide: true }); for (const ex of [-1.2, 1.2]) b.box('wood', 0.08, 0.74, 1.1, [dx + ex, Y + 0.37, dz], { uv: 0.6 }); greenLamp(b, dx - 0.9, Y + 0.79, dz - 0.3, 0); folderStack(b, dx + 0.9, Y + 0.79, dz - 0.2, 0.2, 4);
+    { const dx = -6, dz = -126; b.box('wood', 2.6, 0.06, 1.2, [dx, Y + 0.76, dz], { uv: 0.6, collide: true }); for (const ex of [-1.2, 1.2]) b.box('wood', 0.08, 0.74, 1.1, [dx + ex, Y + 0.37, dz], { uv: 0.6 }); s7Lamp(b, dx - 0.9, Y + 0.79, dz - 0.3, 0); folderStack(b, dx + 0.9, Y + 0.79, dz - 0.2, 0.2, 4);
       const nb = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.02, 0.3), docMat('doc_ops_k_notes', new THREE.MeshStandardMaterial({ map: textPage('#f0e9d8', '#3a1010', false, 16, 0.8), roughness: 0.9 }))); nb.position.set(dx, Y + 0.8, dz); zone.add(nb); anchor('doc_ops_k_notes', nb, 2.4);
       const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.038, 0.09, 14), M.whiteMarble); cup.position.set(dx + 0.5, Y + 0.835, dz + 0.25); zone.add(cup); ctx.anchors.int_ops_tea = { obj: cup, range: 2.2 }; P.add('office_chair', [dx, Y, dz + 0.9], { h: 1.05, yaw: Math.PI }); }
     for (let k = 0; k < 4; k++) { const x = -4 + k * 2.6; b.box('dp_inkMatte', 2.2, 0.06, 4, [x + 4, Y + 0.76, -120], { uv: 0.4 }); world.box(x + 4, Y + 0.4, -120, 2.2, 0.8, 4); paperStack(b, x + 4, Y + 0.79, -119.5, k, 5); }
-    { const ex = emblem(1.2, M.goldBright, M.navy); ex.position.set(-9.75, Y + 3.6, -122); ex.rotation.y = Math.PI / 2; zone.add(ex); const qi = goldText('柒', 1.4, 1.4, new THREE.MeshStandardMaterial({ color: 0x7a1010, metalness: 0.4, roughness: 0.4, emissive: 0x400404 }), { res: 256 }); qi.position.set(-9.75, Y + 1.6, -122); qi.rotation.y = Math.PI / 2; zone.add(qi); }
+    { const ex = emblem(1.2, M.goldBright, M.leather); ex.position.set(-9.75, Y + 3.6, -122); ex.rotation.y = Math.PI / 2; zone.add(ex); const qi = goldText('柒', 1.4, 1.4, new THREE.MeshStandardMaterial({ color: 0x7a1010, metalness: 0.4, roughness: 0.4, emissive: 0x400404 }), { res: 256 }); qi.position.set(-9.75, Y + 1.6, -122); qi.rotation.y = Math.PI / 2; zone.add(qi); }
     point(zone, 0xffc8a0, 10, [0, Y + 5, -118], 16); point(zone, 0xc02018, 6, [0, Y + 4, -130], 10);
     // 杀青室 seventh_wrap（z −134…−158）：档案柜列 + 三只空白档案袋 + 落地镜
     room(-134, -158, -8, 8, 5.4);
@@ -254,7 +254,7 @@ export async function buildDepths(scene, world, ctx) {
       spot(zone, 0xffe8c0, 90, [0, Y + 8.6, -170], [0, Y + 1, -174], 0.4, true, 14); point(zone, 0xc02018, 6, [0, Y + 6, -184], 12); }
     // —— 加密：天花梁与红线网、作战室桌椅地图台灯、档案柜、电报机、回写台红线纸条林、烛台、地面线结圆环 ——
     for (const [z0, z1, x0, x1, h] of [[-112, -134, -10, 10, 6], [-134, -158, -8, 8, 5.4], [-158, -186, -9, 9, 9]]) { for (let z = z0 - 2; z > z1; z -= 3) b.box('dp_kraft', x1 - x0, 0.35, 0.3, [(x0 + x1) / 2, Y + h - 0.2, z], { uv: 0.5 }); for (let x = x0 + 2; x < x1; x += 4) b.add('dp_red', new THREE.CylinderGeometry(0.015, 0.015, z0 - z1, 4), { pos: [x, Y + h - 0.4, (z0 + z1) / 2], rot: [Math.PI / 2, 0, 0] }, { uv: false }); }
-    for (let k = 0; k < 4; k++) { const x = k * 2.6; for (const dz of [-1.4, 0, 1.4]) P.add('office_chair', [x + 1.2 * (dz ? 1 : 0) - 0.6, Y, -120 + dz * 1.6], { h: 1.0, yaw: (k + dz) * 0.7 }); b.add('dp_page', new THREE.PlaneGeometry(1.6, 1.1), { pos: [x, Y + 0.795, -120.3], rot: [-Math.PI / 2, 0, k * 0.2] }, { uv: false }); greenLamp(b, x - 0.8, Y + 0.79, -121.5, 0); b.add('dz_cable', new THREE.CylinderGeometry(0.01, 0.01, 4, 4), { pos: [x, Y + 4, -120] }, { uv: false }); b.add('dz_shade', new THREE.ConeGeometry(0.35, 0.3, 16, 1, true), { pos: [x, Y + 2.2, -120] }, { uv: false }); }
+    for (let k = 0; k < 4; k++) { const x = k * 2.6; for (const dz of [-1.4, 0, 1.4]) P.add('office_chair', [x + 1.2 * (dz ? 1 : 0) - 0.6, Y, -120 + dz * 1.6], { h: 1.0, yaw: (k + dz) * 0.7 }); b.add('dp_page', new THREE.PlaneGeometry(1.6, 1.1), { pos: [x, Y + 0.795, -120.3], rot: [-Math.PI / 2, 0, k * 0.2] }, { uv: false }); s7Lamp(b, x - 0.8, Y + 0.79, -121.5, 0); b.add('dz_cable', new THREE.CylinderGeometry(0.01, 0.01, 4, 4), { pos: [x, Y + 4, -120] }, { uv: false }); b.add('dz_shade', new THREE.ConeGeometry(0.35, 0.3, 16, 1, true), { pos: [x, Y + 2.2, -120] }, { uv: false }); }
     for (let k = 0; k < 8; k++) P.add('file_cabinet', [-9.4, Y, -114 - k * 0.65], { h: 1.4, yaw: Math.PI / 2 }); world.box(-9.4, Y + 0.7, -116.3, 0.7, 1.4, 5.2);
     P.add('telegraph', [-6.9, Y + 0.79, -126.3], { h: 0.25, yaw: 0.4 }); P.add('wall_clock', [0, Y + 5.2, -133.7], { w: 0.8 });
     for (let k = 0; k < 120; k++) { const x = (rnd() - 0.5) * 16, z = -160 - rnd() * 24; if (Math.abs(x) < 2.2 && z < -169 && z > -179) continue; const len = 3 + rnd() * 5; b.add('dp_red', new THREE.CylinderGeometry(0.008, 0.008, len, 3), { pos: [x, Y + 9 - len / 2, z] }, { uv: false }); b.add('dp_page', new THREE.PlaneGeometry(0.12, 0.22), { pos: [x, Y + 9 - len - 0.1, z], rot: [0, rnd() * 3, 0] }, { uv: false }); }
@@ -263,13 +263,20 @@ export async function buildDepths(scene, world, ctx) {
     for (let r = 0; r < 4; r++) for (const sx of [-1, 1]) { b.add('dz_shade', new THREE.ConeGeometry(0.3, 0.26, 14, 1, true), { pos: [sx * 3, Y + 3.6, -138 - r * 4.6] }, { uv: false }); b.add('dz_cable', new THREE.CylinderGeometry(0.01, 0.01, 1.8, 4), { pos: [sx * 3, Y + 4.5, -138 - r * 4.6] }, { uv: false }); }
     b.box('dp_kraft', 2.4, 0.04, 20, [0, Y + 0.01, -146], { uv: false }); for (let k = 0; k < 6; k++) b.box('wood', 0.5, 0.45, 0.5, [-1.6 + (k % 2) * 3.2, Y + 0.23, -138 - Math.floor(k / 2) * 6], { uv: 0.6 });
     zone.add(dust([0, Y, -120], [24, 10, 140], 400, 0xd8b890));
-    b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); jobs.push(P.build(zone));
+    b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); jobs.push(P.build(zone)); jobs.push(buildM5Seventh(zone, world, Y, D, M)); // 批次 M5：作战室/杀青室/回写台精建壳
   }
   // —— 入口道具：B6 维护门、B5 深库后门、局长室无名书 ——
   { const z = ctx.zones.training; if (z) { const y = UNDER.B6, g = new THREE.Group(); const fr = new THREE.Mesh(new THREE.BoxGeometry(0.3, 3.4, 2.2), M.blackMetal); fr.position.set(0, 1.7, 0); g.add(fr); const dr = new THREE.Mesh(new THREE.BoxGeometry(0.1, 3.0, 1.8), M.paintedSteel); dr.position.set(0.12, 1.5, 0); g.add(dr); const pl = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.3), tagMaterial('维护通道　·　通往书芯')); pl.position.set(0.19, 3.1, 0); pl.rotation.y = Math.PI / 2; g.add(pl); const lt = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), new THREE.MeshStandardMaterial({ color: 0, emissive: 0xff3020, emissiveIntensity: 3 })); lt.position.set(0.2, 3.5, 0); g.add(lt); g.position.set(-31.75, y, -146); z.add(g); ctx.depths.b6Door = dr; } }
   { const z = ctx.zones.vault_b5; if (z) { const y = -42; const dr = new THREE.Mesh(new THREE.BoxGeometry(3.6, 4.2, 0.2), M.iron); dr.position.set(0, y + 2.1, -133.9); z.add(dr); const pl = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.3), tagMaterial('深库后门　·　墨渊')); pl.position.set(0, y + 4.5, -133.7); z.add(pl); ctx.depths.b5Door = dr; } }
   { const z = ctx.zones.director; if (z) { const bk = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.34, 0.26), new THREE.MeshStandardMaterial({ color: 0x5a0c0c, roughness: 0.5 })); bk.position.set(-4.6, 71.8 + 1.62, -92.95); bk.rotation.z = 0.12; z.add(bk); ctx.directorBook = bk; } }
   await Promise.all(jobs);
+}
+
+/** M5：第七局台灯——原 greenLamp 绿玻璃罩改暗铜座 + 烟褐纸罩（禁人造物蓝绿） */
+function s7Lamp(b, x, y, z) {
+  b.add('gold', new THREE.CylinderGeometry(0.08, 0.1, 0.03, 16), { pos: [x, y + 0.015, z] }, { uv: 1 });
+  b.add('gold', new THREE.CylinderGeometry(0.012, 0.012, 0.3, 8), { pos: [x, y + 0.17, z] }, { uv: 1 });
+  b.add('dz_shade', new THREE.ConeGeometry(0.13, 0.12, 14, 1, true), { pos: [x, y + 0.36, z] }, { uv: false });
 }
 
 export function updateDepths(ctx, dt, t) {
