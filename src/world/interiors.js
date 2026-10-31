@@ -888,24 +888,23 @@ let _frameEnv = null;
 function frameEnv() { // 批次37：相框专用小环境贴图（等距柱面 canvas，渲染器自动转 PMREM）：暗暖灰底 + 上方两条亮窗 + 几盏暖灯 + 浅色天花，让黄铜框读出金属的明暗反差
   if (_frameEnv) return _frameEnv;
   const W = 512, H = 256, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
-  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#e8e2d6'); g.addColorStop(0.3, '#8a7c68'); g.addColorStop(0.55, '#3a3028'); g.addColorStop(1, '#14100c'); x.fillStyle = g; x.fillRect(0, 0, W, H);
-  x.fillStyle = '#fff6e4'; for (const u of [0.08, 0.33, 0.58, 0.83]) x.fillRect(u * W, H * 0.2, W * 0.07, H * 0.2);
-  for (const u of [0.2, 0.45, 0.7, 0.95]) { const r = x.createRadialGradient(u * W, H * 0.12, 0, u * W, H * 0.12, 18); r.addColorStop(0, '#fff1c8'); r.addColorStop(1, 'rgba(255,220,160,0)'); x.fillStyle = r; x.fillRect(u * W - 18, H * 0.12 - 18, 36, 36); }
+  // 批次38：明暗反差拉大——天花更亮、地面近黑，亮窗纯白更大，金属框才有“亮条 / 暗条”交替
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#fffaf0'); g.addColorStop(0.28, '#b8a68a'); g.addColorStop(0.46, '#2a221a'); g.addColorStop(0.6, '#0c0907'); g.addColorStop(1, '#030202'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#ffffff'; for (const u of [0.06, 0.31, 0.56, 0.81]) x.fillRect(u * W, H * 0.16, W * 0.1, H * 0.26);
+  x.fillStyle = '#000000'; for (const u of [0.06, 0.31, 0.56, 0.81]) x.fillRect((u + 0.048) * W, H * 0.16, W * 0.006, H * 0.26); // 窗棂暗缝
+  for (const u of [0.2, 0.45, 0.7, 0.95]) { const r = x.createRadialGradient(u * W, H * 0.1, 0, u * W, H * 0.1, 22); r.addColorStop(0, '#ffffff'); r.addColorStop(0.4, '#ffe6b0'); r.addColorStop(1, 'rgba(255,220,160,0)'); x.fillStyle = r; x.fillRect(u * W - 22, H * 0.1 - 22, 44, 44); }
   const t = new THREE.CanvasTexture(c); t.mapping = THREE.EquirectangularReflectionMapping; t.colorSpace = THREE.SRGBColorSpace; return (_frameEnv = t);
 }
 let _brassPolish = null;
 const brassPolishMat = () => (_brassPolish ??= new THREE.MeshPhysicalMaterial({ name: 'brassPolish37', color: 0xf2d48e, metalness: 1.0, roughness: 0.14, clearcoat: 1, clearcoatRoughness: 0.05, envMap: frameEnv(), envMapIntensity: 1.9 }));
-function oldBronzeMat() { // 批次36：两批来仍像深色木框 → 带少量噪声的旧铜贴图（暗斑 + 细擦痕 + 少量铜绿）+ 粗糙度噪声图 + 清漆层 + 提高环境反射，让框条吃出金属高光对比
-  const N = 256, mk = () => { const c = document.createElement('canvas'); c.width = c.height = N; return c; };
+function oldBronzeMat() { // 批次38：去掉暗斑 / 磨亮点贴图（在亮底上读成橡木纹）→ 纯黄铜反照率 + 极细横向拉丝法线 + 粗糙度 0.28，金属感靠高反差小环境
+  const N = 512, c = document.createElement('canvas'); c.width = c.height = N; const x = c.getContext('2d');
   let sd = 7; const rnd = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
-  const cc = mk(), x = cc.getContext('2d'); x.fillStyle = '#c9a061'; x.fillRect(0, 0, N, N); // 批次37：偏黄亮黄铜底色（原 #b08350 在暗褐环境反射下读成漆木）
-  for (let i = 0; i < 260; i++) { const r = 2 + rnd() * 10; x.fillStyle = `rgba(${60 + rnd() * 30 | 0},${38 + rnd() * 20 | 0},${18 + rnd() * 10 | 0},${0.12 + rnd() * 0.2})`; x.beginPath(); x.arc(rnd() * N, rnd() * N, r, 0, 7); x.fill(); } // 氧化暗斑
-  for (let i = 0; i < 900; i++) { x.fillStyle = `rgba(245,215,165,${0.06 + rnd() * 0.12})`; x.fillRect(rnd() * N, rnd() * N, 1 + rnd() * 1.5, 1 + rnd() * 1.5); } // 细碎磨亮点（各向同性；批次36 首版横向擦痕在 id_yinze 里读成木纹，改掉）
-  for (let i = 0; i < 14; i++) { x.fillStyle = `rgba(70,110,85,${0.1 + rnd() * 0.12})`; x.beginPath(); x.arc(rnd() * N, rnd() * N, 2 + rnd() * 5, 0, 7); x.fill(); } // 少量铜绿
-  const rc = mk(), y = rc.getContext('2d'); y.fillStyle = '#5a5a5a'; y.fillRect(0, 0, N, N);
-  for (let i = 0; i < 400; i++) { const v = 50 + rnd() * 90 | 0; y.fillStyle = `rgba(${v},${v},${v},0.25)`; y.beginPath(); y.arc(rnd() * N, rnd() * N, 1 + rnd() * 8, 0, 7); y.fill(); }
-  const tex = (c, srgb) => { const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2, 2); if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
-  return new THREE.MeshPhysicalMaterial({ name: 'oldBronze37', color: 0xffffff, map: tex(cc, true), roughnessMap: tex(rc, false), metalness: 1.0, roughness: 0.32, clearcoat: 0.6, clearcoatRoughness: 0.1, envMap: frameEnv(), envMapIntensity: 1.6 }); // 批次37：单配小环境（亮窗 + 暖灯），不再吃大厅暗褐 HDR // 粗糙度降、清漆加，让框条吃锐利高光
+  const im = x.createImageData(N, N);
+  for (let v = 0; v < N; v++) { const row = (rnd() - 0.5) * 2; for (let u = 0; u < N; u++) { const k = (v * N + u) * 4, n = row * 0.75 + (rnd() - 0.5) * 0.25; im.data[k] = 128; im.data[k + 1] = 128 + n * 26 | 0; im.data[k + 2] = 255; im.data[k + 3] = 255; } } // 每行一条细拉丝：只扰动法线 y 分量（沿 u 方向拉丝），无颜色斑
+  x.putImageData(im, 0, 0);
+  const nt = new THREE.CanvasTexture(c); nt.wrapS = nt.wrapT = THREE.RepeatWrapping; nt.repeat.set(1, 3);
+  return new THREE.MeshPhysicalMaterial({ name: 'brass38', color: 0xd4a95c, normalMap: nt, normalScale: new THREE.Vector2(0.35, 0.35), metalness: 1.0, roughness: 0.28, clearcoat: 0.3, clearcoatRoughness: 0.12, envMap: frameEnv(), envMapIntensity: 1.8 });
 }
 function dossierStand(g, M, name, x, z, flip = false) { // flip：相框朝 −Z（周闻：椅前是值班长台，玩家从椅后平台过来）
   const k = IDPHOTO[name]; if (!k) return;
