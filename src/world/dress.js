@@ -108,6 +108,7 @@ export function dressMats(M) {
     r3_terrDark: W(pbr('Terrazzo005', { rn: true, color: 0x55524a, roughness: 0.4, env: 0.38 }), { macro: 0.2, dust: 0.1, rough: 0.25 }), // 批次18 lab3：深色水磨石
     r3_terrDeep: W(pbr('Terrazzo005', { rn: true, color: 0x3e3a33, roughness: 0.42, env: 0.34 }), { macro: 0.2, dust: 0.08, rough: 0.25 }), // 批次33：档案馆用，比 r3_terrDark 再压一档
     r3_labWain: W(new THREE.MeshStandardMaterial({ color: 0x7d8f80, roughness: 0.42, metalness: 0.05 }), { macro: 0.18, grime: 0.35, ground: 1.0, streak: 0.12 }), // 批次18 lab3：浅灰绿油漆墙裙
+    r3_dormWain: W(new THREE.MeshStandardMaterial({ map: chippedPaint(), color: 0xffffff, roughness: 0.5, metalness: 0.02 }), { macro: 0.22, grime: 0.45, ground: 1.0, streak: 0.2 }), // 批次33：宿舍墙裙旧油漆斑驳（掉漆露底灰 + 踢脚擦痕）
     r3_labUpper: W(new THREE.MeshStandardMaterial({ color: 0xe2e0d8, roughness: 0.85, envMapIntensity: 0.3 }), { macro: 0.08, grime: 0.1, streak: 0.04 }), // 批次18 收尾：lab_r3_b 看图 grey_plaster_02 渲成土黄迷彩 → 纯色白漆（未重拍） // 批次18 lab3：白上墙
     r3_epoxyBlack: W(new THREE.MeshStandardMaterial({ color: 0x121315, roughness: 0.3, metalness: 0.05, envMapIntensity: 0.6 }), { macro: 0.1, dust: 0.08 }), // 批次18 lab3：黑色环氧树脂台面
     r3_marbleHoned: W(pbr('Marble016', { rn: true, color: 0x8a8a92, roughness: 0.46, env: 0.42 }), { macro: 0.12, dust: 0.05 }),
@@ -433,4 +434,16 @@ function rivetPlateTex() {
   const rgh = new THREE.CanvasTexture(rc);
   for (const t of [col, nrm, rgh]) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; }
   return { col, nrm, rgh };
+}
+
+// 批次33：旧绿油漆墙裙贴图（确定性伪随机：掉漆斑块露出米灰底灰，下部擦痕更密，上沿一道磨亮）
+function chippedPaint() {
+  const S = 512, cv = document.createElement('canvas'); cv.width = cv.height = S; const c = cv.getContext('2d');
+  c.fillStyle = '#7b8c7c'; c.fillRect(0, 0, S, S);
+  let seed = 7; const rn = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  for (let i = 0; i < 900; i++) { const x = rn() * S, y = rn() * S, r = 2 + rn() * 7; c.fillStyle = `rgba(${110 + rn() * 20 | 0},${125 + rn() * 15 | 0},${110 + rn() * 15 | 0},0.35)`; c.beginPath(); c.arc(x, y, r * 3, 0, 7); c.fill(); } // 刷痕色差
+  for (let i = 0; i < 140; i++) { const x = rn() * S, y = S * Math.pow(rn(), 0.6), w = 3 + rn() * 14, h = 2 + rn() * 7; // 掉漆（越靠下越多）
+    c.fillStyle = '#b9b2a2'; c.beginPath(); c.ellipse(x, y, w, h, rn() * 3, 0, 7); c.fill(); c.strokeStyle = 'rgba(40,46,40,0.55)'; c.lineWidth = 1.2; c.stroke(); }
+  for (let i = 0; i < 60; i++) { const x = rn() * S, y = S * (0.75 + rn() * 0.25); c.strokeStyle = 'rgba(30,30,28,0.35)'; c.lineWidth = 1 + rn() * 2; c.beginPath(); c.moveTo(x, y); c.lineTo(x + 20 + rn() * 60, y + (rn() - 0.5) * 6); c.stroke(); } // 踢脚擦痕
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; return t;
 }

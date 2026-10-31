@@ -121,6 +121,7 @@ export const SHOTS = {
   ext_street: { pos: [0, 1.7, 96], look: [0, 3, 135], fov: 75, zone: 'plaza' },
   ext_side: { pos: [44, 26, 40], look: [10, 18, -20], fov: 66, zone: 'plaza' }, // 批次27：原 [70,10,20] 贴着附楼墙
   ext_booth: { pos: [6.5, 1.7, 66.5], look: [13, 1.6, 75], fov: 60, zone: 'plaza' }, // 批次27 E5 东岗亭近景
+  ext_house: { pos: [70.1, -4.4 + 1.7, 106.6], look: [84.9, -4.4 + 7, 113.4], fov: 65, zone: 'plaza' }, // 批次33：最内圈街屋立面模块近看（路心 R160 外看）
   ext_sky: { pos: [0, 40, 200], look: [0, 20, -40], fov: 50, zone: 'plaza' },
   heli_r3: { pos: [96.5, 12.4 + 1.8, -56.0], look: [80, 12.4 + 0.6, -80], fov: 70, zone: 'helipad' }, // 批次23 屋顶停机坪：东南角 → H / 楼梯间 / 设备房
   heli_r3_b: { pos: [84.5, 12.4 + 1.7, -71.0], look: [84.0, 12.4 + 1.4, -84.0], fov: 78, zone: 'helipad' }, // 批次24：楼梯间 / 设备房南立面近景（檐口 / 雨渍 / 管线 / 百叶）

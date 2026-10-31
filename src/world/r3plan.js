@@ -1530,11 +1530,11 @@ export function planDorm3(y0) {
     light(out, f.X(2.3), y + 2.7, r.zc, anchor ? 0xffd2a0 : 0xffe2c0, anchor ? 2.4 : 1.7, 5.5);
     // 批次22：dorm_r3_b 看图墙面素平 → 三面墙（后墙 + 两道开间隔墙）浅灰绿油漆墙裙 1.2 m + 深色踢脚线；走廊墙门两侧同做
     { const bf = r.back + r.s * 0.1, ff = r.door - r.s * 0.08, zS = r.zc - D.rw / 2 + 0.06, zN = r.zc + D.rw / 2 - 0.06, xm = (bf + ff) / 2, L = Math.abs(ff - bf);
-      out.push({ box: 'r3_labWain', x: bf + r.s * 0.006, y: y + 0.6, z: r.zc, w: 0.012, h: 1.2, d: D.rw - 0.12, tag: r.num + ' 墙裙', on: 'partv' });
+      out.push({ box: 'r3_dormWain', x: bf + r.s * 0.006, y: y + 0.6, z: r.zc, w: 0.012, h: 1.2, d: D.rw - 0.12, tag: r.num + ' 墙裙', on: 'partv' });
       out.push({ box: 'dz_beam', x: bf + r.s * 0.016, y: y + 0.06, z: r.zc, w: 0.02, h: 0.12, d: D.rw - 0.12, tag: r.num + ' 踢脚', on: 'partv' });
-      for (const [zz, sg] of [[zS, 1], [zN, -1]]) { out.push({ box: 'r3_labWain', x: xm, y: y + 0.6, z: zz + sg * 0.006, w: L, h: 1.2, d: 0.012, tag: r.num + ' 墙裙', on: 'partv' });
+      for (const [zz, sg] of [[zS, 1], [zN, -1]]) { out.push({ box: 'r3_dormWain', x: xm, y: y + 0.6, z: zz + sg * 0.006, w: L, h: 1.2, d: 0.012, tag: r.num + ' 墙裙', on: 'partv' });
         out.push({ box: 'dz_beam', x: xm, y: y + 0.06, z: zz + sg * 0.016, w: L, h: 0.12, d: 0.02, tag: r.num + ' 踢脚', on: 'partv' }); }
-      const dz0 = r.zc + 0.6, dz1 = r.zc + 1.5; for (const [a, c] of [[zS, dz0], [dz1, zN]]) if (c - a > 0.1) { out.push({ box: 'r3_labWain', x: ff - r.s * 0.017, y: y + 0.6, z: (a + c) / 2, w: 0.012, h: 1.2, d: c - a, tag: r.num + ' 墙裙', on: 'partv' }); out.push({ box: 'dz_beam', x: ff - r.s * 0.028, y: y + 0.06, z: (a + c) / 2, w: 0.02, h: 0.12, d: c - a, tag: r.num + ' 踢脚', on: 'partv' }); }
+      const dz0 = r.zc + 0.6, dz1 = r.zc + 1.5; for (const [a, c] of [[zS, dz0], [dz1, zN]]) if (c - a > 0.1) { out.push({ box: 'r3_dormWain', x: ff - r.s * 0.017, y: y + 0.6, z: (a + c) / 2, w: 0.012, h: 1.2, d: c - a, tag: r.num + ' 墙裙', on: 'partv' }); out.push({ box: 'dz_beam', x: ff - r.s * 0.028, y: y + 0.06, z: (a + c) / 2, w: 0.02, h: 0.12, d: c - a, tag: r.num + ' 踢脚', on: 'partv' }); }
       out.push({ box: 'dz_beam', x: bf + r.s * 0.01, y: y + 1.21, z: r.zc, w: 0.03, h: 0.025, d: D.rw - 0.12, tag: r.num + ' 墙裙压线', on: 'partv' }); }
     if (r.num === '306') { // 空床：被褥卷起、桌上留下的信 + 合影 + 钥匙
       out.push({ box: 'kraft', x: f.X(0.4), y: y + 0.805, z: f.desk.z + 0.05, w: 0.12, h: 0.006, d: 0.22, tag: '306 锚点', on: 'desk' });
