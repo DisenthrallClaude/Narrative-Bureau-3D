@@ -220,6 +220,15 @@ b579016 菜单实时 3D 机位 + menu_hero 机位；dc5a93d（羊皮纸手机 / 
 - 区域标题金箔字在亮场景上对比依赖投影；手机消息样式（phone）未重做。
 - **Drive 上传未做**（按分工由 lead-58 做）。
 
+## R3 批次59（2026-10-31 23:03 CST 接手，约 35 分钟；续批次57；与 lead-61〔批次58/60：门扇、叫号机、洗墙〕、M1〔第七局〕并行，只动场景文件）
+- **提交**：e0895c6 民居砖/木/店招/雨棚 · 0c8b320 借阅台屏 · 88b0c66 核对机位 · 5d9705b 全局去绿续 · 0265e74 凹凸远处淡出 · fd29b29 s7 N02 贴墙 · 573e72c 安检局徽贴墙（每条 `npx vite build --outDir /tmp/b59dist` 0）。
+- ⚠ 工作区与其他代理共用：本批第一次改 exterior.js 时整份工作区被别的进程重置、改动丢失；之后改同文件一律「HEAD 副本 + 脚本补丁 → git apply（工作区）+ git apply --cached（只提交自己的补丁）」，脚本 work/r3/b59/house_patch.py / loan_patch.py。
+- **1 候号长椅**：41211196197 的 cs_r3（a 组）跑 >50 min 未出图；lite 重拍 41213095881 a 组 23:30 仍在跑（cs_r3 机位在 runner 上持续卡住，原因未查）。**未能游戏内验收**。静态核对：eastwing.js:159 street_seating 实际网格 width 3.7（与 r3plan F7 一致，不是只改了规划框），x 25.15–28.85 / 35.15–38.85，侧屏风 x 24.4 / 39.6 → 各 0.75 m；第一排 z −43±0.43 离南屏风 z −41.95 0.62 m；citizen_service 无 hero GLB 自带隔断（全仓 grep 无）。按几何不应再插屏风。下批：取 41213095881 a 组，或换不 lite 的近机位 cs_r3_c / cs_win 看长椅端部。
+- **2 民居**（exterior.js houseMat）：A 款砖 → Poly Haven brick_wall_006（CC0）色图 + ARM 的 AO 作高度做屏幕导数凹凸（砖缝凹进），色乘 (0.66,0.50,0.46) → 暗红褐；2.5 m 一张（约 0.07 m 一皮砖）；凹凸随 fwidth 远处淡出。D 款 → Wood051（CC0）竖纹 + 0.2 m 板缝凹凸，乘 (3.2,2.9,2.2)。山墙底层同用。店招：蓝底 / 绿底全部去掉 → 暗红底金字（百货 / 书店 / 钟表）、黑底金字（副食品 / 邮电 / 五金）、木底刻字（照相馆 / 饭店）；着色器侧墙招牌色带蓝 / 绿 → 暗红 / 黑 / 木；sh_canvas 雨棚 0xb2462a → 深酒红褐 0x5a2a20。**看图（41213740935 h/ext_house）**：砖面真实可读、不再粉、红褐偏暗 ✔；店招木底刻字「红星照相馆」、黑底金字 ✔，雨棚深酒红 ✔，无红配蓝 / 绿 ✔。远墙砖面略「碎」（已加淡出，0265e74 复拍见 41214663056 m 组）。D 款木楼在该机位未入镜（未单独验收）。注意：着色器按 vSd 段着色，外圈非 ABAC 楼的红砖段也一并换成真实砖。
+- **3 借阅台屏**：pick 41213095881（archive_loan 3 点）首个实体 = `Mesh<archive` 色 000000 无贴图 → interiors.js 借阅柜台 `mon` 平面（emissive 0x7aa8d8 浅蓝）。改 screenUI(0) 档案检索琥珀界面（克隆贴图 flipY、裁 u .039–.966、屏面 0.54×0.29 = 1.85 不拉伸）。便签是 ctx.stickyNote 剧情物，保留。**看图（41213978757 c）**：琥珀检索界面 ✔；阅览桌已棕皮 ✔（efcb60b 验收）。
+- **4 去红配绿续**（5d9705b）：cc_r3_c / cs_win 看到银行家灯绿玻璃罩紧挨红按钮 / 酒红呢 → r3build bankers_lamp green_glass 换琥珀（去 map）、M.lampGreen 琥珀；dress r3_screen 绿荧光 → 暖白；dorm dm_frame 灰绿 → 暖深灰、dm_deskTop 绿呢 → 棕呢。未改：bus_shelter 绿漆 / guard_booth 屋瓦 / lib_nook 等 Blender GLB 内材质、档案馆二层彩窗蓝玻璃（彩窗属正常）、cs_win 柜台面前沿一道细蓝高光（疑环境反射，未查）。CRT 方向：cc_r3_c 机位里 CRT 太小，本批未能确认字的朝向（待复拍 41214663056 q 组近看）。
+- **5 AUDIT 表4**（机位 ec_pic59 / sec_emb59 / s7_n02_59 + 中心 pick）：东廊局史挂框 x 24.24，后面 dz_ashlarEC 石贴面 24.22 → 离墙 2 cm，**不悬空**（审计误报，石贴面不在规划数据里）；安检大厅局徽主墙框 z −75.07，后面 hero GLB H_marbleDark −75.15 → 8 cm → 后移 4 cm（573e72c）；第七局作战室 N02 框 −133.57，后面 dp_kraft 墙 −133.8 → **23 cm 悬空** → 贴墙 4 cm（fd29b29）。s7_entry 的 N02（−53.45）未核对（M1 在重做第七局入口）。复拍 41214663056 o / p：两处已贴墙（work/r3/b59/cmp_hang.jpg 左改前右改后）。
+
 ## R3 批次57（2026-10-31 22:29 CST 接手，约 35 分钟；续批次56；与 lead-58〔批次55〕、ui-redesign-u1 并行，只动场景文件）
 - **提交**：242f736 屏幕 / da479b8 配色 / c98a7c8 联络官室 / 3e6dd95 图片比例 / ed0d416 + 798f5ca 民居 / 0b54a70 悬空图展架（每条 vite build 0）。
 - **电脑屏幕**（src/engine/assets.js `SCR_DRAW` / `screenUI` / `crtUI` / `SCR_ZONE`；src/world/dress.js `Props.build` 屏幕分组；r3build.js `P.scr = SCR_ZONE(id)`）：6 种机关终端界面（0 档案检索 / 1 叫号队列 / 2 值班日志 / 3 电报收发 / 4 业务菜单表单 / 5 局徽待机），琥珀荧光与暖白交替，640×320 = monitor.glb 屏面 UV（u 0.039–0.966, v 0–0.994）× 物理宽高比 1.85 → 不拉伸；材质直接替换原 decal_screen 网格 → 无 z-fighting。按区：citizen/gate/plaza=叫号+菜单，archive/library=检索，command/security/interrog/b4/b5=日志+电报，其他混排；同区内按实例轮换（每种一组 InstancedMesh）。CRT（r2/crt_computer_monitor 的 monitor_glass）用 repeat/offset 把界面铺进其图集块 u .752–.909 / v .606–.816（**朝向未在游戏内核对**）。指挥中心监控台 crtMat k=1/3 改值班日志 / 电报文字。
@@ -1837,3 +1846,13 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 ### 下批先做
 1. 亲眼看 p58 ext_plaza（41211257640，若已回）/ 重拍；过曝就把地埋灯 1550 → 1200。
 2. 门扇：用户拍板是否开第三轮（右扇偏红、左扇上下两端偏冷）。
+
+## 批次 M1 · 主线区 Blender 精建（2026-10-31 23:09 CST 接手，约 35 分钟；与 lead-62 / lead-63 并行，只动第七局 seventh_entry / seventh_gutter）
+- 用户 23:08 新优先级：主线剧情经过的建筑全部在 Blender 里精建到顶尖视觉，自由探索区之后再做。本批顺序 entry → gutter → ops → rewrite → wrap；**本批只做完前两个**。
+- 平面规划：work/r3/m1/plans/plan_seventh_entry.png、plan_seventh_gutter.png（动线、出生点 (0,−57)、红缝到达 (1.2,−68)、walk 传送点 (7.3,−80)、地铁残页 / 打孔卡 / 镜像守则锚点、壁柱避让）。
+- 模型（tools/blender/m1_lib.py 公共库 + m1_entry.py + m1_gutter.py；`blender.sh -b -P m1_entry.py -- <out.glb> <prev>`）：
+  - public/assets/models/m1/entry.glb（3.5 万三角，世界坐标原点 (0,SY,0) 直接放，不走 placeModel 重心化）：暖灰石板地 + 酒红褐走道毯铜压条；两侧石踢脚 + 胡桃框芯护墙板 + 腰线；石壁柱 ×6（基座 / 四槽柱身 / 铜箍柱头，z −54.5/−58.6/−63.3，避开西墙打孔卡 z −61）；檐部（石额枋 + 酒红褐楣带铜齿饰 + 石檐口）；藻井天花 y 9.0（胡桃梁格 + 酒红褐格心 + 铜角花）+ 铜链碗灯 ×2；南墙白缝石门套 + 铜内框 + 铭牌；北端拱门屏墙 z −65（洞口 ±1.75、拱脚 5.6、石拱圈 + 铜内圈 + 酒红褐拱心石，两面）；东侧装订机（铸铁座、铜侧板、胡桃台面、9 针排、飞轮、6 只红线轴，红线拉上天花）。
+  - m1/gutter_rib.glb（一榀拱肋：两侧石壁柱 + 半圆石拱肋拱脚 8.2 + 铜内圈 + 酒红褐拱心石 + 铜吊杆线环托 y 7.6 红线）、m1/gutter_panel.glb（1 m 墙脚段：踢脚 / 胡桃护墙 / 腰线 / 檐线 + 走道毯铜压条石边）。
+- 接入 src/world/m1_seventh.js（depths.js 只加 import + 一行 `jobs.push(buildM1Seventh(...))`）：材质按名字换游戏 pbr 贴图（Wood051 胡桃 / Concrete034 暖灰石 / Metal046A 暗铜 / Fabric023 酒红褐），UV 是 Blender 立方投影 1 m 一张不拉伸；回廊 46 段护墙 + 19 榀拱肋按弧线矩阵烘进世界坐标、按材质合并（每模块约 6 次绘制）；镜像守则 t=0.5 两侧（段 19–27）与段 0 不放拱肋。碰撞：入口壁柱 / 屏墙两翼 / 门套 / 装订机 world.box；回廊每榀壁柱带 yaw 的 world.box。**原牛皮纸墙 / 地 / 书页墙、全部锚点、传送点、zone 判定不动。**
+- Blender 预览（亲眼看过）：work/r3/m1/preview/m1_entry_{0,1,2}.png、m1_gutter_{0,1,2}.png、拼图 preview/sheet_preview.jpg。
+- 未做：seventh_ops / seventh_rewrite / seventh_wrap 精建（下批按剧情顺序继续）；entry.glb 未 meshopt（2.4 MB，可后续压）。
