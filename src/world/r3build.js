@@ -56,7 +56,8 @@ export async function buildR3(ctx, world, MAT, late = false) {
         const rod = it.top - it.y - it.r; b.box('dz_brassDim', 0.02, rod, 0.02, [it.x, it.y + it.r + rod / 2, it.z], { uv: 1 });
         b.add('dz_brassDim', new THREE.CylinderGeometry(0.06, 0.09, 0.08, 12), { pos: [it.x, it.y + it.r + 0.02, it.z] }, { uv: 1 });
         b.add('dz_brassDim', new THREE.CylinderGeometry(0.12, 0.12, 0.03, 16), { pos: [it.x, it.top - 0.015, it.z] }, { uv: 1 });
-        b.add(it.cold ? 'dz_glowCold' : it.dim ? 'r3_globeDim' : 'r3_globe', new THREE.SphereGeometry(it.r, 18, 12), { pos: [it.x, it.y, it.z] }, { uv: false }); continue; }
+        if (it.amber) b.add('dz_brassDim', new THREE.SphereGeometry(it.r * 1.12, 18, 8, 0, Math.PI * 2, 0, Math.PI * 0.42), { pos: [it.x, it.y + it.r * 0.12, it.z] }, { uv: 1 }); // 批次 M9：铜罩
+        b.add(it.cold ? 'dz_glowCold' : it.amber ? 'r3_globeAmber' : it.dim ? 'r3_globeDim' : 'r3_globe', new THREE.SphereGeometry(it.r, 18, 12), { pos: [it.x, it.y, it.z] }, { uv: false }); continue; }
       if (it.pipe) { const L = Math.abs(it.a1 - it.a0), g = new THREE.CylinderGeometry(it.r, it.r, L, 12); if (it.axis === 'x') g.rotateZ(Math.PI / 2); else g.rotateX(Math.PI / 2); b.add(it.mat, g, { pos: [it.x, it.y, it.z] }, { uv: 1 });
         for (let a = Math.min(it.a0, it.a1) + 0.4; a < Math.max(it.a0, it.a1); a += 3) { const r2 = new THREE.CylinderGeometry(it.r * 1.25, it.r * 1.25, 0.05, 12); if (it.axis === 'x') r2.rotateZ(Math.PI / 2); else r2.rotateX(Math.PI / 2); b.add(it.mat, r2, { pos: [it.axis === 'x' ? a : it.x, it.y, it.axis === 'x' ? it.z : a] }, { uv: 1 }); }
         continue; }

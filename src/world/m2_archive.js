@@ -82,7 +82,8 @@ export function buildM2Archive(zone, world, Y) {
   const jobs = [];
   // —— 批次 M6：西墙卡片目录柜 8 联（原 r3plan drawer_cabinet ×8 同位：x −55.45、z −36.2…−42.5，面东；深 0.42 背距墙 0.33）——
   const cat = []; for (let k = 0; k < 8; k++) { cat.push(MX(-55.45, Y, -36.2 - k * 0.9, Math.PI / 2)); world.box(-55.45, Y + 0.7, -36.2 - k * 0.9, 0.44, 1.4, 0.88); }
-  jobs.push(loadModel('m6/card_catalog').then((s) => { const g = bake(s, cat, MAT); g.name = 'm6_card_catalog'; g.traverse((o) => { if (o.isMesh) o.castShadow = true; }); zone.add(g); }));
+  const CAT_MAT = { ...MAT, m1_walnut: pbr('Wood051', { color: 0x8a5c3e, roughness: 0.55, env: 0.45 }), m1_walnutDark: pbr('Wood051', { color: 0x5e3e2a, roughness: 0.5, env: 0.4 }) }; // 批次 M9：西南暗角卡片柜提亮胡桃
+  jobs.push(loadModel('m6/card_catalog').then((s) => { const g = bake(s, cat, CAT_MAT); g.name = 'm6_card_catalog'; g.traverse((o) => { if (o.isMesh) o.castShadow = true; }); zone.add(g); }));
   jobs.push(loadModel('m2/arch_coffer').then((s) => { const g = bake(s, cof, MAT); g.name = 'm2_arch_coffer'; zone.add(g); }));
   jobs.push(loadModel('m2/arch_entab').then((s) => { const g = bake(s, ent, MAT); g.name = 'm2_arch_entab'; zone.add(g); }));
   jobs.push(loadModel('m2/arch_pilaster').then((s) => { const g = bake(s, pil, MAT); g.name = 'm2_arch_pilaster'; zone.add(g); }));

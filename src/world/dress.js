@@ -94,6 +94,7 @@ export function dressMats(M) {
     r3_limestone: W(pbr('Concrete034', { color: 0xcfc6b2, roughness: 0.62, env: 0.55 }), { macro: 0.12, dust: 0.08, grime: 0.12, ground: 0 }), // 批次39：米灰石灰岩线脚（黑大理石墙上读得出）
     r3_glassCase: new THREE.MeshPhysicalMaterial({ color: 0xdfe8e4, roughness: 0.05, metalness: 0, transmission: 0, transparent: true, opacity: 0.18, envMapIntensity: 0.8, depthWrite: false }),
     r3_globe: new THREE.MeshStandardMaterial({ color: 0xfff4e0, emissive: 0xffe2b8, emissiveIntensity: 2.4, roughness: 0.4 }),
+    r3_globeAmber: new THREE.MeshStandardMaterial({ color: 0x4a3020, emissive: 0xc07a34, emissiveIntensity: 0.32, roughness: 0.3, envMapIntensity: 0.5 }), // 批次 M9：烟琥珀玻璃（档案馆东门）
     r3_globeDim: new THREE.MeshStandardMaterial({ color: 0xf2e8d6, emissive: 0xffe2b8, emissiveIntensity: 0.5, roughness: 0.4 }), // 批次16 再压 0.95→0.5；批次15：近机位低悬球灯防过曝
     r3_screen: new THREE.MeshStandardMaterial({ color: 0x14100a, emissive: 0xe8c890, emissiveIntensity: 0.7, roughness: 0.3 }), // 批次59：绿荧光屏 → 暖白荧光（去红配绿）
     r3_screenAmber: new THREE.MeshStandardMaterial({ color: 0x1a1006, emissive: 0xffa040, emissiveIntensity: 0.8, roughness: 0.3 }),
@@ -130,7 +131,7 @@ export function dressMats(M) {
     r3_steelRivet: W((() => { const t = rivetPlateTex(); return new THREE.MeshStandardMaterial({ map: t.col, normalMap: t.nrm, roughnessMap: t.rgh, color: 0xffffff, roughness: 1, metalness: 0.55, envMapIntensity: 0.45 }); })(), { macro: 0.15, grime: 0.25, ground: 0.8 }), // 批次23：B 层墙裙——钢板凹凸 / 铆钉法线 + 接缝锈流 + 底部轻锈（1.2 m 一块，uv 1）
     r3_paintYellow: W(new THREE.MeshStandardMaterial({ color: 0xc8a020, roughness: 0.7 }), { macro: 0.3, dust: 0.2 }),
   };
-  for (const m of [DM.dz_glow, DM.dz_glowCold, DM.dz_shade, DM.dz_glassDark, DM.r3_globe, DM.r3_globeDim, DM.r3_clerestory, DM.r3_wear, DM.r3_glassCase, DM.r3_screen, DM.r3_screenAmber, DM.r3_frosted]) m.userData.noShadow = true;
+  for (const m of [DM.dz_glow, DM.dz_glowCold, DM.dz_shade, DM.dz_glassDark, DM.r3_globe, DM.r3_globeDim, DM.r3_globeAmber, DM.r3_clerestory, DM.r3_wear, DM.r3_glassCase, DM.r3_screen, DM.r3_screenAmber, DM.r3_frosted]) m.userData.noShadow = true;
   return DM;
 }
 

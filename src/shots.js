@@ -65,6 +65,10 @@ export const SHOTS = {
   m6_west: { pos: [-33.0, Y + 2.6, -44.0], look: [-56.0, Y + 6.2, -48.0], fov: 70, lite: 1 },
   m6_catalog: { pos: [-52.3, Y + 1.55, -38.0], look: [-55.6, Y + 0.85, -39.6], fov: 66, lite: 1 },
   m6_b1: { pos: [-33.5, Y - 6 + 1.6, -35.4], look: [-38.5, Y - 6 + 1.3, -39.8], fov: 70, zone: 'archive_b1' },
+  // 批次 M9：东门烟琥珀球灯 / B1 铁柜排 / B1 东墙铁门
+  m9_eastglobe: { pos: [-28.5, Y + 1.7, -51.5], look: [-23.8, Y + 3.3, -51.5], fov: 66, lite: 1 },
+  m9_b1cab: { pos: [-50.6, -4.2 + 1.6, -40.2], look: [-55.7, -4.2 + 0.9, -46.5], fov: 70, zone: 'archive_b1' },
+  m9_b1door: { pos: [-25.8, -4.2 + 1.6, -43.2], look: [-20.0, -4.2 + 1.2, -39.6], fov: 70, zone: 'archive_b1' },
   archive_west: { pos: [-46.5, 1.8 + 1.65, -46.0], look: [-55, 1.8 + 1.0, -36], fov: 74, lite: 1 },
   archive_loan: { pos: [-45.6, 1.8 + 1.6, -48.6], look: [-50.2, 1.8 + 0.85, -51.5], fov: 62, zone: 'archive', lite: 1 }, // 批次33：借阅柜台近景
   archive_cat: { pos: [-49.4, 1.8 + 1.6, -60.4], look: [-51.6, 1.8 + 1.0, -63.3], fov: 62, zone: 'archive', lite: 1 }, // 批次45：大档案柜组 → 卡片目录柜精建近景

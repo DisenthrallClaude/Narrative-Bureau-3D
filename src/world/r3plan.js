@@ -127,7 +127,7 @@ function floorZ(out, mat, x0, x1, z0, z1, y, o = {}) {
 /** 通道磨损贴花（沿长边） */
 function wear(out, x0, x1, z0, z1, y) { out.push({ wear: true, x0: Math.min(x0, x1), x1: Math.max(x0, x1), z0: Math.min(z0, z1), z1: Math.max(z0, z1), y: y + 0.0105, x: (x0 + x1) / 2, z: (z0 + z1) / 2, size: [Math.abs(x1 - x0), 0.01, Math.abs(z1 - z0)], tag: '磨损', on: 'partv' }); }
 /** 乳白玻璃球吊灯（铜吊杆到顶棚），drop = 灯球中心离地 */
-function globe(out, x, z, y, H, drop = 3.0, o = {}) { out.push({ globe: true, x, y: y + drop, z, top: y + H, r: o.r ?? 0.2, cold: !!o.cold, dim: !!o.dim, size: [0.4, 0.4, 0.4], tag: '吊灯', on: 'light' }); }
+function globe(out, x, z, y, H, drop = 3.0, o = {}) { out.push({ globe: true, x, y: y + drop, z, top: y + H, r: o.r ?? 0.2, cold: !!o.cold, dim: !!o.dim, amber: !!o.amber, size: [0.4, 0.4, 0.4], tag: '吊灯', on: 'light' }); }
 /** 吸顶灯槽（乳白灯罩 + 铜边），用于小间/走廊 */
 function troffer(out, x, z, y, H, yaw = 0, len = 1.2, o = {}) { out.push({ troffer: true, x, y: y + H - 0.04, z, yaw, len, cold: !!o.cold, size: [len, 0.06, 0.32], tag: '灯具', on: 'light' }); }
 /** 窗光：体积光柱（从窗口斜射到地面）+ 无投影聚光在地面打亮斑。n = 窗外法线方向（指向室内） */
@@ -747,7 +747,7 @@ export function planArchive(y) {
   out.push({ m: 'r2/fire_extinguisher', x: -20.45, y, z: -46.9, yaw: ROT.W, h: 0.58, tag: 'K3', on: 'floor' });
   out.push({ m: 'r2/fire_extinguisher', x: -20.45, y, z: -56.1, yaw: ROT.W, h: 0.58, tag: 'K3', on: 'floor' });
   out.push({ m: 'r2/exit_sign', x: -20.1, y: y + 6.45, z: -51.5, yaw: ROT.W, w: 0.36, tag: 'K3', on: 'wall' });
-  globe(out, -23.8, -51.5, y, TOP - y, 3.4, { r: 0.22, dim: true });
+  globe(out, -23.8, -51.5, y, TOP - y, 3.4, { r: 0.22, dim: true, amber: true }); // 批次 M9：东门乳白球过曝 → 烟琥珀玻璃 + 铜罩
   // ③ 西南（近南墙）：历届叙事事件陈列柜 ×2 + 卡片目录柜（西墙一排）+ 地球仪
   vitrine(out, -51.4, -38.2, y, 4.0, 0, '叙事事件陈列', { model: true }); vitrine(out, -51.4, -42.2, y, 4.0, 0, '叙事事件陈列', { model: true });
   if (!M6_CAT) for (let k = 0; k < 8; k++) out.push({ m: 'drawer_cabinet', x: -55.45, y, z: -36.2 - k * 0.9, yaw: ROT.E, h: 1.4, tag: '卡片目录', on: 'floor', col: [0.85, 1.4, 0.36] });
@@ -770,7 +770,7 @@ export function planArchive(y) {
   floorZ(out, 'r3_lino', -55.95, -50.7, -55.9, -47.1, y, {});
   for (const [x, z, yaw] of [[-55.6, -32.6, Math.PI * 0.75], [-20.4, -69.4, -Math.PI * 0.25]]) out.push({ m: 'r2/cctv_camera', x, y: y + 5.4, z, yaw, h: 0.3, tag: 'K3', on: 'wall' });
   for (const z of [-46.8, -55.4]) winShaft(out, X0 + 0.2, y + 8.6, z, 1, 0, { i: 1.2, len: 12, spot: true });
-  light(out, -24.0, y + 2.6, -42.7, 0xffdcb0, 3.2, 8); light(out, -24.0, y + 2.6, -60.6, 0xffdcb0, 3.2, 8); light(out, -51.5, y + 2.6, -40.2, 0xffe2c0, 2.6, 7); light(out, -54.4, y + 2.4, -59.7, 0xffe2c0, 2.2, 6); light(out, -23.8, y + 2.8, -51.5, 0xffe6c8, 2.6, 7);
+  light(out, -24.0, y + 2.6, -42.7, 0xffdcb0, 3.2, 8); light(out, -24.0, y + 2.6, -60.6, 0xffdcb0, 3.2, 8); light(out, -51.5, y + 2.6, -40.2, 0xffe2c0, 2.6, 7); light(out, -54.4, y + 2.4, -59.7, 0xffe2c0, 2.2, 6); light(out, -23.8, y + 2.8, -51.5, 0xffd8a8, 1.3, 6); light(out, -54.3, y + 1.9, -39.6, 0xffd2a0, 1.5, 5); // 批次 M9：东门下点光 2.6→1.3；卡片目录柜角不投影暖补光
   // 批次4：档案馆偏暗 → 阅览区/书架通道上方 6 盏暖色补光（模拟大吊灯与台灯群的整体照度）
   for (const [x, z] of [[-46, -45], [-38, -45], [-30, -45], [-46, -58], [-38, -58], [-30, -58]]) light(out, x, y + 4.6, z, 0xffdcb0, 3.0, 13);
   return { room, items: out };
