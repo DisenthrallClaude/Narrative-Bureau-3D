@@ -92,6 +92,7 @@ export const SHOTS = {
   lobby_4f: { pos: [1.2, 22.8 + 1.65, -91.2], look: [-3.5, 22.8 + 1.6, -84.4], fov: 74, zone: 'library' }, // 4F 藏书阁电梯厅
   es_land: { pos: [54.4, 5.3 + 1.65, -63.6], look: [54.6, 8.8 + 1.2, -54.5], fov: 72, zone: 'east_stair' }, // 批次12：东楼梯 1F→2F 中间平台看东跑上行
   es_land_b: { pos: [54.6, 5.3 + 1.65, -55.2], look: [51.8, 3.0, -63.0], fov: 72, zone: 'east_stair' }, // 东跑中段回看平台、层间铜牌、西跑
+  lib_vit: { pos: [-2.9, 22.8 + 1.55, -94.5], look: [-4.4, 22.8 + 1.0, -97.4], fov: 60, zone: 'library' }, // 批次38：入口西侧限阅陈列柜（Blender 精建 lib_vitrine）
   lib_r3: { pos: [0.4, 22.8 + 1.65, -94.4], look: [0, 22.8 + 1.0, -106], fov: 76, zone: 'library' }, // 批次12：藏书阁底层（入口看讲经台、借阅台/限阅柜）
   lib_r3_b: { pos: [8.6, 22.8 + 1.65, -111.8], look: [-3.0, 22.8 + 1.0, -100.5], fov: 76, zone: 'library' }, // 东北阅览桌旁回看入口
   lib_top: { pos: [0, 22.8 + 36, -105.99], look: [0, 22.8, -106], fov: 44, clipY: 22.8 + 4.0, zone: 'library' },
