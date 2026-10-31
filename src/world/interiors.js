@@ -634,6 +634,15 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   world.box(kx, Y + 0.525, kz, 1.2, 1.05, 7);
   if (M16_ARCH) add(placeModel('m16/loan_counter', { width: 7.21, pos: [kx, Y - 0.02, kz], rotY: Math.PI / 2 }).then(m16Dress)); // 批次 M16：hero 柜台（框芯正面 / 石台面嵌皮 / 铜踢脚包角 / 借阅窗口格栅铭牌），外包同旧件
   if (M16_ARCH && M17_ARCH) { const cw = new THREE.PointLight(0xffc08a, 5, 4.5, 2); cw.position.set(kx + 2.0, Y + 1.0, kz); cw.castShadow = false; cw.name = 'm17_counterWash'; zone.add(cw); } // 批次 M17：柜台公众面（+X）前方低强度暖洗光，照出框芯 / 铜踢脚 / 扶脚杆
+  if (M16_ARCH && M17_ARCH && !/[?&]nom18=1/.test(location.search)) { // 批次 M18：扶脚杆仍不显 → 公众面外加一根加粗亮铜扶脚杆（Ø6.4 cm，离地 0.21 m）+ 6 个托架；无碰撞（脚高细件，原 world.box 不动）
+    const rm = new THREE.MeshStandardMaterial({ name: 'm18_footrail', color: 0xd2a468, metalness: 0.75, roughness: 0.45, envMapIntensity: 0.5, emissive: 0x4a2c12, emissiveIntensity: 0.18 });
+    const g = new THREE.Group(); g.name = 'm18_footrail';
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 6.5, 20), rm); rod.rotation.x = Math.PI / 2; rod.position.set(kx + 0.86, Y + 0.21, kz); g.add(rod);
+    for (const s of [-1, 1]) { const cap = new THREE.Mesh(new THREE.SphereGeometry(0.042, 16, 10), rm); cap.position.set(kx + 0.86, Y + 0.21, kz + s * 3.25); g.add(cap); }
+    for (let k = 0; k < 6; k++) { const bz = kz - 3.0 + k * 1.2; const br = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.022, 0.26, 12), rm); br.rotation.z = Math.PI / 2; br.position.set(kx + 0.73, Y + 0.21, bz); g.add(br);
+      const ro = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.02, 16), rm); ro.rotation.z = Math.PI / 2; ro.position.set(kx + 0.61, Y + 0.21, bz); g.add(ro); }
+    g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); zone.add(g);
+  }
   else add(placeModel('r2/loan_counter_6080', { width: 7.21, pos: [kx, Y - 0.02, kz], rotY: Math.PI / 2 }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); return o; }));
   // 台面：登记簿（摊开）、印章、放大镜、订书机、显示器
   const ledger = new THREE.Group();
