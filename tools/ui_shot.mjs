@@ -19,7 +19,7 @@ for (const st of states) {
   await page.evaluate(({ st, bg }) => {
     const $ = (i) => document.getElementById(i);
     document.body.style.background = `#000 url(${bg}) center/cover`; $('c').style.visibility = 'hidden';
-    if (st === 'loading') { $('loadbar').style.width = '62%'; $('loadtip').textContent = '正在装订页面……'; return; }
+    if (st === 'loading') { $('loadbar').style.width = '62%'; if ($('loadpct')) $('loadpct').textContent = '62%'; $('loadtip').textContent = '正在装订页面……'; return; }
     if (st === 'menu') { $('loadbar').style.width = '100%'; $('loadtip').textContent = '点击「进入」开始（建议佩戴耳机）'; $('start').classList.remove('hidden'); return; }
     $('loading').classList.add('hidden'); $('hud').classList.remove('hidden');
     $('objm').textContent = '前往西翼人事档案馆，向管理员领取本人入职档案'; $('objo').textContent = '';

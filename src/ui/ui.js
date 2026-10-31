@@ -8,14 +8,15 @@ export const ui = {
   onClose: null,
 };
 
-export function loadProgress(p, tip) { $('loadbar').style.width = `${Math.round(p * 100)}%`; if (tip) $('loadtip').textContent = tip; }
+{ const tk = document.getElementById('tk'); if (tk) for (let k = 0; k < 48; k++) { const a = k / 48 * Math.PI * 2, r0 = k % 4 ? 41 : 38; tk.insertAdjacentHTML('beforeend', `<line x1="${(Math.sin(a) * r0).toFixed(2)}" y1="${(-Math.cos(a) * r0).toFixed(2)}" x2="${(Math.sin(a) * 45).toFixed(2)}" y2="${(-Math.cos(a) * 45).toFixed(2)}"/>`); } } // 批次46：局徽刻度环
+export function loadProgress(p, tip) { $('loadbar').style.width = `${Math.round(p * 100)}%`; const pc = $('loadpct'); if (pc) pc.textContent = `${Math.round(p * 100)}%`; if (tip) $('loadtip').textContent = tip; }
 export function loadDone(onStart) {
   $('loadtip').textContent = '点击「进入」开始（建议佩戴耳机）';
-  const b = $('start'); b.classList.remove('hidden');
+  const b = $('start'); b.classList.remove('hidden'); const pc = $('loadpct'); if (pc) pc.textContent = '100%';
   b.onclick = () => { $('loading').style.opacity = 0; setTimeout(() => $('loading').classList.add('hidden'), 1200); $('hud').classList.remove('hidden'); onStart(); };
 }
 
-export function setPrompt(text, key = 'E') { $('prompt').innerHTML = text ? (key ? `<b>${key}</b>${text.replace(/^按\s*E\s*/, '')}` : text) : ''; $('cross').classList.toggle('on', !!text); }
+export function setPrompt(text, key = 'E') { $('prompt').innerHTML = text ? (key ? `<b class="key">${key}</b><span class="pt">${text.replace(/^按\s*E\s*/, '')}</span>` : `<span class="pt">${text}</span>`) : ''; $('cross').classList.toggle('on', !!text); }
 
 let toastT = 0;
 export function toast(text, { ms = 4200, whisper = false } = {}) {
