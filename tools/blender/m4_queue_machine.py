@@ -32,7 +32,7 @@ def box(m, w, h, d, x, y, z, rx=0.0, bev=0.0):
 def cyl(m, r, d, x, y, z, v=24, rot=(math.pi / 2, 0, 0)):
     bpy.ops.mesh.primitive_cylinder_add(vertices=v, radius=r, depth=d, location=G(x, y, z)); o = bpy.context.object; o.rotation_euler = rot; return add(o, m)
 M = dict(bronze=mat('qm4_bronze', (0.40, 0.26, 0.13), 0.48, 0.9), brass=mat('qm4_bronzeHi', (0.60, 0.43, 0.21), 0.45, 0.95), brassD=mat('qm4_iron', (0.05, 0.042, 0.036), 0.6, 0.7),
-         glass=mat('qm_glassDark', (0.02, 0.015, 0.012), 0.08), seg=mat('qm_segGlow', (1.0, 0.25, 0.08), 0.4, 0, (1.0, 0.22, 0.06), 0.9),
+         glass=mat('qm_glassDark', (0.02, 0.015, 0.012), 0.08), seg=mat('qm_segGlow', (0.10, 0.012, 0.0), 0.4, 0, (1.0, 0.10, 0.015), 0.95),  # 批次M7：亮段奶黄 → 红橙（底色压暗只留自发光，强度 <1）
          segOff=mat('qm_segOff', (0.035, 0.012, 0.008), 0.6), paper=mat('qm_ticket', (0.86, 0.82, 0.70), 0.8), rubber=mat('qm4_rubber', (0.02, 0.018, 0.016), 0.8),
          red=mat('qm4_btnOxblood', (0.32, 0.05, 0.03), 0.4))
 M['enamel'] = M['bronze']; M['enamelD'] = M['brassD']

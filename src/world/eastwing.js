@@ -150,9 +150,10 @@ export function buildEastWing(scene, world, ctx) {
     // 批次M4：胡桃木方盒 → Blender 重建 1970 年代铸铁 / 古铜取号机（tools/blender/m4_queue_machine.py → m4/queue_machine.glb：倒角古铜壳、浮凸框铆钉排、铸铁凹窗七段码 047、亮铜唇出票口、阶梯檐口顶饰）；
     // 古铜大面 roughness ≥0.45、envMapIntensity 0.5、七段码自发光 0.9；头顶一盏很小的不投影暖点光给铜壳打出高光边（批60 加金属度 / 环境反射没东西可反射）
     add(placeModel('m4/queue_machine', { height: 1.4, pos: [22, Y, ZA - 3], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.95);
-      o.traverse((m) => { if (!m.isMesh) return; for (const mt of [].concat(m.material)) if (mt && /^qm4_/.test(mt.name)) { mt.envMapIntensity = 0.5; mt.roughness = Math.max(mt.roughness, 0.45); } else if (mt && mt.name === 'qm_segGlow') mt.emissiveIntensity = Math.min(mt.emissiveIntensity ?? 1, 0.9); });
+      o.traverse((m) => { if (!m.isMesh) return; for (const mt of [].concat(m.material)) if (mt && /^qm4_/.test(mt.name)) { mt.envMapIntensity = 0.5; mt.roughness = Math.max(mt.roughness, 0.45); } else if (mt && mt.name === 'qm_segGlow') { mt.color.setRGB(0.10, 0.012, 0); mt.emissive.setRGB(1.0, 0.10, 0.015); mt.emissiveIntensity = 0.95; mt.toneMapped = true; } }); /* 批次M7：亮段奶黄 → 红橙（底色压暗，只留红橙自发光 0.95<1） */
       return o; }));
-    { const ql = new THREE.PointLight(0xffc488, 1.6, 1.8, 2); ql.position.set(22 + 0.25, Y + 1.85, ZA - 3 - 0.35); ql.castShadow = false; ql.name = 'qm_rim_m4'; zone.add(ql); }
+    { const ql = new THREE.PointLight(0xffc488, 2.6, 1.8, 2); ql.position.set(22 + 0.25, Y + 1.85, ZA - 3 - 0.35); ql.castShadow = false; ql.name = 'qm_rim_m4'; zone.add(ql);
+      const qr = new THREE.PointLight(0xffb878, 1.4, 1.4, 2); qr.position.set(22 - 0.42, Y + 1.62, ZA - 3 - 0.05); qr.castShadow = false; qr.name = 'qm_edge_m7'; zone.add(qr); } // 批次M7：头顶暖光 1.6→2.6 + 左侧贴边小暖光打铜壳棱边高光（roughness 仍 ≥0.45）
   } else {
   b.box('blackMetal', 0.5, 1.4, 0.4, [22, Y + 0.7, ZA - 3], { uv: 1, collide: true });
   const qn = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.3), new THREE.MeshStandardMaterial({ color: 0, emissive: 0x3a8cff, emissiveIntensity: 1.2 })); qn.position.set(22, Y + 1.2, ZA - 3 - 0.21); qn.rotation.y = Math.PI; zone.add(qn); }
