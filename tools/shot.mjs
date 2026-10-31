@@ -70,4 +70,5 @@ for (let i = 0, first = 0; i < shots.length; i++) {
   console.log(s, ((Date.now() - ts) / 1000).toFixed(0) + 's', JSON.stringify(info));
   } catch (e) { console.log('SHOT ERROR', s, String(e.message).slice(0, 120)); needFresh = true; } // 页面崩溃（OOM）不终止整批，下一机位新开页面
 }
-await browser.close(); srv.close();
+// 批次35：根因——PNG 已写出（ext_house 165 s 拍完），但 SwiftShader 下 browser.close() 挂死，任务一直跑到超时（hall_wanted / cc / ext_sky 连续多批“超 25 分钟”的真相）→ 限时 15 s 关浏览器后强制退出
+await Promise.race([browser.close().catch(() => {}), new Promise((r) => setTimeout(r, 15000))]); srv.close(); process.exit(0);
