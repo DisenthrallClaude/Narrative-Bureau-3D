@@ -46,10 +46,10 @@ export async function initE1FX(G, { AY = -300, SY = -500, quality = 'high' } = {
 
   // 2. 档案馆 B1 贴地薄雾（地坪 −4.2；变体 1 粒子在原点下 1.12…0.67 → 原点抬 1.12×缩放）
   add('fog', 'archive_b1', (root) => {
-    const pts = [[-35, -35.2], [-40.5, -36.8], [-46, -38.6], [-51.5, -40.4], [-38, -39.5]].slice(0, low ? 3 : 5); // E1 二拍：沿西墙通道（ab1_r3 视线）铺；首拍点位多在密集架后，看不见
-    const s = 1.8;
+    const pts = [[-40, -38.6], [-46, -40.4], [-52, -42.2], [-35, -39.2]].slice(0, low ? 2 : 4); // E1：一拍点位在密集架后看不见；二拍沿通道 5 团 ×1.8 太浓成土墙、贴墙出硬边、挡住尽头桌椅 → 三拍离墙 ≥7 m、缩 1.4、降密度
+    const s = 1.4;
     return pts.map(([x, z], i) => {
-      const fx = createEffect({ ...PRESETS.fog, seed: PRESETS.fog.seed + i * 977 }, { color: '#a89a86', size: 1, speed: 0.4, density: low ? 0.25 : 0.45, detail: low ? 0.5 : 1 });
+      const fx = createEffect({ ...PRESETS.fog, seed: PRESETS.fog.seed + i * 977 }, { color: '#9a8c78', size: 1, speed: 0.4, density: low ? 0.14 : 0.2, detail: low ? 0.5 : 1 });
       fx.group.scale.setScalar(s); fx.group.position.set(x, -4.2 + 1.12 * s - 0.08, z); fx.group.rotation.y = i * 1.3;
       root.add(fx.group); return fx;
     });
