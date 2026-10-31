@@ -175,6 +175,46 @@
 - **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
 - 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
 
+## R3 批次34（2026-10-31 08:41 CST 接手，约 35 分钟）
+### 提交
+2ffaa16 街屋立面 / 行道树；860d773 旧铜相框；79774be 宿舍；a24211b 指挥中心控制台 Blender 精建；e872fb2 修内圈行道树量化坐标（**最终代码**）。每次提交前本机 `npx vite build` 返回 0；r3plan dorm3 468 件 0 错 0 警（work/r3/b34/plan_dorm3.png）、command_center 309 件 0 错（3 条旧警告 cctv 离墙 0.4 m，work/r3/b34/plan_command.png）。
+### 1 取回批次33 run
+- 41150328176：dorm_r3_b（b33 墙裙版，work/r3/b33/r41150328176/b33d/dorm_r3_b.png）——**墙裙 140 个小椭圆白点平铺成“彩屑 / 水磨石”感，不像掉漆**（下）；306 床只有一根绿圆柱“被卷”，上部墙面素平；右前衣柜素橙平涂。→ 本批第 4 项全改。ext_house（b33h）已在批次33 看过。
+- 41150518765：top_zhouye / top_qichou 已回（与批次33 记录一致）；**hall_wanted 与 41150099173（ext_street / ext_sky / ext_bird）、41150328176 的 top_yinze / top_zhouwen 都超 25 分钟 → 08:50 取消**，重派到 41152283936（b34w hall_wanted、b34s ext_sky+ext_bird、b34t1–t4 四张俯视各自单独一组）；ext_street 并入 41151728567。
+- 重派后已回：**top_qilingyun / top_yexun（work/r3/b34/tops34.jpg）**：齐凌云边几在椅旁空地、叶寻边几在柜台后红地毯上，均不压椅 / 不贴柜 ✔；top_yinze 已回（见 r41152283936/b34t1）。
+### 2 外观街屋（2ffaa16、e872fb2）
+- streetModules：窗模块实例进深 ×2.2（窗套加厚、窗台出挑约 0.48 m）、店面 ×1.9（雨棚出挑 ≈2 m）、阳台 ×1.3；水刷石 sh_stone 0x8c8678 → 0xc9c0ad 提亮；帆布 0x6a2418 → 0xb2462a。阳台户型 33% → 80%（按户 hash，非随机散布）。**三圈街屋全部贴立面模块**（原只 R160），控制台日志：模块实例 5182 个、按材质 InstancedMesh（三种模块 × 6 材质 ≈ 18 次绘制），未见帧率问题（截图机慢机能正常出图）。
+- 最内圈 R160 二十面体行道树 51 株 → r2/street_tree_tall（h 9.5，InstancedMesh）；外两圈仍是程序树。**坑**：street_tree_tall.glb 是 meshopt 量化（Int16 归一化坐标），geometry.clone().applyMatrix4() 会把米制坐标截断到 ±1 → 第一次出图树缩成地上一团（ext_house 41151728567）；e872fb2 先解量化成 Float32 再变换。改后图 = run 41152872123 b34h2。
+- **看图 ext_house（2ffaa16，work/r3/b34/r41151728567/b34h/ext_house.png）**：窗套变浅、厚，窗台成条灰色出挑，比批次33 明显读得出 ✔（中上）；店面暗色橱窗 + 枣红框 ✔；**雨棚仍不明显、画面里仍未见阳台**（中下，原因未查：可能这两栋恰好是全窗户型，或 sh_bay_bal 背板被墙面遮住——下批 pick 一栋 typ=1 的楼确认）；右侧一扇窗玻璃有白色闪点（模块玻璃与着色器窗 z-fighting，下批把模块玻璃再退 1 cm 或关掉该开间着色器窗）。
+- **看图 ext_street（work/r3/b34/r41151728567/b34x/ext_street.png）**：大道两列高干窄冠树成排、不再遮长椅路灯 ✔（中上）；沥青车道 + 标线 + 斑马线 + 路边停车位 ✔；树干下段颜色偏红、近看仍有纵向拉伸（远看可接受，换真法桐模型留后）。
+### 3 铜相框（860d773）
+- _oldBronze 0x5a4630 / metal 0.8 / rough 0.6 → **0x6b4a2a / metal 0.92 / rough 0.4 / envMapIntensity 1.2**；名签铜牌贴图底色改同色暗铜渐变（#7e5a34→#583c22），字改抛光凸字 #e2c288 + 暗色投影，材质 metal 0.85 / rough 0.4。
+- **看图 id_yinze（work/r3/b34/r41151728567/b34i/id_yinze.png，对比 work/r3/cmp34_id_yinze.jpg）**：不再亮橙 ✔，名签凸字清楚 ✔（中上）；框体是均匀暗铜褐、有一点高光但大厅环境反射弱，**仍略像深色木框**（中）——下批可给框加 1–2 mm 倒角让边缘吃高光，或局部加铜绿 / 磨亮边。
+### 4 宿舍（79774be）
+- 306 空床：绿圆柱 → **Blender 精建 r2/dorm_bedding**（tools/blender/dorm_bedding.py：2.6 圈阿基米德螺线截面军绿毛毯卷 + 不等频压褶 + 两端松散 + 搭到床尾的毯尾；矩形双片缝合白布枕头，四角收尖、中间压凹；26k 三角），Props 放在床垫顶面（singleBed 新 opts.props）。Blender 预览 work/r3/b34/prev/dorm_bedding_front.png / dorm_bedding_top.png 合格。其余 13 间仍是批次24 的褶皱被褥 + 枕头。
+- 墙裙 chippedPaint 重画：140 个小白椭圆 → 18 块大块不规则锯齿掉漆（集中在下沿、内层更深底灰）+ 10 处小磕碰 + 横向刷痕 + 踢脚擦痕。
+- 上部墙面：新材质 r3_dormUpper（dress.js oldPlaster()：旧白灰色差晕 + 顶部渗水黄渍 + 发丝裂 + 起皮露底），r3plan 每间后墙 + 两道开间隔墙墙裙压线以上贴面（后墙高窗在其前 0.11 m，不遮挡）。
+- 门扇 / 衣柜 dm_wardrobe 素橙 → 木纹（plank）+ 压暗清漆；门把手加铜锁面板（贯穿两面）+ 两面圆执手；门牌原有（tagMaterial）。
+- **看图 dorm_r3_b（79774be，run 41152238415 → work/r3/b34/r41152238415/b34d/dorm_r3_b.png，对比 work/r3/cmp34_dorm_r3_b.jpg）**：上部墙面有了顶部黄渍条、起皮斑、色差，不再素平 ✔（中上）；墙裙变成大块不规则掉漆 + 刷痕，不再像彩屑 ✔，但贴图平铺仍能看出斑块重复（中）；306 床头的军绿毛毯卷读得出螺旋卷 + 压褶 ✔（中上），**枕头在这个机位被毛毯卷挡住看不到**；右前衣柜仍偏橙平（dm_wardrobe 加木纹后变化不明显——该衣柜可能另用材质，下批 pick 确认）（中下）。门扇在机位外，未验收。
+### 5 指挥中心（a24211b）
+- **排查清单**（依据 eastwing.js / r3plan planCommand 代码 + 批次13 旧图 work/r3/b13/gh1/a/cc_r3.png；新图 run 41152324220 / 41152757734 待看）：
+  1. **廉价方块件**：① 24 席控制台 = 黑方板台面 + 两块黑侧板 + 三个黑盒显示器（最显眼，本批已换）；② 值班长台 = wood 方盒 6×1.0×1.2 + 黑玛瑙台面板，台上 paintedSteel 方块 0.6×0.3×0.45（下批 Blender 精建：芯板立面 + 铜包边 + 台上老式对讲 / 电话交换机）；③ 文字地球基座 2.8 m 见方块；④ 阶梯席位每级是整块地毯方盒 + 金线，无踢面 / 防滑条。
+  2. **穿模**：两侧显示器绕各自中心转 ±0.25 rad，相邻 CRT 外壳在后部有 ≈5 cm 交叠（原黑盒同样存在），正面看不见；操作员椅 office_chair 推入台下深度未核。
+  3. **空旷**：主屏前通道（x 26.5–43.5，z −39.8…−35.4）与平台前通道一大片空地毯，只有文字地球；可加两组低矮态势台 / 绳栏柱（按动线成排，不挡通道）。
+  4. **灯光**：全厅冷蓝 rectLight + 三盏 0xbcd4ff 点光 + 每席冷光格栅，色温单一、无层次；值班平台只有周闻空椅补光。建议：席位台灯（已有隔席 bankers_lamp）提亮成暖色点缀、主屏前加地面反光、平台加两盏暖色筒灯。
+- **精建 1 件**：r2/cc_console（tools/blender/cc_console.py，11k 三角：胡桃木台面倒圆 + 绿呢书写垫铜压条 + 灰绿烤漆钢柜体 + 两侧三抽屉柜铜拉手 / 标签框 + 黑踢脚退进 + 显示器后台架 + 24° 斜面仪表条（拨动开关 / 红绿黄指示灯 / 标签）+ 三台 CRT 外壳（前框留屏口、三段收腰后壳、底座、铭牌、电源灯）），Blender 按材质合并成 10 个网格；eastwing.js 24 席按材质 InstancedMesh（10 次绘制），屏幕仍用原 canvas consoleMaterial（前移 4 mm 防 z-fighting），碰撞盒不变。预览 work/r3/b34/prev/cc_console_wide.png / cc_console_front.png 合格。改后 cc_r3 / cc_r3_b / id_zhouwen = run 41152757734 b34c3。
+### 收尾
+- 走查（e872fb2 = 最终代码）run 41152872123：**通过 31 / 失败 0 / 控制台错误 0** ✔（work/r3/b34/r41152872123/walk/WALKTHROUGH.md；79774be 版 41152238415 同为 31/0/0）。Pages：e872fb2 Deploy success（run 41152873418）。
+- 截止本节未回（下批先取）：41152283936 的 hall_wanted（b34w）、ext_sky / ext_bird（b34s）；41152324220（cc_r3 / cc_r3_b / cc_comm / cc_top，a24211b 之前的旧控制台诊断）；41152757734 b34c3（cc_r3 / cc_r3_b / id_zhouwen，**新控制台改后图**）。hall_wanted 已连续三批没按时回（单机位 > 25 分钟），下批考虑改 low 画质或缩短 frames。
+- Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删同名旧卷再传 v03 1NeFFOVPs5EOFrNWt10wtVWYRahoK84hN（136.8 MB）、v04 1aHp2toqW13yqDM4QUO7PeUo6AVWxsKsy（287.4 MB，含 dorm_bedding / cc_console glb）；v01 / v02 见 PROGRESS-LOG（打包于本 HANDOFF 提交之后）。
+- 对比图：`python3 work/r3/b34/cmp34.py` → work/r3/cmp34_ext_house.jpg、cmp34_ext_street.jpg、cmp34_id_yinze.jpg、cmp34_dorm_r3_b.jpg（cc_r3 / hall_wanted / ext_sky 等改后图回来后重跑）。
+### 下批先做
+1. 取 41152757734（新控制台 cc_r3 / cc_r3_b / id_zhouwen）、41152324220、41152283936（hall_wanted / ext_sky / ext_bird），重跑 cmp34.py；看新控制台在席位里有无穿模（CRT 后壳 vs 后排、椅子 vs 抽屉柜）。
+2. 街屋：pick 一栋 typ=1 楼确认阳台模块是否出图；雨棚再加大或改条纹帆布；修模块玻璃白闪点（z-fighting）。
+3. 宿舍：pick 右前衣柜材质改木纹；机位补一张看到枕头 / 门扇的。
+4. 指挥中心：值班长台 Blender 精建（芯板 + 铜包边 + 台上对讲 / 交换机，替换 paintedSteel 方块）；灯光分层（暖色台灯点缀 + 平台筒灯）。
+5. 铜相框边缘倒角吃高光。
+
 ## R3 批次33（2026-10-31 08:08 CST 接手，约 35 分钟）
 ### 提交
 0e553e7 小修 + 大厅侧廊排椅；d7e3ddc 档案馆地面；29b81d6 行道树 / 沥青车道 / 板缝；c59a0c5 街屋 Blender 立面模块；4b2d590 宿舍墙裙 + ext_house 机位（**最终代码**）。每次提交前本机 `npx vite build` 返回 0；r3plan archive 210 件 0 错（2 条旧警告 cctv 离墙 0.4 m，work/r3/b33/plan_archive.png）、metro 207 件 0 错 0 警（work/r3/b33/plan_metro.png）。
