@@ -822,7 +822,7 @@ function buildStreetRows(g, M, place, rnd) {
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
         { float wall = 1.0 - step(0.5, abs(vLn.y));
           float u = abs(vLn.x) > 0.5 ? vLm.z : vLm.x; float y = vLm.y; float side = abs(vLn.x) > 0.5 ? 1.0 : 0.0;
-          vec3 pal = vSd < 0.34 ? vec3(0.47, 0.44, 0.40) /* 批次57：冷灰 → 暖灰抹灰 */ : vSd < 0.67 ? vec3(0.46, 0.27, 0.21) : vec3(0.68, 0.64, 0.57); // 批次32：三色成排——深灰抹灰 / 暗红砖 / 米灰石（去掉偏蓝绿的第四色）
+          vec3 pal = vSd > 0.93 ? vec3(0.27, 0.18, 0.12) /* 批次57：D 深木构 */ : vSd < 0.34 ? vec3(0.47, 0.44, 0.40) /* 批次57：冷灰 → 暖灰抹灰 */ : vSd < 0.67 ? vec3(0.46, 0.27, 0.21) : vec3(0.68, 0.64, 0.57); // 批次32：三色成排——深灰抹灰 / 暗红砖 / 米灰石（去掉偏蓝绿的第四色）
           vec3 col = pal;
           // 面砖 / 砖缝
           vec2 tg = fract(vec2(u / 0.6, y / 0.3)); col *= 0.93 + 0.07 * step(0.08, tg.x) * step(0.1, tg.y);
@@ -840,7 +840,7 @@ function buildStreetRows(g, M, place, rnd) {
               col *= 1.0 - 0.3 * step(0.82, y); // 勒脚压顶阴影线
             } else {
               bool brick = vSd >= 0.34 && vSd < 0.67;
-              vec2 bs = brick ? vec2(0.25, 0.065) : vec2(0.9, 0.42);
+              bool timber = vSd > 0.93; vec2 bs = brick ? vec2(0.25, 0.065) : timber ? vec2(0.22, 40.0) /* 竖向木板 */ : vec2(0.9, 0.42);
               float row = floor(y / bs.y); vec2 bb = vec2(u / bs.x + 0.5 * mod(row, 2.0), y / bs.y); vec2 bf = fract(bb);
               float mort = (1.0 - step(brick ? 0.05 : 0.025, bf.x) * step(bf.y, brick ? 0.82 : 0.95)) * (1.0 - aa);
               vec3 base = brick ? vec3(0.50, 0.26, 0.19) : pal * 0.95;
@@ -955,13 +955,13 @@ function buildStreetRows(g, M, place, rnd) {
     for (const sd of [-1, 1]) {
       const front = R + sd * (roadW / 2 + walkW); let s = 0, k = 0;
       while (s < C && nh < NH) { let w = 12 + Math.floor(hs(k + R) * 4) * 3, d = 14 + Math.floor(hs(k * 3.3 + R) * 3) * 2, fl = 4 + Math.floor(hs(k * 7.7 + R + sd) * 4);
-        // 批次57：局旁内圈（R160）民居改 ABAC 规律循环——A 3 层坡顶红褐砖 + 中间阳台；B 2 层平顶女儿墙米灰水刷石、只开窗；C 4 层坡顶暖灰抹灰 + 隔层阳台 + 老虎窗
-        const V = R === 160 ? 'ABAC'[k % 4] : null; if (V) { w = V === 'A' ? 12 : V === 'B' ? 9 : 15; d = V === 'B' ? 12 : 14; fl = V === 'A' ? 3 : V === 'B' ? 2 : 4; }
+        // 批次57：局旁内圈（R160）民居改 ABACABAD 规律循环（D=深木构 2 层坡顶）——A 3 层坡顶红褐砖 + 中间阳台；B 2 层平顶女儿墙米灰水刷石、只开窗；C 4 层坡顶暖灰抹灰 + 隔层阳台 + 老虎窗
+        const V = R === 160 ? 'ABACABAD'[k % 8] : null; if (V) { w = { A: 12, B: 9, C: 15, D: 9 }[V]; d = V === 'A' || V === 'C' ? 14 : 12; fl = { A: 3, B: 2, C: 4, D: 2 }[V]; } // D：2 层深木构坡顶小铺（每 8 栋一次）
         const h = 4.2 + (fl - 1) * 3.2 + 0.9; const th = (s + w / 2) / front; const rc = front + sd * d / 2; const [x, z] = at(rc, th);
-        if (place(x, z) && place(...at(front, th))) { q.setFromAxisAngle(up, th); m4.compose(new THREE.Vector3(x, Y0, z), q, new THREE.Vector3(w, h, d)); if (V) aTyp[nh] = V === 'A' ? 1.5 : V === 'B' ? 1.8 : 1.2; houses.setMatrixAt(nh++, m4);
+        if (place(x, z) && place(...at(front, th))) { q.setFromAxisAngle(up, th); m4.compose(new THREE.Vector3(x, Y0, z), q, new THREE.Vector3(w, h, d)); if (V) aTyp[nh] = { A: 1.5, B: 1.8, C: 1.2, D: 1.97 }[V]; houses.setMatrixAt(nh++, m4);
           { // 批次34：三圈街屋都贴模块（原只最内圈 R160）；批次33：最内圈街屋贴 Blender 精建立面模块（窗套 / 窗台 / 阳台铁栏 / 店面雨棚），对齐着色器开间网格（窗 3.4 m、店 5 m）
-            const yaw = th + (sd < 0 ? 0 : Math.PI), fr = front - sd * 0.16, sdv = ((x * 0.0137 + z * 0.0071) % 1 + 1) % 1, th3 = hs(k * 5.1 + R + sd), typ = V ? { A: 1, B: 0, C: 2 }[V] : th3 < 0.2 ? 0 : th3 < 0.6 ? 1 : 2; /* 批次34：阳台户型 80%（ext_house 画面里没见阳台） */
-            const pv = V ? { A: 0.5, B: 0.8, C: 0.2 }[V] : sdv, pal = pv < 0.34 ? [0.47, 0.44, 0.40] : pv < 0.67 ? [0.46, 0.27, 0.21] : [0.68, 0.64, 0.57];
+            const yaw = th + (sd < 0 ? 0 : Math.PI), fr = front - sd * 0.16, sdv = ((x * 0.0137 + z * 0.0071) % 1 + 1) % 1, th3 = hs(k * 5.1 + R + sd), typ = V ? { A: 1, B: 0, C: 2, D: 0 }[V] : th3 < 0.2 ? 0 : th3 < 0.6 ? 1 : 2; /* 批次34：阳台户型 80%（ext_house 画面里没见阳台） */
+            const pv = V ? { A: 0.5, B: 0.8, C: 0.2, D: 0.2 }[V] : sdv, pal = pv < 0.34 ? [0.47, 0.44, 0.40] : pv < 0.67 ? [0.46, 0.27, 0.21] : [0.68, 0.64, 0.57];
             const c0 = s + w / 2; // 局部 +x = 弧长增加方向，u 处的角度 = (c0 + u) / front
             for (let u = -5 * Math.floor((w / 2 - 2.5) / 5); u <= w / 2 - 2.5 + 1e-3; u += 5) mods.push(['sh_shop', fr, (c0 + u) / front, 0, yaw, null, hs(u * 1.7 + k * 2.3 + R + sd) < 0.45]); /* 批次36：约 45% 店面橱窗暖光（模块 litGlass，按户 hash 稳定） */
             const kb = Math.floor((w / 2 - 1.7) / 3.4 - 0.5 + 1e-3), bays = []; for (let b = -kb - 1; b <= kb; b++) bays.push(3.4 * (b + 0.5));
@@ -973,7 +973,7 @@ function buildStreetRows(g, M, place, rnd) {
           m4.compose(new THREE.Vector3(x, Y0 + h - 0.35, z), q, new THREE.Vector3(w + 0.9, 0.35, d + 0.9)); if (np < NH * 2) pars.setMatrixAt(np++, m4);
           if (V === 'B') { // 平顶：檐口上再起 0.9 m 女儿墙（四边薄墙）
             for (const [ox, oz, sx, sz] of [[0, d / 2, w, 0.25], [0, -d / 2, w, 0.25], [w / 2, 0, 0.25, d], [-w / 2, 0, 0.25, d]]) { if (np >= NH * 2) break; const [px, pz] = [x + Math.cos(th) * ox + Math.sin(th) * oz, z - Math.sin(th) * ox + Math.cos(th) * oz]; m4.compose(new THREE.Vector3(px, Y0 + h, pz), q, new THREE.Vector3(sx, 0.9, sz)); pars.setMatrixAt(np++, m4); } }
-          else if (nf < NH) { m4.compose(new THREE.Vector3(x, Y0 + h, z), q, new THREE.Vector3(w + 1.6, d * 0.38, d + 1.7)); roofs.setMatrixAt(nf, m4); roofs.setColorAt(nf++, V === 'A' ? ROOFC[1] : V === 'C' ? ROOFC[0] : ROOFC[k % 3]);
+          else if (nf < NH) { m4.compose(new THREE.Vector3(x, Y0 + h, z), q, new THREE.Vector3(w + 1.6, d * 0.38, d + 1.7)); roofs.setMatrixAt(nf, m4); roofs.setColorAt(nf++, V === 'A' || V === 'D' ? ROOFC[1] : V === 'C' ? ROOFC[0] : ROOFC[k % 3]);
             if (V === 'C') for (const ox of [-w / 4, w / 4]) { if (nf >= NH || np >= NH * 2) break; const oz = -sd * d * 0.36, [px, pz] = [x + Math.cos(th) * ox + Math.sin(th) * oz, z - Math.sin(th) * ox + Math.cos(th) * oz]; // 老虎窗：临街坡面上小方体 + 小两坡顶
               m4.compose(new THREE.Vector3(px, Y0 + h, pz), q, new THREE.Vector3(1.6, 2.0, 1.8)); pars.setMatrixAt(np++, m4); m4.compose(new THREE.Vector3(px, Y0 + h + 2.0, pz), q.clone().multiply(new THREE.Quaternion().setFromAxisAngle(up, Math.PI / 2)), new THREE.Vector3(2.1, 0.7, 2.0)); roofs.setMatrixAt(nf, m4); roofs.setColorAt(nf++, ROOFC[0]); } } }
         s += w + 0.4; k++; if (k % 6 === 0) s += 10; }
