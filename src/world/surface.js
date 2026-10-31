@@ -181,7 +181,7 @@ export async function buildSurface(scene, world, ctx) {
       thermosRack(b, world, 58.0, Y3, 30.6, Math.PI / 2, 10);
       noticeBoard(zone, b, D.cx0 + 0.1, Y3 + 1.6, 20.0, Math.PI / 2, 1.6, 0.9, '三楼公告', [['作息', ['6:30 起床', '22:30 熄灯'], '#efe8d6'], ['卫生', ['周六大扫除'], '#e8eef4'], ['寻物', ['306 室的信', '请交宿管'], '#f4e8c8']]);
       for (const r of rooms) { const f = dorm3Furn(r), anchorRoom = r.num === '306';
-        singleBed(b, world, f.bed.x, Y3, f.bed.z, f.bed.yaw, anchorRoom ? { made: false } : { olive: true });
+        singleBed(b, world, f.bed.x, Y3, f.bed.z, f.bed.yaw, anchorRoom ? { made: false, props: P } : { olive: true });
         desk(b, world, f.desk.x, Y3, f.desk.z, f.desk.yaw, 1.1); wardrobe(b, world, f.wardrobe.x, Y3, f.wardrobe.z, 0, { suitcase: !anchorRoom }); washstand(b, world, f.wash.x, Y3, f.wash.z, f.wash.yaw);
         thermos(b, f.X(0.25), Y3 + 0.8, f.desk.z + 0.35); if (!anchorRoom) mug(b, f.X(0.45), Y3 + 0.8, f.desk.z + 0.15);
         // 后墙高窗（借老虎窗光：磨砂玻璃 + 木窗框）
@@ -197,7 +197,7 @@ export async function buildSurface(scene, world, ctx) {
           const cxl = xd - s * 0.02 + dirx * 0.44, czl = hz + 0.01 + dirz * 0.44;
           b.add('dm_wardrobe', new THREE.BoxGeometry(0.04, 2.06, 0.88), { pos: [cxl, Y3 + 1.03, czl], rot: [0, ry, 0] }, { uv: 1 });
           for (const [ly, lh] of [[0.55, 0.7], [1.5, 0.9]]) b.add('dm_desk', new THREE.BoxGeometry(0.052, lh, 0.6), { pos: [cxl, Y3 + ly, czl], rot: [0, ry, 0] }, { uv: 1 });
-          const hx = xd - s * 0.02 + dirx * 0.8, hzz = hz + 0.01 + dirz * 0.8; b.add('brass', new THREE.BoxGeometry(0.1, 0.03, 0.03), { pos: [hx, Y3 + 1.0, hzz], rot: [0, ry, 0] }, { uv: false });
+          const hx = xd - s * 0.02 + dirx * 0.8, hzz = hz + 0.01 + dirz * 0.8; b.add('brass', new THREE.BoxGeometry(0.1, 0.03, 0.03), { pos: [hx, Y3 + 1.0, hzz], rot: [0, ry, 0] }, { uv: false }); /* 批次34：铜锁面板（贯穿门扇两面）+ 两面圆执手 */ b.add('brass', new THREE.BoxGeometry(0.05, 0.2, 0.064), { pos: [hx, Y3 + 0.98, hzz], rot: [0, ry, 0] }, { uv: false }); for (const e of [-1, 1]) b.add('brass', new THREE.SphereGeometry(0.026, 14, 10), { pos: [hx + e * 0.06 * Math.cos(ry), Y3 + 0.93, hzz - e * 0.06 * Math.sin(ry)] }, { uv: false });
           for (const e of [-1, 1]) b.box('dm_wardrobe', 0.24, 2.2, 0.06, [xd, Y3 + 1.1, (e < 0 ? f.door.z0 - 0.03 : f.door.z1 + 0.03)], { uv: 1 }); b.box('dm_wardrobe', 0.24, 0.08, 1.02, [xd, Y3 + 2.14, (f.door.z0 + f.door.z1) / 2], { uv: 1 });
           if (!ang) world.box(cxl, Y3 + 1.03, czl, 0.06, 2.06, 0.88); }
         tubeLamp(b, f.X(2.4), Y3 + H3 - 0.02, r.zc, Math.PI / 2, true);

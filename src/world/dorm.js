@@ -42,7 +42,7 @@ export function dormMats() {
     dm_enamelRim: new THREE.MeshStandardMaterial({ color: 0x24407a, roughness: 0.3, envMapIntensity: 0.3 }),
     dm_desk: matte({ color: 0x6a4a2c, roughness: 0.7, envMapIntensity: 0.2 }),
     dm_deskTop: matte({ color: 0x3e5a48, roughness: 0.8 }), // 绿呢台面垫
-    dm_wardrobe: matte({ color: 0x7a5434, roughness: 0.65, envMapIntensity: 0.2 }),
+    dm_wardrobe: matte({ map: plank, color: 0x8a6448, roughness: 0.55, envMapIntensity: 0.25 }), // 批次34：素橙平涂 → 木纹 + 压暗清漆
     dm_brass: new THREE.MeshStandardMaterial({ color: 0xb08a48, metalness: 0.8, roughness: 0.45, envMapIntensity: 0.4 }),
     dm_pane: new THREE.MeshStandardMaterial({ color: 0x9ab0c4, emissive: 0xcfdcea, emissiveIntensity: 0.55, roughness: 0.2 }),
     dm_sillWhite: matte({ color: 0xd8d2c4 }),
@@ -119,7 +119,8 @@ export function singleBed(b, world, x, y, z, yaw = 0, o = {}) {
     const g = new THREE.BoxGeometry(W + 0.06, 0.07, 1.3, 12, 1, 16); const p = g.attributes.position; for (let i = 0; i < p.count; i++) { const gx = p.getX(i), gz = p.getZ(i), u = gz / 1.3 + 0.5; if (p.getY(i) > 0) p.setY(i, p.getY(i) + Math.sin(u * Math.PI) * 0.03 + 0.012 * Math.sin(gx * 11 + gz * 7) + 0.008 * Math.sin(gz * 23 - gx * 5)); if (Math.abs(gx) > W / 2 - 0.02) { p.setY(i, p.getY(i) - 0.16); p.setX(i, gx + Math.sign(gx) * 0.01 * Math.sin(gz * 31)); } } g.computeVertexNormals();
     b.add(o.olive ? 'dm_olive' : 'dm_quilt', g, { pos: P(0, 0.57, 0.28), rot: R }, { uv: 1.4 });
     { const tg = new THREE.BoxGeometry(W + 0.06, 0.03, 0.22, 12, 1, 2), tp = tg.attributes.position; for (let i = 0; i < tp.count; i++) { const gx = tp.getX(i); if (tp.getY(i) > 0) tp.setY(i, tp.getY(i) + 0.008 * Math.sin(gx * 13)); if (Math.abs(gx) > W / 2 - 0.02) tp.setY(i, tp.getY(i) - 0.12); } tg.computeVertexNormals(); b.add('dm_sheet', tg, { pos: P(0, 0.625, 0.28 - 0.58), rot: R }, { uv: false }); }
-  } else b.add('dm_olive', new THREE.CylinderGeometry(0.14, 0.14, W - 0.2, 14), { pos: P(0, 0.66, -L / 2 + 0.35), rot: [0, yaw, Math.PI / 2] }, { uv: 1 });
+  } else if (o.props) o.props.add('r2/dorm_bedding', P(0, 0.522, -L / 2 + 0.53), { s: 1, yaw: yaw + Math.PI }); // 批次34：Blender 精建卷起军绿毛毯（不等频压褶 + 螺旋截面 + 搭床尾的毯尾）+ 白布枕头（tools/blender/dorm_bedding.py）
+  else b.add('dm_olive', new THREE.CylinderGeometry(0.14, 0.14, W - 0.2, 14), { pos: P(0, 0.66, -L / 2 + 0.35), rot: [0, yaw, Math.PI / 2] }, { uv: 1 });
   const w = P(0, 0, 0); world.box(w[0], y + 0.5, w[2], Math.abs(Math.cos(yaw)) * W + Math.abs(Math.sin(yaw)) * L, 1.0, Math.abs(Math.sin(yaw)) * W + Math.abs(Math.cos(yaw)) * L);
 }
 
