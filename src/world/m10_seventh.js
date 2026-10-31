@@ -14,6 +14,7 @@ function tune(o) {
     const mt = m.material; if (!mt || !mt.name) return;
     if (/^m10_(bronze|iron)/.test(mt.name)) { mt.envMapIntensity = 0.5; mt.roughness = Math.max(mt.roughness, 0.48); }
     else mt.envMapIntensity = Math.min(mt.envMapIntensity ?? 1, 0.4);
+    if (mt.name === 'm10_enamel') { mt.envMapIntensity = 0.12; mt.roughness = Math.max(mt.roughness, 0.55); } // M13：暖黑搪瓷罩顶反天空蓝 → 压环境反射
     if (mt.name === 'm10_bulb') { mt.emissive.setRGB(1.0, 0.8, 0.52); mt.emissiveIntensity = 0.9; m.userData.noShadow = true; }
     if (mt.name === 'm10_enamelIn') { mt.emissive.setRGB(1.0, 0.86, 0.66); mt.emissiveIntensity = 0.35; mt.side = THREE.DoubleSide; }
   });

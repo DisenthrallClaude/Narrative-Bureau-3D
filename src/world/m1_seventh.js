@@ -82,6 +82,6 @@ export function buildM5Seventh(zone, world, Y, D, M) {
   world.box(-7.25, Y + 0.52, -133.35, 4.4, 1.04, 0.9);
   for (const x of [-6.9, -4.3]) world.box(x, Y + 0.26, -112.82, 1.95, 0.52, 0.7);
   point(zone, 0xffc890, 3, [-4.3, Y + 3.0, -121.3], 6);                                                       // 沙盘碗灯（M8：三盏铜链灯组）
-  // M13：作战室 ops 铜件（沙盘铜碗灯罩顶反蓝）envMapIntensity 0.5→0.25（克隆材质，仅 ops）
-  return Promise.all(['ops', 'wrap', 'rewrite'].map((n) => loadModel('m8/' + n).then((src) => { const o = src.clone(true); o.traverse((m) => { if (m.isMesh) { m.material = pick(MAT, m.material); if (n === 'ops' && /bronze/.test(m.material?.name || '')) { m.material = m.material.clone(); m.material.envMapIntensity = 0.25; } m.castShadow = false; m.receiveShadow = true; } }); o.position.set(0, Y, 0); o.name = 'm8_' + n; zone.add(o); })));
+  // M13：作战室 ops 铜件（沙盘铜碗灯罩顶反蓝）envMapIntensity 0.5→0.12、粗糙≥0.55（克隆材质，仅 ops；0.25 时罩顶仍反蓝）
+  return Promise.all(['ops', 'wrap', 'rewrite'].map((n) => loadModel('m8/' + n).then((src) => { const o = src.clone(true); o.traverse((m) => { if (m.isMesh) { m.material = pick(MAT, m.material); if (n === 'ops' && /bronze/.test(m.material?.name || '')) { m.material = m.material.clone(); m.material.envMapIntensity = 0.12; m.material.roughness = Math.max(m.material.roughness, 0.55); } m.castShadow = false; m.receiveShadow = true; } }); o.position.set(0, Y, 0); o.name = 'm8_' + n; zone.add(o); })));
 }
