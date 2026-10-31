@@ -2062,3 +2062,20 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 ### 下批先做
 1. `bash tools/gh_shots_fetch.sh 41222914846 work/r3/m11/r41222914846` 看局长室三张（天花是否压暗、窗帘离窗、护墙框芯可读、大班台皮面/铜饰）；拼 work/r3/m11/sheet.jpg；取 walk 41222916929（31/31、控制台 0）。
 2. abyss_gate 深渊门（石拱巨门 / 铜铆框 / 台阶 / 石墙穹顶；保留 int_abyss_fold、int_abyss_guard、doc_abyss_gate_plate 位置）。
+
+## 批次 M13 · 墨渊 abyss_gate 深渊门 Blender 精建 + 局长室验收 + 小尾巴（2026-11-01 01:12 CST 接手，约 35 分钟；与 r3-model-m12 并行，未碰训练场 / UI / game-intranet）
+- 工作方式：独立 worktree /tmp/m13wt（`worktree add --no-checkout` + sparse 排除 screenshots/，591 MB），node_modules 软链 game/。
+- **A 局长室验收**（run 41222914846 → work/r3/m11/sheet.jpg）：格子天花格心 0x3a1a12 读成黑洞、压暗顶部；护墙框芯在 desk/west 机位偏黑但可辨；窗帘在窗间柱位、不挡窗（OK）；大班台铜饰在机位距离几乎看不见。→ bfe3592：格心提到 0x5a2c1e；大班台单独提亮铜 0xb88a52；台面上方加不投影暖点光（4, 3.2 m）。复拍 run 41224300545：天花格心暗酒红可读、房间不再压暗；铜饰仍小但台面有暖光区。**遗留（非本批）**：东墙藏青局旗挂幅 + 会客区藏青地毯、桌上蓝色小件 = 蓝色人造物，下批换酒红褐/暖黑。
+- **B 小尾巴**：
+  - 作战室沙盘铜碗灯：碗罩在 m8/ops.glb 里与作战室其他铜件同材质 m1_bronze → 只对 ops 克隆铜材质 env 0.12、粗糙≥0.55（b6036f7 先压 0.25，截图 run 41224217374 罩顶仍反蓝，1a0c7c1/c90b684 再压到 0.12）；同屋 M10 暖黑搪瓷吊灯外罩 m10_enamelBlack 同症，env→0.12、粗糙≥0.55。复拍 run 41224880185（seventh_ops / m8_ops_lamp）。
+  - 东墙补给区 3 只 r2/metal_jerrycan_green（r3plan s7_ops 补给）：r3build 里仅 id==='s7_ops' 时 shader 改为灰度×锈褐 (0.42,0.2,0.13)，保留贴图细节；训练场油料区同模型不动。
+  - ext_door_near（lite，1280×720，3 帧）：run 41224219451。
+- **C 深渊门**（22c3baf + 0f7a655）：tools/blender/m13_abyss.py（`blender.sh -b -P m13_abyss.py -- <outdir> <prevdir|-> <view|-1>`）→ public/assets/models/m13/abyss_gate.glb（meshopt，18.8k 三角，388 KB，bbox x ±15.8 / y 0…30 / z −82…−53）；src/world/m13_abyss.js（`?nom13=1` 回旧），depths.js 门段 `jobs.push(buildM13Abyss)`，M13 下原 9 圈书页拱 + 两根书柱不画。
+  - 规划：work/r3/m13/plans/abyss_plan.{md,png}。门洞 = 等边尖拱 w12.4/起拱 10.6，与折页面 int_abyss_fold 完全重合（z −80.8）→ **特效批直接把星纹/漩涡贴在折页面或其同位面**。四层退缩拱券（错缝拱石 + 拱心石 + 小圆柱 + 酒红褐嵌带 + 连续背衬防灰缝透光）、暗铜铆钉门框、两侧门座（右=原铭牌底墙，左=暗铜符刻板）、立面墙 30 m + 扶壁 + 束腰线 + 齿饰檐口、门侧三级台阶（不在通行带）、深井围合（东西侧墙壁柱 + 南墙）。
+  - 碰撞：门座/拱墩、墙墩+扶壁+台阶、侧墙、南墙共 8 个 world.box；通行带 |x|<6.2 无台阶无障碍。门槛石顶面在地坪下（不可见），仅铜条露出 1.2 cm。
+  - 锚点 int_abyss_fold / int_abyss_guard / doc_abyss_gate_plate、灯、传送、zone 判定未动。机位 m13_gate_front / side / plate。
+  - 截图 run 41224217374（22c3baf）：正面巨门庄重，石材贴图读得出；问题→已在 0f7a655 修：灰缝透背景、铜件/符刻板读成黑条。复拍 run 41225085424（0f7a655），walk 41225083725。walk run 41224221254（22c3baf）31/31、控制台 0。
+- Drive：分卷 1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq 下新建 v16_m13_models（1EdLGxfztcDGHxkuuYHEfYJbTNKvgoRqf），v16_m13_models.tgz（1X6ByeMSy-YYGHkNie5TNjfBQUR3MgfOM，含 raw/meshopt glb、py、js、plans、preview；为 22c3baf 版本）。
+### 下批先做
+1. 折页面目前是平白纸面（emissive 0.18）在暗石门里过曝 → 特效批换星纹之门/漩涡。
+2. 局长室蓝色藏青挂幅/地毯/桌上蓝件换色。
