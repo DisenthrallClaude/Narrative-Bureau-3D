@@ -2224,7 +2224,7 @@ export function planCitizenService(y) {
   floorZ(out, 'r3_corr', 27.2, 42.8, -40.45, -37.55, y, { lift: 0.006, border: 0.22, uv: 0.6 });
   for (const z of [-40.47, -37.53]) out.push({ box: 'dz_brassDim', x: 35, y: y + 0.0185, z, w: 15.6, h: 0.004, d: 0.025, tag: '地面', on: 'partv' });
   for (const x of [27.18, 42.82]) out.push({ box: 'dz_brassDim', x, y: y + 0.0185, z: -39, w: 0.025, h: 0.004, d: 2.9, tag: '地面', on: 'partv' });
-  out.push({ m: 'r2/44_pocket_rotating_newspaper_stand', x: 35, y: y + 0.014, z: -39.0, yaw: 0, h: 1.6, tag: '表格取阅架', on: 'floor' });
+  out.push({ m: 'r2/news_rack_6080', x: 35, y: y + 0.014, z: -39.0, yaw: 0, h: 1.48, tag: '表格取阅架', on: 'floor' });
   out.push({ sign: '表格取阅', sub: '举报登记表 · 附表七 · 报名表', x: 35, y: y + 1.75, z: -38.68, yaw: 0, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
   for (const x of [27.75, 42.25]) out.push({ m: 'r4/furniture_trashBin_lid_a01', x, y: y + 0.014, z: -39.0, yaw: x < 35 ? ROT.E : ROT.W, fit: [0.384, 0.848, 0.364], tag: '垃圾桶', on: 'floor' });
   for (const x of [30, 40]) {
@@ -2243,7 +2243,7 @@ export function planCitizenService(y) {
   hang(out, '5 号窗 · 加试报名咨询等候', 45.9, y + 3.6, -45.2, 0, 3.0, 0.42, y + H);
   pic(out, 'textures/b02/B02_海报_加试报名大厅.png', 48.9, y + 1.3, -41.6, Math.PI * 0.85, 0.66, 0.99, 'black', { tag: '流程海报', stand: true, fy: y });
   out.push({ fixed: true, m: '固定:展板', x: 48.9, y, z: -41.6, yaw: 0, size: [0.74, 1.85, 0.4], tag: '流程海报', on: 'floor' });
-  out.push({ m: 'r2/44_pocket_rotating_newspaper_stand', x: 44.2, y, z: -41.3, yaw: 0, h: 1.6, tag: '报刊架', on: 'floor' });
+  out.push({ m: 'r2/news_rack_6080', x: 44.2, y, z: -41.3, yaw: 0, h: 1.48, tag: '报刊架', on: 'floor' });
   for (const z of [-44.0, -46.4]) { globe(out, 45.9, z, y, H, 4.2, { r: 0.22 }); light(out, 45.9, y + 4.0, z, 0xffe2b8, 1.4, 9); }
   // ⑥ 东墙：窗下暖气片 + 窗间信报箱（群众来信投递）+ 楼梯口
   for (const z of [-36, -44.6]) out.push({ m: 'r4/cast_iron_radiator_bart', x: 55.79, y: y + 0.1, z, yaw: ROT.W, fit: [0.926, 0.624, 0.153], tag: '暖气', on: 'wall' });

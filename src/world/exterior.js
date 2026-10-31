@@ -738,7 +738,7 @@ function busStops(g, at, Y0) {
     put('r2/bus_shelter_6080', 168.6, 34, 3.02, (w) => { const o = w.children[0]; const m = new THREE.Mesh(new THREE.PlaneGeometry(0.54, 0.81), sign); m.position.set(2.35 + o.position.x, 1.95, 0.75 + 0.032 + o.position.z); w.add(m); });
     // 批次39：成组对称——候车亭（弧长 34）居中，西侧垃圾桶（29.4）、东侧垃圾桶（38.6）对称；报刊亭移到候车亭东侧同一后退线（弧长 45，r 171.6，原 41.5 在候车亭正后方被挡），旋转报架在报刊亭门前东侧（49）
     put('r2/simple_90_s_kiosk', 171.6, 45, 2.6);
-    put('r2/44_pocket_rotating_newspaper_stand', 170.0, 49, 1.6); // 材质修正在 assets.js loadModel（室内表格取阅架同模型）
+    put('r2/news_rack_6080', 170.0, 49, 1.48); // 批次41：细铁丝格兜旋转报架（远看白色点阵线框）→ Blender 精建 60–80 年代墨绿铁皮报刊架（4 级斜搁板插满报纸，tools/blender/news_rack_6080.py）；市民大厅表格取阅架 / 报刊架同换
     put('r2/garbage_bin', 169.2, 38.6, 1.0); put('r2/garbage_bin', 169.2, 29.4, 1.0);
   }
 }
