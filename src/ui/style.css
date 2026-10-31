@@ -180,7 +180,7 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
   font-family: 'Courier Prime', 'Courier New', 'Nimbus Mono PS', 'Liberation Mono', 'NB Serif', 'Noto Serif SC', monospace;
   box-shadow: 0 30px 80px rgba(0,0,0,.7), inset 0 0 90px rgba(110,74,30,.38), inset 0 0 0 1px rgba(90,60,25,.25); }
 #reader .paper:not(.dark):not(.screen):not(.phone)::before { content: '叙事管理局 · 京城总部　内部资料 · 注意保存　　档号 NB-0731'; position: absolute; left: 84px; right: 70px; top: 30px; padding-bottom: 7px;
-  border-bottom: 1px double rgba(90,60,25,.45); font-family: 'NB Serif', serif; font-size: 11px; letter-spacing: .26em; color: rgba(70,48,22,.75); }
+  border-bottom: 1px double rgba(90,60,25,.45); font-family: 'NB Serif', serif; font-size: 12px; letter-spacing: .26em; color: rgba(52,34,14,.9); } /* 批次48：页眉档号 11 → 12 px、加深 */
 #reader .paper:not(.dark):not(.screen):not(.phone)::after { content: ''; position: absolute; left: 30px; top: 0; bottom: 0; width: 18px; pointer-events: none;
   background: radial-gradient(circle at 9px 22%, rgba(30,20,10,.55) 0 6px, rgba(120,90,50,.35) 6.5px 7.5px, transparent 8px), radial-gradient(circle at 9px 78%, rgba(30,20,10,.55) 0 6px, rgba(120,90,50,.35) 6.5px 7.5px, transparent 8px); }
 #reader .paper:not(.dark):not(.screen):not(.phone) h2 { font-family: 'NB Serif', var(--title); font-weight: 700; letter-spacing: .24em; color: #2a1d10; border-bottom: 1px solid rgba(90,60,25,.4); }
@@ -214,3 +214,13 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #chapter .a { font-family: 'NB Serif', 'Noto Serif SC', serif; font-weight: 700; font-size: 52px; letter-spacing: .4em; margin-right: -.4em; color: var(--ivory); text-shadow: 0 2px 18px rgba(0,0,0,.7); }
 #chapter .b { margin-top: 0; font-family: 'NB Serif', serif; font-size: 17px; letter-spacing: .34em; color: #c8b896; }
 #chapter .b:empty { display: none; }
+
+/* ===== 批次48：dark 文档（密件 / 黑底档案）与纸质档案、对话框同一套 墨绿 · 暗铜 · 米白 · 衬线 ===== */
+#reader .paper.dark { padding: 70px 70px 66px 84px; background: radial-gradient(ellipse at 50% 35%, #18201b, #0b100d 78%); color: #e6dcc4; font-family: 'NB Serif', var(--serif);
+  border: 1px solid rgba(176,129,74,.6); outline: 1px solid rgba(176,129,74,.18); outline-offset: 6px; box-shadow: 0 30px 80px rgba(0,0,0,.8), inset 0 0 80px rgba(0,0,0,.55); }
+#reader .paper.dark::before { content: '叙事管理局 · 京城总部　绝密 · 阅后归档　　档号 NB-0731'; position: absolute; left: 84px; right: 70px; top: 30px; padding-bottom: 7px;
+  border-bottom: 1px double rgba(176,129,74,.5); font-family: 'NB Serif', serif; font-size: 12px; letter-spacing: .26em; color: rgba(196,160,104,.85); }
+#reader .paper.dark h2 { font-family: 'NB Serif', var(--title); font-weight: 700; letter-spacing: .24em; color: #f0e4c8; border-bottom: 1px solid rgba(176,129,74,.4); }
+#reader .paper.dark .txt { font-size: 16.5px; line-height: 2; letter-spacing: .04em; color: #e6dcc4; }
+#reader .paper.dark .pg { font-family: 'NB Serif', serif; font-size: 13px; letter-spacing: .3em; color: rgba(196,160,104,.8); opacity: 1; }
+#reader .paper.dark .pg::before { content: '— 第 '; } #reader .paper.dark .pg::after { content: ' 页 —'; }
