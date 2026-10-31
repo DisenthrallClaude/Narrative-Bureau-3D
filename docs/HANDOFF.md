@@ -1903,3 +1903,55 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 - Blender 预览（亲眼看，仅新件无原房间）：work/r3/m5/preview/m5_{ops_0-2,wrap_0-1,rewrite_0-1}.png、ops_sheet.jpg、wr_sheet.jpg——护墙/壁柱/檐口/门套对位，沙盘与排字台细节可读；纵梁偏稀（仅 4 m 一根）。平面图 work/r3/m5/plans/plan_{ops,wrap,rewrite}.png（**建模后补画**）。
 - Drive v07_m5_models.tar 1YCtDArqKQKwaCjKLvUDPfOi7FG0-uQa0。
 - 截图/走查已派 run 41217295963 / 41217297749（m5:seventh_ops,s7_ops_b,seventh_wrap,seventh_rewrite,m1_entry_s,m1_gutter_b + walk），**收尾时未出结果，游戏内效果未亲眼验收，sheet.jpg 未拼**。下批：取图验收 → 纵梁加密/天花格心 → walk 31/31 核对。
+
+## 批次 M2 · 人事档案馆 + B1 密集库 Blender 精建（2026-10-31 23:32 CST 接手，约 35 分钟；与 r3-model-m1 / r3-build-lead-63 并行，只动 archive / archive_b1）
+- 平面功能规划：沿用 R3 档案馆布局（东门 → 借阅柜台 → 阅览长桌区 → 开架区 A/B → 西南卡片目录/叙事事件陈列 → 西北缩微阅读 → 员工区地胶 → 北侧楼梯上回廊 / 楼梯洞下 B1），本批精建件作为固定件登记后重跑检查：work/r3/m2/plans/plan_archive_m2.png（216 件 0 错误）、plan_archive_b1.png（110 件 0 错误）。
+- 模型（tools/blender/m2_archive.py，`blender.sh -b -P m2_archive.py -- public/assets/models/m2 <prev> coffer,entab,pilaster,door,b1rib,b1pipe`；复用 m1_lib 的 box/cyl/finish/render，立方投影 UV 1 m 一张不拉伸；未 meshopt，文件 65–112 KB）：
+  - m2/arch_coffer.glb：3×3 m 藻井格（胡桃主梁 0.62 深 + 铜压条、两级胡桃退台线脚、酒红褐格心 + 铜嵌线、中心铜花饰 + 四角铜钉），932 三角 ×144 格。
+  - m2/arch_entab.glb：2 m 檐部模块（石额枋 / 酒红褐楣带 10 枚铜齿饰 / 石檐口两道线脚），沿四墙一周，底 Y+11.8（= 回廊档案盒书架顶）。
+  - m2/arch_pilaster.glb：东墙壁柱（暗石踢脚 + 石基座 + 胡桃柱身三道凹槽 + 铜嵌线 + 铜箍 + 石柱头），高 11.33 按 1.04 拉到檐部底（4%，可忽略），z −36 / −41.5 / −61 / −66（避开东门与门旁灭火器）。
+  - m2/arch_door.glb：东门（洞宽 7 m、高 5.2）石门套：门墩 + 石框 + 铜内框 + 角块 + 门楣 + 酒红褐楣板铜铭牌。东门出口标识 r3plan.js 由 y+5.5 上移到 y+6.45 避让门楣。
+  - m2/b1_rib.glb：B1 混凝土肋梁（36 m 全跨、0.42 深、两端 4 级阶梯加腋 + 暗石垫块），z −38 / −44.5 / −51.5 / −58.5 / −65.5（避开楼梯洞 z −35.3…−37.5 与冷光灯管）。
+  - m2/b1_pipe.glb：6 m 三管管线段（暗铜褐管 + 铁法兰 + 墙托架），北墙 y BY+4.4 共 6 段。
+- 接入 src/world/m2_archive.js（interiors.js 只加 import、两行 jobs.push、木梁格 + 铁桁架三行加 `if (!M2_ARCHIVE)`）：材质按名字换游戏 pbr（Wood051 / Concrete034 / Metal046A 粗糙 0.48 env 0.5 / Fabric023），按矩阵烘世界坐标后按材质合并（藻井 144 格 ≈4 次绘制）。**合并时只保留 position/normal/uv，不带第二套 UV**，与「北墙变大厅照片」那类 uv1 问题无关。碰撞：东墙壁柱 ×4、门套两侧 world.box。剧情触发器 / 借阅台 / 叶寻 / ctx.stickyNote / B1 密集架 / 第 7 排拨盘 / 缝隙全部未动。`?nom2=1` 关闭本批精建对比。
+- 北墙「大厅照片」旧 bug：本批查了 hero.js——placeHero 的 lmInPlace 会就地给 hallMats 材质打光照贴图补丁，hallMats 里唯一与全局 mats() 共享的是 glassClear（被正则 /^glass/ 排除），档案馆墙用的 M.wallPlaster 不在其中，**未找到档案馆网格引用大厅材质的路径，根因仍未定位**（批次 11 起未再复现）。M2 檐部与藻井覆盖了北墙上沿。
+
+## 批次 M4 · 正门外观 / 门扇 / 叫号机（2026-10-31 23:36 CST 接手，约 35 分钟；与 r3-model-m2、r3-model-m3 并行，只动 exterior.js 外观色 + 门扇、hero.js 外观材质、eastwing.js 叫号机、r3plan.js 一盆绿植）
+### 提交
+9c67678 外观禁蓝 + 门扇色相锁；c044993 叫号机 Blender 重建 + 头顶暖点光 + 撤绿植；fb5c5ba 叫号机七段码前移修 z-fight。每次提交前 `npx vite build --outDir /tmp/m4dist` = 0。
+### 1 外观禁蓝（9c67678）
+- 招牌「叙事管理局」的「蓝底」= 立面 F_marbleDark 抛光冷黑石（0x2a2b30、env 0.9）映黄昏蓝天。改：文字后加暗铜底板（0x3a2716、金属 0.6 / 粗糙 0.5 / env 0.5，z −4.988，文字前移到 −4.972 防 z-fight）= 暗铜底金字；hero.js EXT.marbleDark → 暖黑哑光 0x28211b / 粗糙 0.5 / env 0.45。
+- 竖幅：局旗贴图 B01_02_局旗深蓝.png 用 HSV 把蓝色相（PIL 色相 128–200）重染为酒红褐、金线 / 金字不动 → 新文件 public/content/textures/b01/B01_02_局旗酒红.png（对比 work/r3/m4/flag_recolor.jpg）；exterior.js 5 处 `content.tex('tex_flag_bureau')` → `flagTexM4()`，无贴图时兜底色 0x14244d → 0x3e1a14。**只改外观，室内大厅垂旗仍用原深蓝贴图（manifest 未动）。**
+- 局徽底衬 M.navy（8 处，含玫瑰窗 / 鼓室 / 塔顶 / 喷泉局徽与一处 navy 胶囊体）→ 酒红褐呢 embBackM4()（0x3e1a14）。
+- hero.js 外观其余冷色：EXT.marble 0x9a9aa2→0x9c9790 env 1.0→0.6；EXT.slate 0x3c4250→0x403b38 env 0.6；EXT.lead 0x3a3e46→0x3d3a37 金属 0.6 env 0.5；EXT.iron 0x2b2d33→0x2c2723。
+### 2 门扇（9c67678）——新思路：色相锁
+- 不再调底色乘数，弃用批60 右扇克隆 dMR，两扇共享同一份 dM 铜材 + ironD。
+- 根因（批55–60 已逐路查明）：左扇底部紫 = 半球光天色 0x9a96c8 + 天空反射；右扇牛血红 = 2850K 暖光 × 铜色金属（金属反射 = 光色 × 底色）。三轮调底色只能挪一点。
+- 做法：门扇材质 onBeforeCompile 在 `dithering_fragment` 之后把出射色按亮度 L 重映射到统一暗古铜色相 HUE_M4 = (0.62,0.42,0.24)（mix 0.85）——各路光的明暗照常，色偏改不了色相 → 两扇、上下端同色。customProgramCacheKey 追加 `|hueM4`，链上原 weather 补丁。
+- 游戏内验收见下「截图」。
+### 3 叫号机（c044993 + fb5c5ba）
+- tools/blender/m4_queue_machine.py → public/assets/models/m4/queue_machine.glb（8.3k 三角）：铸铁阶梯底座 + 4 球足、倒角 0.03 古铜柜壳、正 / 侧面亮铜浮凸框 + 铆钉排、铸铁凹芯检修门 + 锁孔、古铜腰线、一体楔形斜台（铸铁嵌板、酒红褐取号钮配亮铜圈、亮铜唇出票口 + 半露纸票）、圆角古铜显示头（铸铁凹窗 + 玻璃 + 七段码 047 + 四角铆钉）、阶梯檐口 + 半圆顶饰。材质 qm4_*（不再被 walnutTone 改色）；游戏内 qm4_* env 0.5、粗糙 ≥0.45，七段码自发光 3.5→0.9。
+- eastwing.js：placeModel('m4/queue_machine') 原位原尺寸（height 1.4、碰撞 boundsOf 不变）；头顶前上方不投影暖点光 qm_rim_m4（0xffc488、1.6、射程 1.8）。
+- r3plan.js：叫号机旁 (20.85,−33) 绿萝撤掉（另两盆不动）。
+- Blender 预览：work/r3/m4/preview/m4_qm_{0,1,2}.png、m4_qm_sheet.jpg。
+- 游戏首拍 m4q（41216516542，c044993）：绿植已无 ✔、读成铆钉古铜立柜不再是木方盒 ✔；**七段码花屏**（段与玻璃前表面共面 z-fight）→ fb5c5ba 前移 4 mm，复拍 run 41217240272。
+### 4 广场洗墙
+- 取到 p60 ext_plaza（41215327273，58be4db）：亲眼看 + 像素统计 ≥250 的像素 0%，下半立面暖亮未过曝、石墙可读 → **地埋灯 1550 不改**。
+### 5 门廊 hero 模型——未做（时间不够）。
+
+## 批次 M5 · 第七局 作战室 / 杀青室 / 回写台 Blender 精建（2026-10-31 23:46 CST 接手，约 35 分钟；与 r3-model-m2 / m4 并行，只动 seventh_ops / wrap / rewrite + m1 走道毯）
+- 提交 ab069f6。模型 tools/blender/m5_rooms.py（复用 m1_lib；`blender.sh -b -P m5_rooms.py -- public/assets/models/m5 <prev|-> [ops wrap rewrite]`）→ public/assets/models/m5/{ops 2.2 万, wrap 2.5 万, rewrite 3.1 万三角}.glb，世界坐标原点 (0,SY,0)，材质名沿用 m1_*。
+  - 三室通用壳：四壁石踢脚 + 胡桃框芯护墙板 + 腰线铜条 + 三级檐口（石/酒红褐楣/石）+ 四槽石壁柱（基座/铜箍/柱头）+ 墙角柱 + 胡桃纵梁（与原牛皮纸横梁成井字）+ 北门石门套两面（铜内框、酒红褐楣）。锚点处护墙留空：作战室南墙看板 x±4.2、东墙叛徒墙 z −126.3…−119.7；杀青室南墙镜 x±0.95；回写台西墙排字台段。
+  - 作战室：作战沙盘（−4.3, −121.3；2.4×3.0，石台座 + 胡桃框芯柜 + 铜压边 + 牛皮纸地形街区 + 酒红褐标旗 + 红线连标 + 铜链碗灯）；标图墙 = 叛徒墙外胡桃框 + 铜内唇 + 吊图铜轨 + 标题楣 + 图钉槽托。
+  - 杀青室：定稿台 = 原档案袋木台外包石台座 + 胡桃框芯 + 铜腰带（台面/档案袋锚点不动）；落地镜加石框酒红褐楣。
+  - 回写台：西墙回写排字台（z −166…−160.6，铸铁/胡桃字盘柜 12 抽、4 块斜面活字盘铜隔条、背板、排字手托、校样纸）；中央长桌外加石台座 + 胡桃裙板（台面/巨书不动）。
+- 接入 m1_seventh.js `buildM5Seventh`（depths.js 只在 seventh 块末尾加一行）：碰撞 = 全部壁柱、沙盘、排字台 world.box；沙盘加暖点光。剧情锚点/传送/zone 判定未动。顺手：第七局 greenLamp 绿罩 → s7Lamp 暗铜座烟褐罩（2 处）；作战室局徽 M.navy → M.leather（禁蓝绿）。
+- 遗留三件：①走道毯 m1_burgundy 去 Fabric023 → 纯色 0x6a2a20 / 粗糙 0.85（楣带/拱心石同材质一起变）。②入口"人像"：放大 r41215990525 seventh_entry（work/r3/m5/fig_crop.png）判断为**装订机西侧铜飞轮斜视 + 铜轮毂高光**，不是人物模型，未删。③回廊远端蓝灰：未单独复查；作战室原有蓝/绿件（navy 局徽、绿台灯）已去，是否就是来源待 m1_gutter_b 复拍。
+- Blender 预览（亲眼看，仅新件无原房间）：work/r3/m5/preview/m5_{ops_0-2,wrap_0-1,rewrite_0-1}.png、ops_sheet.jpg、wr_sheet.jpg——护墙/壁柱/檐口/门套对位，沙盘与排字台细节可读；纵梁偏稀（仅 4 m 一根）。平面图 work/r3/m5/plans/plan_{ops,wrap,rewrite}.png（**建模后补画**）。
+- Drive v07_m5_models.tar 1YCtDArqKQKwaCjKLvUDPfOi7FG0-uQa0。
+- 截图/走查已派 run 41217295963 / 41217297749（m5:seventh_ops,s7_ops_b,seventh_wrap,seventh_rewrite,m1_entry_s,m1_gutter_b + walk），**收尾时未出结果，游戏内效果未亲眼验收，sheet.jpg 未拼**。下批：取图验收 → 纵梁加密/天花格心 → walk 31/31 核对。
+- 提交：aac7d39（档案馆藻井/檐部/壁柱/门套）、9c6116c（B1 肋梁/管线）；每次提交前 `npx vite build --outDir /tmp/m2dist` = 0。
+- 走查：run 41216239935（含 aac7d39）与 41216457891（含 9c6116c）均 **通过 31 / 失败 0 / 控制台 0**。Pages：c044993 Deploy success（含 9c6116c）。
+- 游戏内截图（Actions，1600×900 high）：work/r3/m2/r41216239935/m2/archive_r3.png、archive_shelf.png；work/r3/m2/r41216457891/m2b/ab1_r3.png、ab1_east.png；拼图 work/r3/m2/sheet.jpg（左 4 张游戏图 + 右 Blender 预览）。archive_gallery 截止时未回图（run 41216239935 仍在跑，下批 `bash tools/gh_shots_fetch.sh 41216239935 work/r3/m2/r41216239935` 取）。
+- 亲眼判断：archive_r3 里藻井格阵列 + 四周檐部第一次让档案馆顶部读成「厚重的机关大厅天花」，替掉了原来的平板木梁格，透视下格子整齐、无穿插；未见悬空/穿墙。ab1_east 肋梁两端阶梯加腋落在东墙上、与冷光灯管错开；ab1_r3 肋梁跨过楼梯旁未穿钢梯。**问题**：① 藻井格心酒红褐在游戏里偏暗，读成深褐（可把 m1_burgundy 提到 0xa04434 或加一盏顶部暖补光）；② archive_r3 顶部中央一个过曝白色大光球（既有补光/吊灯，非本批）；③ 西墙高窗彩窗是蓝色玻璃（既有，违反「人造物禁蓝绿」，本批未动）；④ 东墙壁柱 / 门套在现有机位里只是远处小块，缺近景验证；⑤ 北墙管线在两张 B1 图里都不在画面内，未亲眼验收。
+- 未做：卡片目录柜 / 借阅柜台 / 阅览长桌 / 密集架手摇轮的 Blender hero 重建（本批只做了建筑壳）；B1 铁门、档案铁柜；藻井 / 门套近景机位。下批建议：加 archive_door（东门近景）与 archive_ceiling（仰拍）机位，并按上面①提亮格心。
