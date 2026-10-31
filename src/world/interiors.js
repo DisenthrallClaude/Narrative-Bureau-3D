@@ -9,7 +9,7 @@ import { lightShaft, dust, CanvasScreen, time, roseGlassTexture } from '../engin
 import { content } from '../engine/content.js';
 import { FLOOR, T, HERO } from './exterior.js';
 import { placeHero, hallMats } from './hero.js';
-import { buildM2Archive, M2_ARCHIVE } from './m2_archive.js';
+import { buildM2Archive, buildM2ArchiveB1, M2_ARCHIVE } from './m2_archive.js';
 export const HERO_HALL = HERO && !new URLSearchParams(location.search).has('legacyhall');
 
 const Y = FLOOR;
@@ -25,6 +25,7 @@ export async function buildInteriors(scene, world, ctx) {
   buildHall(zones.security_hall, world, ctx, M, (p) => add('security_hall', p)); T('int hall');
   buildArchive(zones.archive, zones.archive_b1, world, ctx, M, (p) => add('archive', p), (p) => add('archive_b1', p));
   jobs.push(buildM2Archive(zones.archive, world, Y)); // 批次 M2：档案馆藻井/檐部/东墙壁柱/东门门套
+  jobs.push(buildM2ArchiveB1(zones.archive_b1, Y - 6.0)); // 批次 M2：B1 混凝土肋梁 + 北墙管线
   T('int archive'); if (ctx.heroHallJob) jobs.push(ctx.heroHallJob); await Promise.all(jobs); T('int models');
   return zones;
 }

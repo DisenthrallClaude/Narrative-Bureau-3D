@@ -57,3 +57,16 @@ export function buildM2Archive(zone, world, Y) {
   jobs.push(loadModel('m2/arch_door').then((s) => { const g = bake(s, [MX(X1, Y, -51.5, -Math.PI / 2)], MAT); g.name = 'm2_arch_door'; zone.add(g); }));
   return Promise.all(jobs);
 }
+
+/** B1 密集库：混凝土肋梁 ×5（避开楼梯洞 z −35.3…−37.5 与冷光灯管 z −34/−41/…，两端阶梯加腋）+ 北墙三管管线 6 段。密集架/第 7 排拨盘/缝隙不动。 */
+export function buildM2ArchiveB1(zone, BY) {
+  if (!M2_ARCHIVE) return Promise.resolve();
+  const MAT = { ...m2Mats(), m2_concrete: pbr('Concrete034', { color: 0x7a7268, roughness: 0.85, env: 0.3 }), m2_pipe: pbr('Metal046A', { color: 0x7a5a3e, metalness: 0.6, roughness: 0.55, env: 0.45 }) };
+  const TOP = BY + 5.2, cx = -38;
+  const ribs = [-38.0, -44.5, -51.5, -58.5, -65.5].map((z) => MX(cx, TOP, z));
+  const pipes = []; for (let k = 0; k < 6; k++) pipes.push(MX(-53 + k * 6, BY + 4.4, -70, 0));
+  return Promise.all([
+    loadModel('m2/b1_rib').then((s) => { const g = bake(s, ribs, MAT); g.name = 'm2_b1_rib'; zone.add(g); }),
+    loadModel('m2/b1_pipe').then((s) => { const g = bake(s, pipes, MAT); g.name = 'm2_b1_pipe'; zone.add(g); }),
+  ]);
+}

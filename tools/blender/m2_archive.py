@@ -111,6 +111,30 @@ def door():
     finish(S, f'{OUT}/arch_door.glb', 'arch_door')
     render(S, PREV, 'm2_door', [((2.0, 2.8, 8.5), (0, 3.0, 0), 30), ((3.6, 5.4, 1.4), (2.6, 5.4, 0), 35)], lights=[((0, 4, 3), 1500, (1, .85, .65)), ((3, 6, 1.2), 300, (1, .85, .65))])
 
+
+# ---------------- B1 密集库：混凝土肋梁（36 m 全跨，两端加腋），顶面 y=0 ----------------
+def b1rib():
+    S = reset(); P = pal(); conc = mat('m2_concrete', (0.30, 0.285, 0.26), 0.85)
+    box(conc, 36.0, 0.42, 0.45, y=-0.21, bev=0.03)
+    for sx in (-1, 1):
+        for k in range(4):  # 阶梯加腋（4 级近似斜腋）
+            box(conc, 1.0 - k * 0.22, 0.15, 0.45, x=sx * (18.0 - (1.0 - k * 0.22) / 2), y=-0.42 - 0.075 - k * 0.15)
+        box(P['stoneD'], 0.6, 0.08, 0.55, x=sx * 17.7, y=-1.04)  # 腋底垫石
+    finish(S, f'{OUT}/b1_rib.glb', 'b1_rib')
+    render(S, PREV, 'm2_b1rib', [((14.5, -2.2, 4.0), (17.0, -0.6, 0), 30)], lights=[((15, -1.5, 2.5), 400, (1, .9, .75))])
+
+# ---------------- B1 管线 6 m 段：三根管 + 法兰 + 墙托架，背面 z=0 ----------------
+def b1pipe():
+    S = reset(); P = pal(); pipe = mat('m2_pipe', (0.22, 0.17, 0.12), 0.55, 0.6); iron = mat('m1_iron', (0.05, 0.045, 0.04), 0.5, 0.9)
+    for (r, yy, zz) in ((0.09, 0.0, 0.18), (0.06, 0.24, 0.16), (0.11, -0.28, 0.2)):
+        cyl(pipe, r, 6.0, y=yy, z=zz, axis='x', n=16)
+        for x in (-2.95, 2.95): cyl(iron, r + 0.035, 0.06, x=x, y=yy, z=zz, axis='x', n=16)
+    for x in (-1.5, 1.5):
+        box(iron, 0.06, 0.8, 0.04, x=x, y=-0.02, z=0.02)
+        for yy in (0.0, 0.24, -0.28): box(iron, 0.05, 0.03, 0.3, x=x, y=yy - 0.12, z=0.15)
+    finish(S, f'{OUT}/b1_pipe.glb', 'b1_pipe')
+    render(S, PREV, 'm2_b1pipe', [((2.5, 0.6, 3.0), (0, 0, 0), 30)], lights=[((1.5, 1, 2.5), 300, (1, .9, .75))])
+
 for f in argv[2].split(','):
     if f == 'pilaster': pilaster(11.8)
     else: globals()[f]()
