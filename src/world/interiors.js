@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { Batch } from '../engine/batch.js';
-import { placeModel, loadTex } from '../engine/assets.js';
+import { placeModel, loadTex, screenUI } from '../engine/assets.js';
 import { mats } from './mats.js';
 import { Frame, archRingGeo, archSolidGeo, archShape, archApex, lancetWindow, emblem, goldText } from './gothic.js';
 import { lightShaft, dust, CanvasScreen, time, roseGlassTexture } from '../engine/fx.js';
@@ -638,7 +638,9 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   add(placeModel('desk_lamp', { height: 0.7, pos: [kx - 0.2, Y + 1.11, kz - 2.9], rotY: -Math.PI / 2 }));
   b.box('blackMetal', 0.06, 0.38, 0.6, [kx - 0.3, Y + 1.36, kz + 0.6], { uv: 1 });
   b.box('blackMetal', 0.2, 0.12, 0.2, [kx - 0.3, Y + 1.14, kz + 0.6], { uv: 1 });
-  const mon = new THREE.Mesh(new THREE.PlaneGeometry(0.54, 0.32), new THREE.MeshStandardMaterial({ color: 0, emissive: 0x7aa8d8, emissiveIntensity: 0.9 })); mon.position.set(kx - 0.26, Y + 1.37, kz + 0.6); mon.rotation.y = Math.PI / 2; zone.add(mon);
+  // 批次59：借阅台显示器原为浅蓝平涂发光面（pick 41213095881：Mesh<archive 色 000000 无贴图）→ 档案检索琥珀终端界面 screenUI(0)；PlaneGeometry 的 v 向与 monitor.glb 相反 → 克隆贴图 flipY，裁 u .039–.966 使 640×320 界面按 1.85 物理比例不拉伸（屏面 0.54×0.29）
+  const monT = screenUI(0).emissiveMap.clone(); monT.flipY = true; monT.repeat.set(0.927, 0.994); monT.offset.set(0.039, 0.006); monT.needsUpdate = true;
+  const mon = new THREE.Mesh(new THREE.PlaneGeometry(0.54, 0.29), new THREE.MeshStandardMaterial({ color: 0, emissive: 0xffffff, emissiveMap: monT, emissiveIntensity: 0.85, roughness: 0.25, name: 'loan_scr59' })); mon.position.set(kx - 0.26, Y + 1.37, kz + 0.6); mon.rotation.y = Math.PI / 2; zone.add(mon);
   const note = new THREE.Mesh(new THREE.PlaneGeometry(0.09, 0.09), stickyMaterial()); note.position.set(kx - 0.255, Y + 1.5, kz + 0.84); note.rotation.y = Math.PI / 2; note.rotation.z = 0.12; zone.add(note); ctx.stickyNote = note;
   // 印章
   b.add('wood', new THREE.CylinderGeometry(0.03, 0.035, 0.09, 12), { pos: [kx + 0.3, Y + 1.155, kz - 0.4] }, { uv: 1 });
