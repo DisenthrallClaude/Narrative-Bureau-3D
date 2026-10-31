@@ -78,7 +78,7 @@ def casing(P, axis, c, inward, g0, g1, gh, both=True):
             if axis == 'x': box(P['bronze'], 0.03, gh, 0.03, x, gh / 2, ci + iw * 0.115)
             else: box(P['bronze'], 0.03, gh, 0.03, ci + iw * 0.115, gh / 2, x)
 
-def ceiling(P, x0, x1, z0, z1, h, step=4.0):
+def ceiling(P, x0, x1, z0, z1, h, step=2.5):
     """胡桃纵梁（与原牛皮纸横梁成井字藻井）+ 铜角花。"""
     xi0, xi1 = x0 + 0.2, x1 - 0.2
     n = max(2, round((xi1 - xi0) / step)); s = (xi1 - xi0) / n
@@ -86,6 +86,9 @@ def ceiling(P, x0, x1, z0, z1, h, step=4.0):
         x = xi0 + i * s
         box(P['walnutD'], 0.26, 0.42, (z0 - z1) - 0.4, x, h - 0.21, (z0 + z1) / 2, bev=0.012)
         box(P['bronze'], 0.06, 0.03, (z0 - z1) - 0.4, x, h - 0.435, (z0 + z1) / 2)
+        z = z0 - 2.0
+        while z > z1 + 0.5:                                              # 与原牛皮纸横梁交点：铜角花
+            cyl(P['bronze'], 0.11, 0.04, x, h - 0.45, z, n=16); z -= 3.0
     for x in (xi0 + 0.15, xi1 - 0.15):
         box(P['walnut'], 0.3, 0.3, (z0 - z1) - 0.4, x, h - 0.15, (z0 + z1) / 2, bev=0.01)
 
