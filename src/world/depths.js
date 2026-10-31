@@ -15,6 +15,7 @@ import { m5Mats } from './dress_m5.js';
 import { UNDER } from './rooms.js';
 import { buildM1Seventh, buildM5Seventh } from './m1_seventh.js';
 import { buildM10Seventh, NO_M10 } from './m10_seventh.js';
+import { buildM13Abyss, M13_ABYSS } from './m13_abyss.js';
 
 export const AY = -300, SY = -500; // 墨渊 / 装订线 地坪
 const rnd = (() => { let s = 23; return () => ((s = (s * 16807) % 2147483647) / 2147483647); })();
@@ -105,8 +106,9 @@ export async function buildDepths(scene, world, ctx) {
     // 来路：书脊井维护梯厅（南端黑色金门）
     { const f = new Frame([0, Y, -54], Math.PI); b.add('dp_inkMatte', new THREE.BoxGeometry(14, 8, 1), f.at(0, 4, -0.5), { uv: 0.3, collide: true }); b.add('elevDoor', new THREE.BoxGeometry(2.6, 3.6, 0.1), f.at(0, 1.8, 0.02), { uv: false }); b.add('gold', archRingGeo(3.4, 2.4, 2.8, 2.4, 0.2), f.at(0, 0, 0.1), { uv: 1 }); const pl = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.36), tagMaterial('书脊井 · 维护梯　返回')); pl.position.set(0, Y + 4.6, -54.1 + 0.2); pl.rotation.y = 0; zone.add(pl); ctx.depths.returnDoor = pl; }
     // 折页门：由层层书页折成的尖拱巨门（z −80），门内是城市
-    { const gz = -80; for (let k = 0; k < 9; k++) { const s = 1 - k * 0.07; const f = new Frame([0, Y, gz - k * 0.35], 0); b.add(k % 2 ? 'dp_page' : 'dp_pageDark', archRingGeo(14 * s + 1.2, 12 * s, 14 * s, 12 * s, 0.3), f.at(0, 0, 0, [0, 0, (k % 2 ? 0.015 : -0.015)]), { uv: 0.3 }); }
-      for (const sx of [-1, 1]) { b.box('dp_inkMatte', 4, 26, 4, [sx * 9.5, Y + 13, gz], { uv: 0.3, collide: true }); for (let k = 0; k < 12; k++) bigBook(b, sx * 9.5 + (rnd() - 0.5) * 0.6, Y + k * 2.1, gz + 2.1, 3.6, 2.0, 0.6, (rnd() - 0.5) * 0.1, k % 3 ? 'dp_inkMatte' : 'navy'); }
+    { const gz = -80; if (M13_ABYSS) jobs.push(buildM13Abyss(zone, world, Y)); // 批次 M13：石拱深渊门 hero（m13_abyss.js），下面书页拱圈 / 书柱在 M13 下不画
+      if (!M13_ABYSS) for (let k = 0; k < 9; k++) { const s = 1 - k * 0.07; const f = new Frame([0, Y, gz - k * 0.35], 0); b.add(k % 2 ? 'dp_page' : 'dp_pageDark', archRingGeo(14 * s + 1.2, 12 * s, 14 * s, 12 * s, 0.3), f.at(0, 0, 0, [0, 0, (k % 2 ? 0.015 : -0.015)]), { uv: 0.3 }); }
+      if (!M13_ABYSS) for (const sx of [-1, 1]) { b.box('dp_inkMatte', 4, 26, 4, [sx * 9.5, Y + 13, gz], { uv: 0.3, collide: true }); for (let k = 0; k < 12; k++) bigBook(b, sx * 9.5 + (rnd() - 0.5) * 0.6, Y + k * 2.1, gz + 2.1, 3.6, 2.0, 0.6, (rnd() - 0.5) * 0.1, k % 3 ? 'dp_inkMatte' : 'navy'); }
       const fold = new THREE.Mesh(new THREE.ShapeGeometry(archShape(12.4, 10.6)), new THREE.MeshStandardMaterial({ map: textPage('#efe8d6', '#20180f', true, 30, 0.5), emissive: 0xfff2d0, emissiveIntensity: 0.18, side: THREE.DoubleSide, transparent: true, opacity: 0.92 }));
       fold.position.set(0, Y, gz - 0.8); zone.add(fold); ctx.depths.fold = fold; ctx.anchors.int_abyss_fold = { obj: fold, range: 7 };
       const gp = plane(zone, docMat('doc_abyss_gate_plate', brassPlaqueMaterial('第八号驯化空间 · 墨渊', ['驯化度 99.98%', '入内请报出自己的名字', '若想不起名字，请勿入内'])), 1.2, 1.5, 7.2, Y + 1.8, gz + 2.12, 0); anchor('doc_abyss_gate_plate', gp);

@@ -71,6 +71,9 @@ export const SHOTS = {
   m9_b1door: { pos: [-25.8, -4.2 + 1.6, -43.2], look: [-20.0, -4.2 + 1.2, -39.6], fov: 70, zone: 'archive_b1' },
   m11_dir_desk: { pos: [3.6, 71.8 + 1.7, -97.4], look: [0, 71.8 + 1.3, -106.5], fov: 66, zone: 'director' },
   m11_dir_west: { pos: [6.0, 71.8 + 1.7, -99.0], look: [-12.85, 71.8 + 3.0, -104.5], fov: 72, zone: 'director' },
+  m13_gate_front: { pos: [0, -300 + 1.7, -60], look: [0, -300 + 8.5, -80], fov: 74, zone: 'abyss_gate' },      // M13：深渊门正面（门洞 = 折页面）
+  m13_gate_side: { pos: [-10.5, -300 + 1.7, -66], look: [4, -300 + 7, -80], fov: 72, zone: 'abyss_gate' },     // M13：斜侧看退缩拱券 / 扶壁 / 台阶
+  m13_gate_plate: { pos: [4.2, -300 + 1.7, -74.2], look: [7.4, -300 + 2.6, -78.6], fov: 60, zone: 'abyss_gate' }, // M13：右门座铜铭牌 + 铆钉门框近景
   m11_dir_ceil: { pos: [-5.0, 71.8 + 1.6, -95.5], look: [3.0, 71.8 + 5.4, -109.0], fov: 76, zone: 'director' },
   m9_tr_wall: { pos: [-14, -52 + 1.7, -112], look: [-32, -52 + 6.5, -124], fov: 72, zone: 'training' },
   m9_tr_north: { pos: [6, -52 + 1.7, -118], look: [-16, -52 + 5.5, -92.2], fov: 74, zone: 'training' },
