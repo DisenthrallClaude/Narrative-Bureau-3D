@@ -95,7 +95,7 @@ export function dressMats(M) {
     r3_glassCase: new THREE.MeshPhysicalMaterial({ color: 0xdfe8e4, roughness: 0.05, metalness: 0, transmission: 0, transparent: true, opacity: 0.18, envMapIntensity: 0.8, depthWrite: false }),
     r3_globe: new THREE.MeshStandardMaterial({ color: 0xfff4e0, emissive: 0xffe2b8, emissiveIntensity: 2.4, roughness: 0.4 }),
     r3_globeDim: new THREE.MeshStandardMaterial({ color: 0xf2e8d6, emissive: 0xffe2b8, emissiveIntensity: 0.5, roughness: 0.4 }), // 批次16 再压 0.95→0.5；批次15：近机位低悬球灯防过曝
-    r3_screen: new THREE.MeshStandardMaterial({ color: 0x0a1a12, emissive: 0x4ad08a, emissiveIntensity: 0.9, roughness: 0.3 }),
+    r3_screen: new THREE.MeshStandardMaterial({ color: 0x14100a, emissive: 0xe8c890, emissiveIntensity: 0.7, roughness: 0.3 }), // 批次59：绿荧光屏 → 暖白荧光（去红配绿）
     r3_screenAmber: new THREE.MeshStandardMaterial({ color: 0x1a1006, emissive: 0xffa040, emissiveIntensity: 0.8, roughness: 0.3 }),
     r3_mapPaper: new THREE.MeshStandardMaterial({ color: 0xcfc3a0, roughness: 0.85 }),
     r3_hazard: new THREE.MeshStandardMaterial({ map: hazardTex(), roughness: 0.7 }),

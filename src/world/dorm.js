@@ -25,7 +25,7 @@ export function dormMats() {
   return {
     dm_wood: matte({ map: plank, roughness: 0.78, envMapIntensity: 0.12 }),
     dm_terrazzo: matte({ map: terr, roughness: 0.72, envMapIntensity: 0.12 }),
-    dm_frame: new THREE.MeshStandardMaterial({ color: 0x3e4a44, metalness: 0.35, roughness: 0.62, envMapIntensity: 0.25 }),
+    dm_frame: new THREE.MeshStandardMaterial({ color: 0x4a4038 /* 批次59：灰绿床架 → 暖深灰 */, metalness: 0.35, roughness: 0.62, envMapIntensity: 0.25 }),
     dm_frameCream: new THREE.MeshStandardMaterial({ color: 0xcfc8b4, metalness: 0.2, roughness: 0.6, envMapIntensity: 0.2 }),
     dm_slat: matte({ color: 0x8a6a44 }),
     dm_mattress: matte({ map: stripe }),
@@ -41,7 +41,7 @@ export function dormMats() {
     dm_enamel: new THREE.MeshStandardMaterial({ color: 0xeeeae0, roughness: 0.28, metalness: 0, envMapIntensity: 0.35 }),
     dm_enamelRim: new THREE.MeshStandardMaterial({ color: 0x24407a, roughness: 0.3, envMapIntensity: 0.3 }),
     dm_desk: matte({ color: 0x6a4a2c, roughness: 0.7, envMapIntensity: 0.2 }),
-    dm_deskTop: matte({ color: 0x3e5a48, roughness: 0.8 }), // 绿呢台面垫
+    dm_deskTop: matte({ color: 0x4a3426, roughness: 0.8 }), // 台面垫（批次59：绿呢 → 棕呢）
     dm_wardrobe: matte({ map: plank, color: 0x5a3a24, roughness: 0.42, envMapIntensity: 0.3 }), dm_wardrobePanel: matte({ map: plank, color: 0x4a2f1c, roughness: 0.38, envMapIntensity: 0.32 }), // 批次35：深胡桃——dorm_r3_b 偏橙的大面其实是门板 / 芯板用的 dm_desk（0x6a4a2c 无贴图），改用胡桃木纹 dm_wardrobePanel // 批次34：素橙平涂 → 木纹 + 压暗清漆
     dm_brass: new THREE.MeshStandardMaterial({ color: 0xb08a48, metalness: 0.8, roughness: 0.45, envMapIntensity: 0.4 }),
     dm_pane: new THREE.MeshStandardMaterial({ color: 0x9ab0c4, emissive: 0xcfdcea, emissiveIntensity: 0.55, roughness: 0.2 }),

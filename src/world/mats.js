@@ -97,7 +97,7 @@ export function mats() {
   M.winView = new THREE.MeshBasicMaterial({ map: cityViewTexture(), toneMapped: true }); M.winView.userData.noShadow = true; // M6：室内窗外城景（R4 P1-6 floor3 纯蓝）
   M.concrete = pbr('Concrete036', { color: 0x7a7a7e, roughness: 0.9 });
   M.screenOff = new THREE.MeshStandardMaterial({ color: 0x050608, roughness: 0.15, metalness: 0.4 });
-  M.lampGreen = new THREE.MeshStandardMaterial({ color: 0x0d4a2a, emissive: 0x1d7a45, emissiveIntensity: 0.25, roughness: 0.15, metalness: 0.1 });
+  M.lampGreen = new THREE.MeshStandardMaterial({ color: 0x5a3210, emissive: 0xa8601c, emissiveIntensity: 0.3, roughness: 0.15, metalness: 0.1 }); // 批次59：银行家灯绿罩 → 琥珀罩（去红配绿；名字保留）
   M.lampWarm = new THREE.MeshStandardMaterial({ color: 0xfff1d6, emissive: 0xffd9a0, emissiveIntensity: 6, roughness: 0.5 });
   M.lampCold = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xe8f0ff, emissiveIntensity: 5, roughness: 0.5 });
   M.runeGold = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffc35a, emissiveIntensity: 3.5 });

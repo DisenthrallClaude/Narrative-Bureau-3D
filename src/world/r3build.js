@@ -18,7 +18,7 @@ const _aged = new Map();
 function ageMat(m, k) { const key = m.uuid + k; if (_aged.has(key)) return _aged.get(key); const n = m.clone(); const a = AGE[k]; n.color.setRGB(n.color.r * a[0], n.color.g * a[1], n.color.b * a[2]); n.roughness = Math.max(n.roughness ?? 0.5, a[3]); if (n.metalness > 0.5) n.metalness = 0.75; n.envMapIntensity = Math.min(n.envMapIntensity ?? 1, 0.7); _aged.set(key, n); return n; }
 function glowMat(m, name) {
   const key = m.uuid + ':glow'; if (_aged.has(key)) return _aged.get(key); let n = m;
-  if (name.includes('bankers_lamp') && m.name === 'green_glass') { n = m.clone(); n.emissive = new THREE.Color(0x2c7a3c); n.emissiveIntensity = 0.9; }
+  if (name.includes('bankers_lamp') && m.name === 'green_glass') { n = m.clone(); n.map = null; n.color = new THREE.Color(0x7a4614); n.emissive = new THREE.Color(0xc0701e); n.emissiveIntensity = 0.75; } // 批次59：绿玻璃罩紧挨红按钮 / 酒红地毯（cc_r3_c 红配绿）→ 琥珀玻璃罩
   if (name.includes('ceiling_light') && /Emmision|Bulb/.test(m.name)) { n = m.clone(); n.emissive = new THREE.Color(0xffd49a); n.emissiveIntensity = 2.2; n.toneMapped = true; }
   _aged.set(key, n); return n;
 }
