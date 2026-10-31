@@ -99,6 +99,32 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #loading.open .leaf.r { transform: rotateY(-178deg); }
 #loading.open .book { transform: scale(1.04); transition: transform 1.4s ease-in; }
 
+
+/* —— U1 v3（用户 22:23）：主菜单不做摊开书 → 左侧人文主义古典排版 + 右侧建筑外观渲染图 —— */
+#loading { background: var(--vellum); perspective: none; }
+#loading::after { display: none; }
+#loading .split { position: absolute; inset: 0; display: flex; }
+#loading .leaf.r { order: 0; flex: 0 0 41%; padding: 52px 64px 44px 72px; box-shadow: 12px 0 40px rgba(60,35,12,.25); z-index: 2; border-radius: 0; animation: rise 1s var(--ease) both; }
+#loading .leaf.r::before { inset: 24px 26px; }
+#loading .hero { order: 1; position: relative; flex: 1; margin: 0; overflow: hidden; background: #2a1b10; }
+#loading .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; transform-origin: 50% 40%; animation: kenburns 28s ease-in-out infinite alternate, fadeIn 1.6s ease both; }
+@keyframes kenburns { from { transform: scale(1.04); } to { transform: scale(1.14) translate(-1.5%, -1%); } }
+#loading .hero::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgba(241,230,207,.55) 0%, rgba(241,230,207,0) 14%), linear-gradient(0deg, rgba(30,18,8,.55) 0%, rgba(30,18,8,0) 26%), radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(30,18,8,.4) 100%); }
+#loading .hero::after { content: ''; position: absolute; inset: 22px; z-index: 1; border: 1px solid rgba(240,213,140,.5); outline: 1px solid rgba(240,213,140,.2); outline-offset: 5px; pointer-events: none; }
+#loading .hero figcaption { position: absolute; right: 44px; bottom: 40px; z-index: 2; font-family: var(--serif-zh); font-size: 12px; letter-spacing: .3em; color: #f6ecd6; text-shadow: 0 1px 3px rgba(0,0,0,.8); animation: fadeIn 1s 1.6s both; }
+#loading .hero figcaption b { font-family: var(--latin); font-weight: 600; font-size: 11px; letter-spacing: .4em; color: var(--gilt2); }
+#loading .tp { align-items: flex-start; text-align: left; padding-bottom: 50px; }
+#loading .pre { letter-spacing: .5em; }
+#loading h1 { margin: 22px 0 6px -.04em; font-size: min(80px, 5.4vw); letter-spacing: .06em; }
+#loading .lat { margin-left: 0; font-size: 14px; letter-spacing: .62em; }
+#loading .fleuron { margin: 22px 0 8px -4px; width: 220px; }
+#loading .quote { text-align: left; max-width: 380px; font-size: 16.5px; }
+#loading .colophon { left: 72px; right: auto; text-align: left; }
+#loading .seal { right: 64px; bottom: 60px; }
+#loading button { margin-left: 56px; }
+#loading.open .split { transform: scale(1.03); transition: transform 1.4s ease-in; }
+#loading.open .leaf.r { transform: translateX(-30px); }
+
 /* ============ HUD ============ */
 #hud { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
 #cross { position: absolute; left: 50%; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; border: 1px solid rgba(255,248,230,0); transition: transform .35s var(--ease), border-color .35s; }
