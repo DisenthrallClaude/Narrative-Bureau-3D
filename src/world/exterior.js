@@ -846,7 +846,7 @@ function buildStreetRows(g, M, place, rnd) {
           float bx0 = fract(u / 0.2); vec3 wTex = texture2D(uWood, vec2(y * 0.12, u * 0.9 + floor(u / 0.2) * 0.37)).rgb;
           float seam = 1.0 - smoothstep(0.0, 0.05, bx0) * smoothstep(1.0, 0.95, bx0);
           float hgt = isBrick ? bAo : isWood ? (1.0 - seam) * 0.8 + dot(wTex, vec3(0.3)) * 0.2 : 0.5;
-          vec2 dH = vec2(dFdx(hgt), dFdy(hgt)) * (isBrick ? 1.6 : isWood ? 1.2 : 0.0);
+          vec2 dH = vec2(dFdx(hgt), dFdy(hgt)) * (isBrick ? 1.6 : isWood ? 1.2 : 0.0) * (1.0 - clamp(fwidth(u) * 8.0, 0.0, 0.85)); // 批次59：远处凹凸淡出（ext_house 远墙砖面闪点）
           { vec3 sp = -vViewPosition; vec3 sx = dFdx(sp), sy = dFdy(sp); vec3 r1 = cross(sy, normal), r2 = cross(normal, sx); float fd = dot(sx, r1) * faceDirection;
             vec3 grd = sign(fd) * (dH.x * r1 + dH.y * r2); vec3 nn = abs(fd) * normal - grd; if (dot(nn, nn) > 1e-12 && wall > 0.5) normal = normalize(nn); }
           if (isBrick) col = bTex * vec3(0.66, 0.50, 0.46) * (0.75 + 0.25 * bAo); // 贴图均值 sRGB (173,116,83) → 约 (145,83,56) 暗红褐，不粉
