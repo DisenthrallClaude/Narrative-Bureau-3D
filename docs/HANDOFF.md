@@ -193,7 +193,10 @@
 ### 4 未做
 - 安检大厅黑色现代候机椅：r3plan / interiors.js 里没找到对应模型，已派 pick run 41147289244（hall_wanted 右下）查网格名，下批据此替换为 wait_bench_6080。宿舍 dorm_r3_b 墙面 / 床 / 门扇质感未做。
 ### 收尾
-- 走查（c8d3960 = 最终代码）run 41147820168，结果见下行。Pages c8d3960 success。
+- 走查（c8d3960 = 最终代码）run 41147820168：**通过 31 / 失败 0 / 控制台错误 0** ✔（work/r3/b32/walk/walk/WALKTHROUGH.md）。Pages c072d41 success（代码同 c8d3960）。
+- 改后补看（work/r3/b32/sheet2.jpg）：archive_west / archive 新阅览桌车削腿、绿呢、铜压条读得出 ✔，借阅柜台未进这两个机位；archive 中轴两侧仍有大片浅灰地面（下批）。ext_sky 街屋已是红 / 灰坡屋顶、外墙三色 ✔（中上）；ext_bird 正常。id_yexun 改成越柜台俯看后相框只占约 1/20（**比 0c80592 默认机位差**，下批把 tcam 删掉回默认）。
+- pick 41147289244：安检大厅 hall_wanted 右下黑色候机椅 = **hero_hall.glb 里的 H_leatherBlack 网格**（x≈15.1，z −63…−61），不是 r3plan / interiors 摆件；下批隐藏该网格后放 wait_bench_6080。
+- Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删批次31 四卷，再传 v01 1qtEweZm1t4EwMn-rcdnY23yGjq8GY1ig（2.6 MB）、v02 1QXTV_jzhkGtpoRlN35Xv7qNvKLBnL8bG（22.9 MB）、v03 1r9rB-Z6G1FZH2-FxtcJdmkEkhs-QlmYM（136 MB）、v04 1R725jlc1_G3krFnF-csButFje1QLeW_y（282 MB，含两个新 glb）；v01 打包于 c072d41（不含本行）。
 - 对比图：`python3 work/r3/b32/cmp32.py` → work/r3/cmp32_*.jpg（改后图取到 work/r3/b32/r<run>/ 后重跑）。
 ### 下批先做
 1. 取 41146095184（ext_sky / ext_bird）、41146910525（archive_west / archive / id_yexun 新模型）、41147289244（pick 候机椅）、41147820168（走查）。
