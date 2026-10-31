@@ -692,6 +692,25 @@ function streetModules(g, mods, at, Y0) { // 批次33：tools/blender/street_hou
     console.log('[NB] 街屋立面模块', name, list.length); });
 }
 
+// 批次37：街屋店面招牌由平涂色块 → 有字招牌（60–80 年代国营商店：红底金字 / 蓝底白字 / 绿底白字木框招牌），每个店面模块一块，按开间 hash 取店名（稳定，不随机散布）
+const SHOP_NAMES = [['国营百货商店', '#8e1a14', '#f2d27a'], ['副食品商店', '#1c3a6e', '#f4f0e4'], ['红星照相馆', '#8e1a14', '#f2d27a'], ['人民邮电', '#1d5a34', '#f4f0e4'], ['新华书店', '#8e1a14', '#f2d27a'], ['国营饭店', '#1c3a6e', '#f4f0e4'], ['五金交电', '#1d5a34', '#f4f0e4'], ['钟表眼镜', '#5a2a14', '#f2d27a']];
+function shopSigns(g, mods, at, Y0) {
+  const hs = (k) => { const x = Math.sin(k * 91.7 + 17.3) * 43758.5453; return x - Math.floor(x); };
+  const geo = new THREE.PlaneGeometry(4.3, 0.66), m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), one = new THREE.Vector3(1, 1, 1);
+  const lists = SHOP_NAMES.map(() => []);
+  for (const md of mods) { if (md[0] !== 'sh_shop') continue; const [, fr, th, , yaw] = md; const k = Math.floor(hs(Math.round(th * 1e4) + fr) * SHOP_NAMES.length); lists[k].push([fr, th, yaw]); }
+  SHOP_NAMES.forEach(([name, bg, fg], k) => { const L = lists[k]; if (!L.length) return;
+    const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 172; const c = cv.getContext('2d');
+    c.fillStyle = '#3a2414'; c.fillRect(0, 0, 1024, 172); c.fillStyle = bg; c.fillRect(14, 14, 996, 144);
+    c.strokeStyle = fg; c.globalAlpha = 0.5; c.lineWidth = 3; c.strokeRect(26, 26, 972, 120); c.globalAlpha = 1;
+    c.fillStyle = fg; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `900 ${Math.min(108, 860 / name.length)}px "NB Title", "NB Serif", serif`;
+    const chars = [...name], step = Math.min(150, 860 / chars.length); chars.forEach((ch, i) => c.fillText(ch, 512 + (i - (chars.length - 1) / 2) * step, 90));
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+    const mat = new THREE.MeshStandardMaterial({ map: t, roughness: 0.6, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: TOD.label === '白昼' ? 0.05 : 0.35 });
+    const im = new THREE.InstancedMesh(geo, mat, L.length);
+    L.forEach(([fr, th, yaw], i) => { const sd = Math.abs(((yaw - th) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)) > 1 ? 1 : -1; const [x, z] = at(fr - sd * 0.38, th); q.setFromAxisAngle(up, yaw); m4.compose(new THREE.Vector3(x, Y0 + 3.6, z), q, one); im.setMatrixAt(i, m4); });
+    im.computeBoundingSphere(); im.userData.noCull = true; im.frustumCulled = false; im.castShadow = false; im.receiveShadow = true; g.add(im); });
+}
 function buildStreetRows(g, M, place, rnd) {
   const hs = (k) => { const x = Math.sin(k * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
   const boxG = new THREE.BoxGeometry(1, 1, 1); boxG.translate(0, 0.5, 0);
@@ -725,7 +744,7 @@ function buildStreetRows(g, M, place, rnd) {
             vec3 sc = h2(vec2(bay, 1.0)) < 0.33 ? vec3(0.62, 0.10, 0.08) : h2(vec2(bay, 1.0)) < 0.66 ? vec3(0.10, 0.22, 0.48) : vec3(0.12, 0.36, 0.22);
             col = mix(col * 0.75, vec3(0.05, 0.06, 0.07), glass); col = mix(col, sc, sign);
             float shopOn = step(0.55, h2(vec2(bay, 7.0 + vSd)));
-            em += glass * shopOn * (1.0 - front) * vec3(1.0, 0.66, 0.36) * 0.8 /* 批次36：正面橱窗亮光交给模块 litGlass */ + sign * vec3(1.0, 0.9, 0.8) * sc * 1.6 * step(0.4, h2(vec2(bay, 3.0)));
+            em += glass * shopOn * (1.0 - front) * vec3(1.0, 0.55, 0.24) * 0.45 /* 批次37：侧面橱窗压暗偏暖 */ /* 批次36：正面橱窗亮光交给模块 litGlass */ + sign * vec3(1.0, 0.9, 0.8) * sc * 1.6 * step(0.4, h2(vec2(bay, 3.0)));
             col *= 1.0 - 0.25 * step(y, 0.45); // 水刷石勒脚
           } else if (y > vH - 0.9) { col *= y > vH - 0.6 ? 0.55 : 1.15; // 檐口 + 檐下线脚
           } else {
@@ -739,7 +758,7 @@ function buildStreetRows(g, M, place, rnd) {
             col = mix(col, vec3(0.85, 0.83, 0.78), frame * 0.7);
             col = mix(col, vec3(0.04, 0.05, 0.06), win); col = mix(col, vec3(0.30, 0.18, 0.10), mull);
             float on = step(1.0 - ${lit.toFixed(2)}, h2(vec2(cx + side * 31.0, cy) + vSd * 17.0));
-            em += win * (1.0 - mull) * on * (1.0 - step(0.5, abs(vLn.z))) /* 批次36：临街正面 / 背面的亮窗交给模块 litGlass（稳定少量暖窗），着色器只在山墙侧面画亮窗——去掉正面窗后再叠一层亮窗的白闪点 */ * mix(vec3(1.0, 0.6, 0.3), vec3(1.0, 0.76, 0.5), h2(vec2(cx, cy * 3.1))) * 0.75; /* 批次36：山墙亮窗 2.0 → 0.75、偏暖（原过曝成白块；1.3 仍偏白，ext_house b36b） */
+            em += win * (1.0 - mull) * on * (1.0 - step(0.5, abs(vLn.z))) /* 批次36：临街正面 / 背面的亮窗交给模块 litGlass（稳定少量暖窗），着色器只在山墙侧面画亮窗——去掉正面窗后再叠一层亮窗的白闪点 */ * step(0.5, h2(vec2(cx * 1.7, cy + 5.0))) * mix(vec3(1.0, 0.5, 0.2), vec3(1.0, 0.62, 0.32), h2(vec2(cx, cy * 3.1))) * 0.5; /* 批次37：侧面亮窗再减半 + 更暖（ext_house 仍见奶白块） */ /* 批次36：山墙亮窗 2.0 → 0.75、偏暖（原过曝成白块；1.3 仍偏白，ext_house b36b） */
           }
           col = mix(vec3(0.16, 0.16, 0.17), col, wall); // 平屋面
           diffuseColor.rgb *= col; totalEmissiveRadiance += em * wall;
@@ -769,14 +788,15 @@ function buildStreetRows(g, M, place, rnd) {
   // 两圈环路：R 为车行道中心线；内侧、外侧各一排临街街屋
   for (const R of [160, 245, 305]) { // 批次29：ext_sky 看图——R212 / 300 两圈都在城墙到画框之外，墙外 120–200 m 一片空地 → 改三圈 160 / 245 / 305（相邻圈街屋背靠背留 ≥4 m 后巷）
     const C = 2 * Math.PI * R, roadW = 12, walkW = 4;
-    for (let s = 0; s < C; s += 6) { const th = s / R; const [x, z] = at(R, th); if (!place(x, z)) continue; q.setFromAxisAngle(up, th);
+    const placeR = (x, z) => place(x, z) || (R === 160 && z > 90 && Math.abs(x) > 26 && Math.abs(x) < 70); // 批次37：内圈环路在南大道两侧（原整片剔除成平褐空地）接续到大道路口 |x| 26 m，街屋仍不进南轴
+    for (let s = 0; s < C; s += 6) { const th = s / R; const [x, z] = at(R, th); if (!placeR(x, z)) continue; q.setFromAxisAngle(up, th);
       if (nr < NSEG) { m4.compose(new THREE.Vector3(x, Y0, z), q, new THREE.Vector3(6.3, 0.06, roadW)); roads.setMatrixAt(nr++, m4); }
       for (const sd of [-1, 1]) { const rr = R + sd * (roadW / 2 + walkW / 2); const [wx, wz] = at(rr, th); if (nw < NSEG * 2) { m4.compose(new THREE.Vector3(wx, Y0, wz), q, new THREE.Vector3(6.3 * rr / R, 0.2, walkW)); walks.setMatrixAt(nw++, m4); }
         const rc = R + sd * (roadW / 2 + 0.12); const [cx, cz] = at(rc, th); if (nc < NSEG * 2) { m4.compose(new THREE.Vector3(cx, Y0, cz), q, new THREE.Vector3(6.3, 0.24, 0.26)); curbs.setMatrixAt(nc++, m4); } }
     }
     // 路灯（每 30 m，两侧对位）与行道树（灯间居中，每 30 m）——等距成列
     for (let s = 0; s < C; s += 15) { const th = s / R; const lamp = Math.round(s / 15) % 2 === 0;
-      for (const sd of [-1, 1]) { const rr = R + sd * (roadW / 2 + 0.9); const [x, z] = at(rr, th); if (!place(x, z) || nl >= NL || nt >= NL) continue;
+      for (const sd of [-1, 1]) { const rr = R + sd * (roadW / 2 + 0.9); const [x, z] = at(rr, th); if (!placeR(x, z) || nl >= NL || nt >= NL) continue;
         const yaw = th + (sd > 0 ? 0 : Math.PI); q.setFromAxisAngle(up, yaw);
         if (lamp) { m4.compose(new THREE.Vector3(x, Y0 + 0.2, z), q, new THREE.Vector3(1, 1, 1)); poles.setMatrixAt(nl, m4); arms.setMatrixAt(nl, m4); heads.setMatrixAt(nl++, m4); }
         else if (R === 160) tallTrees.push([x, z, yaw]); /* 批次34：最内圈二十面体树 → r2/street_tree_tall */ else { m4.compose(new THREE.Vector3(x, Y0 + 0.2, z), q, new THREE.Vector3(1, 3.2, 1)); stems.setMatrixAt(nt, m4); m4.compose(new THREE.Vector3(x, Y0 + 2.9, z), q, new THREE.Vector3(2.6, 2.4, 2.6)); crowns.setMatrixAt(nt++, m4); } } }
@@ -802,7 +822,14 @@ function buildStreetRows(g, M, place, rnd) {
         s += w + 0.4; k++; if (k % 6 === 0) s += 10; }
     }
   }
-  streetModules(g, mods, at, Y0); console.log('[NB] 街屋模块实例', mods.length, '高干行道树', tallTrees.length);
+  // 批次37：城墙外南侧（大道两侧 |x| 26–68 m、墙外 125–149 m）= 环路内侧街心绿地：修剪草坪扇形 + 两列高干行道树（每 12 m 等距）+ 石材路缘，不再是平褐空地
+  { const gm = M.grass.clone(); for (const k of ['map', 'normalMap', 'roughnessMap']) if (gm[k]) { gm[k] = gm[k].clone(); gm[k].wrapS = gm[k].wrapT = THREE.RepeatWrapping; gm[k].repeat.set(80, 80); gm[k].needsUpdate = true; }
+    const T0 = 0.21, T1 = 0.474;
+    for (const sgn of [1, -1]) { const st = sgn > 0 ? -Math.PI / 2 + T0 : -Math.PI / 2 - T1;
+      const lawn = new THREE.Mesh(new THREE.RingGeometry(125, 149, 48, 1, st, T1 - T0), gm); lawn.rotation.x = -Math.PI / 2; lawn.position.set(0, Y0 + 0.08, -35); lawn.receiveShadow = true; lawn.userData.noCull = true; g.add(lawn);
+      for (const r of [124.7, 149.3]) { const kerb = new THREE.Mesh(new THREE.RingGeometry(r - 0.3, r + 0.3, 48, 1, st, T1 - T0), curbMat); kerb.rotation.x = -Math.PI / 2; kerb.position.set(0, Y0 + 0.12, -35); kerb.userData.noCull = true; g.add(kerb); }
+      for (const r of [129, 145]) for (let a = T0 + 6 / r; a <= T1 - 4 / r; a += 12 / r) { const th = sgn * a; const [x, z] = at(r, th); tallTrees.push([x, z, th]); } } }
+  streetModules(g, mods, at, Y0); shopSigns(g, mods, at, Y0); console.log('[NB] 街屋模块实例', mods.length, '高干行道树', tallTrees.length);
   if (tallTrees.length) loadModel('r2/street_tree_tall').then((src) => { src.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(src); const sc = 9.5 / Math.max(0.01, bb.max.y - bb.min.y), S = new THREE.Vector3(sc, sc, sc), tq = new THREE.Quaternion();
     src.traverse((o) => { if (!o.isMesh) return; const geo = o.geometry.clone(); for (const n of ['position', 'normal']) { const a = geo.getAttribute(n); if (!a || (a.array instanceof Float32Array && !a.normalized && !a.isInterleavedBufferAttribute)) continue; const f = new Float32Array(a.count * 3); for (let i = 0; i < a.count; i++) { f[i * 3] = a.getX(i); f[i * 3 + 1] = a.getY(i); f[i * 3 + 2] = a.getZ(i); } geo.setAttribute(n, new THREE.BufferAttribute(f, 3)); } /* 批次34 修：street_tree_tall 是 meshopt 量化 glb（Int16 归一化坐标），直接 applyMatrix4 会把米制坐标截断到 ±1 → 树缩成地上一团（ext_house 看图）；先解量化成 Float32 */ geo.applyMatrix4(o.matrixWorld); geo.translate(0, -bb.min.y, 0);
       let mat = o.material; if (/trunk/.test(mat?.name || '')) { // 批次35：树干原贴图纵向拉伸、偏红 → ambientCG Bark007（CC0）按真实米制柱面重映射：u = 角度 × 半径 / 0.6 m、v = 高度 / 0.9 m（树高 9.5 m 缩放后）
