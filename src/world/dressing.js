@@ -12,6 +12,7 @@ import { FLOOR } from './exterior.js';
 import { UPPER } from './upper.js';
 import { UNDER } from './rooms.js';
 import { buildM9Training, M9_TRAIN } from './m9_training.js';
+import { M12_TRAIN } from './m12_training.js'; // 批次 M12：平铁灯光桁架 → m12/tr_truss
 import { dressMats, spineMaterial, Props, wallDress, wallSeg, coffered, bunkerCeiling, rug, floorInlay, deskSet, paperStack, folderStack, telephone, bin, plantPot, cabinetRow, spineShelf, hangingSign, greenLamp } from './dress.js';
 
 const Y = FLOOR;
@@ -293,7 +294,7 @@ export async function buildDressing(scene, world, ctx) {
     for (const sx of [-1, 1]) { const x = sx * (X - 1.7); b.box('steel', 0.05, 0.05, Z0 - Z1, [x, y + 8.05, (Z0 + Z1) / 2], { uv: 1 }); for (let z = Z0 - 1; z > Z1; z -= 2) { b.box('steel', 0.04, 1.05, 0.04, [x, y + 7.53, z], { uv: 1 }); b.box('blackMetal', 1.6, 0.12, 0.08, [sx * (X - 0.9), y + 6.9, z], { uv: 1 }); } }
     b.box('steel', 2 * X - 3.4, 0.05, 0.05, [0, y + 8.05, Z1 + 1.7], { uv: 1 }); for (let x = -X + 2; x < X - 1; x += 2) b.box('steel', 0.04, 1.05, 0.04, [x, y + 7.53, Z1 + 1.7], { uv: 1 });
     // 顶部灯光桁架（每 12 m 一榀）+ 射灯头
-    for (let z = Z0 - 10; z > Z1 + 4; z -= 12) { for (const dy of [0, 0.8]) b.box('steel', 2 * X, 0.08, 0.08, [0, y + H - 1.2 - dy, z], { uv: 1 }); for (let x = -X + 1; x < X; x += 1.6) b.box('steel', 0.04, 0.8, 0.04, [x, y + H - 1.6, z], { uv: 1, rot: [0, 0, 0.6 * ((x / 1.6) % 2 ? 1 : -1)] }); for (let x = -24; x <= 24; x += 8) { b.add('blackMetal', new THREE.CylinderGeometry(0.16, 0.2, 0.4, 12), { pos: [x, y + H - 2.3, z], rot: [0.5, 0, 0] }, { uv: 1 }); b.add('dz_glowCold', new THREE.CircleGeometry(0.15, 12), { pos: [x, y + H - 2.48, z + 0.1], rot: [Math.PI / 2 + 0.5, 0, 0] }, { uv: false }); } }
+    for (let z = Z0 - 10; z > Z1 + 4; z -= 12) { if (!M12_TRAIN) for (const dy of [0, 0.8]) b.box('steel', 2 * X, 0.08, 0.08, [0, y + H - 1.2 - dy, z], { uv: 1 }); if (!M12_TRAIN) for (let x = -X + 1; x < X; x += 1.6) b.box('steel', 0.04, 0.8, 0.04, [x, y + H - 1.6, z], { uv: 1, rot: [0, 0, 0.6 * ((x / 1.6) % 2 ? 1 : -1)] }); for (let x = -24; x <= 24; x += 8) { b.add('blackMetal', new THREE.CylinderGeometry(0.16, 0.2, 0.4, 12), { pos: [x, y + H - 2.3, z], rot: [0.5, 0, 0] }, { uv: 1 }); b.add('dz_glowCold', new THREE.CircleGeometry(0.15, 12), { pos: [x, y + H - 2.48, z + 0.1], rot: [Math.PI / 2 + 0.5, 0, 0] }, { uv: false }); } }
     // 护具区：软垫地块 + 护具架 + 急救站 + 观众看台
     for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) b.box(((i + j) % 2) ? 'navy' : 'dz_bakelite', 2, 0.08, 2, [18 + i * 2.05, y + 0.04, -100 - j * 2.05], { uv: 0.6 });
     P.add('worn_rack', [28, y, -97], { h: 2, yaw: -Math.PI / 2 }); P.add('gas_mask', [27.5, y + 1.3, -98.2], { h: 0.3, yaw: -Math.PI / 2 });

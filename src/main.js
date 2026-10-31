@@ -22,6 +22,7 @@ import { buildRooms, updateRooms } from './world/rooms.js';
 import { buildUpper, updateUpper } from './world/upper.js';
 import { buildDressing, updateDressing } from './world/dressing.js';
 import { buildR3 } from './world/r3build.js';
+import { applyM12Training } from './world/m12_training.js';
 import { applyBakes, exportBake, BAKES } from './engine/bakeao.js';
 import { installSkyFog } from './engine/skyfog.js';
 import { mats } from './world/mats.js';
@@ -105,7 +106,7 @@ async function boot() {
   scene.background = sky; scene.backgroundIntensity = SKY_I;
   scene.environment = envSky;
   LOG('hdr ok'); UI.loadProgress(0.1, '建造主楼……');
-  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx); await buildDressing(scene, world, ctx); await buildM5(scene, world, ctx); await buildSurface(scene, world, ctx); await buildDepths(scene, world, ctx); await buildR3(ctx, world, ctx._r3mat, true);
+  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx); await buildDressing(scene, world, ctx); await buildM5(scene, world, ctx); await buildSurface(scene, world, ctx); await buildDepths(scene, world, ctx); await buildR3(ctx, world, ctx._r3mat, true); await applyM12Training(ctx, world); // 批次 M12：B6 训练场第二轮
   // R3 批次8 性能：地表/外景合批网格按 32 m 格切块（视锥 + 阴影视锥剔除生效）；主楼外立面 hi/lo 两级按格切换；小件按距离剔除
   { const t0 = performance.now(); const ext = scene.getObjectByName('exterior'); const L = new LodCells(+(params.get('lodNear') ?? 40));
     const fl = ctx.facadeLod; const keep = (o) => fl && (o.parent === fl.hi || o.parent === fl.lo || fl.hi.getObjectById(o.id) || fl.lo.getObjectById(o.id));

@@ -76,6 +76,9 @@ export const SHOTS = {
   m9_tr_north: { pos: [6, -52 + 1.7, -118], look: [-16, -52 + 5.5, -92.2], fov: 74, zone: 'training' },
   m9_tr_brief: { pos: [-20.2, -52 + 1.6, -108.8], look: [-22, -52 + 1.0, -104], fov: 62, zone: 'training' },
   m9_tr_locker: { pos: [9.2, -52 + 1.6, -102.2], look: [12.7, -52 + 1.0, -105.6], fov: 66, zone: 'training' },
+  m12_tr_door: { pos: [2, -52 + 1.7, -106], look: [0, -52 + 4.6, -92.2], fov: 70, zone: 'training' }, // 批次 M12：电梯厅开口石门套
+  m12_tr_truss: { pos: [-4, -52 + 1.7, -116], look: [4, -52 + 13.5, -128], fov: 74, zone: 'training' }, // 批次 M12：屋架
+  m12_tr_gates: { pos: [0, -52 + 1.8, -101], look: [0, -52 + 3.2, -122], fov: 78, zone: 'training' }, // 批次 M12：副本门暖色
   archive_west: { pos: [-46.5, 1.8 + 1.65, -46.0], look: [-55, 1.8 + 1.0, -36], fov: 74, lite: 1 },
   archive_loan: { pos: [-45.6, 1.8 + 1.6, -48.6], look: [-50.2, 1.8 + 0.85, -51.5], fov: 62, zone: 'archive', lite: 1 }, // 批次33：借阅柜台近景
   archive_cat: { pos: [-49.4, 1.8 + 1.6, -60.4], look: [-51.6, 1.8 + 1.0, -63.3], fov: 62, zone: 'archive', lite: 1 }, // 批次45：大档案柜组 → 卡片目录柜精建近景
