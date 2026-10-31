@@ -1021,7 +1021,7 @@ export function planArchiveB1(y) {
   for (const [x, z] of [[-44.2, -35.2], [-42.6, -35.2]]) out.push({ m: 'storage_cart', x, y, z, yaw: 0.05, w: 1.1, tag: '推车', on: 'floor', col: [1.1, 1.0, 0.8] });
   out.push({ m: 'r2/wooden_flat_filing_tray', x: -48.1, y: y + 0.78, z: -34.4, yaw: Math.PI, w: 0.34, tag: '值守台', on: 'desk' });
   // ② 西墙：锈蚀文件柜一排（旧库）+ 捕鼠器；东墙：双联钢架 + 档案盒
-  for (let k = 0; k < 16; k++) out.push({ m: 'r2/rusty_filing_cabinet', x: X0 + 0.3, y, z: -42.0 - k * 0.5, yaw: ROT.E, h: 1.35, tag: '西墙锈柜', on: 'floor', col: [0.42, 1.35, 0.56] });
+  if (!M6_CAT) for (let k = 0; k < 16; k++) out.push({ m: 'r2/rusty_filing_cabinet', x: X0 + 0.3, y, z: -42.0 - k * 0.5, yaw: ROT.E, h: 1.35, tag: '西墙锈柜', on: 'floor', col: [0.42, 1.35, 0.56] });
   for (let k = 0; k < 6; k++) { const z = -43.6 - k * 4.3; out.push({ m: 'r2/double_metal_shelving_unit', x: X1 - 0.45, y, z, yaw: ROT.W, h: 2.0, tag: '东墙钢架', on: 'floor', col: [4.16, 2.0, 0.8] });
     for (const dy of [0.42, 1.02, 1.6]) for (const dz of [-1.2, 0.4, 1.4]) if ((dy * 10 + dz) % 3 > 0.5) out.push({ m: 'r2/filing_box', x: X1 - 0.45, y: y + dy, z: z + dz, yaw: ROT.W, w: 0.34, tag: '东墙钢架', on: 'shelf' }); }
   for (const [x, z] of [[-55.2, -50.3], [-22.0, -62.9]]) out.push({ m: 'r2/mousetrap', x, y, z, yaw: 1.1, w: 0.16, tag: '捕鼠器', on: 'floor' });

@@ -90,15 +90,19 @@ export function buildM2Archive(zone, world, Y) {
 }
 
 /** B1 密集库：混凝土肋梁 ×5（避开楼梯洞 z −35.3…−37.5 与冷光灯管 z −34/−41/…，两端阶梯加腋）+ 北墙三管管线 6 段。密集架/第 7 排拨盘/缝隙不动。 */
-export function buildM2ArchiveB1(zone, BY, ctx) {
+export function buildM2ArchiveB1(zone, BY, ctx, world) {
   if (!M2_ARCHIVE) return Promise.resolve();
   const MAT = { ...m2Mats(), m2_concrete: pbr('Concrete034', { color: 0x7a7268, roughness: 0.85, env: 0.3 }), m2_pipe: pbr('Metal046A', { color: 0x7a5a3e, metalness: 0.6, roughness: 0.55, env: 0.45 }) };
   const TOP = BY + 5.2, cx = -38;
+  if (world) { world.box(-55.69, BY + 0.675, -45.75, 0.58, 1.35, 8.0); } // 批次 M6：西墙档案铁柜 ×16 整排碰撞（z −41.75…−49.75）
   const ribs = [-38.0, -44.5, -51.5, -58.5, -65.5].map((z) => MX(cx, TOP, z));
   const pipes = []; for (let k = 0; k < 6; k++) pipes.push(MX(-53 + k * 6, BY + 4.4, -70, 0));
   return Promise.all([
     loadModel('m2/b1_rib').then((s) => { const g = bake(s, ribs, MAT); g.name = 'm2_b1_rib'; zone.add(g); }),
     loadModel('m2/b1_pipe').then((s) => { const g = bake(s, pipes, MAT); g.name = 'm2_b1_pipe'; zone.add(g); }),
+    // 批次 M6：西墙档案铁柜 ×16（原 r3plan rusty_filing_cabinet 同位：x −55.7、z −42.0…−49.5 每 0.5，面东；深 0.56 背贴墙内皮 −56 留 0.02）+ 东墙防火铁门（z −39.6，前通道东端；门套背贴墙内皮 x −20）
+    loadModel('m6/b1_cabinet').then((s) => { const I = []; for (let k = 0; k < 16; k++) I.push(MX(-55.69, BY, -42.0 - k * 0.5, Math.PI / 2)); const g = bake(s, I, MAT); g.name = 'm6_b1_cabinet'; zone.add(g); }),
+    loadModel('m6/b1_door').then((s) => { const g = bake(s, [MX(-20.0, BY, -39.6, -Math.PI / 2)], MAT); g.name = 'm6_b1_door'; zone.add(g); }),
     // 批次 M6：密集架端板 hero（钢制烤漆暖灰 + 凹芯板压框 + 铸铁把手座 + 手摇轮轴座）挂进每排可移动 grp；原端板/分格线/把手/踢脚板在 interiors.js 下关闭，铜卡框/编号/手摇轮/第 7 排拨盘保留
     loadModel('m6/compact_end').then((s) => { const I = [new THREE.Matrix4()]; const g = bake(s, I, MAT); for (const r of ctx?.compactRows ?? []) { const c = g.clone(); c.name = 'm6_compact_end'; r.grp.add(c); } }),
   ]);

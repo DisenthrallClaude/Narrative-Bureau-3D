@@ -25,7 +25,7 @@ export async function buildInteriors(scene, world, ctx) {
   buildHall(zones.security_hall, world, ctx, M, (p) => add('security_hall', p)); T('int hall');
   buildArchive(zones.archive, zones.archive_b1, world, ctx, M, (p) => add('archive', p), (p) => add('archive_b1', p));
   jobs.push(buildM2Archive(zones.archive, world, Y)); // 批次 M2：档案馆藻井/檐部/东墙壁柱/东门门套
-  jobs.push(buildM2ArchiveB1(zones.archive_b1, Y - 6.0, ctx)); // 批次 M2：B1 混凝土肋梁 + 北墙管线
+  jobs.push(buildM2ArchiveB1(zones.archive_b1, Y - 6.0, ctx, world)); // 批次 M2：B1 混凝土肋梁 + 北墙管线
   T('int archive'); if (ctx.heroHallJob) jobs.push(ctx.heroHallJob); await Promise.all(jobs); T('int models');
   return zones;
 }
