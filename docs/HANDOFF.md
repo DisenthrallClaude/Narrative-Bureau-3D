@@ -200,7 +200,7 @@
 - Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删同名旧卷再传 v03 1AHDQyjlymyHKIP4oGqIzaKBjIqrp1tuE、v04 1LL874Xgn7rC7Z1pZlH9zx6fZcEHJEIc3（含 service_window.glb）；v01 / v02 在本 HANDOFF 提交后重传（见 PROGRESS-LOG）。
 - 对比图 `python3 work/r3/b37/cmp37.py` → work/r3/cmp37_*.jpg + 总拼图 work/r3/b37/sheet.jpg（未回的机位补跑脚本即可）。
 ### 下批先做
-1. 取回 run 41160124050（cs_r3 / cs_r3_b）与 41160436241（ext_sky / ext_bird），验收服务窗口精建、高墙面、街心绿地；重跑 cmp37.py 更新拼图。
+1. 取回 run 41161000388（cs_r3 / cs_r3_b 重派；原 41160124050 超 25 分钟已取消，取消后可能仍上传）与 41160436241（ext_sky / ext_bird），验收服务窗口精建、高墙面、街心绿地；重跑 cmp37.py 更新拼图。
 2. 铜相框去暗斑改拉丝 + 拉大环境对比；街屋山墙侧面平涂招牌带。
 3. 南大道路口成组街具（报刊亭 / 公交站）、东墙高窗线脚。
 
