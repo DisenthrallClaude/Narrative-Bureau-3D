@@ -11,8 +11,8 @@ export const SHOTS = {
   hall_vault: { pos: [6, Y + 1.6, -47], look: [-1, Y + 22, -58], fov: 80 },
   hall_aisle: { pos: [14.6, Y + 1.65, -33.5], look: [11, Y + 2.7, -66], fov: 72 },
   hall_gates: { pos: [-6, Y + 1.7, -35], look: [6, Y + 1.5, -44], fov: 70, lite: 1 },
-  archive: { pos: [-22, Y + 1.7, -50], look: [-50, Y + 3, -52], fov: 75 },
-  archive_gallery: { pos: [-54.6, Y + 6.2 + 1.6, -36], look: [-30, Y + 5, -40], fov: 75 },
+  archive: { pos: [-22, Y + 1.7, -50], look: [-50, Y + 3, -52], fov: 75, lite: 1 },
+  archive_gallery: { pos: [-54.6, Y + 6.2 + 1.6, -36], look: [-30, Y + 5, -40], fov: 75, lite: 1 },
   b1: { pos: [-26.5, Y - 6 + 1.7, -38.6], look: [-37, Y - 6 + 1.3, -40.5], fov: 72 },
   b1_seam: { pos: [-35.7, Y - 6 + 1.65, -39.0], look: [-36.2, Y - 6 + 1.5, -42], fov: 70 },
   east_door: { pos: [10, Y + 1.65, -48], look: [30, Y + 2.5, -46], fov: 72 },
@@ -57,18 +57,18 @@ export const SHOTS = {
   gate_r3: { pos: [-1.5, 1.8 + 1.65, -11.6], look: [9, 1.8 + 1.4, -19], fov: 74, zone: 'gate' },
   gate_r3_b: { pos: [8.6, 1.8 + 1.65, -27.8], look: [-8, 1.8 + 1.0, -14], fov: 74, zone: 'gate' },
   gate_top: { pos: [0, 1.8 + 34, -17.99], look: [0, 1.8, -18], fov: 50, clipY: 1.8 + 4.5, zone: 'gate' },
-  archive_r3: { pos: [-21.0, 1.8 + 1.65, -51.5], look: [-40, 1.8 + 1.4, -55], fov: 76 },
-  archive_shelf: { pos: [-28.2, 1.8 + 1.6, -40.65], look: [-21, 1.8 + 1.2, -40.65], fov: 72 },
-  archive_west: { pos: [-46.5, 1.8 + 1.65, -46.0], look: [-55, 1.8 + 1.0, -36], fov: 74 },
-  archive_loan: { pos: [-45.6, 1.8 + 1.6, -48.6], look: [-50.2, 1.8 + 0.85, -51.5], fov: 62, zone: 'archive' }, // 批次33：借阅柜台近景
-  archive_top: { pos: [-38, 1.8 + 40, -50.99], look: [-38, 1.8, -51], fov: 52, clipY: 1.8 + 4.0, zone: 'archive' },
-  cc_r3: { pos: [24.0, 8.8 + 1.7, -35.6], look: [36, 8.8 + 1.2, -50], fov: 76, zone: 'command_center' },
-  cc_r3_b: { pos: [33.0, 8.8 + 1.8 + 1.65, -57.4], look: [35, 8.8 + 2.0, -36], fov: 76, zone: 'command_center' },
+  archive_r3: { pos: [-21.0, 1.8 + 1.65, -51.5], look: [-40, 1.8 + 1.4, -55], fov: 76, lite: 1 },
+  archive_shelf: { pos: [-28.2, 1.8 + 1.6, -40.65], look: [-21, 1.8 + 1.2, -40.65], fov: 72, lite: 1 },
+  archive_west: { pos: [-46.5, 1.8 + 1.65, -46.0], look: [-55, 1.8 + 1.0, -36], fov: 74, lite: 1 },
+  archive_loan: { pos: [-45.6, 1.8 + 1.6, -48.6], look: [-50.2, 1.8 + 0.85, -51.5], fov: 62, zone: 'archive', lite: 1 }, // 批次33：借阅柜台近景
+  archive_top: { pos: [-38, 1.8 + 40, -50.99], look: [-38, 1.8, -51], fov: 52, clipY: 1.8 + 4.0, zone: 'archive', lite: 1 },
+  cc_r3: { pos: [24.0, 8.8 + 1.7, -35.6], look: [36, 8.8 + 1.2, -50], fov: 76, zone: 'command_center', lite: 1 },
+  cc_r3_b: { pos: [33.0, 8.8 + 1.8 + 1.65, -57.4], look: [35, 8.8 + 2.0, -36], fov: 76, zone: 'command_center', lite: 1 },
   cc_comm: { pos: [47.6, 8.8 + 1.8 + 1.6, -57.0], look: [43.6, 8.8 + 1.8 + 0.9, -60.7], fov: 78, zone: 'command_center' },
-  cs_r3: { pos: [24.2, 1.8 + 1.7, -33.0], look: [37, 1.8 + 1.2, -50.5], fov: 74, zone: 'citizen_service' }, // 批次11：市民服务大厅（西南角看窗口）
+  cs_r3: { pos: [24.2, 1.8 + 1.7, -33.0], look: [37, 1.8 + 1.2, -50.5], fov: 74, zone: 'citizen_service', lite: 1 }, // 批次11：市民服务大厅（西南角看窗口）
   cs_r3_c: { pos: [23.5, 1.8 + 1.6, -46.1], look: [22.3, 1.8 + 0.6, -43.2], fov: 60, zone: 'citizen_service' }, // 批次36：西门内看引导台正面（Blender 精建 guide_desk 验收）
-  cs_r3_e: { pos: [38.5, 1.8 + 1.7, -40.3], look: [56, 1.8 + 3.6, -40.3], fov: 72, zone: 'citizen_service' }, // 批次38：东墙两樘高窗线脚 + 来信投递验收
-  cs_r3_b: { pos: [47.5, 1.8 + 1.7, -49.6], look: [27, 1.8 + 1.0, -37], fov: 74, zone: 'citizen_service' }, // 东北角回看候号区/填单台
+  cs_r3_e: { pos: [38.5, 1.8 + 1.7, -40.3], look: [56, 1.8 + 3.6, -40.3], fov: 72, zone: 'citizen_service', lite: 1 }, // 批次38：东墙两樘高窗线脚 + 来信投递验收
+  cs_r3_b: { pos: [47.5, 1.8 + 1.7, -49.6], look: [27, 1.8 + 1.0, -37], fov: 74, zone: 'citizen_service', lite: 1 }, // 东北角回看候号区/填单台
   // 批次13：人物图片（通缉海报 / 证件照小卡）特写
   hall_wanted: { pos: [12.6, 1.8 + 2.0, -64], look: [17.4, 1.8 + 2.2, -64], fov: 70 },
   b1_wanted: { pos: [-13.0, -10 + 1.8, -114], look: [-15.75, -10 + 2.0, -114], fov: 60 },
@@ -92,16 +92,16 @@ export const SHOTS = {
   lobby_4f: { pos: [1.2, 22.8 + 1.65, -91.2], look: [-3.5, 22.8 + 1.6, -84.4], fov: 74, zone: 'library' }, // 4F 藏书阁电梯厅
   es_land: { pos: [54.4, 5.3 + 1.65, -63.6], look: [54.6, 8.8 + 1.2, -54.5], fov: 72, zone: 'east_stair' }, // 批次12：东楼梯 1F→2F 中间平台看东跑上行
   es_land_b: { pos: [54.6, 5.3 + 1.65, -55.2], look: [51.8, 3.0, -63.0], fov: 72, zone: 'east_stair' }, // 东跑中段回看平台、层间铜牌、西跑
-  lib_lec: { pos: [3.2, 22.8 + 1.7, -99.2], look: [0, 22.8 + 1.3, -106], fov: 58, zone: 'library' }, // 批次39：圆厅中轴东南看讲经台（Blender 精建 lib_lectern，正面雕饰 + 侧面）
-  lib_lec_n: { pos: [2.6, 22.8 + 1.75, -102.9], look: [0, 22.8 + 1.35, -106], fov: 55, zone: 'library' }, // 批次40：讲经台东南 ≈4 m 近景（雕饰 + 诵经灯 + 补光）
-  lib_lec_s: { pos: [-2.4, 22.8 + 1.8, -110.0], look: [0, 22.8 + 0.95, -106.8], fov: 58, zone: 'library' }, // 批次40：讲经台北侧（诵读者视角）看两级诵读台阶 + 斜面书托
-  lib_vit: { pos: [-2.9, 22.8 + 1.55, -94.5], look: [-4.4, 22.8 + 1.0, -97.4], fov: 60, zone: 'library' }, // 批次38：入口西侧限阅陈列柜（Blender 精建 lib_vitrine）
-  lib_nook: { pos: [1.7, 22.8 + 1.55, -112.3], look: [0, 22.8 + 1.0, -115.3], fov: 55, zone: 'library' }, // 批次42：北阅读龛近景（Blender 精建 lib_nook）
-  lib_star: { pos: [-1.55, 22.8 + 1.9, -111.0], look: [-2.39, 22.8 + 0.95, -112.58], fov: 55, zone: 'library' }, // 批次44：星图台台面近景（lib_startable 星图板 UV 修复 + 提亮）
-  lib_globe: { pos: [4.6, 22.8 + 1.6, -110.2], look: [2.39, 22.8 + 0.85, -112.58], fov: 55, zone: 'library' }, // 批次41：北区东侧地球仪近景（Blender 精建 lib_globe）
-  lib_r3: { pos: [0.4, 22.8 + 1.65, -94.4], look: [0, 22.8 + 1.0, -106], fov: 76, zone: 'library' }, // 批次12：藏书阁底层（入口看讲经台、借阅台/限阅柜）
-  lib_r3_b: { pos: [8.6, 22.8 + 1.65, -111.8], look: [-3.0, 22.8 + 1.0, -100.5], fov: 76, zone: 'library' }, // 东北阅览桌旁回看入口
-  lib_top: { pos: [0, 22.8 + 36, -105.99], look: [0, 22.8, -106], fov: 44, clipY: 22.8 + 4.0, zone: 'library' },
+  lib_lec: { pos: [3.2, 22.8 + 1.7, -99.2], look: [0, 22.8 + 1.3, -106], fov: 58, zone: 'library', lite: 1 }, // 批次39：圆厅中轴东南看讲经台（Blender 精建 lib_lectern，正面雕饰 + 侧面）
+  lib_lec_n: { pos: [2.6, 22.8 + 1.75, -102.9], look: [0, 22.8 + 1.35, -106], fov: 55, zone: 'library', lite: 1 }, // 批次40：讲经台东南 ≈4 m 近景（雕饰 + 诵经灯 + 补光）
+  lib_lec_s: { pos: [-2.4, 22.8 + 1.8, -110.0], look: [0, 22.8 + 0.95, -106.8], fov: 58, zone: 'library', lite: 1 }, // 批次40：讲经台北侧（诵读者视角）看两级诵读台阶 + 斜面书托
+  lib_vit: { pos: [-2.9, 22.8 + 1.55, -94.5], look: [-4.4, 22.8 + 1.0, -97.4], fov: 60, zone: 'library', lite: 1 }, // 批次38：入口西侧限阅陈列柜（Blender 精建 lib_vitrine）
+  lib_nook: { pos: [1.7, 22.8 + 1.55, -112.3], look: [0, 22.8 + 1.0, -115.3], fov: 55, zone: 'library', lite: 1 }, // 批次42：北阅读龛近景（Blender 精建 lib_nook）
+  lib_star: { pos: [-1.55, 22.8 + 1.9, -111.0], look: [-2.39, 22.8 + 0.95, -112.58], fov: 55, zone: 'library', lite: 1 }, // 批次44：星图台台面近景（lib_startable 星图板 UV 修复 + 提亮）
+  lib_globe: { pos: [4.6, 22.8 + 1.6, -110.2], look: [2.39, 22.8 + 0.85, -112.58], fov: 55, zone: 'library', lite: 1 }, // 批次41：北区东侧地球仪近景（Blender 精建 lib_globe）
+  lib_r3: { pos: [0.4, 22.8 + 1.65, -94.4], look: [0, 22.8 + 1.0, -106], fov: 76, zone: 'library', lite: 1 }, // 批次12：藏书阁底层（入口看讲经台、借阅台/限阅柜）
+  lib_r3_b: { pos: [8.6, 22.8 + 1.65, -111.8], look: [-3.0, 22.8 + 1.0, -100.5], fov: 76, zone: 'library', lite: 1 }, // 东北阅览桌旁回看入口
+  lib_top: { pos: [0, 22.8 + 36, -105.99], look: [0, 22.8, -106], fov: 44, clipY: 22.8 + 4.0, zone: 'library', lite: 1 },
   cs_top: { pos: [35, 1.8 + 40, -42.49], look: [35, 1.8, -42.5], fov: 50, clipY: 1.8 + 4.8, zone: 'citizen_service' },
   ec_r3: { pos: [26.3, 1.8 + 1.65, -79.6], look: [25.0, 1.8 + 1.2, -100], fov: 70, zone: 'east_cloister' }, // 批次11：东廊（南口看陈列面）
   ec_r3_b: { pos: [25.2, 1.8 + 1.65, -110.2], look: [27.4, 1.8 + 1.0, -88], fov: 70, zone: 'east_cloister' }, // 拐角回看长凳面
@@ -145,7 +145,7 @@ export const SHOTS = {
   zone_top: { pos: [35, 15.8 + 40, -46.49], look: [35, 15.8, -46.5], fov: 50, clipY: 15.8 + 5.2, zone: 'zone_control' },
   ec_corner: { pos: [26.6, 1.8 + 1.6, -112.0], look: [19.0, 1.8 + 1.4, -114.2], fov: 70, zone: 'east_cloister' }, // 东西段公告栏 → 食堂口
   ec_top: { pos: [23.2, 1.8 + 46, -95.79], look: [23.2, 1.8, -95.8], fov: 50, clipY: 1.8 + 4.4, zone: 'east_cloister' },
-  cc_r3_c: { pos: [37.6, 8.8 + 1.8 + 1.55, -56.5], look: [35, 8.8 + 1.8 + 0.7, -58.8], fov: 62, zone: 'command_center' }, // 批次36：平台前沿看北，正对值班长台精建（芯板立面 / 交换机 / 背墙挂图 / 壁灯）
+  cc_r3_c: { pos: [37.6, 8.8 + 1.8 + 1.55, -56.5], look: [35, 8.8 + 1.8 + 0.7, -58.8], fov: 62, zone: 'command_center', lite: 1 }, // 批次36：平台前沿看北，正对值班长台精建（芯板立面 / 交换机 / 背墙挂图 / 壁灯）
   cc_top: { pos: [35, 8.8 + 34, -46.49], look: [35, 8.8, -46.5], fov: 50, clipY: 8.8 + 4.6, zone: 'command_center' },
   canteen_r3: { pos: [-3.0, 1.8 + 1.65, -111.6], look: [6, 1.8 + 1.3, -136], fov: 76 },
   canteen_line: { pos: [-7.0, 1.8 + 1.6, -134.8], look: [6, 1.8 + 1.1, -138.6], fov: 72 },
@@ -195,7 +195,7 @@ export const SHOTS = {
   liaison_r3: { pos: [4.0, 8.8 + 1.65, -93.4], look: [16, 8.8 + 1.2, -108], fov: 72 },
   liaison_r3_b: { pos: [26.0, 8.8 + 1.65, -116.4], look: [8, 8.8 + 1.0, -99], fov: 72 },
   liaison_r3_top: { pos: [14.1, 8.8 + 27, -104.99], look: [14.1, 8.8, -105], fov: 55, clipY: 8.8 + 3.6, zone: 'floor2' },
-  library: { pos: [0, 22.8 + 1.65, -95], look: [0, 22.8 + 14, -112], fov: 80 },
+  library: { pos: [0, 22.8 + 1.65, -95], look: [0, 22.8 + 14, -112], fov: 80, lite: 1 },
   director: { pos: [5, 71.8 + 1.65, -94], look: [-2, 71.8 + 2, -110], fov: 72 },
   director_r3: { pos: [-2.2, 71.8 + 1.65, -93.0], look: [3, 71.8 + 1.0, -104], fov: 74 },
   director_r3_b: { pos: [-11.2, 71.8 + 1.7, -109.6], look: [4, 71.8 + 1.0, -96], fov: 72 },
