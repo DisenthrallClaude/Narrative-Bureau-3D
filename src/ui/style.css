@@ -24,7 +24,7 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #loading .frame .tl { left: -4px; top: -4px; border-width: 2px 0 0 2px; } #loading .frame .tr { right: -4px; top: -4px; border-width: 2px 2px 0 0; }
 #loading .frame .bl { left: -4px; bottom: -4px; border-width: 0 0 2px 2px; } #loading .frame .br { right: -4px; bottom: -4px; border-width: 0 2px 2px 0; }
 #loading .cls { position: absolute; top: 48px; left: 0; right: 0; text-align: center; font-family: var(--serif-zh); font-size: 12px; letter-spacing: .6em; color: rgba(226,191,134,.55); }
-#loading .emb { width: 118px; height: 118px; filter: drop-shadow(0 0 14px rgba(226,191,134,.18)) drop-shadow(0 2px 2px rgba(0,0,0,.6)); animation: embGlow 5s ease-in-out infinite; }
+#loading .emb { width: 138px; height: 138px; filter: drop-shadow(0 0 14px rgba(226,191,134,.18)) drop-shadow(0 2px 2px rgba(0,0,0,.6)); animation: embGlow 5s ease-in-out infinite; }
 @keyframes embGlow { 50% { filter: drop-shadow(0 0 22px rgba(226,191,134,.32)) drop-shadow(0 2px 2px rgba(0,0,0,.6)); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 #loading h1 { font-family: 'NB Serif', var(--title); font-weight: 700; letter-spacing: .62em; margin: 30px 0 12px .62em; font-size: 44px; color: var(--ivory); text-shadow: 0 2px 0 rgba(0,0,0,.5), 0 0 30px rgba(226,191,134,.12); }
@@ -138,3 +138,79 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #chapter .b { margin-top: 26px; font-size: 18px; letter-spacing: .3em; color: #b0262a; }
 #fade { position: fixed; inset: 0; background: #000; z-index: 45; opacity: 0; pointer-events: none; transition: opacity .8s; }
 #fade.on { opacity: 1; }
+
+/* ===== 批次47：HUD / 对话框 / 文档阅读 / 章节卡 统一深墨绿 · 暗铜 · 米白 · 衬线 ===== */
+/* HUD 目标栏：半透明墨绿底 + 左铜线 + 上下细铜线渐隐，衬线小字 */
+#obj { left: 30px; top: 28px; max-width: 440px; padding: 10px 18px 11px 16px; font-family: var(--serif-zh);
+  background: linear-gradient(90deg, rgba(12,22,17,.72), rgba(12,22,17,.46) 70%, rgba(12,22,17,0)); border-left: 2px solid var(--cu); }
+#obj::before, #obj::after { content: ''; position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, rgba(226,191,134,.55), rgba(176,129,74,.25) 60%, transparent); }
+#obj::before { top: 0; } #obj::after { bottom: 0; }
+#obj .t { font-family: var(--serif-zh); font-size: 11px; letter-spacing: .42em; color: var(--cu2); margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+#obj .t::before { content: ''; width: 5px; height: 5px; background: var(--cu2); transform: rotate(45deg); }
+#obj .m { font-family: var(--serif-zh); font-size: 15px; line-height: 1.6; color: var(--ivory); text-shadow: 0 1px 3px rgba(0,0,0,.8); letter-spacing: .08em; border-left: 0; padding-left: 0; }
+#obj .o { font-family: var(--serif-zh); font-size: 12.5px; color: #bfb091; margin-top: 6px; padding-left: 0; letter-spacing: .06em; }
+#obj .o:empty { display: none; }
+#area .n { font-family: 'NB Serif', var(--title); font-weight: 700; color: var(--ivory); letter-spacing: .5em; }
+#area .e { color: var(--cu); }
+/* 物品栏：墨绿格 + 细铜线 + 内描边，衬线小签 */
+#inv { right: 30px; top: 28px; gap: 12px; }
+#inv .it { width: 56px; height: 56px; border: 1px solid rgba(176,129,74,.75); background-color: rgba(12,22,17,.66); box-shadow: inset 0 0 0 3px rgba(8,14,11,.55), inset 0 0 0 4px rgba(226,191,134,.14), 0 3px 12px rgba(0,0,0,.4); }
+#inv .it > div { color: var(--cu2) !important; font-family: var(--serif-zh); }
+#inv .it span { bottom: -20px; font-family: var(--serif-zh); font-size: 11px; letter-spacing: .1em; color: var(--ivory); text-shadow: 0 1px 3px #000; }
+
+/* 对话框：墨绿纸纹底 + 暗铜双线框 + 四角铜角花；说话人铜签 */
+#dlg { bottom: 6%; padding: 30px 40px 20px; font-family: var(--serif-zh);
+  background: linear-gradient(180deg, rgba(15,27,21,.90), rgba(8,15,11,.95)), url('/assets/tex/Paper006_color.webp') center/520px;
+  background-blend-mode: normal, luminosity; border: 1px solid rgba(176,129,74,.7); outline: 1px solid rgba(176,129,74,.2); outline-offset: 5px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.55), inset 0 0 50px rgba(0,0,0,.4); }
+#dlg::before, #dlg::after { content: ''; position: absolute; width: 14px; height: 14px; border: solid var(--cu2); opacity: .8; }
+#dlg::before { left: -4px; top: -4px; border-width: 2px 0 0 2px; } #dlg::after { right: -4px; bottom: -4px; border-width: 0 2px 2px 0; }
+#dlg .who { position: absolute; left: 30px; top: -14px; margin: 0; padding: 4px 18px 4px 16px; font-size: 13px; font-weight: 600; letter-spacing: .3em; color: #1c130a;
+  background: linear-gradient(180deg, #e7c48c, #b98a50 55%, #8e6534); border: 1px solid #5a3d1e; box-shadow: inset 0 1px 0 rgba(255,240,205,.6), 0 2px 6px rgba(0,0,0,.55); text-shadow: 0 1px 0 rgba(255,235,195,.4); }
+#dlg .who:empty { display: none; }
+#dlg .line { font-size: 18px; line-height: 1.8; color: var(--ivory); letter-spacing: .05em; }
+#dlg .line.narr { color: #bfb196; }
+#dlg .choices div { border-color: rgba(176,129,74,.45); color: var(--ivory); font-family: var(--serif-zh); }
+#dlg .choices div.sel, #dlg .choices div:hover { background: rgba(176,129,74,.18); border-color: var(--cu2); }
+#dlg .next { right: 26px; bottom: 10px; color: var(--cu); font-family: var(--serif-zh); letter-spacing: .24em; }
+
+/* 文档阅读 · 纸质档案：米黄档案纸 + 装订孔 + 页眉档号 + 打字机字（西文等宽 / 汉字宋体）+ 红色骑缝印 */
+#reader { background: radial-gradient(ellipse at 50% 45%, rgba(14,24,19,.80), rgba(3,6,4,.92) 75%); }
+#reader .paper:not(.dark):not(.screen):not(.phone) { padding: 70px 70px 66px 84px; color: #2a2017; background-color: #e3d3ad; background-size: 600px;
+  font-family: 'Courier Prime', 'Courier New', 'Nimbus Mono PS', 'Liberation Mono', 'NB Serif', 'Noto Serif SC', monospace;
+  box-shadow: 0 30px 80px rgba(0,0,0,.7), inset 0 0 90px rgba(110,74,30,.38), inset 0 0 0 1px rgba(90,60,25,.25); }
+#reader .paper:not(.dark):not(.screen):not(.phone)::before { content: '叙事管理局 · 京城总部　内部资料 · 注意保存　　档号 NB-0731'; position: absolute; left: 84px; right: 70px; top: 30px; padding-bottom: 7px;
+  border-bottom: 1px double rgba(90,60,25,.45); font-family: 'NB Serif', serif; font-size: 11px; letter-spacing: .26em; color: rgba(70,48,22,.75); }
+#reader .paper:not(.dark):not(.screen):not(.phone)::after { content: ''; position: absolute; left: 30px; top: 0; bottom: 0; width: 18px; pointer-events: none;
+  background: radial-gradient(circle at 9px 22%, rgba(30,20,10,.55) 0 6px, rgba(120,90,50,.35) 6.5px 7.5px, transparent 8px), radial-gradient(circle at 9px 78%, rgba(30,20,10,.55) 0 6px, rgba(120,90,50,.35) 6.5px 7.5px, transparent 8px); }
+#reader .paper:not(.dark):not(.screen):not(.phone) h2 { font-family: 'NB Serif', var(--title); font-weight: 700; letter-spacing: .24em; color: #2a1d10; border-bottom: 1px solid rgba(90,60,25,.4); }
+#reader .paper:not(.dark):not(.screen):not(.phone) .txt { font-size: 16.5px; line-height: 2; letter-spacing: .04em; color: #2a2017; text-shadow: 0 0 .6px rgba(30,20,10,.55), .3px .2px 0 rgba(30,20,10,.18); }
+#reader .paper:not(.dark):not(.screen):not(.phone) .pg { bottom: 22px; font-family: 'NB Serif', serif; font-size: 13px; letter-spacing: .3em; color: rgba(60,40,18,.75); opacity: 1; }
+#reader .paper:not(.dark):not(.screen):not(.phone) .pg::before { content: '— 第 '; } #reader .paper:not(.dark):not(.screen):not(.phone) .pg::after { content: ' 页 —'; }
+#reader .seal { position: absolute; right: 54px; bottom: 54px; width: 108px; height: 108px; border-radius: 50%; border: 3px solid rgba(168,30,34,.78); box-shadow: inset 0 0 0 4px rgba(227,211,173,.0), inset 0 0 0 6px rgba(168,30,34,.6);
+  display: flex; align-items: center; justify-content: center; text-align: center; font-family: 'NB Serif', serif; font-weight: 700; font-size: 15px; line-height: 1.25; letter-spacing: .12em; color: rgba(168,30,34,.82); transform: rotate(-13deg); mix-blend-mode: multiply; opacity: .9; pointer-events: none;
+  -webkit-mask: radial-gradient(circle at 30% 40%, #000 55%, rgba(0,0,0,.7) 70%, #000 85%); }
+#reader .seal::before { content: '★'; position: absolute; top: 12px; font-size: 13px; }
+#reader .paper.dark .seal, #reader .paper.screen .seal, #reader .paper.phone .seal { display: none; }
+/* 终端类：琥珀荧光（不用科技蓝） */
+#reader .paper.screen { background: radial-gradient(ellipse at 50% 40%, #1a1206, #0a0703 80%); color: #ffb648; font-family: 'Courier New', 'Liberation Mono', 'NB Sans', monospace;
+  border: 1px solid rgba(176,129,74,.55); outline: 1px solid rgba(176,129,74,.15); outline-offset: 6px; box-shadow: 0 0 46px rgba(255,160,40,.16), inset 0 0 70px rgba(0,0,0,.75); }
+#reader .paper.screen::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px); }
+#reader .paper.screen h2 { font-family: 'Courier New', 'NB Sans', monospace; font-weight: 700; color: #ffc766; border-color: rgba(255,182,72,.35); text-shadow: 0 0 8px rgba(255,170,50,.55); letter-spacing: .16em; }
+#reader .paper.screen .txt { color: #ffb648; text-shadow: 0 0 6px rgba(255,165,45,.5), 0 0 1px rgba(255,200,120,.8); font-size: 16px; }
+#reader .paper.screen .txt::after { content: '▌'; animation: blink 1.1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+#reader .paper.screen .pg { color: #c98a34; opacity: .85; }
+#reader .help { bottom: 3.6vh; font-family: var(--serif-zh); color: #b9a57e; letter-spacing: .24em; font-size: 12.5px; }
+
+/* 章节卡：墨绿底纸纹 + 档案编号 + 铜细线 + 大号宋体 */
+#chapter { background: radial-gradient(ellipse at 50% 46%, #13241b 0%, #060b08 72%); }
+#chapter::before { content: ''; position: absolute; inset: 0; background: url('/assets/tex/Paper006_color.webp') center/520px; opacity: .06; mix-blend-mode: luminosity; }
+#chapter::after { content: ''; position: absolute; inset: 34px; border: 1px solid rgba(176,129,74,.32); outline: 1px solid rgba(176,129,74,.14); outline-offset: 5px; pointer-events: none; }
+#chapter > * { position: relative; }
+#chapter .no { font-family: 'NB Serif', serif; font-size: 12px; letter-spacing: .5em; color: var(--cu); }
+#chapter .rule { width: 340px; height: 1px; margin: 22px 0; background: linear-gradient(90deg, transparent, var(--cu2), transparent); position: relative; }
+#chapter .rule::after { content: ''; position: absolute; left: 50%; top: -3px; width: 6px; height: 6px; margin-left: -3px; background: #0b140f; border: 1px solid var(--cu2); transform: rotate(45deg); }
+#chapter .a { font-family: 'NB Serif', 'Noto Serif SC', serif; font-weight: 700; font-size: 52px; letter-spacing: .4em; margin-right: -.4em; color: var(--ivory); text-shadow: 0 2px 18px rgba(0,0,0,.7); }
+#chapter .b { margin-top: 0; font-family: 'NB Serif', serif; font-size: 17px; letter-spacing: .34em; color: #c8b896; }
+#chapter .b:empty { display: none; }

@@ -93,7 +93,7 @@ function renderPage() {
   const p = pages[pi]; const el = $('paper');
   el.className = 'paper ' + (p.style ?? '');
   const txt = (p.text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/「本条不存在。」/g, '<span class="red">「本条不存在。」</span>');
-  el.innerHTML = `${p.title ? `<h2>${p.title}</h2>` : ''}${p.img ? `<img class="full" src="${p.img}">` : ''}${p.text ? `<div class="txt">${txt}</div>` : ''}${p.stamp ? `<div class="stamp">${p.stamp}</div>` : ''}${pages.length > 1 ? `<div class="pg">${pi + 1} / ${pages.length}</div>` : ''}`;
+  el.innerHTML = `${p.title ? `<h2>${p.title}</h2>` : ''}${p.img ? `<img class="full" src="${p.img}">` : ''}${p.text ? `<div class="txt">${txt}</div>` : ''}${p.stamp ? `<div class="stamp">${p.stamp}</div>` : ''}${!p.style && !p.img ? '<div class="seal">叙事管理局<br>档案专用</div>' : ''}${pages.length > 1 ? `<div class="pg">${pi + 1} / ${pages.length}</div>` : ''}`;
   p.onShow?.();
 }
 export function openReader(pg, { onClose } = {}) {
@@ -139,7 +139,7 @@ export function onResume(fn) { $('resume').onclick = fn; }
 
 export function chapterCard(a, b, ms = 6000) {
   if (window.__NB_AUTO__) { window.__NB_AUTO__.log?.push('章节卡 ' + a + ' / ' + (b ?? '')); ms = 50; }
-  return new Promise((res) => { $('chapa').textContent = a; $('chapb').textContent = b ?? ''; $('chapter').classList.add('on'); setTimeout(() => { $('chapter').classList.remove('on'); setTimeout(res, 2000); }, ms); });
+  return new Promise((res) => { $('chapa').textContent = a; $('chapb').textContent = b ?? ''; $('chapno').textContent = /终/.test(a + (b ?? '')) ? '档案号 NB-0001 · 结卷' : '档案号 NB-0001 · 第一卷'; $('chapter').classList.add('on'); setTimeout(() => { $('chapter').classList.remove('on'); setTimeout(res, 2000); }, ms); });
 }
 export function fade(on) { $('fade').classList.toggle('on', on); }
 export function setFpsText(t) { $('fps').textContent = t; }
