@@ -42,7 +42,7 @@ export function dormMats() {
     dm_enamelRim: new THREE.MeshStandardMaterial({ color: 0x24407a, roughness: 0.3, envMapIntensity: 0.3 }),
     dm_desk: matte({ color: 0x6a4a2c, roughness: 0.7, envMapIntensity: 0.2 }),
     dm_deskTop: matte({ color: 0x3e5a48, roughness: 0.8 }), // 绿呢台面垫
-    dm_wardrobe: matte({ map: plank, color: 0x8a6448, roughness: 0.55, envMapIntensity: 0.25 }), // 批次34：素橙平涂 → 木纹 + 压暗清漆
+    dm_wardrobe: matte({ map: plank, color: 0x5a3a24, roughness: 0.42, envMapIntensity: 0.3 }), dm_wardrobePanel: matte({ map: plank, color: 0x4a2f1c, roughness: 0.38, envMapIntensity: 0.32 }), // 批次35：深胡桃——dorm_r3_b 偏橙的大面其实是门板 / 芯板用的 dm_desk（0x6a4a2c 无贴图），改用胡桃木纹 dm_wardrobePanel // 批次34：素橙平涂 → 木纹 + 压暗清漆
     dm_brass: new THREE.MeshStandardMaterial({ color: 0xb08a48, metalness: 0.8, roughness: 0.45, envMapIntensity: 0.4 }),
     dm_pane: new THREE.MeshStandardMaterial({ color: 0x9ab0c4, emissive: 0xcfdcea, emissiveIntensity: 0.55, roughness: 0.2 }),
     dm_sillWhite: matte({ color: 0xd8d2c4 }),
@@ -145,11 +145,11 @@ export function wardrobe(b, world, x, y, z, yaw = 0, o = {}) {
   const bx = (key, w, h, d, lx, ly, lz, uv = 1) => b.add(key, new THREE.BoxGeometry(w, h, d), { pos: P(lx, ly, lz), rot: R }, { uv });
   bx('dm_wardrobe', W, H, 0.55, 0, H / 2 + 0.06, 0, 1); bx('dm_wardrobe', W + 0.04, 0.05, 0.58, 0, H + 0.085, 0, 1); bx('dm_desk', W - 0.04, 0.06, 0.5, 0, 0.03, 0, 1);
   bx('dm_shoe', 0.008, H - 0.12, 0.01, 0, H / 2 + 0.06, 0.277, false);
-  for (const sx of [-1, 1]) { const dx = sx * W / 4, dw = W / 2 - 0.03; bx('dm_desk', W / 2 - 0.08, H - 0.3, 0.012, dx, H / 2 + 0.06, 0.28, 1);
+  for (const sx of [-1, 1]) { const dx = sx * W / 4, dw = W / 2 - 0.03; bx('dm_wardrobePanel', W / 2 - 0.08, H - 0.3, 0.012, dx, H / 2 + 0.06, 0.28, 1);
     // 批次24：门板框架（立梃 / 上中下冒头）+ 凸芯板 + 铜拉手（底座 + 把）+ 锁眼
     for (const e of [-1, 1]) bx('dm_wardrobe', 0.07, H - 0.12, 0.022, dx + e * (dw / 2 - 0.035), H / 2 + 0.06, 0.288, 1);
     for (const yy of [0.15, 1.02, H - 0.03]) bx('dm_wardrobe', dw - 0.14, 0.07, 0.022, dx, yy, 0.288, 1);
-    for (const [yy, hh] of [[0.585, 0.8], [1.47, 0.82]]) bx('dm_desk', dw - 0.22, hh - 0.08, 0.016, dx, yy, 0.292, 1);
+    for (const [yy, hh] of [[0.585, 0.8], [1.47, 0.82]]) bx('dm_wardrobePanel', dw - 0.22, hh - 0.08, 0.016, dx, yy, 0.292, 1);
     bx('dm_brass', 0.035, 0.2, 0.008, sx * 0.05, 1.08, 0.3, false); bx('dm_brass', 0.016, 0.16, 0.03, sx * 0.05, 1.08, 0.316, false); bx('dm_frame', 0.008, 0.02, 0.004, sx * 0.05, 0.96, 0.302, false); }
   bx('dm_wardrobe', 0.34, 0.44, 0.012, W / 4 + 0.03, 1.47, 0.303, false); bx('dm_mirror', 0.3, 0.4, 0.004, W / 4 + 0.03, 1.47, 0.311, false); // 门上小镜（木框 + 反射镜面）
   if (o.suitcase !== false) { b.add('dm_case', RB(0.6, 0.2, 0.42, 0.03), { pos: P(0, H + 0.21, 0), rot: R }, { uv: false }); }

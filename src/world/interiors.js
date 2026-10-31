@@ -1,5 +1,6 @@
 // 室内：正门门廊/服务台、安检大厅（扇形拱顶、玫瑰窗、闸机与扫描门、LED 大屏）、人事档案馆（回廊、阅览大厅、B1 密集库）
 import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { Batch } from '../engine/batch.js';
 import { placeModel, loadTex } from '../engine/assets.js';
 import { mats } from './mats.js';
@@ -907,9 +908,10 @@ function dossierStand(g, M, name, x, z, flip = false) { // flip：相框朝 −Z
   const fr = new THREE.Group(); fr.name = 'pframe_' + name; fr.position.set(x, TOP, z + (flip ? 0.13 : -0.13)); fr.rotation.order = 'YXZ'; fr.rotation.set(-0.24, flip ? Math.PI : 0, 0); g.add(fr);
   const fa = (geo, m, px, py, pz, rx = 0) => { const me = new THREE.Mesh(geo, m); me.position.set(px, py, pz); me.rotation.x = rx; me.castShadow = true; me.receiveShadow = true; fr.add(me); return me; };
   const PW = 0.13, PH = 0.18, B = 0.014, BOT = 0.046, D = 0.016;
-  fa(new THREE.BoxGeometry(PW + 2 * B, BOT, D), brass, 0, BOT / 2, 0); // 底框（宽，嵌名签）
-  fa(new THREE.BoxGeometry(PW + 2 * B, B, D), brass, 0, BOT + PH + B / 2, 0); // 顶框
-  for (const sx of [-1, 1]) fa(new THREE.BoxGeometry(B, PH, D), brass, sx * (PW / 2 + B / 2), BOT + PH / 2, 0);
+  const RB = (w, h, d) => new RoundedBoxGeometry(w, h, d, 3, 0.0028); // 批次35：框条 2.8 mm 倒圆，边缘吃环境高光（直角方条整面同色像木框）
+  fa(RB(PW + 2 * B, BOT, D), brass, 0, BOT / 2, 0); // 底框（宽，嵌名签）
+  fa(RB(PW + 2 * B, B, D), brass, 0, BOT + PH + B / 2, 0); // 顶框
+  for (const sx of [-1, 1]) fa(RB(B, PH + 0.004, D), brass, sx * (PW / 2 + B / 2), BOT + PH / 2, 0);
   fa(new THREE.BoxGeometry(PW + 2 * B - 0.004, PH + BOT + B - 0.004, 0.004), new THREE.MeshStandardMaterial({ color: 0x2a1c12, roughness: 0.7 }), 0, (PH + BOT + B) / 2, -D / 2 - 0.001); // 背板
   fa(new THREE.BoxGeometry(PW + 0.006, 0.004, 0.002), brass, 0, BOT + PH + 0.002, D / 2 - 0.002); // 内口铜线
   const pm = fa(new THREE.PlaneGeometry(PW, PH), framePhotoMat(name), 0, BOT + PH / 2, 0.002); pm.castShadow = false;
