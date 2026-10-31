@@ -10,6 +10,7 @@ import { FLOOR } from './exterior.js';
 import { point, rectLight, spot, brassPlaqueMaterial, brassPlateMaterial } from './interiors.js';
 import { lightShaft } from '../engine/fx.js';
 import { goldText } from './gothic.js';
+import { warmSweepDirector } from './m11_director.js';
 
 const ZONE_OF = { plaza: ['surface', () => 0], security_hall: ['security_hall', () => FLOOR], library: ['library', () => UPPER['4F']], east_stair: ['east_wing', () => FLOOR], lobby_2F: ['floor2', () => UPPER['2F']], lobby_3F: ['floor3', () => UPPER['3F']], lobby_4F: ['library', () => UPPER['4F']], lobby_12F: ['director', () => UPPER['12F']], east_cloister: ['east_cloister', () => FLOOR], citizen_service: ['east_wing', () => FLOOR], floor3_office: ['floor3', () => UPPER['3F']], floor2_liaison: ['floor2', () => UPPER['2F']], floor2_pub: ['floor2', () => UPPER['2F']], director: ['director', () => UPPER['12F']], gate: ['gate', () => FLOOR], archive: ['archive', () => FLOOR], command_center: ['east_wing', () => FLOOR + 7], exam_center: ['east_wing', () => FLOOR + 7], lab3: ['floor3', () => UPPER['3F']], zone_control: ['east_wing', () => FLOOR + 14], east_ante: ['east_wing', () => FLOOR + 14], east_ante2: ['east_wing', () => FLOOR + 7], helipad_roof: ['surface', () => 12.4], canteen: ['canteen', () => FLOOR], b1: ['armory', () => -10], b2: ['interrogation', () => -18], archive_b1: ['archive_b1', () => FLOOR - 6], vault_b3: ['vault_b3', () => -26], blobby_b1: ['armory', () => -10], blobby_b2: ['interrogation', () => -18], blobby_b6: ['training', () => -52], spine_b3: ['vault_b3', () => -26], spine_b4: ['vault_b4', () => -34], spine_b5: ['vault_b5', () => -42], b4: ['vault_b4', () => -34], b5: ['vault_b5', () => -42], b6: ['training', () => -52], b7: ['abyss', () => -300], medical: ['floor3', () => UPPER['3F']], dorm: ['surface', () => 0.046], dorm2: ['surface', () => 4.64], dorm3: ['surface', () => 9.24], interrogation: ['interrogation', () => -18], hangar: ['surface', () => 0], training: ['training', () => -52], b5_deep: ['vault_b5', () => -42], metro: ['surface', () => -3.955], memorial: ['surface', () => 0.08], s7_ops: ['seventh', () => -500], s7_wrap: ['seventh', () => -500], abyss_city: ['abyss', () => -300], abyss_exam: ['abyss', () => -300], abyss_core: ['abyss', () => -280], abyss_tide: ['abyss', () => -300], s7_entry: ['seventh', () => -500] };
 // 做旧：冷轧钢/喷漆钢件压暗、偏橄榄灰、提高粗糙度（「过白过新」）
@@ -171,6 +172,7 @@ export async function buildR3(ctx, world, MAT, late = false) {
         if (AGE[nm]) m.material = Array.isArray(m.material) ? m.material.map((x) => ageMat(x, nm)) : ageMat(m.material, nm);
         if (nm.includes('bankers_lamp') || nm.includes('ceiling_light') || nm.includes('kerosene') || nm.includes('vintage_oil_lamp')) m.material = Array.isArray(m.material) ? m.material.map((x) => glowMat(x, nm)) : glowMat(m.material, nm);
       }
+      if (id === 'director') warmSweepDirector(zone); // 批次 M15：局长室道具去蓝绿
     }));
     ctx.r3 = ctx.r3 ?? {}; ctx.r3[id] = plan;
   }

@@ -55,3 +55,27 @@ export function buildM11Director(zone, world, y) {
   }
   return Promise.all(jobs).catch((e) => console.warn('M11 director', e));
 }
+
+// —— 批次 M15：局长室禁蓝零容忍 —— 对局长室所有道具模型（Props 实例，名字 'props:*'）做蓝 / 青 / 绿像素 → 酒红褐重映射（保留明暗与贴图细节）；
+// 玻璃防风烛台（透射玻璃反天光成蓝）改成不透射的暖琥珀釉。壳体 / 窗 / 天空不在 Props 里，不受影响。?nom15=1 关闭。
+const M15_DEBLUE = typeof location !== 'undefined' && !new URLSearchParams(location.search).has('nom15');
+const DEBLUE_GLSL = '\n{ vec3 q = diffuseColor.rgb; float l = dot(q, vec3(0.3, 0.59, 0.11)); float cb = q.b - q.r, cg = q.g - q.r;'
+  + ' if ((cb > 0.025 && q.b >= q.g * 0.85) || (cg > 0.03 && q.g > q.b)) diffuseColor.rgb = clamp(vec3(0.40, 0.19, 0.12) * (0.45 + l * 2.2), 0.0, 1.0); }';
+function deBlueMat(x, nm) {
+  if (!x || x.userData?.m15) return x;
+  const c = x.clone(); c.userData = { ...(x.userData || {}), m15: true };
+  if (nm.includes('candle_holder')) { if ('transmission' in c) c.transmission = 0; c.transparent = false; c.opacity = 1; c.color = new THREE.Color(0x7a4a22); c.roughness = 0.4; c.envMapIntensity = 0.3; }
+  const prev = x.onBeforeCompile, prevKey = x.customProgramCacheKey?.bind(x);
+  c.onBeforeCompile = (sh, r) => { prev?.call(c, sh, r); sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>' + DEBLUE_GLSL); };
+  c.customProgramCacheKey = () => (prevKey ? prevKey() : '') + '|m15deblue';
+  if (c.emissive) { const h = {}; c.emissive.getHSL(h); if (h.s > 0.2 && h.h > 0.2 && h.h < 0.75) c.emissive.setHex(0xff9a40); }
+  return c;
+}
+export function warmSweepDirector(root) {
+  if (!M15_DEBLUE || !root) return;
+  root.traverse((o) => {
+    if (!o.isMesh || !(o.name || '').startsWith('props:')) return;
+    const nm = o.name.slice(6);
+    o.material = Array.isArray(o.material) ? o.material.map((x) => deBlueMat(x, nm)) : deBlueMat(o.material, nm);
+  });
+}

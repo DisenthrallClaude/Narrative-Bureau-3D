@@ -12,7 +12,8 @@ import { FLOOR } from './exterior.js';
 import { UPPER } from './upper.js';
 import { UNDER } from './rooms.js';
 import { buildM9Training, M9_TRAIN } from './m9_training.js';
-import { M12_TRAIN } from './m12_training.js'; // 批次 M12：平铁灯光桁架 → m12/tr_truss
+import { M12_TRAIN } from './m12_training.js';
+import { warmSweepDirector } from './m11_director.js'; // 批次 M15 // 批次 M12：平铁灯光桁架 → m12/tr_truss
 import { dressMats, spineMaterial, Props, wallDress, wallSeg, coffered, bunkerCeiling, rug, floorInlay, deskSet, paperStack, folderStack, telephone, bin, plantPot, cabinetRow, spineShelf, hangingSign, greenLamp } from './dress.js';
 
 const Y = FLOOR;
@@ -182,19 +183,20 @@ export async function buildDressing(scene, world, ctx) {
     // 壁炉侧：两张扶手椅 + 小圆几 + 地球仪
     for (const z of [-98.4, -101.6]) P.add('armchair', [-10, y, z], { h: 1.05, yaw: -Math.PI / 2 + (z > -100 ? -0.4 : 0.4) });
     b.add('wood', new THREE.CylinderGeometry(0.35, 0.35, 0.04, 20), { pos: [-9.4, y + 0.6, -100] }, { uv: 0.6 }); b.add('wood', new THREE.CylinderGeometry(0.04, 0.12, 0.6, 10), { pos: [-9.4, y + 0.3, -100] }, { uv: 0.6, collide: true }); P.add('vase', [-9.4, y + 0.62, -100], { h: 0.32 });
-    rug(b, -9.6, -100, 3.4, 4.6, y + 0.016, 'dz_rugNavy');
+    rug(b, -9.6, -100, 3.4, 4.6, y + 0.016, 'dz_rugGreen'); // M15：藏青地毯 → 酒红褐底驼纹（dz_rugGreen 已在批次57重染）
     P.add('gothic_cabinet', [-12.4, y, -95.2], { h: 2.6, yaw: Math.PI / 2 }); P.add('gothic_cabinet', [-12.4, y, -105.6], { h: 2.6, yaw: Math.PI / 2 }); world.box(-12.4, y + 1.3, -95.2, 1, 2.6, 2); world.box(-12.4, y + 1.3, -105.6, 1, 2.6, 2);
     b.box('blackMarble', 0.7, 1.1, 0.7, [-8.5, y + 0.55, -109.5], { uv: 0.5, collide: true }); P.add('marble_bust', [-8.5, y + 1.1, -109.5], { h: 0.62, yaw: 0.6 });
     b.box('blackMarble', 0.7, 1.1, 0.7, [8.5, y + 0.55, -109.5], { uv: 0.5, collide: true }); P.add('bronze_gui', [8.5, y + 1.1, -109.5], { h: 0.35 });
     // 局徽挂毯（机要室隔墙西面）
-    { const tp = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 4.2), M.navy); tp.position.set(6.82, y + 3.4, -99.5); tp.rotation.y = -Math.PI / 2; zone.add(tp); const em = emblem(0.75, M.goldBright, M.navy); em.position.set(6.78, y + 3.7, -99.5); em.rotation.y = -Math.PI / 2; zone.add(em); b.box('brass', 0.06, 0.06, 2.8, [6.78, y + 5.55, -99.5], { uv: 1 }); for (let k = 0; k < 9; k++) b.box('gold', 0.02, 0.18, 0.04, [6.8, y + 1.22, -100.6 + k * 0.27], { uv: 1 }); }
+    { const m15Wine = new THREE.MeshStandardMaterial({ color: 0x4a1a14, roughness: 0.92, side: THREE.DoubleSide }); // M15：藏青挂毯 → 酒红褐呢
+      const tp = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 4.2), m15Wine); tp.position.set(6.82, y + 3.4, -99.5); tp.rotation.y = -Math.PI / 2; zone.add(tp); const em = emblem(0.75, M.goldBright, m15Wine); em.position.set(6.78, y + 3.7, -99.5); em.rotation.y = -Math.PI / 2; zone.add(em); b.box('brass', 0.06, 0.06, 2.8, [6.78, y + 5.55, -99.5], { uv: 1 }); for (let k = 0; k < 9; k++) b.box('gold', 0.02, 0.18, 0.04, [6.8, y + 1.22, -100.6 + k * 0.27], { uv: 1 }); }
     // 机要室：碎纸机、密电终端、档案柜、密码门键盘
     b.box('blackMetal', 0.6, 0.8, 0.45, [8, y + 0.4, -94.6], { uv: 1, collide: true }); b.box('dz_bakelite', 0.5, 0.04, 0.05, [8, y + 0.81, -94.6], { uv: false }); paperStack(b, 8.4, y, -95.1, 0.4, 2);
     b.box('wood', 1.6, 0.76, 0.8, [11.8, y + 0.38, -102.6], { uv: 0.6, collide: true }); P.add('monitor', [11.8, y + 0.76, -102.85], { h: 0.4, yaw: -Math.PI / 2 }); P.add('keyboard', [11.5, y + 0.76, -102.6], { w: 0.42, yaw: -Math.PI / 2 }); telephone(b, 11.8, y + 0.76, -102.0, -Math.PI / 2, 'dz_redPhone');
     cabinetRow(P, world, 10, y, -103.5, 0, 4, 0.62, 'drawer_cabinet', 1.4);
-    b.box('blackMetal', 0.04, 0.28, 0.18, [7.17, y + 1.4, -96.4], { uv: 1 }); const kp = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.2), new THREE.MeshStandardMaterial({ color: 0, emissive: 0x30ff70, emissiveIntensity: 0.9 })); kp.position.set(7.2, y + 1.42, -96.4); kp.rotation.y = Math.PI / 2; zone.add(kp);
+    b.box('blackMetal', 0.04, 0.28, 0.18, [7.17, y + 1.4, -96.4], { uv: 1 }); const kp = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.2), new THREE.MeshStandardMaterial({ color: 0, emissive: 0xff9a40, emissiveIntensity: 0.7 })); kp.position.set(7.2, y + 1.42, -96.4); kp.rotation.y = Math.PI / 2; zone.add(kp);
     point(zone, 0xffc890, 5, [-11, y + 4.8, -100], 8); point(zone, 0xffc890, 4, [10, y + 3.5, -99], 7);
-    finish(zone, b, P);
+    b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); jobs.push(P.build(zone).then(() => warmSweepDirector(zone))); // 批次 M15：道具去蓝绿
   }
 
   // ================= 1F 职工食堂与中庭 =================

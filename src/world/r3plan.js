@@ -520,7 +520,7 @@ export function planDirector(y) {
   out.push({ m: 'r2/side_table_01', x: 5.55, y, z: -100.0, yaw: 0, h: 0.55, tag: '会客区', on: 'floor' });
   out.push({ m: 'r2/bankers_lamp', x: 5.55, y: y + 0.55, z: -100.0, yaw: -0.6, h: 0.4, tag: '会客区', on: 'desk' });
   out.push({ m: 'r2/coffee_mug', x: 3.7, y: y + 0.45, z: -97.9, yaw: 0.4, h: 0.09, tag: '会客区', on: 'desk' });
-  rug(out, 'dz_rugNavy', 4.0, y + 0.02, -98.1, 4.2, 4.0);
+  rug(out, 'dz_rugGreen', 4.0, y + 0.02, -98.1, 4.2, 4.0); // M15：会客区藏青格纹 → 酒红褐底驼纹
   light(out, 4.0, y + 2.6, -98.0, 0xffd2a0, 3, 7);
   // ② 秘书台（入口西侧，面向来访者）
   workstation(out, -6.0, -95.6, y, -Math.PI / 2, 90, { typewriter: true, tag: '秘书台' });
