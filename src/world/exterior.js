@@ -530,6 +530,14 @@ async function heroFacade(g, M, world, ctx, add) {
   // 批次58：门廊券内石面反弹暖光（2850K，不投影）——批55 遮蔽后左门扇只剩间接光、直射暖灯照不到外表面；补光偏左放（距左门扇外表面 ≈1.9 m、右门扇 ≈3.8 m + 射程窗口衰减），把左扇抬到暗古铜而右扇基本不变
   // 批次60：单盏 Y+3.4 只照亮左扇中段（上段 (54,29,28) 偏灰、底部 (59,37,45) 偏紫）→ 改竖排两盏（Y+1.6 / Y+6.6）覆盖整扇 9 m 高度，各 18 / 射程 6.5，仍偏左、不投影
   for (const [py, nm] of [[1.6, 'porch_bounce60_lo'], [6.6, 'porch_bounce60_hi']]) { const pb = new THREE.PointLight(0xffb26e, 18, 6.5, 2); pb.position.set(-1.0, Y + py, -7.8); pb.castShadow = false; pb.name = nm; g.add(pb); }
+  // 批次M7：正门门廊 hero 细部（tools/blender/m7_portico.py → m7/portico.glb）：五重券门柱叶饰钟形柱头 + 八角阶梯柱础、门洞内侧三级退缩石门套 + 暗铜嵌线、门楣下沿叠涩齿饰。
+  // 叠加在 hero_facade 原 portal 上（原柱头 / 柱脚被包住），不加碰撞（门洞内皮只凸 0.16 m，通行 6.68 m），剧情触发器 / 门扇不动；石材深灰（Granite003A），暗铜金属 0.6 / 粗糙 0.5 / env 0.5。?nom7=1 关闭对比
+  if (!/[?&]nom7=1/.test(location.search)) loadModel('m7/portico').then((src) => {
+    const st = (c, r) => weather(pbr('Granite003A', { color: c, roughness: r, env: 0.35, normalScale: 0.9 }), { macro: 0.14, dust: 0.15, grime: 0.3, ground: 0.4, rough: 0.1 });
+    const MM = { m7_stone: st(0x6a645c, 0.8), m7_stoneDark: st(0x45403a, 0.85), m7_bronze: new THREE.MeshStandardMaterial({ color: 0x4a3420, metalness: 0.6, roughness: 0.5, envMapIntensity: 0.5 }) };
+    src.traverse((o) => { if (!o.isMesh) return; o.material = [].concat(o.material).map((mt) => MM[mt?.name] || mt); if (o.material.length === 1) o.material = o.material[0]; o.castShadow = false; o.receiveShadow = true; });
+    src.position.set(0, Y, -5); src.name = 'm7_portico'; gHi.add(src);
+  }).catch((e) => console.warn('[NB] m7 portico', e));
   innerVestibuleDoors(g, M, Y); // 批次49：门洞纵深——门厅尽头内门（铜饰胡桃木门半开）+ 门厅暖光渐变
   // 文字带「叙事管理局」（黑色抛光石板上的鎏金字）
   // 批次M4：招牌底板原是 F_marbleDark 抛光黑石映出黄昏蓝天 → 读成蓝底；文字后加暗铜底板（金属 0.6 / 粗糙 0.5 / env 0.5，哑光暗古铜）= 暗铜底金字
