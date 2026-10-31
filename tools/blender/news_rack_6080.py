@@ -10,7 +10,7 @@ def mat(name, col, rough=0.5, metal=0.0, emit=None, es=0.0):
     b.inputs['Base Color'].default_value = (*col, 1); b.inputs['Roughness'].default_value = rough; b.inputs['Metallic'].default_value = metal
     if emit: b.inputs['Emission Color'].default_value = (*emit, 1); b.inputs['Emission Strength'].default_value = es
     return m
-M = dict(green=mat('nr_greenPaint', (0.06, 0.20, 0.13), 0.42, 0.25), greenD=mat('nr_greenDark', (0.035, 0.11, 0.07), 0.5, 0.25),
+M = dict(green=mat('nr_greenPaint', (0.060, 0.030, 0.015), 0.40, 0.35), greenD=mat('nr_greenDark', (0.028, 0.014, 0.007), 0.48, 0.35)  # 批次55：墨绿 → 暗铜褐烤漆（材质名保留以兼容）,
          cream=mat('nr_cream', (0.78, 0.72, 0.58), 0.5), red=mat('nr_red', (0.50, 0.06, 0.04), 0.45),
          steel=mat('nr_steel', (0.30, 0.30, 0.31), 0.45, 0.8), brass=mat('nr_rivet', (0.62, 0.48, 0.25), 0.35, 1.0),
          rubber=mat('nr_rubber', (0.03, 0.03, 0.03), 0.9),

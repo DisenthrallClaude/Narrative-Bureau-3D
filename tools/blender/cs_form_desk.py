@@ -25,7 +25,7 @@ M = dict(walnut=mat('fd_walnut', (1, 1, 1), 0.42, tex=os.path.join(TEXD, 'fd_wal
          brass=mat('fd_brass', (0.80, 0.60, 0.30), 0.28, 1.0), brassD=mat('fd_brassDim', (0.50, 0.37, 0.19), 0.4, 1.0),
          steel=mat('fd_steel', (0.55, 0.55, 0.56), 0.3, 1.0), ink=mat('fd_ink', (0.03, 0.03, 0.035), 0.35),
          formA=mat('fd_formA', (1, 1, 1), 0.8, 0, TA), formB=mat('fd_formB', (1, 1, 1), 0.8, 0, TB),
-         glass=mat('fd_glass', (0.75, 0.80, 0.78), 0.05, 0.0, alpha=0.18), felt=mat('fd_felt', (0.13, 0.20, 0.14), 0.9))
+         glass=mat('fd_glass', (0.75, 0.80, 0.78), 0.05, 0.0, alpha=0.18), felt=mat('fd_felt', (0.12, 0.018, 0.022), 0.95))  # 批次55：灰绿毛毡 → 深酒红呢面
 def G(x, y, z): return (x, -z, y)
 def add(o, m): o.data.materials.append(M[m]); return o
 def box(m, w, h, d, x, y, z, rx=0.0):
