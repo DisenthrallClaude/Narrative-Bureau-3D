@@ -1881,7 +1881,7 @@ const X8 = {
     for (const x of [-12.5, 12.5]) { out.push({ box: 'iron', x, y: y + 12.9, z: -124, w: 0.6, h: 0.06, d: 62, tag: '电缆桥架', on: 'ceil' }); for (const s of [-1, 1]) out.push({ box: 'iron', x: x + s * 0.3, y: y + 12.98, z: -124, w: 0.03, h: 0.14, d: 62, tag: '电缆桥架', on: 'ceil' });
       for (let k = 0; k < 6; k++) out.push({ box: 'dz_bakelite', x: x + (k - 2.5) * 0.08, y: y + 12.96, z: -124, w: 0.05, h: 0.05, d: 61.6, tag: '电缆', on: 'ceil' }); }
     // ③ 局旗吊挂：主通道两侧（面朝电梯厅），桁架下 3.2 m 高的竖幅
-    for (const z of [-104, -112]) for (const sx of [-1, 1]) { out.push({ box: 'blackMetal', x: sx * 4.6, y: y + 12.4, z, w: 1.5, h: 0.05, d: 0.05, tag: '局旗', on: 'ceil' }); pic(out, 'textures/b01/B01_02_局旗深蓝.png', sx * 4.6, y + 11.3, z, 0, 1.4, 2.1, /* 批次57：2:3 原比例，上沿贴吊杆 */ 'none', { side: 2, tag: '局旗', on: 'ceil' }); }
+    for (const z of [-104, -112]) for (const sx of [-1, 1]) { out.push({ box: 'blackMetal', x: sx * 4.6, y: y + 12.4, z, w: 1.5, h: 0.05, d: 0.05, tag: '局旗', on: 'ceil' }); pic(out, 'textures/b01/B01_02_局旗酒红.png', sx * 4.6, y + 11.3, z, 0, 1.4, 2.1, /* 批次57：2:3 原比例，上沿贴吊杆 */ 'none', { side: 2, tag: '局旗', on: 'ceil' }); } // 批次M17 审计：训练场垂旗深蓝 → 酒红褐重染版（禁蓝）
     // ④ 地面标线：副本门区安全弧线（r = 26，黄白相间短段）、ABY 门前斜纹警示、射击线后黄线
     for (let a = -1.08; a <= 1.08; a += 0.06) { const r = 25.6, x = Math.sin(a) * r, z = -102 - Math.cos(a) * r; if (Math.abs(x) < 2.8 && z > -128.5) continue; if (Math.round(a / 0.06) % 2) continue; out.push({ box: 'r3_paintYellow', x, y: y + 0.006, z, w: 1.4, h: 0.012, d: 0.14, yaw: -a, tag: '安全线', on: 'partv' }); }
     { const a = -0.95 + 5 * 0.38, gx = Math.sin(a) * 30, gz = -102 - Math.cos(a) * 30, dx = -Math.sin(a), dz = Math.cos(a), tx = Math.cos(a), tz = Math.sin(a);
