@@ -1956,6 +1956,24 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 ### 下批先做
 1. 取 41218178525 门扇两机位验收色相锁。2. 叫号机亮段调红、铜壳加一点高光。3. 正门门廊石门套 / 尖拱线脚 / 柱头 / 台阶 hero 模型（本批未做）。
 
+## 批次 M12 · B6 训练场第二轮（续 M9；2026-11-01 00:56 CST 接手，约 35 分钟；与 r3-model-m10 / m11 并行，只动 training；独立 worktree /tmp/m12wt）
+- 提交：e62e989（课椅）、0c1a61e（器材柜 / 高窗）、0a5be1f（地面 / 副本门 / 电梯厅门套 / 屋架 / 兜底暖化 / 机位）、fd48776（电梯厅墙与地坪、柜再压暗、屋架消蓝点）。`npx vite build --outDir /tmp/m12dist` 均 0。`?nom12=1` 回旧（M12 全部；器材柜 / 高窗改动在 m9_training.js 内，跟 `?nom9`）。
+- 新文件 src/world/m12_training.js：`applyM12Training(ctx, world)` 在 main.js `buildR3(..., true)` 之后跑一遍，只遍历 training 区（含 B6 电梯厅），幂等：
+  1. 地面 trainFloor（深蓝灰橡胶垫）→ Concrete034 暖灰 0x8c8378 + weather 磨损；地面网格灯带 0xc9a052 → 暗铜（自发光 0.05）；paintY → 暗黄 0x6e5422、paintW → 0x7e7466（只换本区网格上的材质，B1 等不受影响）。
+  2. 副本门书页材质发光色：SUR 琥珀 / COM 暗金 / MYS 酒红 / RPG 铜褐 / EXP 羊皮纸（各 lerp 0xffe8c0 0.35，仍可区分），ABY 封门不动；自发光仍由 updateRooms 驱动（峰值 0.67）。锚点 / 铭牌 / 碰撞未动。
+  3. B6 电梯厅：r3_steelRivet 墙裙 → 胡桃 Wood051 0x5e3c2a；r3_bunkerConc 墙（透过开口读成橄榄绿大片的就是它）→ 暖深灰 Concrete034 0x6a6158；r3_epoxy → 同训练场地面。训练场侧开口加石门套 group `m12_tr_doorcase`（门柱 1.2×5.9 贴洞口外沿 x ±9.4…10.6 + 柱础 + 退缩线 + 暗铜嵌线 + 门楣 21.6×1.3 + 两级檐口 + 拱心石 + 铜牌），两个门柱 world.box，不占通行宽度。
+  4. 屋架：tools/blender/m9_training.py `truss` 出模到 public/assets/models/m12/tr_truss.glb（5508 三角，meshopt 100 KB）× 5 榀（z −102…−150，每 12 m，底弦 y+14，x 缩放 63.2/64.36 贴墙不穿）；dressing.js 在 M12_TRAIN 下关掉旧平铁桁架（射灯头保留挂在新屋架底弦下）。节点板 / 铆钉金属度 0.8 时反射天空 HDR 成蓝点 → 压到 0.5 / env 0.3。
+  5. 兜底：区内其余材质 / 灯光，色相 72°–288° 且有饱和度 → 克隆后改暖褐 / 暖白（护具区 navy 软垫、局徽 navy、冷白灯带 / 射灯 / rectLight 0xbcd4ff、m5_olive 隔板等）。**带贴图的冷色件抓不到**（如墙脚蓝色塑料周转箱 plastic_container、副本门旁橄榄色器材包）。
+- 课椅：tools/blender/m12_training.py `chair` → m12/tr_chair.glb（胡桃座板 + 两条弧形胡桃靠背 + 铸铁腿 / 拉杆 + 铜铆钉 / 编号牌，1748 三角，meshopt 44 KB）；r3plan 简报区 r2/schoolchair_01 → m12/tr_chair（同位，h 0.82）。考场（exam_center）那批课椅未动。
+- 器材柜：m9_training.js 给 tr_locker 单独一套烤漆 0x5c5248 / 0x382f28（原 0xa79b8b 读成白色现代柜），铜标签框 / 拉手保留。
+- 高窗：m9_glow 奶黄 0xe0903e×0.7 → 暖白 0xf0d8b4×0.45（"采光井"），**未改成格栅造型**。
+- Blender 预览（亲眼看）：work/r3/m12/preview/m12_chair_a/b_0.png（座背比例、铸铁腿读出；第一版靠背板比立柱宽已修）、m9_truss_a_0.png（华伦桁架 + 节点板 + 铆钉）。
+- 游戏内（run 41223713817，0a5be1f）拼图 work/r3/m12/sheet.jpg（左 M9 改前 / 右 M12 改后 + 3 个新机位）：地面蓝灰 → 暖灰混凝土 ✔、黄网格基本消失 ✔；副本门全部暖色 ✔（门间差异变小）；简报区椅子变木椅 ✔；石门套到位 ✔；屋架华伦桁架读出 ✔（有蓝点 → fd48776 修）；**开口里仍是橄榄绿大片、器材柜仍偏浅** → fd48776 修，复拍 run 41224349530（m12b：north / locker / door / truss / wall）→ door / truss / wall 已回（work/r3/m12/sheet_b.jpg）：开口里橄榄绿大片已变暖深灰混凝土 ✔，门套与墙面同色系、读成石门套 ✔；屋架左上仍可见零星蓝白小光点（疑为旧黑钢屋面梁上的冷色小件或射灯反光，未定位）；m9_tr_wall 里墙脚蓝色塑料周转箱 + 副本门旁两只橄榄色帆布 / 器材包（带贴图模型）仍在。**north / locker 两张写本节时还在跑，未亲眼看**，下批先 `bash tools/gh_shots_fetch.sh 41224349530 work/r3/m12/r41224349530` 看器材柜是否已压成暖灰。
+- 走查 run 41223725588（0a5be1f）通过 31 / 失败 0 / 控制台错误 0（work/r3/m12/walk/walk/WALKTHROUGH.md）。Pages 0a5be1f Deploy success，m12/tr_truss.glb、m12/tr_chair.glb 线上 200。
+- Drive 分卷：v15_m12_models（1S0c5ePSkjWtVUalOqFYmVtNcfF6nugl4）内 v15_m12_models.tar.gz（1afaAqCwOT7W1YlS8KQJvHjZYWkKgpVYs：2 glb + m12_training.py/js + m9_training.js + 预览）。未删旧卷。
+- 未完成：靶位 / 训练台精细模型；高窗格栅造型；墙脚蓝色塑料箱（带贴图，兜底抓不到，需换模型或在 dress_m5 里换掉）；门柱与 M9 窄开间壁柱在 x ±9.6 附近有几厘米交叠（门柱盖住，看不到缝）；北墙开口上方 vaultWall 仍是红砖（本批只要求墙裙 + 门套）。
+- 注意：本批中途沙箱 /tmp 被清空（worktree 丢失一次，重建后用 work/r3/m12/src/ 备份恢复）；/tmp 空间紧时删过已完成批次的 /tmp/m7dist、/tmp/m8dist 和 /tmp/m8wt、/tmp/m9wt（均已在 origin/main，工作区干净）。
+
 ## 批次 M9 · 档案馆收尾 + B6 训练场 Blender hero（2026-11-01 00:29 CST 接手，约 35 分钟；与 r3-model-m7 / m8 并行，只动 archive / training；独立 worktree /tmp/m9wt）
 - 提交：bb6a358（档案馆收尾 + 机位）、e0c73ef（训练场 hero）。提交前 `npx vite build --outDir /tmp/m9dist` 均 0（注意 /tmp 只剩约 2 GB，几个 dist 并存会 ENOSPC，build 完即删）。
 - A1 东门球灯：r3plan `globe(..., { amber: true })` → r3build 加铜罩（球冠 0.42π）+ 新材质 dress.js `r3_globeAmber`（烟琥珀 0x4a3020，自发光 0xc07a34 ×0.32）；正下方点光 2.6→1.3、色温更暖。**柜台聚光**：查到柜台在西侧 x −50，与东门球无关，未改。游戏内 m9_eastglobe / archive_r3（run 41220497557）亲眼看：不再是白色过曝球，读成暖琥珀灯 + 铜罩 ✔。
