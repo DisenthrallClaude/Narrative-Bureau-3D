@@ -89,3 +89,10 @@ r2/fern_02.glb — Poly Haven「Fern 02」（CC0）；批次41 用作街心草�
 00GameDevs Three.js 特效库（https://00gamedevs.com/，MIT License，Copyright (c) 2026 00GameDevs (@00vchannel)）：
   「星紋之門 astral-gate」（深渊门门洞星纹膜）、「貼地薄霧 ground-fog」（档案馆 B1 薄雾）、「浮符矩陣 arcane-matrix」（第七局回写台浮符）。
   运行时代码 src/vendor/gdevs-vfx.js 保留原 MIT 与 Three.js 许可声明；颜色 / 速度 / 密度按本游戏改为暗金琥珀低亮度。
+
+—— 批次 I1 交互音效 ——
+Kenney（www.kenney.nl）音效包，CC0 1.0（http://creativecommons.org/publicdomain/zero/1.0/）：
+  「Interface Sounds 1.0」— UI 悬停 / 点击 / 确认 / 返回 / 菜单（public/content/audio/K_ui_*.ogg，低通 + 降调 0.89 处理成暗调）
+  「Impact Sounds」— 脚步 石材 / 木地板 / 地毯、金属格栅脚步（impactMetal_light 截短）、抽屉末端木撞、金属柜门撞（K_step_*、K_drawer、K_cabinet）
+  「RPG Audio」— 翻页 bookFlip / bookOpen、木门开关 doorOpen / doorClose、抽屉木轨 creak、金属柜锁舌 metalLatch（K_paper_*、K_door_*、K_drawer、K_cabinet）
+  齿轮加载声为本项目 WebAudio 程序化合成（src/engine/audio.js gears()），非素材。
