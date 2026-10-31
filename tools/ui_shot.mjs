@@ -4,7 +4,7 @@ import { chromium } from 'playwright-core';
 import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path';
 const ROOT = path.resolve('dist');
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.svg': 'image/svg+xml' };
-const out = process.argv[2] || 'out/ui'; let states = (process.argv[3] || 'all'); states = states === 'all' ? ['loading', 'menu', 'hud', 'dialog', 'reader', 'terminal', 'chapter', 'pause'] : states.split(',');
+const out = process.argv[2] || 'out/ui'; let states = (process.argv[3] || 'all'); states = states === 'all' ? ['loading', 'menu', 'hud', 'dialog', 'reader', 'reader_dark', 'terminal', 'chapter', 'pause'] : states.split(',');
 fs.mkdirSync(out, { recursive: true });
 const srv = http.createServer((req, res) => { let p = decodeURIComponent(req.url.split('?')[0]); if (p.endsWith('/')) p += 'index.html'; const f = path.join(ROOT, p); if (!f.startsWith(ROOT) || !fs.existsSync(f)) { res.writeHead(404); return res.end(); } res.writeHead(200, { 'Content-Type': MIME[path.extname(f)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(res); }).listen(0);
 const port = srv.address().port;
@@ -26,6 +26,7 @@ for (const st of states) {
     $('objm').textContent = '前往西翼人事档案馆，向管理员领取本人入职档案'; $('objo').textContent = '';
     $('inv').innerHTML = ['工作证', '钥匙', '便签'].map((n) => `<div class="it"><div style="font-size:22px;text-align:center;line-height:54px;color:#d8b469">${n[0]}</div><span>${n}</span></div>`).join('');
     if (st === 'dialog') { $('dlg').classList.remove('hidden'); $('dlgwho').textContent = '叶寻 · 档案馆'; $('dlgline').textContent = '你的档案在甲字七号屉。别翻别人的——翻了，也要登记。'; return; }
+    if (st === 'reader_dark') { $('reader').classList.remove('hidden'); $('paper').className = 'paper dark'; $('paper').innerHTML = '<h2>内部通报 · 第三页</h2><div class="txt">经查，监测指挥中心本周叫号记录中有一条无法归档的条目。\n该条目编号与在编人员重复，来源不明。\n\n请各处室勿私自查阅、勿转述。\n\n<span class="red">「本条不存在。」</span></div><div class="pg">3 / 3</div>'; return; } // 批次48
     if (st === 'terminal') { $('reader').classList.remove('hidden'); $('paper').className = 'paper screen'; $('paper').innerHTML = '<h2>监测终端 · 叫号记录</h2><div class="txt">&gt; QUERY  NB-0731\n&gt; 状态：待报到\n&gt; 所属：京城总部 · 监测指挥中心（实习）\n&gt; 备注：本条不存在。\n&gt; </div><div class="pg">1 / 2</div>'; return; }
     if (st === 'chapter') { $('hud').classList.add('hidden'); $('chapa').textContent = '第一章 · 报到'; $('chapb').textContent = '你又一次来报到了。'; $('chapter').style.transition = 'none'; $('chapter').classList.add('on'); return; }
     if (st === 'hud') { $('prompt').innerHTML = '<b class="key">E</b><span class="pt">查阅 卡片目录柜 · 甲字 07 屉</span>'; $('cross').classList.add('on'); $('arean').textContent = '人事档案馆'; $('areae').textContent = 'PERSONNEL ARCHIVE'; $('area').classList.add('on'); return; }
