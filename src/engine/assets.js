@@ -23,6 +23,16 @@ const modelCache = new Map();
 // R2：网上模型别名（tools/models_all.mjs 处理进 assets/models/r2/）
 export const ALIAS = { lion_justice: 'r2/lion_palais_de_justice_d_orl_ans_france', gargoyle_a: 'r2/gargoyle_3dst27', gargoyle_b: 'r2/gargoyle_statue_photogrammetry' };
 /** 加载 GLB，返回原始 scene（缓存）。unlit 扫描件转为 PBR。 */
+const _woodMats = {};
+function woodBox(o, m) { // 物体空间盒投影 UV（0.5 m 一格，按法线主轴取面），木纹沿长边
+  const g = o.geometry, pa = g.getAttribute('position'), na = g.getAttribute('normal'); if (!pa || !na) return;
+  const uv = new Float32Array(pa.count * 2);
+  for (let i = 0; i < pa.count; i++) { const nx = Math.abs(na.getX(i)), ny = Math.abs(na.getY(i)), nz = Math.abs(na.getZ(i)); const x = pa.getX(i), y = pa.getY(i), z = pa.getZ(i);
+    const [u, v] = nx >= ny && nx >= nz ? [z, y] : ny >= nz ? [x, z] : [x, y]; uv[i * 2] = u / 0.9; uv[i * 2 + 1] = v / 0.45; }
+  g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  const dark = /Dark/.test(m.name);
+  o.material = _woodMats[m.name] ??= Object.assign(pbr('Wood051', { color: dark ? 0x4a3020 : 0x8a5a38, roughness: 0.55, env: 0.6 }), { name: m.name });
+}
 export function loadModel(name) {
   name = ALIAS[name] ?? name;
   if (!modelCache.has(name)) {
@@ -34,6 +44,7 @@ export function loadModel(name) {
         g.scene.traverse((o) => {
           if (o.isMesh) {
             const m = o.material;
+            if (m && /^(dd|gd)_walnut/.test(m.name || '')) { woodBox(o, m); return; } // 批次36：Blender 精建台体（值班长台 / 引导台）的胡桃木面是无 UV 纯色 → cc_r3_c 看图像橙色塑料；补盒投影 UV + Wood051 木纹
             if (m && /decal_screen/.test(m.name || '')) { o.material = screenUI(0); o.userData.screen = true; o.castShadow = false; return; } // M5：显示器原贴图是粉紫色桌面，换成局内系统界面
             if (m && m.isMeshBasicMaterial) {
               o.material = new THREE.MeshStandardMaterial({ map: m.map, color: m.color, roughness: 0.85, metalness: 0, side: m.side, transparent: m.transparent, alphaTest: m.alphaTest });
