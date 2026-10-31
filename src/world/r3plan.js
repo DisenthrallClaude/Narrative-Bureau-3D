@@ -2430,7 +2430,7 @@ export function planLibrary(y) {
     aisles: [{ label: '入口中轴', x0: -1.6, x1: 1.6, z0: -102.6, z1: -93.4 }, { label: '回廊东', x0: 3.4, x1: 5.6, z0: -107.0, z1: -105.0 }, { label: '回廊西', x0: -5.6, x1: -3.4, z0: -107.0, z1: -105.0 }, { label: '回廊北', x0: -1.0, x1: 1.0, z0: -111.6, z1: -109.4 }] };
   // —— 固定锚点 ——
   F7(out, '讲经台', cx, cz, 4.4, 4.4, y, 0, 0.6);
-  for (const a of [-0.9, 0.9, Math.PI]) { const [x, z] = P(a, 9.6); F7(out, '阅读龛', x, z, 1.4, 0.8, y, a, 1.0); }
+  for (const a of [-0.9, 0.9, Math.PI]) { const [x, z] = P(a, 9.6); F7(out, '阅读龛', x, z, 1.48, 0.82, y, a, 1.94); const [xc, zc] = P(a, 9.6 - 0.70); F7(out, '阅读龛座椅', xc, zc, 0.56, 0.56, y, a, 0.95); } // 批次42：Blender 精建 lib_nook（书格上架 1.94 高 + 读者侧软垫椅）
   for (let k = 0; k < 5; k++) { const a = 0.5 + k * 1.15, [x, z] = P(a, RI - 0.45); F7(out, '倚架书梯', x, z, 0.5, 0.6, y, a, 4.2); }
   // —— ① 地面 ——
   ringF(out, 'r3_stoneBorder', 2.8, 3.3, cx, cz, y + 0.012); ringF(out, 'dz_brassDim', 3.3, 3.36, cx, cz, y + 0.013, 1); ringF(out, 'r3_terrLobby', 3.36, 5.8, cx, cz, y + 0.011); ringF(out, 'dz_brassDim', 5.8, 5.86, cx, cz, y + 0.013, 1);
