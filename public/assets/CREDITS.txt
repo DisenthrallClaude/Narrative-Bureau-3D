@@ -79,3 +79,5 @@
 "Lynx Helicopter" — artfletch (sketchfab.com/3d-models/9028fe1f38a74a789a023300e034efd3), CC BY 4.0（机库停机位 A；批次24 补署名）
 
 r2/reading_table_6080.glb, r2/loan_counter_6080.glb — 本项目 Blender 自建（tools/blender/hall_props.py，批次32）；贴图 ambientCG CC0（Wood051 / Marble006 / Metal048A）
+r2/street_tree_tall.glb — 由 Poly Haven「Jacaranda Tree」（CC0）经 tools/tree_lift.mjs 抬冠收冠变形而得（批次33 行道树）
+assets/tex/ph/asphalt_02 — Poly Haven「Asphalt 02」by Rob Tuytel（CC0，批次33 车道沥青）

@@ -1636,7 +1636,7 @@ export function planMetro(y) {
   F7(out, '守则立牌', 3.6, 133.6, 0.8, 0.4, y, 0, 1.6); F7(out, '外卖车', 8.7, 146.5, 2.2, 1.8, y, 0.3, 1.2);
   for (const x of [-18, -15, -12, -9, 9, 12, 15, 18]) F7(out, '隔离墩', x, 118, 0.3, 0.3, y, 0, 0.95);
   // ① 出站集散：盲道（黄）从出站口北延；出口两侧垃圾桶 + 报刊旋转架 + 导向牌
-  floorZ(out, 'r3_paintYellow', -0.2, 0.2, 145.6, 169.8, y); floorZ(out, 'r3_paintYellow', -0.2, 0.2, 100.2, 134.2, y);
+  floorZ(out, 'r3_paintYellow', -0.2, 0.2, 145.6, 169.8, y); // 批次33：北段 100.2–134.2 已成沥青车道，盲道只留出站口南侧
   out.push({ m: 'r2/garbage_bin', x: -3.6, y, z: 147.2, yaw: 0, h: 1.0, tag: '出站集散', on: 'floor', col: [0.6, 1.0, 0.6] });
   out.push({ m: 'r2/concrete_trash_bin', x: 3.6, y, z: 147.6, yaw: 0, h: 0.9, tag: '出站集散', on: 'floor', col: [0.6, 0.9, 0.6] });
   out.push({ m: 'r2/44_pocket_rotating_newspaper_stand', x: 4.6, y, z: 151.0, yaw: 0, h: 1.6, tag: '出站集散', on: 'floor', col: [0.6, 1.6, 0.6] });

@@ -444,7 +444,7 @@ export async function buildSurface(scene, world, ctx) {
     for (const z of [110, 152]) for (const sx of [-1, 1]) P.add('park_bench', [sx * 21.5, Y, z], { w: 2.0, yaw: sx > 0 ? -Math.PI / 2 : Math.PI / 2 });
     // 批次32 ext_street：原「plazaTile 黑小方砖 + 每 6 m 一道金线」远看像空柏油 → 分缝花岗岩人行道（Poly Haven granite_tile，≈50 cm 板，CC0）
     //   + 深色花岗岩分隔带（每 6 m，代替金线）+ 两侧花岗岩路缘石（高 15 cm，带倒角顶）+ 行道树池（铸铁箅子 + 石砌池边 + 蓝花楹，成列 6 m 一株）
-    { const gr = phMat('granite_tile', { color: 0x9a968e, roughness: 0.75, env: 0.6 }); for (const t of [gr.map, gr.normalMap, gr.roughnessMap, gr.aoMap]) if (t) { t.wrapS = t.wrapT = THREE.RepeatWrapping; }
+    { const gr = phMat('granite_tile', { color: 0x8e8a82, roughness: 0.7, env: 0.75, normalScale: 2.4 }); gr.aoMap = gr.roughnessMap; gr.aoMapIntensity = 1.8; /* 批次33：板缝在黄昏低光下读得出（法线 ×2.4 + ARM 的 AO 通道压缝） */ for (const t of [gr.map, gr.normalMap, gr.roughnessMap, gr.aoMap]) if (t) { t.wrapS = t.wrapT = THREE.RepeatWrapping; }
       const sw = new THREE.Mesh(new THREE.BoxGeometry(30, 0.05, 70), gr); const uv = sw.geometry.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 15, uv.getY(i) * 35); // 2 m 一张贴图 = 4×4 板
       sw.position.set(0, Y + 0.02, 135); sw.receiveShadow = true; zone.add(sw);
       const band = new THREE.MeshStandardMaterial({ color: 0x3a3a3e, roughness: 0.6 }); const curbM = new THREE.MeshStandardMaterial({ color: 0x8c8a86, roughness: 0.7 });
@@ -461,7 +461,23 @@ export async function buildSurface(scene, world, ctx) {
       for (const [x, z] of [[-7, 104], [-7, 110], [-7, 116], [-7, 122], [-7, 128], [7, 104], [7, 110], [7, 116], [7, 122], [7, 128], [7, 152], [7, 158]]) {
         for (const [dx, dz, w, d] of [[0, -0.74, 1.6, 0.12], [0, 0.74, 1.6, 0.12], [-0.74, 0, 0.12, 1.36], [0.74, 0, 0.12, 1.36]]) { const e = new THREE.Mesh(new THREE.BoxGeometry(w, 0.08, d), pitM); e.position.set(x + dx, Y + 0.08, z + dz); e.castShadow = e.receiveShadow = true; zone.add(e); }
         const gm = new THREE.Mesh(new THREE.BoxGeometry(1.36, 0.03, 1.36), grateM); gm.position.set(x, Y + 0.06, z); gm.receiveShadow = true; zone.add(gm);
-        P.add('r2/jacaranda_tree', [x, Y + 0.075, z], { h: 7.5, yaw: (z % 7) * 0.9 }); world.box(x, Y + 1.5, z, 0.5, 3, 0.5); } }
+        P.add('r2/street_tree_tall', [x, Y + 0.075, z], { h: 9.5, yaw: (z % 7) * 0.9 }); /* 批次33：蓝花楹低宽冠 → 抬冠收冠行道树（枝下高 ≈3.0 m，冠幅 ≈4.6 m，tools/tree_lift.mjs） */ world.box(x, Y + 1.5, z, 0.5, 3, 0.5); } }
+      // 批次33：中间 12 m 改沥青车道（Poly Haven asphalt_02 CC0）+ 花岗岩立缘 + 白色标线：车道边线 / 虚线分道线 / 两侧路边停车位 / 出站口前停止线 + 斑马线
+      { const as = phMat('asphalt_02', { color: 0x6a6866, roughness: 0.9, env: 0.35, normalScale: 1.6 }); for (const t of [as.map, as.normalMap, as.roughnessMap]) if (t) { t.wrapS = t.wrapT = THREE.RepeatWrapping; }
+        const RZ0 = 100.6, RZ1 = 135.4, RL = RZ1 - RZ0, RC = (RZ0 + RZ1) / 2;
+        const rd = new THREE.Mesh(new THREE.BoxGeometry(12, 0.02, RL), as); const ru = rd.geometry.attributes.uv; for (let i = 0; i < ru.count; i++) ru.setXY(i, ru.getX(i) * 4, ru.getY(i) * RL / 3); // 3 m 一张
+        rd.position.set(0, Y + 0.05, RC); rd.receiveShadow = true; zone.add(rd);
+        const kerb = new THREE.MeshStandardMaterial({ color: 0x77746f, roughness: 0.75 }), band = new THREE.MeshStandardMaterial({ color: 0x3a3a3e, roughness: 0.6 });
+        for (const sx of [-1, 1]) { const k = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.14, RL), kerb); k.position.set(sx * 6.11, Y + 0.09, RC); k.castShadow = k.receiveShadow = true; zone.add(k);
+          for (let z = RZ0 + 1; z < RZ1; z += 1) { const j = new THREE.Mesh(new THREE.BoxGeometry(0.23, 0.142, 0.01), band); j.position.set(sx * 6.11, Y + 0.09, z); zone.add(j); } }
+        const paint = new THREE.MeshStandardMaterial({ color: 0xd8d6cf, roughness: 0.6, envMapIntensity: 0.4, polygonOffset: true, polygonOffsetFactor: -2 });
+        const line = (x, z, w, d) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), paint); m.rotation.x = -Math.PI / 2; m.position.set(x, Y + 0.0612, z); m.receiveShadow = true; zone.add(m); };
+        for (const sx of [-1, 1]) line(sx * 3.6, (RZ0 + 129) / 2, 0.15, 129 - RZ0); // 车道 / 停车带分界线（停车带宽 2.3 m）
+        for (let z = RZ0 + 1.5; z < 128; z += 6) line(0, z + 1.5, 0.15, 3); // 虚线分道线 3 m 线 / 3 m 空
+        for (const sx of [-1, 1]) { for (let z = RZ0 + 0.4; z <= 128.5; z += 5.5) line(sx * 4.75, z, 2.3, 0.12); } // 停车位横线（5.5 m 一位）
+        line(0, 129.6, 7.2, 0.4); // 停止线
+        for (let x = -5.4; x <= 5.41; x += 0.9) line(x, 132.6, 0.45, 4.0); // 斑马线
+      }
     for (const sx of [-1, 1]) for (let k = 0; k < 3; k++) { const p = person(M, { coat: [0x2a3040, 0x40302a, 0x30402a][k] }); p.position.set(sx * (5 + k * 3.2), Y, 120 + k * 7); p.rotation.y = sx > 0 ? -2.8 : 2.8; zone.add(p); }
   }
 
