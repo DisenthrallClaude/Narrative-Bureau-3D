@@ -725,7 +725,7 @@ function buildStreetRows(g, M, place, rnd) {
             vec3 sc = h2(vec2(bay, 1.0)) < 0.33 ? vec3(0.62, 0.10, 0.08) : h2(vec2(bay, 1.0)) < 0.66 ? vec3(0.10, 0.22, 0.48) : vec3(0.12, 0.36, 0.22);
             col = mix(col * 0.75, vec3(0.05, 0.06, 0.07), glass); col = mix(col, sc, sign);
             float shopOn = step(0.55, h2(vec2(bay, 7.0 + vSd)));
-            em += glass * shopOn * (1.0 - front) * vec3(1.0, 0.72, 0.42) * 1.4 /* 批次36：正面橱窗亮光交给模块 litGlass */ + sign * vec3(1.0, 0.9, 0.8) * sc * 1.6 * step(0.4, h2(vec2(bay, 3.0)));
+            em += glass * shopOn * (1.0 - front) * vec3(1.0, 0.66, 0.36) * 0.8 /* 批次36：正面橱窗亮光交给模块 litGlass */ + sign * vec3(1.0, 0.9, 0.8) * sc * 1.6 * step(0.4, h2(vec2(bay, 3.0)));
             col *= 1.0 - 0.25 * step(y, 0.45); // 水刷石勒脚
           } else if (y > vH - 0.9) { col *= y > vH - 0.6 ? 0.55 : 1.15; // 檐口 + 檐下线脚
           } else {
@@ -739,7 +739,7 @@ function buildStreetRows(g, M, place, rnd) {
             col = mix(col, vec3(0.85, 0.83, 0.78), frame * 0.7);
             col = mix(col, vec3(0.04, 0.05, 0.06), win); col = mix(col, vec3(0.30, 0.18, 0.10), mull);
             float on = step(1.0 - ${lit.toFixed(2)}, h2(vec2(cx + side * 31.0, cy) + vSd * 17.0));
-            em += win * (1.0 - mull) * on * (1.0 - step(0.5, abs(vLn.z))) /* 批次36：临街正面 / 背面的亮窗交给模块 litGlass（稳定少量暖窗），着色器只在山墙侧面画亮窗——去掉正面窗后再叠一层亮窗的白闪点 */ * mix(vec3(1.0, 0.6, 0.3), vec3(1.0, 0.76, 0.5), h2(vec2(cx, cy * 3.1))) * 1.3; /* 批次36：山墙亮窗 2.0 → 1.3、偏暖（原过曝成白块） */
+            em += win * (1.0 - mull) * on * (1.0 - step(0.5, abs(vLn.z))) /* 批次36：临街正面 / 背面的亮窗交给模块 litGlass（稳定少量暖窗），着色器只在山墙侧面画亮窗——去掉正面窗后再叠一层亮窗的白闪点 */ * mix(vec3(1.0, 0.6, 0.3), vec3(1.0, 0.76, 0.5), h2(vec2(cx, cy * 3.1))) * 0.75; /* 批次36：山墙亮窗 2.0 → 0.75、偏暖（原过曝成白块；1.3 仍偏白，ext_house b36b） */
           }
           col = mix(vec3(0.16, 0.16, 0.17), col, wall); // 平屋面
           diffuseColor.rgb *= col; totalEmissiveRadiance += em * wall;

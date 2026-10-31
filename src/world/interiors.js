@@ -894,7 +894,7 @@ function oldBronzeMat() { // 批次36：两批来仍像深色木框 → 带少�
   const rc = mk(), y = rc.getContext('2d'); y.fillStyle = '#5a5a5a'; y.fillRect(0, 0, N, N);
   for (let i = 0; i < 400; i++) { const v = 50 + rnd() * 90 | 0; y.fillStyle = `rgba(${v},${v},${v},0.25)`; y.beginPath(); y.arc(rnd() * N, rnd() * N, 1 + rnd() * 8, 0, 7); y.fill(); }
   const tex = (c, srgb) => { const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2, 2); if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
-  return new THREE.MeshPhysicalMaterial({ name: 'oldBronze36', color: 0xffffff, map: tex(cc, true), roughnessMap: tex(rc, false), metalness: 1.0, roughness: 0.55, clearcoat: 0.5, clearcoatRoughness: 0.18, envMapIntensity: 2.2 });
+  return new THREE.MeshPhysicalMaterial({ name: 'oldBronze36', color: 0xd2bfa6 /* 去一点橙，偏旧铜 */, map: tex(cc, true), roughnessMap: tex(rc, false), metalness: 1.0, roughness: 0.55, clearcoat: 0.5, clearcoatRoughness: 0.18, envMapIntensity: 2.2 });
 }
 function dossierStand(g, M, name, x, z, flip = false) { // flip：相框朝 −Z（周闻：椅前是值班长台，玩家从椅后平台过来）
   const k = IDPHOTO[name]; if (!k) return;
