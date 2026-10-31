@@ -913,11 +913,11 @@ function buildStreetRows(g, M, place, rnd) {
   // 批次37：城墙外南侧（大道两侧 |x| 26–68 m、墙外 125–149 m）= 环路内侧街心绿地：修剪草坪扇形 + 两列高干行道树（每 12 m 等距）+ 石材路缘，不再是平褐空地
   { const gm = M.grass.clone(); for (const k of ['map', 'normalMap', 'roughnessMap']) if (gm[k]) { gm[k] = gm[k].clone(); gm[k].wrapS = gm[k].wrapT = THREE.RepeatWrapping; gm[k].repeat.set(80, 80); gm[k].needsUpdate = true; }
     /* 批次41：ext_green 看图草坪像地毯（单一贴图 80× 重复、色相均匀）→ 世界坐标两级值噪声：大尺度 18 m 斑块（深绿 / 黄绿 / 微枯）+ 3 m 细斑 + 近路缘 1.2 m 内略深（踩踏 / 水汽）；法线加强 1.6 */
-    gm.normalScale?.set(1.6, 1.6); gm.customProgramCacheKey = () => 'lawn42';
+    gm.normalScale?.set(1.6, 1.6); gm.customProgramCacheKey = () => 'lawn42b';
     gm.onBeforeCompile = (sh) => { sh.vertexShader = 'varying vec3 vLw;\n' + sh.vertexShader.replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvLw = (modelMatrix * vec4(transformed, 1.0)).xyz;');
       sh.fragmentShader = 'varying vec3 vLw;\nfloat lh(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}\nfloat ln(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(lh(i),lh(i+vec2(1,0)),f.x),mix(lh(i+vec2(0,1)),lh(i+vec2(1,1)),f.x),f.y);}\n' + sh.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
         { vec2 q = vLw.xz; float big = ln(q / 18.0) * 0.65 + ln(q / 7.0) * 0.35, fine = ln(q / 3.0), r = length(vec2(q.x, q.y + 35.0)), edge = 1.0 - smoothstep(0.0, 1.2, min(abs(r - 125.0), abs(r - 149.0)));
-          vec3 tint = mix(vec3(0.80, 1.00, 0.72), vec3(0.98, 1.04, 0.78), smoothstep(0.35, 0.75, big)); tint = mix(tint, vec3(1.04, 0.98, 0.80), smoothstep(0.72, 0.9, fine) * 0.25); /* 批次42：ext_green 看图整体偏黄褐像枯草 → 两端回调偏绿、细斑微枯 0.45→0.25 */
+          vec3 tint = mix(vec3(0.64, 0.98, 0.60), vec3(0.80, 1.00, 0.64), smoothstep(0.35, 0.75, big)); tint = mix(tint, vec3(0.96, 0.96, 0.74), smoothstep(0.72, 0.9, fine) * 0.2); /* 批次42：ext_green 看图整体偏黄褐像枯草 → 第一版（0.80,1.00,0.72）→（0.98,1.04,0.78）黄昏下仍橄榄黄 → 第二版压红：（0.64,0.98,0.60）→（0.80,1.00,0.64），细斑微枯 0.2 */
           diffuseColor.rgb *= tint * (0.9 + 0.2 * fine) * (1.0 - 0.18 * edge); }`); };
     const T0 = 0.21, T1 = 0.474;
     for (const sgn of [1, -1]) { const st = sgn > 0 ? -Math.PI / 2 + T0 : -Math.PI / 2 - T1;
