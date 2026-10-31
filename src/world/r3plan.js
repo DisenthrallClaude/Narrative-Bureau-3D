@@ -429,7 +429,7 @@ export function planFloor2Pub(y) {
   // —— ③ 新闻发布厅：两块座席（每块 5 × 4）面向讲台，中央过道 ——
   for (let r = 0; r < 4; r++) for (const bx of [-15.3, -12.9]) for (let c = 0; c < 4; c++) { const x = bx + (bx < -14 ? -c : c) * 0.78; out.push({ m: 'r2/dining_chair_02', x, y, z: -109.4 + r * 0.95, yaw: Math.PI, h: 0.98, tag: '发布厅座席', on: 'floor' }); }
   rug(out, 'dz_rugRed', -14.5, y, -113.6, 8.6, 4.2);
-  for (const sx of [-1, 1]) { const x = -14 + sx * 4.7; out.push({ box: 'brass', x, y: y + 1.5, z: -117.2, w: 0.04, h: 3.0, d: 0.04, tag: '局旗', on: 'partv' }); pic(out, 'textures/b01/B01_02_局旗深蓝.png', x + sx * 0.02, y + 2.35, -117.18, 0, 0.9, 1.35, 'none', { tag: '局旗', side: 2 }); }
+  for (const sx of [-1, 1]) { const x = -14 + sx * 4.7; out.push({ box: 'brass', x, y: y + 1.5, z: -117.2, w: 0.04, h: 3.0, d: 0.04, tag: '局旗', on: 'partv' }); pic(out, 'textures/b01/B01_02_局旗酒红.png', x + sx * 0.02, y + 2.35, -117.18, 0, 0.9, 1.35, 'none', { tag: '局旗', side: 2 }); } // 批次M18：局旗深蓝 → 酒红褐重染版（禁蓝）
   light(out, -14.5, y + 3.2, -108.5, 0xffe2c0, 4, 11);
   // —— ④ 发布厅前厅：长椅背靠隔断 + 两块展板 ——
   for (const x of [-18.6, -10.4]) out.push({ m: 'r2/church_pew_bench', x, y, z: -104.0 + 0.4, yaw: 0, w: 1.6, tag: '前厅', on: 'floor' });
@@ -1903,7 +1903,7 @@ const X8 = {
     // ① 路灯两列（x = ±11，每 12 m 左右，避让报亭/单车/便利店/公交站）+ 灯杆竖幅（局旗 / 规则之泉）
     const L = [[-11, 104], [-11, 116], [-11, 136], [-11, 148], [-11, 160], [11, 104], [11, 115.6], [11, 136], [11, 152], [11, 160]];
     L.forEach(([x, z], i) => { out.push({ m: 'street_lamp_02', x, y, z, yaw: x < 0 ? ROT.E : ROT.W, h: 4.8, tag: '路灯', on: 'floor', col: [0.4, 4.8, 0.4] });
-      pic(out, i % 2 ? 'textures/b01/B01_08_海报_规则之泉.png' : 'textures/b01/B01_02_局旗深蓝.png', x, y + 3.25, z + 0.22, 0, 0.55, 0.825, 'none', { side: 2, tag: '灯杆竖幅', on: 'pic' }); /* 批次57：2:3 原比例 */ });
+      pic(out, i % 2 ? 'textures/b01/B01_08_海报_规则之泉.png' : 'textures/b01/B01_02_局旗酒红.png', x, y + 3.25, z + 0.22, 0, 0.55, 0.825, 'none', { side: 2, tag: '灯杆竖幅', on: 'pic' }); /* 批次57：2:3 原比例 */ }); // 批次M18：灯杆竖幅局旗深蓝 → 酒红
     for (const [x, z] of L) light(out, x * 0.85, y + 4.4, z, 0xffd8a0, 0.8, 9);
     // ② 广场边缘护柱（x = ±18.4，每 2.4 m；便利店段让开）+ 黑石收边带
     for (const sx of [-1, 1]) { for (let z = 101.5; z < 168.5; z += 2.4) { if (sx > 0 && z > 124.5 && z < 131.5) continue; out.push({ m: 'bollard', x: sx * 18.4, y, z, yaw: 0, h: 0.95, tag: '护柱', on: 'floor', col: [0.25, 0.95, 0.25] }); }
