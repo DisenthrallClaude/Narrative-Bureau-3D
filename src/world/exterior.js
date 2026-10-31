@@ -1119,6 +1119,11 @@ function innerVestibuleDoors(g, M, Y) {
   }
   // 批次50：门廊前墙门洞侧壁（x ±3.5，z −6.4…−6.7，高 9）胡桃木门套衬板 + 铜收边，压掉 ext_door_mid 门洞右侧那条平亮竖面
   for (const sx of [-1, 1]) { box(g, woodDk, 0.06, 9, 0.42, sx * 3.47, Y + 4.5, -6.55); box(g, brass, 0.07, 9, 0.03, sx * 3.47, Y + 4.5, -6.33); }
+  // 批次50 补：ext_door_mid 看图——平亮米黄竖面实为主楼 GLB 门洞内侧石壁（x ±3.5，z −4.9…−6.4，门扇铰接处之后）被门厅面光打亮 → 胡桃木门洞衬板 + 3 段凸芯板 + 铜收边贴满 z −4.95…−6.35，高 8.6 m
+  for (const sx of [-1, 1]) { const x = sx * 3.44, zc = -5.65, dz = 1.4;
+    box(g, woodDk, 0.05, 8.6, dz, x, Y + 4.3, zc);
+    for (const [py, ph] of [[1.1, 1.6], [3.75, 3.1], [6.85, 2.5]]) { box(g, wood, 0.03, ph, dz - 0.3, x - sx * 0.035, Y + py, zc); box(g, brass, 0.02, 0.025, dz - 0.24, x - sx * 0.04, Y + py + ph / 2 + 0.03, zc); }
+    box(g, brass, 0.06, 8.6, 0.025, x - sx * 0.01, Y + 4.3, zc + dz / 2); }
 }
 
 
