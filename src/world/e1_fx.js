@@ -35,21 +35,21 @@ export async function initE1FX(G, { AY = -300, SY = -500, quality = 'high' } = {
 
   // 1. 深渊门：星纹膜（门洞等边尖拱 w12.4 / 起拱 10.6 / 顶 ≈21.3，折页面 z −80.8）
   add('gate', 'abyss_gate', (root) => {
-    const fx = createEffect(PRESETS.gate, { color: '#7a5420', size: 1, speed: 0.35, density: low ? 0.2 : 0.4, detail: low ? 0.5 : 1 });
-    fx.group.traverse((o) => { if (o.name === 'utility-gate-frame') o.visible = false; }); // 石拱已是门框
+    const fx = createEffect(PRESETS.gate, { color: '#a8742c', size: 1, speed: 0.35, density: low ? 0.2 : 0.4, detail: low ? 0.5 : 1 });
+    fx.group.traverse((o) => { if (o.name === 'utility-gate-frame') { o.visible = false; o.layers.set(31); } }); // 石拱已是门框
     fx.group.rotation.y = -Math.PI / 2; // 特效门面法线 +X → 朝玩家 +Z
-    fx.group.scale.setScalar(5.6);
-    fx.group.position.set(0, AY + 0.6, -80.74);
+    fx.group.scale.setScalar(7.2); // E1 二拍：5.6 时椭圆膜边缘落在门洞里读成暗斑 → 放大到椭圆边被石拱侧壁遮住
+    fx.group.position.set(0, AY + 0.3, -80.74);
     root.add(fx.group);
     return [fx];
   });
 
   // 2. 档案馆 B1 贴地薄雾（地坪 −4.2；变体 1 粒子在原点下 1.12…0.67 → 原点抬 1.12×缩放）
   add('fog', 'archive_b1', (root) => {
-    const pts = [[-36, -38.5], [-44, -41.5], [-29, -41], [-52, -44.5], [-40, -50]].slice(0, low ? 3 : 5);
-    const s = 1.6;
+    const pts = [[-35, -35.2], [-40.5, -36.8], [-46, -38.6], [-51.5, -40.4], [-38, -39.5]].slice(0, low ? 3 : 5); // E1 二拍：沿西墙通道（ab1_r3 视线）铺；首拍点位多在密集架后，看不见
+    const s = 1.8;
     return pts.map(([x, z], i) => {
-      const fx = createEffect({ ...PRESETS.fog, seed: PRESETS.fog.seed + i * 977 }, { color: '#6e655a', size: 1, speed: 0.4, density: low ? 0.18 : 0.3, detail: low ? 0.5 : 1 });
+      const fx = createEffect({ ...PRESETS.fog, seed: PRESETS.fog.seed + i * 977 }, { color: '#a89a86', size: 1, speed: 0.4, density: low ? 0.25 : 0.45, detail: low ? 0.5 : 1 });
       fx.group.scale.setScalar(s); fx.group.position.set(x, -4.2 + 1.12 * s - 0.08, z); fx.group.rotation.y = i * 1.3;
       root.add(fx.group); return fx;
     });
@@ -57,8 +57,9 @@ export async function initE1FX(G, { AY = -300, SY = -500, quality = 'high' } = {
 
   // 3. 第七局 回写台：浮符矩阵围绕排字台（长桌 3.2×7，中心 0, SY, −174）
   add('runes', 'seventh_rewrite', (root) => {
-    const fx = createEffect(PRESETS.runes, { color: '#a87a34', size: 1, speed: 0.3, density: low ? 0.2 : 0.35, detail: low ? 0.5 : 0.8, quantity: low ? 3 : 5 });
-    fx.group.scale.setScalar(2.4); fx.group.position.set(0, SY + 0.03, -174);
+    const fx = createEffect(PRESETS.runes, { color: '#6a4818', size: 1, speed: 0.3, density: low ? 0.2 : 0.35, detail: low ? 0.5 : 0.8, quantity: low ? 3 : 5 });
+    fx.group.scale.setScalar(1.8); fx.group.position.set(0, SY + 0.6, -174);
+    fx.group.children.forEach((o) => { if (o.isMesh && Math.abs(o.rotation.x + Math.PI / 2) < 0.01) { o.visible = false; o.layers.set(31); } }); // E1 二拍：地面方格矩阵在暗红地面上读成白砖线、太抢 → 去掉，只留浮符
     fx.group.traverse((o) => { if (o.material && !o.material.depthWrite) { o.material.polygonOffset = true; o.material.polygonOffsetFactor = -2; o.material.polygonOffsetUnits = -4; } });
     root.add(fx.group);
     return [fx];
