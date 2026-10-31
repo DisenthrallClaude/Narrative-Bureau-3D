@@ -106,6 +106,7 @@ export function dressMats(M) {
     dz_ashlarEC: W((() => { const R = { repeat: [1 / 3, 1 / 3] }, P = 'assets/tex/ph/large_sandstone_blocks'; // 自带 repeat 的克隆贴图（M.stone 会改共享原图的 repeat）
       const m = new THREE.MeshStandardMaterial({ map: loadTex(P + '_col.webp', { srgb: true, ...R }), normalMap: loadTex(P + '_nrm.webp', R), roughnessMap: loadTex(P + '_arm.webp', R), color: 0xbcb0a0, roughness: 1, envMapIntensity: 0.4 }); m.normalScale.set(1.2, 1.2); m.name = 'ph:ashlarEC'; return m; })(), { macro: 0.14, grime: 0.3, streak: 0.12 }),
     r3_terrDark: W(pbr('Terrazzo005', { rn: true, color: 0x55524a, roughness: 0.4, env: 0.38 }), { macro: 0.2, dust: 0.1, rough: 0.25 }), // 批次18 lab3：深色水磨石
+    r3_terrDeep: W(pbr('Terrazzo005', { rn: true, color: 0x3e3a33, roughness: 0.42, env: 0.34 }), { macro: 0.2, dust: 0.08, rough: 0.25 }), // 批次33：档案馆用，比 r3_terrDark 再压一档
     r3_labWain: W(new THREE.MeshStandardMaterial({ color: 0x7d8f80, roughness: 0.42, metalness: 0.05 }), { macro: 0.18, grime: 0.35, ground: 1.0, streak: 0.12 }), // 批次18 lab3：浅灰绿油漆墙裙
     r3_labUpper: W(new THREE.MeshStandardMaterial({ color: 0xe2e0d8, roughness: 0.85, envMapIntensity: 0.3 }), { macro: 0.08, grime: 0.1, streak: 0.04 }), // 批次18 收尾：lab_r3_b 看图 grey_plaster_02 渲成土黄迷彩 → 纯色白漆（未重拍） // 批次18 lab3：白上墙
     r3_epoxyBlack: W(new THREE.MeshStandardMaterial({ color: 0x121315, roughness: 0.3, metalness: 0.05, envMapIntensity: 0.6 }), { macro: 0.1, dust: 0.08 }), // 批次18 lab3：黑色环氧树脂台面

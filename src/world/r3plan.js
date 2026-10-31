@@ -737,7 +737,7 @@ export function planArchive(y) {
   for (const [x, z] of [[-21.3, -44.6], [-26.6, -62.4]]) out.push({ m: 'r2/mousetrap', x, y, z, yaw: 0.7, w: 0.16, tag: '开架区', on: 'floor' });
   for (const z of [-40.65, -42.75, -44.85, -58.45, -60.55, -62.65]) globe(out, -24.05, z, y, TOP - y, 3.1, { r: 0.18 });
   // ② 东门入口：石材门厅 + 还档分拣台 + 灭火器（档案馆禁水，不设消火栓）
-  floorZ(out, 'r3_check', -27.4, -20.15, -56.4, -46.6, y, { uv: 1.5, border: 0.14 });
+  floorZ(out, 'r3_terrDeep', -27.4, -20.15, -56.4, -46.6, y, { uv: 1.5, border: 0.14, bmat: 'r3_stoneBorder' }); // 批次33：浅灰暖水磨石（红地毯两侧大片发白）→ 深色水磨石 + 黑石收边
   out.push({ m: 'r2/woodentable_01', x: -23.2, y, z: -47.6, yaw: Math.PI, fit: [2.2, 0.82, 0.8], tag: '还档分拣台', on: 'floor', col: [2.2, 0.82, 0.8] });
   for (const [dx, m, sz] of [[-0.7, 'r2/wooden_flat_filing_tray', { w: 0.34 }], [0.0, 'r2/several_folders', { h: 0.3 }], [0.7, 'r2/desk_bell', { w: 0.1 }]]) out.push({ m, x: -23.2 + dx, y: y + 0.82, z: -47.65, yaw: Math.PI, ...sz, tag: '还档分拣台', on: 'desk' });
   out.push({ sign: '还档处', sub: '请勿直接放回架上', x: -23.2, y: y + 1.25, z: -47.2 - 0.01, yaw: 0, size: [0.34, 0.12, 0.01], tag: '门牌', on: 'sign' });
@@ -1903,7 +1903,7 @@ Object.assign(X8, {
   archive(out, y) {
     // 开架区 A/B 实木地板 + 石材收边（东门方格石地面南北两侧）；开架区西侧通道、借阅柜台前磨损；西南卡片目录区方砖
     floorZ(out, 'r3_parquet', -27.2, -20.4, -66.4, -56.6, y, { border: 0.14 }); floorZ(out, 'r3_parquet', -27.2, -20.4, -46.4, -38.2, y, { border: 0.14 });
-    floorZ(out, 'r3_terrDark', -55.6, -48.4, -44.6, -36.2, y, { border: 0.14 }); // 批次32：白方砖（陈列区突兀）→ 深色水磨石
+    floorZ(out, 'r3_terrDeep', -55.6, -48.4, -44.6, -36.2, y, { border: 0.14 }); // 批次33 压一档；批次32：白方砖（陈列区突兀）→ 深色水磨石
     wear(out, -28.5, -27.5, -66.0, -38.5, y); wear(out, -48.4, -46.6, -53.0, -50.1, y);
   },
   canteen(out, y) {

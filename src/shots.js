@@ -60,6 +60,7 @@ export const SHOTS = {
   archive_r3: { pos: [-21.0, 1.8 + 1.65, -51.5], look: [-40, 1.8 + 1.4, -55], fov: 76 },
   archive_shelf: { pos: [-28.2, 1.8 + 1.6, -40.65], look: [-21, 1.8 + 1.2, -40.65], fov: 72 },
   archive_west: { pos: [-46.5, 1.8 + 1.65, -46.0], look: [-55, 1.8 + 1.0, -36], fov: 74 },
+  archive_loan: { pos: [-45.6, 1.8 + 1.6, -48.6], look: [-50.2, 1.8 + 0.85, -51.5], fov: 62, zone: 'archive' }, // 批次33：借阅柜台近景
   archive_top: { pos: [-38, 1.8 + 40, -50.99], look: [-38, 1.8, -51], fov: 52, clipY: 1.8 + 4.0, zone: 'archive' },
   cc_r3: { pos: [24.0, 8.8 + 1.7, -35.6], look: [36, 8.8 + 1.2, -50], fov: 76, zone: 'command_center' },
   cc_r3_b: { pos: [33.0, 8.8 + 1.8 + 1.65, -57.4], look: [35, 8.8 + 2.0, -36], fov: 76, zone: 'command_center' },
