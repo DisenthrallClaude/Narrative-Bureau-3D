@@ -1,0 +1,5 @@
+#!/bin/bash
+# 批次56：dump 全部 r3plan → work/r3/b56/plans/<id>.json，再跑 tools/audit56.py
+cd "$(dirname "$0")/.."; O=../work/r3/b56/plans; mkdir -p $O
+F=1.8; declare -A Y=( [plaza]=0 [security_hall]=$F [library]=22.8 [east_stair]=$F [lobby_2F]=8.8 [lobby_3F]=15.8 [lobby_4F]=22.8 [lobby_12F]=71.8 [east_cloister]=$F [citizen_service]=$F [floor3_office]=15.8 [floor2_liaison]=8.8 [floor2_pub]=8.8 [director]=71.8 [gate]=$F [archive]=$F [command_center]=8.8 [exam_center]=8.8 [lab3]=15.8 [zone_control]=15.8 [east_ante]=15.8 [east_ante2]=8.8 [helipad_roof]=12.4 [canteen]=$F [b1]=-10 [b2]=-18 [archive_b1]=-4.2 [vault_b3]=-26 [b4]=-34 [b5]=-42 [b6]=-52 [b7]=-300 [medical]=15.8 [dorm]=0.046 [dorm2]=4.64 [dorm3]=9.24 [interrogation]=-18 [hangar]=0 [training]=-52 [b5_deep]=-42 [metro]=-3.955 [memorial]=0.08 [s7_ops]=-500 [s7_wrap]=-500 [abyss_city]=-300 [abyss_exam]=-300 [abyss_core]=-280 [abyss_tide]=-300 [s7_entry]=-500 )
+for id in "${!Y[@]}"; do node tools/r3plan_dump.mjs $id ${Y[$id]} > $O/$id.json 2>/dev/null || rm -f $O/$id.json & done; wait; ls $O | wc -l

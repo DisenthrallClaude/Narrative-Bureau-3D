@@ -156,7 +156,7 @@ export function buildEastWing(scene, world, ctx) {
   for (const x of [30, 40]) { if (R3.citizen_service) { add(placeModel('r2/cs_form_desk', { width: 3.4, pos: [x, Y, ZA - 7] }).then(walnutTone)); world.box(x, Y + 0.5, ZA - 7, 3.3, 1.0, 1.3); continue; } b.box('wood', 3.2, 1.0, 1.2, [x, Y + 0.5, ZA - 7], { uv: 0.6, collide: true }); b.box('onyx', 3.4, 0.06, 1.4, [x, Y + 1.03, ZA - 7], { uv: 0.5 }); }
   const rf = new THREE.Mesh(new THREE.BoxGeometry(0.21, 0.003, 0.3), new THREE.MeshStandardMaterial({ color: 0xf6f2e8, roughness: 0.8 })); rf.position.set(30, Y + 1.065, ZA - 7); rf.rotation.y = 0.2; zone.add(rf); ctx.anchors.doc_cit_report_form = rf;
   // 排队座椅（三排）
-  for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) add(placeModel('street_seating', { width: 4.2, pos: [27 + k * 10, Y, ZA - 11 - r * 2.4], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.85); return o; }));
+  for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) add(placeModel('street_seating', { width: 3.7, pos: [27 + k * 10, Y, ZA - 11 - r * 2.4], rotY: Math.PI }).then((o) => { world.boundsOf(o, 0.85); return o; }));
   // 排队市民
   // 批次12 收尾：改为 1/3/4 号窗台前各一位正在办理（站两只圆凳之间），3 号窗一米线处一位等候（站在线内侧，不占窗口前主通道）（cs_top 看候号座椅间站人像「在长椅间罚站」）。批次12：4 位排队市民原本站在候号长椅里（x 25/29/35/39 正落在长椅端部，穿模）→ R3 下同一 x、退到相邻两排长椅之间的过道（z 各 −1.2 m），面向窗口不变
   const citizens = R3.citizen_service ? [[23.5, -50.2, 0x3a3020], [34.3, -50.2, 0x22324a], [39.7, -50.2, 0x4a2a2a], [34.3, -49.68, 0x2a3a2a]] : [[25, ZA - 11, 0x3a3020], [29, ZA - 13.4, 0x22324a], [39, ZA - 11, 0x4a2a2a], [35, ZA - 13.4, 0x2a3a2a]];

@@ -42,7 +42,7 @@ export function dressMats(M) {
     dz_pil: W(pbr('Marble016', { rn: true, color: 0x2a2a30, roughness: 0.34, env: 0.6 }), { macro: 0.12, grime: 0.2, ground: 1.2 }),
     dz_damask: W(phm('quatrefoil_gray', { color: 0x3a4670, env: 0.35 }), { macro: 0.15, grime: 0.15 }),
     dz_damaskRed: W(phm('quatrefoil_gray', { color: 0x7a2a26, env: 0.35 }), { macro: 0.15, grime: 0.15 }),
-    dz_damaskGreen: W(phm('quatrefoil_gray', { color: 0x355a44, env: 0.35 }), { macro: 0.15, grime: 0.15 }),
+    dz_damaskGreen: W(phm('quatrefoil_gray', { color: 0x6b5b4a, env: 0.35 /* 批次56：绿墙布 → 暖灰褐 */ }), { macro: 0.15, grime: 0.15 }),
     dz_panel: W(phm('dark_paneled_wood', { color: 0xc8a68a, env: 0.5 }), { macro: 0.1, grime: 0.2, ground: 1.0 }),
     dz_plaster: W(phm('grey_plaster_02', { color: 0xb8ac94, env: 0.3 }), { macro: 0.2, grime: 0.25, streak: 0.1 }),
     dz_ceil: W(new THREE.MeshStandardMaterial({ color: 0x3e3830, roughness: 0.92, envMapIntensity: 0.2 }), { macro: 0.25, grime: 0.1 }),
@@ -80,8 +80,8 @@ export function dressMats(M) {
     r3_check: W(pbr('Terrazzo005', { rn: true, color: 0x9c968a, roughness: 0.5, env: 0.45 }), { macro: 0.16, grime: 0.12, dust: 0.06 }), // 批次4：走廊棋盘 → 暖灰水磨石
     r3_stoneBorder: W(pbr('Marble016', { rn: true, color: 0x3a3632, roughness: 0.4, env: 0.5 }), { macro: 0.1 }),
     r3_carpet: W(pbr('Carpet012', { color: 0x5c6c7c, roughness: 1 }), { macro: 0.22, dust: 0.1 }),
-    r3_carpetGreen: W(pbr('Carpet012', { color: 0x46564a, roughness: 1 }), { macro: 0.22, dust: 0.1 }),
-    r3_carpetRed: W(pbr('Carpet012g', { color: 0x8e2420, roughness: 1, env: 0.3 }), { macro: 0.2, dust: 0.1 }), // 批次12：同东廊根因（Carpet012 彩色贴图偏蓝黑 × 暗红 ≈ 黑）→ 去色 Carpet012g 染红（比东廊 crimson 略深，用于整间铺地）
+    r3_carpetGreen: W(pbr('Carpet012', { color: 0x7a6248, roughness: 1 }) /* 批次56：灰绿地毯 → 驼色 */, { macro: 0.22, dust: 0.1 }),
+    r3_carpetRed: W(pbr('Carpet012g', { color: 0x5c2c22, roughness: 1, env: 0.3 /* 批次56：正红 → 深酒红褐 */ }), { macro: 0.2, dust: 0.1 }), // 批次12：同东廊根因（Carpet012 彩色贴图偏蓝黑 × 暗红 ≈ 黑）→ 去色 Carpet012g 染红（比东廊 crimson 略深，用于整间铺地）
     r3_carpetBrown: W(pbr('Carpet012', { color: 0x6a5440, roughness: 1 }), { macro: 0.22, dust: 0.1 }),
     r3_tile: W(new THREE.MeshStandardMaterial({ map: tile('#9a9484', '#6a6456', 8), roughness: 0.45, envMapIntensity: 0.4 }), { macro: 0.14, dust: 0.1 }),
     r3_lino: W(pbr('Concrete036', { color: 0x6e7a70, roughness: 0.55, env: 0.35 }), { macro: 0.25, dust: 0.15, rough: 0.3 }),
@@ -102,7 +102,7 @@ export function dressMats(M) {
     // 批次12：市民服务大厅哑光黑大理石（原 blackMarble 清漆镜面反光过强）、屏风磨砂玻璃
     // 批次12：东廊——红地毯原用 Carpet012 彩色贴图（本身偏蓝黑，均值 52/59/72）× 暗红 → 乘出来近黑；改用去色归一的 Carpet012g 再染正红
     r3_carpetCrimson: W(pbr('Carpet012g', { color: 0xa22622, roughness: 1, env: 0.35 }), { macro: 0.18, dust: 0.08 }),
-    r3_feltGreen: pbr('Carpet012g', { color: 0x2c4a34, roughness: 1, env: 0.2, repeat: [3, 3] }),
+    r3_feltGreen: pbr('Carpet012g', { color: 0x5a4030, roughness: 1, env: 0.2, repeat: [3, 3] /* 批次56：绿呢 → 驼色呢 */ }),
     // 东廊上墙面：Poly Haven large_sandstone_blocks（与主楼外立面同石种，3 m 一张图；整块方石 + 线脚带），暖灰石灰岩色
     dz_ashlarEC: W((() => { const R = { repeat: [1 / 3, 1 / 3] }, P = 'assets/tex/ph/large_sandstone_blocks'; // 自带 repeat 的克隆贴图（M.stone 会改共享原图的 repeat）
       const m = new THREE.MeshStandardMaterial({ map: loadTex(P + '_col.webp', { srgb: true, ...R }), normalMap: loadTex(P + '_nrm.webp', R), roughnessMap: loadTex(P + '_arm.webp', R), color: 0xbcb0a0, roughness: 1, envMapIntensity: 0.4 }); m.normalScale.set(1.2, 1.2); m.name = 'ph:ashlarEC'; return m; })(), { macro: 0.14, grime: 0.3, streak: 0.12 }),

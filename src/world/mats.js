@@ -79,21 +79,21 @@ export function mats() {
   M.wallStone = pbr('Marble016', { rn: true, color: 0x5e5e66, roughness: 0.5, env: 0.6 }); // M4：原花岗岩在暖光下呈锈斑，改黑金纹大理石
   M.vault = pbr('Concrete034', { color: 0x8a8478, roughness: 0.85, env: 0.6 }); M.vault.side = THREE.DoubleSide; M.vault.userData.noShadow = true; // 双面薄壳自投影会出现橙黑色阴影痤疮
   M.panelWall = pbr('Marble006', { rn: true, color: 0x5e5850, roughness: 0.6, env: 0.35 });
-  M.wallPlaster = phm('grey_plaster_02', { color: 0x6a7a72, env: 0.35 }); // 批次7：Poly Haven 实拍石膏（原 ambientCG Concrete034）
+  M.wallPlaster = phm('grey_plaster_02', { color: 0x8c8274, env: 0.35 }) /* 批次56：灰绿 0x6a7a72 → 米灰（档案馆大墙读成墨绿） */; // 批次7：Poly Haven 实拍石膏（原 ambientCG Concrete034）
   M.onyx = pbr('Onyx013', { color: 0x8a8a90, roughness: 0.22, env: 1.2 });
   M.wood = pbr('Wood051', { color: 0x4a3020, roughness: 0.55, env: 0.3 }); // M4：深胡桃
   M.bronzeDoor = pbr('Metal048A', { color: 0x2e2620, metalness: 0.9, roughness: 0.62, repeat: [1, 3] }); M.bronzePanel = pbr('Metal048A', { color: 0x3a2c20, metalness: 0.9, roughness: 0.55 }); M.bronzeFrame = pbr('Metal048A', { color: 0x4a3c2c, metalness: 0.9, roughness: 0.7 }); /* 批次31：ext_door_mid 看图门扇仍橙红、框反光亮 → 压到深古铜 0x2e2620 / 0x3a2c20，门框单独哑光 bronzeFrame（不再借踏步防滑条材质） */ M.brassNosing = pbr('Metal048A', { color: 0x8c6c3e, metalness: 1, roughness: 0.55 }); // 批次30：正门铜门（暗古铜门扇 + 浅一档芯板 + 哑光铜框）/ 台阶铜防滑条
   M.doorWood = pbr('Wood051', { color: 0x6a4e3a, roughness: 0.55, repeat: [1.5, 4] });
   M.woodFloor = pbr('WoodFloor064', { rn: true, color: 0x6e5a4a, roughness: 0.72, env: 0.2 }); // M4：掠射角环境反射是档案馆「白光溢出」的主因
-  M.carpet = pbr('Carpet012', { color: 0x6a2228, roughness: 1 });
+  M.carpet = pbr('Carpet012', { color: 0x4e2c22, roughness: 1 }) /* 批次56：正红 → 深酒红褐 */;
   M.steel = pbr('Metal009', { color: 0xc8ccd0, metalness: 1, roughness: 0.32 });
   M.blackMetal = pbr('Metal046A', { color: 0x3a3c42, metalness: 1, roughness: 0.38 });
   M.paintedSteel = new THREE.MeshStandardMaterial({ color: 0xc9cbc8, metalness: 0.5, roughness: 0.42 });
-  M.paintedGreen = new THREE.MeshStandardMaterial({ color: 0x3d4a40, metalness: 0.45, roughness: 0.45 });
+  M.paintedGreen = new THREE.MeshStandardMaterial({ color: 0x575046, metalness: 0.45 /* 批次56：橄榄绿漆 → 暖灰 */, roughness: 0.45 });
   M.kraft = pbr('Paper006', { color: 0xd6b88a, roughness: 0.9 });
   M.kraftDark = pbr('Cardboard004', { color: 0xb08a5a, roughness: 0.95 });
   M.leather = pbr('Leather026', { rn: true, color: 0x2a1c16, roughness: 0.62, env: 0.4 }); // M5：原粗糙度图均值 0.37×0.5 → 偏镜面，桌面泛白
-  M.baize = new THREE.MeshStandardMaterial({ color: 0x1d3a28, roughness: 0.97, envMapIntensity: 0.05 }); // M6：阅览桌绿台呢（原皮革掠射角泛白，R4 P1-2）
+  M.baize = new THREE.MeshStandardMaterial({ color: 0x3a281c, roughness: 0.9, envMapIntensity: 0.05 }) /* 批次56：绿台呢 → 深棕皮革 */; // M6：阅览桌绿台呢（原皮革掠射角泛白，R4 P1-2）
   M.winView = new THREE.MeshBasicMaterial({ map: cityViewTexture(), toneMapped: true }); M.winView.userData.noShadow = true; // M6：室内窗外城景（R4 P1-6 floor3 纯蓝）
   M.concrete = pbr('Concrete036', { color: 0x7a7a7e, roughness: 0.9 });
   M.screenOff = new THREE.MeshStandardMaterial({ color: 0x050608, roughness: 0.15, metalness: 0.4 });

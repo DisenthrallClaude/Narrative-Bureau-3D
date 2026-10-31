@@ -2181,7 +2181,7 @@ export function planCitizenService(y) {
   for (let k = 0; k < 5; k++) F7(out, '服务窗口', 23.5 + k * 5.4, ZM + 1.6, 4.6, 1.0, y, 0, 1.1);
   F7(out, '畸变物投放口', 31.6, ZM + 1.4, 0.5, 0.5, y, 0, 1.2);
   for (const x of [30, 40]) F7(out, '填单台', x, ZA - 7, 3.4, 1.4, y, 0, 1.06);
-  for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) F7(out, '候号座椅', 27 + k * 10, ZA - 11 - r * 2.4, 4.2, 0.8, y, 0, 0.85);
+  for (let r = 0; r < 3; r++) for (let k = 0; k < 2; k++) F7(out, '候号座椅', 27 + k * 10, ZA - 11 - r * 2.4, 3.7, 0.8, y, 0, 0.85); // 批次56：4.2→3.7 m，端部离两侧屏风 0.75 m（用户 10-31 反馈长椅插进玻璃隔断）
   F7(out, '叫号机', 22, ZA - 3, 0.5, 0.4, y, 0, 1.4);
   F7(out, '群众来信墙', 50.2, ZA - 0.42, 9.4, 0.12, y, 0, 3.8);
   F7(out, '电饭锅（剧情）', 33, ZA - 13.4, 0.5, 0.4, y, 0, 1.3); // 批次12：用户要求不放人物模型 → 排队市民/大妈不再生成，固定锚点只留电饭锅
@@ -2241,7 +2241,7 @@ export function planCitizenService(y) {
   out.push({ sign: '填写样张', sub: '附表七（归档人员查询）', x: 40, y: y + 1.35, z: ZA - 0.42, yaw: Math.PI, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
   for (const x of [30, 40]) light(out, x, y + 2.6, ZA - 1.2, 0xffe6c8, 0.8, 4);
   // ⑤ 东区：5 号窗专用等候（同款座椅 2 排，面朝窗口）+ 西侧屏风 + 展架海报 + 报刊架
-  for (const z of [-44.0, -46.4]) out.push({ m: 'street_seating', x: 45.9, y, z, yaw: Math.PI, w: 4.2, tag: '5 号窗等候', on: 'floor' });
+  for (const z of [-44.0, -46.4]) out.push({ m: 'street_seating', x: 46.25, y, z, yaw: Math.PI, w: 3.5, tag: '5 号窗等候', on: 'floor' }); // 批次56：长椅插屏风 → 3.5 m、东移，端部离 x 43.4 屏风 1.1 m
   lowScreen(out, 'z', 43.4, -47.0, -42.6, y); lowScreen(out, 'x', -42.6, 43.4, 48.4, y);
   hang(out, '5 号窗 · 加试报名咨询等候', 45.9, y + 3.6, -45.2, 0, 3.0, 0.42, y + H);
   pic(out, 'textures/b02/B02_海报_加试报名大厅.png', 48.9, y + 1.3, -41.6, Math.PI * 0.85, 0.66, 0.99, 'black', { tag: '流程海报', stand: true, fy: y });
