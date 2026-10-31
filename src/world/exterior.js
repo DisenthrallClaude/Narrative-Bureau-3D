@@ -504,18 +504,22 @@ async function heroFacade(g, M, world, ctx, add) {
   for (const k in dM) occ(dM[k]);
   const ironD = M.iron.clone(); if (Object.prototype.hasOwnProperty.call(M.iron, 'onBeforeCompile')) ironD.onBeforeCompile = M.iron.onBeforeCompile; if (Object.prototype.hasOwnProperty.call(M.iron, 'customProgramCacheKey')) ironD.customProgramCacheKey = M.iron.customProgramCacheKey;
   ironD.color.set(0x2a2420); occ(ironD); // 铁箍：冷蓝灰 → 暖黑铁（共享 M.iron 不动）
+  // 批次60：右门扇实测 (64–103,10–37,0) 牛血红（G、B 极低）——右扇单独克隆三种铜材，底色乘 (0.80,1.30,1.55) 回暖棕 / 暗古铜，金属度 ≤0.45 让暖漫反射主导；左扇不变
+  const dMR = {}; for (const k in dM) { const c = dM[k].clone(); if (Object.prototype.hasOwnProperty.call(dM[k], 'onBeforeCompile')) c.onBeforeCompile = dM[k].onBeforeCompile; if (Object.prototype.hasOwnProperty.call(dM[k], 'customProgramCacheKey')) c.customProgramCacheKey = dM[k].customProgramCacheKey; c.color.multiply(new THREE.Color(0.80, 1.30, 1.55)); c.metalness = Math.min(c.metalness, 0.45); c.needsUpdate = true; dMR[k] = c; }
   for (const sx of [-1, 1]) {
+    const dM_ = sx > 0 ? dMR : dM;
     const leaf = new THREE.Group(); const w = DW / 2, h = DH;
-    const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), dM.bronzeDoor); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), dM_.bronzeDoor); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
     for (const fz of [-1, 1]) {
-      for (let c = 0; c < 2; c++) for (let r = 0; r < 4; r++) { const pw = w * 0.38, ph = r === 3 ? 1.9 : 1.55, px = sx * -(w * 0.27 + c * w * 0.46), py = 0.9 + r * 1.95 + ph / 2; const pnl = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.06), dM.bronzePanel); pnl.position.set(px, py, fz * 0.16); leaf.add(pnl); const fr = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.12, ph + 0.12, 0.03), dM.bronzeFrame); fr.position.set(px, py, fz * 0.145); leaf.add(fr); }
-      for (const k of [0, 2, 4]) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.12, 0.05), ironD); strap.position.set(sx * -w / 2, 0.55 + k * 1.95, fz * 0.17); leaf.add(strap); for (let r = 0; r < 5; r++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 6), dM.bronzePanel); st.position.set(sx * -(0.3 + r * 0.7), 0.55 + k * 1.95, fz * 0.2); leaf.add(st); } }
+      for (let c = 0; c < 2; c++) for (let r = 0; r < 4; r++) { const pw = w * 0.38, ph = r === 3 ? 1.9 : 1.55, px = sx * -(w * 0.27 + c * w * 0.46), py = 0.9 + r * 1.95 + ph / 2; const pnl = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.06), dM_.bronzePanel); pnl.position.set(px, py, fz * 0.16); leaf.add(pnl); const fr = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.12, ph + 0.12, 0.03), dM_.bronzeFrame); fr.position.set(px, py, fz * 0.145); leaf.add(fr); }
+      for (const k of [0, 2, 4]) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.12, 0.05), ironD); strap.position.set(sx * -w / 2, 0.55 + k * 1.95, fz * 0.17); leaf.add(strap); for (let r = 0; r < 5; r++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 6), dM_.bronzePanel); st.position.set(sx * -(0.3 + r * 0.7), 0.55 + k * 1.95, fz * 0.2); leaf.add(st); } }
     }
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 8, 24), M.gold); ring.position.set(sx * -(w - 0.5), h * 0.45, 0.2); leaf.add(ring);
     leaf.position.set(sx * DW / 2, Y, -6.2); leaf.rotation.y = sx * -1.25; g.add(leaf);
   }
   // 批次58：门廊券内石面反弹暖光（2850K，不投影）——批55 遮蔽后左门扇只剩间接光、直射暖灯照不到外表面；补光偏左放（距左门扇外表面 ≈1.9 m、右门扇 ≈3.8 m + 射程窗口衰减），把左扇抬到暗古铜而右扇基本不变
-  { const pb = new THREE.PointLight(0xffb26e, 24, 6, 2); pb.position.set(-1.0, Y + 3.4, -7.8); pb.castShadow = false; pb.name = 'porch_bounce58'; g.add(pb); }
+  // 批次60：单盏 Y+3.4 只照亮左扇中段（上段 (54,29,28) 偏灰、底部 (59,37,45) 偏紫）→ 改竖排两盏（Y+1.6 / Y+6.6）覆盖整扇 9 m 高度，各 18 / 射程 6.5，仍偏左、不投影
+  for (const [py, nm] of [[1.6, 'porch_bounce60_lo'], [6.6, 'porch_bounce60_hi']]) { const pb = new THREE.PointLight(0xffb26e, 18, 6.5, 2); pb.position.set(-1.0, Y + py, -7.8); pb.castShadow = false; pb.name = nm; g.add(pb); }
   innerVestibuleDoors(g, M, Y); // 批次49：门洞纵深——门厅尽头内门（铜饰胡桃木门半开）+ 门厅暖光渐变
   // 文字带「叙事管理局」（黑色抛光石板上的鎏金字）
   const txt = goldText('叙事管理局', 15, 2.9, M.goldBright, { res: 512, spacing: 60 }); txt.position.set(0, Y + 31.2, -4.99); g.add(txt);
