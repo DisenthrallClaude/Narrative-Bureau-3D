@@ -1,17 +1,25 @@
 # 批次52：市民服务大厅叫号 / 取号机精建（eastwing.js 原 blackMetal 方盒 0.5×1.4×0.4 + 蓝色发光平面）。
-# 70 年代立式取号机：墨绿烤漆柜身（倒角 + 铜包角 + 踢脚）+ 顶部铜壳显示头（三位数码管窗：暗红发光七段码「047」+ 铜框玻璃 + 上沿铜铭牌）
+# 70 年代立式取号机：胡桃木柜身（批次54：墨绿烤漆 → 胡桃木纹 + 暗铜；用户不要绿色）（倒角 + 铜包角 + 踢脚）+ 顶部铜壳显示头（三位数码管窗：暗红发光七段码「047」+ 铜框玻璃 + 上沿铜铭牌）
 # + 中段斜面操作板（铜框、大号铜按钮「取号」+ 出票口与半露纸票）+ 下段检修门（铜锁孔 + 凸芯板）。游戏坐标 +Z = 正面，原点 = 占地中心地面。占地 0.5 × 0.4，高 1.4。
 import bpy, sys, math
 from mathutils import Vector
 argv = sys.argv[sys.argv.index('--') + 1:]; OUT, PREV = argv[0], argv[1]
 bpy.ops.wm.read_factory_settings(use_empty=True); S = bpy.context.scene
-def mat(name, col, rough=0.5, metal=0.0, emit=None, es=0.0):
+import os
+TEXD = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tex')
+def mat(name, col, rough=0.5, metal=0.0, emit=None, es=0.0, tex=None, nrm=None):
     m = bpy.data.materials.new(name); m.use_nodes = True; b = m.node_tree.nodes['Principled BSDF']
     b.inputs['Base Color'].default_value = (*col, 1); b.inputs['Roughness'].default_value = rough; b.inputs['Metallic'].default_value = metal
     if emit: b.inputs['Emission Color'].default_value = (*emit, 1); b.inputs['Emission Strength'].default_value = es
+    if tex:
+        t = m.node_tree.nodes.new('ShaderNodeTexImage'); t.image = bpy.data.images.load(tex); m.node_tree.links.new(t.outputs['Color'], b.inputs['Base Color'])
+    if nrm:
+        t = m.node_tree.nodes.new('ShaderNodeTexImage'); t.image = bpy.data.images.load(nrm); t.image.colorspace_settings.name = 'Non-Color'
+        nm = m.node_tree.nodes.new('ShaderNodeNormalMap'); nm.inputs['Strength'].default_value = 0.5
+        m.node_tree.links.new(t.outputs['Color'], nm.inputs['Color']); m.node_tree.links.new(nm.outputs['Normal'], b.inputs['Normal'])
     return m
-M = dict(enamel=mat('qm_enamelGreen', (0.045, 0.085, 0.06), 0.42), enamelD=mat('qm_enamelDark', (0.02, 0.04, 0.03), 0.5),
-         brass=mat('qm_brass', (0.80, 0.60, 0.30), 0.28, 1.0), brassD=mat('qm_brassDim', (0.48, 0.35, 0.18), 0.42, 1.0),
+M = dict(enamel=mat('qm_walnut', (1, 1, 1), 0.38, tex=os.path.join(TEXD, 'fd_walnut.jpg'), nrm=os.path.join(TEXD, 'walnut_n.jpg')), enamelD=mat('qm_walnutDark', (1, 1, 1), 0.45, tex=os.path.join(TEXD, 'fd_walnutD.jpg'), nrm=os.path.join(TEXD, 'walnut_n.jpg')),
+         brass=mat('qm_brass', (0.80, 0.60, 0.30), 0.28, 1.0), brassD=mat('qm_brassDim', (0.40, 0.28, 0.14), 0.45, 1.0),
          glass=mat('qm_glassDark', (0.02, 0.015, 0.012), 0.08), seg=mat('qm_segGlow', (1.0, 0.25, 0.08), 0.4, 0, (1.0, 0.22, 0.06), 3.5),
          segOff=mat('qm_segOff', (0.035, 0.012, 0.008), 0.6), paper=mat('qm_ticket', (0.86, 0.82, 0.70), 0.8), rubber=mat('qm_rubber', (0.02, 0.02, 0.02), 0.8),
          red=mat('qm_btnRed', (0.45, 0.05, 0.03), 0.35))
@@ -69,6 +77,13 @@ for i, ch in enumerate('047'): digit(ch, (i - 1) * 0.12)
 box('brassD', 0.2, 0.035, 0.004, 0, 1.30, ZF + 0.012); box('rubber', 0.17, 0.012, 0.003, 0, 1.30, ZF + 0.015)  # 铭牌
 for o in list(S.objects):
     for md in list(o.modifiers): bpy.context.view_layer.objects.active = o; bpy.ops.object.modifier_apply(modifier=md.name)
+def uv_cube(o, s):  # 批次54：胡桃木件立方投影 UV（0.6 m 一张）
+    bpy.ops.object.select_all(action='DESELECT'); bpy.context.view_layer.objects.active = o; o.select_set(True)
+    bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+    bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
+    bpy.ops.uv.cube_project(cube_size=0.6, correct_aspect=True, clip_to_bounds=False, scale_to_bounds=False); bpy.ops.object.mode_set(mode='OBJECT')
+for o in list(S.objects):
+    if o.type == 'MESH' and o.data.materials and o.data.materials[0].name.startswith('qm_walnut'): uv_cube(o, 0.6)
 for o in S.objects:
     if o.type == 'MESH' and 'UVMap' not in o.data.uv_layers: o.data.uv_layers.new(name='UVMap')
 bpy.ops.object.select_all(action='SELECT'); bpy.context.view_layer.objects.active = S.objects[0]
