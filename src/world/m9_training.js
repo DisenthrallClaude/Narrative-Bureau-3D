@@ -43,7 +43,7 @@ export function buildM9Training(zone, world, y) {
   for (let z = Z0 - 4; z > Z1; z -= 8) { bays.push(MX(-X, y, z, Math.PI / 2)); bays.push(MX(X, y, z, -Math.PI / 2)); } // 西 / 东墙 8 开间
   for (const x of [-28, -20, -12, 12, 20, 28]) bays.push(MX(x, y, Z1 + 0.2, 0)); // 南墙（内表面 z −155.8）（中段 ±8 m 靶档区保留原墙）
   for (const x of [-28, -20, 20, 28]) bays.push(MX(x, y, Z0 - 0.2, Math.PI)); // 北墙（内表面 z −92.2）
-  for (const s of [-1, 1]) bays.push(MX(s * 12.8, y, Z0 - 0.2, Math.PI, 0.8)); // 北墙电梯厅开口两侧窄开间（6.4 m，止于 x ±9.6）
+  for (const s of [-1, 1]) bays.push(MX(s * 13.3, y, Z0 - 0.2, Math.PI, 0.675)); // 北墙电梯厅开口两侧窄开间（M14：5.4 m，止于 x ±10.6，与 M12 门柱 9.4…10.6 对接不再交叠；原 12.8 / 0.8 止于 ±9.6）
   const jobs = [];
   jobs.push(loadModel('m9/tr_bay').then((s) => { const g = bake(s, bays, MAT); g.name = 'm9_tr_bay'; zone.add(g); }));
   jobs.push(loadModel('m9/tr_lectern').then((s) => { const g = bake(s, [MX(-22, y, -104.0, Math.PI)], MAT); g.name = 'm9_tr_lectern'; g.traverse((o) => { if (o.isMesh) o.castShadow = true; }); zone.add(g); }));

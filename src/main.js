@@ -9,6 +9,7 @@ import { Interactions } from './engine/interact.js';
 import { Audio } from './engine/audio.js';
 import { content } from './engine/content.js';
 import { buildM5 } from './world/dress_m5.js';
+import { applyM14Training } from './world/m14_training.js';
 import { buildSurface } from './world/surface.js';
 import { buildDepths, updateDepths, depthZone, setupDepths } from './world/depths.js';
 import { PlanarReflector } from './engine/reflect.js';
@@ -106,7 +107,7 @@ async function boot() {
   scene.background = sky; scene.backgroundIntensity = SKY_I;
   scene.environment = envSky;
   LOG('hdr ok'); UI.loadProgress(0.1, '建造主楼……');
-  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx); await buildDressing(scene, world, ctx); await buildM5(scene, world, ctx); await buildSurface(scene, world, ctx); await buildDepths(scene, world, ctx); await buildR3(ctx, world, ctx._r3mat, true); await applyM12Training(ctx, world); // 批次 M12：B6 训练场第二轮
+  await buildExterior(scene, world, ctx); await buildInteriors(scene, world, ctx); await buildEastWing(scene, world, ctx); await buildVault(scene, world, ctx); await buildRooms(scene, world, ctx); await buildUpper(scene, world, ctx); await buildDressing(scene, world, ctx); await buildM5(scene, world, ctx); await buildSurface(scene, world, ctx); await buildDepths(scene, world, ctx); await buildR3(ctx, world, ctx._r3mat, true); await applyM12Training(ctx, world); await applyM14Training(ctx); // 批次 M12 / M14：B6 训练场第二、三轮
   // R3 批次8 性能：地表/外景合批网格按 32 m 格切块（视锥 + 阴影视锥剔除生效）；主楼外立面 hi/lo 两级按格切换；小件按距离剔除
   { const t0 = performance.now(); const ext = scene.getObjectByName('exterior'); const L = new LodCells(+(params.get('lodNear') ?? 40));
     const fl = ctx.facadeLod; const keep = (o) => fl && (o.parent === fl.hi || o.parent === fl.lo || fl.hi.getObjectById(o.id) || fl.lo.getObjectById(o.id));
