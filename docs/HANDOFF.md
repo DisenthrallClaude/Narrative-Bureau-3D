@@ -1956,6 +1956,18 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 ### 下批先做
 1. 取 41218178525 门扇两机位验收色相锁。2. 叫号机亮段调红、铜壳加一点高光。3. 正门门廊石门套 / 尖拱线脚 / 柱头 / 台阶 hero 模型（本批未做）。
 
+## 批次 M9 · 档案馆收尾 + B6 训练场 Blender hero（2026-11-01 00:29 CST 接手，约 35 分钟；与 r3-model-m7 / m8 并行，只动 archive / training；独立 worktree /tmp/m9wt）
+- 提交：bb6a358（档案馆收尾 + 机位）、e0c73ef（训练场 hero）。提交前 `npx vite build --outDir /tmp/m9dist` 均 0（注意 /tmp 只剩约 2 GB，几个 dist 并存会 ENOSPC，build 完即删）。
+- A1 东门球灯：r3plan `globe(..., { amber: true })` → r3build 加铜罩（球冠 0.42π）+ 新材质 dress.js `r3_globeAmber`（烟琥珀 0x4a3020，自发光 0xc07a34 ×0.32）；正下方点光 2.6→1.3、色温更暖。**柜台聚光**：查到柜台在西侧 x −50，与东门球无关，未改。游戏内 m9_eastglobe / archive_r3（run 41220497557）亲眼看：不再是白色过曝球，读成暖琥珀灯 + 铜罩 ✔。
+- A2 卡片目录柜角：不投影暖补光 (−54.3, y+1.9, −39.6) 1.5/5 m + 目录柜单独提亮胡桃（CAT_MAT：walnut 0x8a5c3e / walnutDark 0x5e3e2a，只作用 m6/card_catalog）。m6_catalog 亲眼看：柜体红褐木色读出、抽屉铜框/卡签可辨（仍偏小），比 M6 明显亮 ✔。
+- A3 B1 机位：m9_b1cab（西墙铁柜排）/ m9_b1door（东墙铁门）。看图：16 柜成排贴墙、暖灰烤漆 ✔（略偏白）；铁门门套/凸板/推杠可读 ✔。B1 右侧地面镜面黑反光是旧问题，未处理。
+- A4 检查：audit56（archive/archive_b1/training 三区 dump 在 work/r3/m9/plans/）落地件↔隔断 0；落地件互插 1 处为旧有 archive_b1 古董桌↔扶手椅 7 cm（椅子塞桌下，合理）；训练场 4 面局旗"背后无墙"为旧项（挂桁架）。r3plan_draw training errors=0。
+- B 训练场：规划 work/r3/m9/plans/training_plan.md + plan_training.png。tools/blender/m9_training.py → public/assets/models/m9/：tr_bay（8×16 m 开间：胡桃凸芯板墙裙 1.4 m + 踢脚石 + 腰线暗铜嵌条、暖灰石饰面分缝、半壁柱拼 0.8 m 带础/头、高窗 3.0×3.4 窗套/石窗台/铁棂/暖琥珀内透 emissive 0.7、三级檐口；2940 三角）×26（东西各 8、南两翼各 3、北两翼 2 + 开口旁 0.8 缩放窄开间）；tr_lectern（简报区 −22,−104）；tr_locker ×5（x 12.7，每 1.02 m 成排）。src/world/m9_training.js 接入；dressing.js 在 M9_TRAIN 下关掉蓝色灯条护墙板（南墙中段 ±8 m 保留、灯条改 dz_brassDim）；r3plan 讲台/器材柜改 F7 固定件登记。`?nom9=1` 回旧。锚点/触发器/副本门/控制塔/维护门碰撞未动；讲台、柜排各加一个小碰撞盒。Blender 预览 work/r3/m9/preview/（prev_sheet.jpg）。
+- 游戏内 training_r3（run 41221264162）亲眼看：墙面从蓝灯条深色瓷砖变成暖灰石 + 壁柱 + 高窗暖光，蓝色消失 ✔；高窗偏亮奶黄（B6 地下有窗叙事上牵强，可改成"采光井/通风窗"或压 emissive 0.45）。
+- 截图：work/r3/m9/r41220497557/m9a/、work/r3/m9/r41221264162/m9b/；拼图 work/r3/m9/sheet.jpg（9 张）。走查 run 41221284508（e0c73ef）通过 31 / 失败 0 / 控制台错误 0（work/r3/m9/walk/walk/WALKTHROUGH.md）。另：简报区课桌椅（r2/schooldesk）椅面仍是蓝色，违反禁人造物蓝绿，未处理。机位 m9_eastglobe / m9_b1cab / m9_b1door / m9_tr_wall / m9_tr_north / m9_tr_brief / m9_tr_locker。
+- Drive：分卷文件夹下新建 v12_m9_models（1IrJcljXdlIphXPU_CoCSNe5c3vsQjTGC）内 v12_m9_models.tar.gz（1IKNrlSQ_CqWdIlI-obNzOYXDlmV8hvqv：3 glb + m9_training.py + m9_training.js + 预览 + 规划）。未删任何旧卷。
+- 未完成：屋架 tr_truss（脚本函数已写，未出模/未接入）；靶位/训练台 hero；电梯厅开口门套；高窗亮度/叙事再定。
+
 ## 批次 M6 · 档案馆 / B1 家具 hero + M2 遗留快修（2026-11-01 00:00 CST 接手，约 35 分钟；与 r3-model-m4 / m5 并行，只动 archive / archive_b1）
 - 提交：fcdfed6（快修 + 卡片目录柜 + 密集架端板）、600714d（机位）、a2df50d（B1 档案铁柜 + 东墙铁门）、0cc5cb9（B1 烤漆改素色暖灰）。`?nom2=1` 同时关闭 M2 与 M6（M6_CAT 也读 nom2）。
 - 快修：①西墙高窗 interiors.js 的 glassIn 在 M2_ARCHIVE 下关闭，m2_archive.js 自建 4 樘拱窗，贴图 = stainedGlassTexture(3) 按像素把蓝色菱格/纹章底重映射为琥珀/酒红/暗金（emissive 1.35）——**游戏内已确认变暖、无蓝**；②planArchive 全部 globe 加 dim（r3_globeDim 自发光 0.5）——**游戏内 archive_r3 东门机位上方那颗白球仍然过曝，未解决**（推测是球体正下方 light(-23.8,y+2.8) 与柜台 spot 把白色漫反射打爆 + bloom，下一步：档案馆球灯单独换烟琥珀玻璃材质 color≈0x5a3a20 或换铜罩吊灯模型，并降低那盏点光）；③m1_burgundy 0x8a3428 → 0xc25a40（藻井格心/楣带/楣板，仰拍机位已读成红褐不再是深褐）；④阅览台灯绿罩 → 暗铜罩（M6_LAMP，只覆盖 lampGreen）。
