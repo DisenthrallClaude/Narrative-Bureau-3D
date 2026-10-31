@@ -14,8 +14,8 @@ function m1Mats(D, M) {
     m1_walnutDark: pbr('Wood051', { color: 0x37231a, roughness: 0.45, env: 0.3 }),
     m1_stone: pbr('Concrete034', { color: 0xa09484, roughness: 0.78, env: 0.4 }),
     m1_stoneDark: pbr('Concrete034', { color: 0x5e554c, roughness: 0.7, env: 0.4 }),
-    m1_bronze: pbr('Metal046A', { color: 0x7a5634, metalness: 1, roughness: 0.4, env: 0.9 }),
-    m1_burgundy: pbr('Fabric023', { color: 0x5a1c18, roughness: 0.85, env: 0.2 }),
+    m1_bronze: pbr('Metal046A', { color: 0xa87a4a, metalness: 1, roughness: 0.34, env: 1.3 }), // 首拍（41214853132 m1_entry_s）装订机铜件读成黑 → 提亮
+    m1_burgundy: pbr('Fabric023', { color: 0x9a3026, roughness: 0.85, env: 0.2 }), // 首拍走道毯近黑 → 提亮
     m1_kraft: D.dp_kraft,
     m1_iron: M.blackMetal,
     m1_thread: D.dp_red,

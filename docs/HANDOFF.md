@@ -1856,3 +1856,5 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 - 接入 src/world/m1_seventh.js（depths.js 只加 import + 一行 `jobs.push(buildM1Seventh(...))`）：材质按名字换游戏 pbr 贴图（Wood051 胡桃 / Concrete034 暖灰石 / Metal046A 暗铜 / Fabric023 酒红褐），UV 是 Blender 立方投影 1 m 一张不拉伸；回廊 46 段护墙 + 19 榀拱肋按弧线矩阵烘进世界坐标、按材质合并（每模块约 6 次绘制）；镜像守则 t=0.5 两侧（段 19–27）与段 0 不放拱肋。碰撞：入口壁柱 / 屏墙两翼 / 门套 / 装订机 world.box；回廊每榀壁柱带 yaw 的 world.box。**原牛皮纸墙 / 地 / 书页墙、全部锚点、传送点、zone 判定不动。**
 - Blender 预览（亲眼看过）：work/r3/m1/preview/m1_entry_{0,1,2}.png、m1_gutter_{0,1,2}.png、拼图 preview/sheet_preview.jpg。
 - 未做：seventh_ops / seventh_rewrite / seventh_wrap 精建（下批按剧情顺序继续）；entry.glb 未 meshopt（2.4 MB，可后续压）。
+- 游戏内首拍（run 41214853132，60b282e）：m1_entry_s 亲眼看——石壁柱 / 檐部 / 门套 / 护墙板 / 石板地都对位，无悬空穿墙；**问题**：走道毯近黑、装订机铜件读成黑 → 第二提交把 m1_bronze 提亮（0xa87a4a / 粗糙 0.34 / env 1.3）、m1_burgundy 提亮（0x9a3026），**该调色未在游戏内复拍验证**。入口里另有他人 R3 陈设（右侧展台/衣帽架、左下木箱、门套顶挂件）与装订机是否相碰需下批俯视核对。
+- Drive 快照_分卷：删旧 v01/v02 → v01 18DIUFx_pE1l2uU7njZPnKF1_3711BEL9、v02 12fiLCdH8BXIHCqrRP9LL4TVfvd1iPOEO，新增 v05_m1_models.tar 1rvLqxiENy0lg8d7KdkGcjcXcqug-FjR_（m1 glb + 脚本 + 平面图 + 预览）；v03/v04 未动。
