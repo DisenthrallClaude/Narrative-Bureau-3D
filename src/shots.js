@@ -59,6 +59,12 @@ export const SHOTS = {
   gate_top: { pos: [0, 1.8 + 34, -17.99], look: [0, 1.8, -18], fov: 50, clipY: 1.8 + 4.5, zone: 'gate' },
   archive_r3: { pos: [-21.0, 1.8 + 1.65, -51.5], look: [-40, 1.8 + 1.4, -55], fov: 76, lite: 1 },
   archive_shelf: { pos: [-28.2, 1.8 + 1.6, -40.65], look: [-21, 1.8 + 1.2, -40.65], fov: 72, lite: 1 },
+  // 批次 M6：档案馆东门近景 / 仰拍天花 / 西墙彩窗+卡片目录 / 卡片目录近景 / B1 密集架端板
+  m6_eastdoor: { pos: [-27.5, Y + 1.7, -50.5], look: [-20.2, Y + 3.4, -51.5], fov: 70, lite: 1 },
+  m6_ceiling: { pos: [-36.0, Y + 1.6, -51.5], look: [-30.0, Y + 12.6, -51.0], fov: 80, lite: 1 },
+  m6_west: { pos: [-33.0, Y + 2.6, -44.0], look: [-56.0, Y + 6.2, -48.0], fov: 70, lite: 1 },
+  m6_catalog: { pos: [-52.3, Y + 1.55, -38.0], look: [-55.6, Y + 0.85, -39.6], fov: 66, lite: 1 },
+  m6_b1: { pos: [-33.5, Y - 6 + 1.6, -35.4], look: [-38.5, Y - 6 + 1.3, -39.8], fov: 70, zone: 'archive_b1' },
   archive_west: { pos: [-46.5, 1.8 + 1.65, -46.0], look: [-55, 1.8 + 1.0, -36], fov: 74, lite: 1 },
   archive_loan: { pos: [-45.6, 1.8 + 1.6, -48.6], look: [-50.2, 1.8 + 0.85, -51.5], fov: 62, zone: 'archive', lite: 1 }, // 批次33：借阅柜台近景
   archive_cat: { pos: [-49.4, 1.8 + 1.6, -60.4], look: [-51.6, 1.8 + 1.0, -63.3], fov: 62, zone: 'archive', lite: 1 }, // 批次45：大档案柜组 → 卡片目录柜精建近景
