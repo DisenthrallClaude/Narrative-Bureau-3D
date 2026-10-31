@@ -7,6 +7,7 @@
 // 画质：low 档（核显）降密度 / 降细节 / 雾只放 3 团；只在对应区域（G.zone）可见时 update，其余时间 group.visible=false。
 // 预热：在主循环 compileAsync 之前加入场景并推进一帧，让着色器随全场景一起预编译（同 kit/warm.js 思路），首次进入不卡。
 import * as THREE from 'three';
+import { E2, warmB1, buildFogBand, amberize, gateRim } from './e2_fx.js'; // 批次 E2
 
 const P = typeof location !== 'undefined' ? new URLSearchParams(location.search) : new URLSearchParams();
 const OFF = new Set((P.get('e1off') || '').split(',').filter(Boolean));
@@ -19,7 +20,9 @@ const PRESETS = {
 };
 
 export async function initE1FX(G, { AY = -300, SY = -500, quality = 'high' } = {}) {
+  if (E2) warmB1(G); // E2：B1 冷色治理是配色修正，不随 ?nofx 关（?noe2=1 或 ?e1off=b1warm 关）
   if (!E1_FX) return null;
+  if (E2 && !OFF.has('gate')) gateRim(G, AY);
   let createEffect;
   try { ({ createEffect } = await import('../vendor/gdevs-vfx.js')); } catch (e) { console.warn('E1 fx', e); return null; }
   const low = quality === 'low';
@@ -35,7 +38,7 @@ export async function initE1FX(G, { AY = -300, SY = -500, quality = 'high' } = {
 
   // 1. 深渊门：星纹膜（门洞等边尖拱 w12.4 / 起拱 10.6 / 顶 ≈21.3，折页面 z −80.8）
   add('gate', 'abyss_gate', (root) => {
-    const fx = createEffect(PRESETS.gate, { color: '#a8742c', size: 1, speed: 0.35, density: low ? 0.2 : 0.4, detail: low ? 0.5 : 1 });
+    const fx = createEffect(PRESETS.gate, { color: '#a8742c', size: 1, speed: 0.35, density: E2 ? (low ? 0.3 : 0.55) : (low ? 0.2 : 0.4), detail: E2 ? (low ? 0.8 : 1.5) : (low ? 0.5 : 1) }); // E2：星纹太弱 → 提细节 / 密度（亮度仍由暗金色 #a8742c 压住）
     fx.group.traverse((o) => { if (o.name === 'utility-gate-frame') { o.visible = false; o.layers.set(31); } }); // 石拱已是门框
     fx.group.rotation.y = -Math.PI / 2; // 特效门面法线 +X → 朝玩家 +Z
     fx.group.scale.setScalar(7.2); // E1 二拍：5.6 时椭圆膜边缘落在门洞里读成暗斑 → 放大到椭圆边被石拱侧壁遮住
@@ -46,6 +49,7 @@ export async function initE1FX(G, { AY = -300, SY = -500, quality = 'high' } = {
 
   // 2. 档案馆 B1 贴地薄雾（地坪 −4.2；变体 1 粒子在原点下 1.12…0.67 → 原点抬 1.12×缩放）
   add('fog', 'archive_b1', (root) => {
+    if (E2) return [buildFogBand(root, { low })]; // E2：E1 三次雾团失败 → 改通道中线贴地体积雾带（e2_fx.js）
     const pts = [[-40, -38.6], [-46, -40.4], [-52, -42.2], [-35, -39.2]].slice(0, low ? 2 : 4); // E1：一拍点位在密集架后看不见；二拍沿通道 5 团 ×1.8 太浓成土墙、贴墙出硬边、挡住尽头桌椅 → 三拍离墙 ≥7 m、缩 1.4、降密度
     const s = 1.4;
     return pts.map(([x, z], i) => {
@@ -61,6 +65,7 @@ export async function initE1FX(G, { AY = -300, SY = -500, quality = 'high' } = {
     fx.group.scale.setScalar(1.8); fx.group.position.set(0, SY + 0.6, -174);
     fx.group.children.forEach((o) => { if (o.isMesh && Math.abs(o.rotation.x + Math.PI / 2) < 0.01) { o.visible = false; o.layers.set(31); } }); // E1 二拍：地面方格矩阵在暗红地面上读成白砖线、太抢 → 去掉，只留浮符
     fx.group.traverse((o) => { if (o.material && !o.material.depthWrite) { o.material.polygonOffset = true; o.material.polygonOffsetFactor = -2; o.material.polygonOffsetUnits = -4; } });
+    if (E2) amberize(fx.group); // E2：浮晶米白 → 琥珀（片元输出乘色）
     root.add(fx.group);
     return [fx];
   });

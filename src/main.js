@@ -1,6 +1,7 @@
 // 《叙事管理局》入口：渲染、加载、分区、控制、交互、剧情
 import * as THREE from 'three';
 import { initE1FX } from './world/e1_fx.js';
+import { E2, E2_OFF } from './world/e2_fx.js'; const E2B1 = E2 && !E2_OFF.has('b1warm'); // 批次 E2
 import { chunkGroup, LodCells, DistCull, PortalCull } from './engine/chunk.js';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { Renderer, QUALITY } from './engine/renderer.js';
@@ -285,7 +286,7 @@ const ZONE_LOOK = {
   gate: { env: 'hall', envI: 0.7, sun: 3.2, exp: 1.05, fog: [0x2a241c, 0.005], hemi: 0.18 },
   security_hall: { env: 'hall', envI: HALL_PROBE ? 1.0 : 0.6, sun: 0, exp: 1.0, fog: [0x1d1915, 0.010], hemi: 0.12 },
   archive: { env: 'hall', envI: 0.5, sun: 0, exp: 1.45, fog: [0x241c14, 0.008], hemi: 0.2 },
-  archive_b1: { env: 'hall', envI: 0.3, sun: 0, exp: 1.2, fog: [0x10141a, 0.02], hemi: 0.05 },
+  archive_b1: { env: 'hall', envI: E2B1 ? 0.22 : 0.3, sun: 0, exp: 1.2, fog: [E2B1 ? 0x17120c : 0x10141a, 0.02], hemi: 0.05 }, // 批次 E2：B1 去蓝（暖雾、降冷环境反射）
   citizen_service: { env: 'hall', envI: 0.65, sun: 0, exp: 1.05, fog: [0x221d17, 0.010], hemi: 0.14 },
   exam_center: { env: 'hall', envI: 0.6, sun: 0, exp: 1.05, fog: [0x1a1c22, 0.010], hemi: 0.12 },
   command_center: { env: 'hall', envI: 0.5, sun: 0, exp: 1.3, fog: [0x0a1020, 0.008], hemi: 0.16 },
