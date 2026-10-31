@@ -2007,3 +2007,25 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 ### 下批先做
 1. `bash tools/gh_shots_fetch.sh 41219985684 work/r3/m7/r41219985684` 取 ext_door_mid / near / plaza：看门扇两扇是否同为暗古铜、左下不紫、右扇不红；发灰 / 太平 → exterior.js hueLock 的 mix 0.85→0.7（只允许再调一次）。同时看门廊柱头 / 柱础 / 门套在游戏里是否与原柱身对位、有无漂浮或 z-fight。
 2. 取 41219987735 walk 结果（31/31、控制台 0）。
+
+## 批次 M10 · 正门验收收尾 + 第七局细节修正（2026-11-01 00:41 CST 接手，约 35 分钟；与 r3-model-m9 / m11 并行；独立 worktree /tmp/m10wt）
+### 提交
+24efb62 第七局陈设替换 + 叫号机铜壳压暗；ae23567 meshopt 压缩。代码提交前 `npx vite build`（因磁盘仅剩 ~0.5 GB，用临时配置 copyPublicDir:false 编译）= 0。
+### B 第七局（tools/blender/m10_s7props.py → public/assets/models/m10/{pendant 3.3k, oldchair 7.1k, stool 3.7k 三角}.glb；src/world/m10_seventh.js；depths.js 收集位置；`?nom10=1` 回旧）
+- 白色圆锥吊灯罩（作战室会商长桌 ×4、杀青室中轴 ×8，dz_shade 自发光 1.2）→ 1960–70 年代暖黑搪瓷工业吊灯（暗古铜吊杆/灯头/卷边口，内侧暖白搪瓷 emissive 0.35，乳白灯泡 0.9）；罩口高度不变（作战室 Y+2.2、杀青室 Y+3.6），电缆截短接天花。作战室桌面 s7Lamp 白发光小圆锥 → dz_brassDim 暗铜罩。
+- 白网面现代转椅 office_chair ×13（会商长桌 12 + K 的桌 1）→ 胡桃 + 酒红褐皮面老式办公椅（弧形分段靠背、扶手、四爪铸铁底座 + 铜轮），位置/朝向不变；K 的桌茶杯锚点 int_ops_tea 未动。
+- 杀青室前景纯黑方块 = depths.js 中轴 6 只 'wood' 木凳盒（无碰撞、非锚点、r3plan F7 只是占位）→ 胡桃框 + 皮面方凳（铜钉压边），同位。
+- 绿色：休整角小桌 r2/modified_thermos（绿色保温壶）撤掉。东墙补给区 3 只 metal_jerrycan_green 军绿油桶**未处理**（地面、不在桌面），下批可换色或撤。
+- 游戏内（run 41222140159，24efb62）亲眼看：m8_ops_lamp 前景吊灯读成深色搪瓷碗罩、内侧暖亮，台灯成暗铜罩，前景/右侧椅子读成胡桃皮椅 ✔；m8_wrap 中轴 8 盏全部换成深色吊灯、前景两黑块读成胡桃皮面凳 ✔；m8_ops_w 无变化（该机位不含被替换件）。**遗留**：沙盘上方 M8 三盏铜碗灯其中一盏罩顶反出蓝色（env 天空反射），下批把该材质 envMapIntensity 压到 ≤0.3 或换暖色；seventh_ops 机位截至写本节仍在跑。
+- Blender 预览：work/r3/m10/preview/m10_{pendant,chair,stool}_*.png、prev_sheet.jpg（pendant_1 机位落在地面下，无效）。
+### A 正门
+- 叫号机（eastwing.js）：qm4_bronze 底色 → (0.24,0.15,0.072)、roughness ≥0.5；qm4_bronzeHi → (0.42,0.29,0.14)。cs_qm 游戏内（41222140159）柜身像素均值 (121,84,46)→(100,64,29)，读成更深的古铜 ✔，「047」红橙不变。
+- 门扇色相锁：41219985684 门/广场机位 40 分钟未出图 → 00:49 取消；新派 lite 单机位 **41221558412**（m10d:ext_door_mid，medium / 1280×720 / frames 4）——截至本节仍在跑，**色相锁仍未亲眼验收，0.85 未调（未验证前不动）**；门廊 M7 新件对位同样未验。
+- 走查：41219987735 其实是 "after:walk" 截图任务（不是剧情走查），无 31/31 结果；29eed1b 的 41220220735 通过 31 / 失败 0 / 控制台 0；本批 24efb62 的 **41222145865 通过 31 / 失败 0 / 控制台 0**。
+### meshopt（ae23567）
+m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0.82、m10 三件 1.2→0.48 MB；压前压后包围盒与材质名逐一核对一致。均为 position.set 整体放置，非 bakeInstances 顶点烘焙（m1/gutter_* 未碰）。
+### 截图 / 备份
+- 拼图 work/r3/m10/sheet.jpg（改前 M8 / 改后 M10：ops_lamp、wrap、ops_w、cs_qm + Blender 预览；脚本 work/r3/m10/sheet.py，seventh_ops 到了重跑）。M8 原始 6 机位拼图 work/r3/m8/sheet.jpg。
+- Drive 快照_分卷 新增 v13_m10_models.tar 1vaVOVHjIcnzTll7X5nLw-gAT5MBVnYL8（m10 glb + 脚本 + m10_seventh.js + 预览），其它卷未动。
+### 下批先做
+1. `bash tools/gh_shots_fetch.sh 41221558412 work/r3/m10/door` 看门扇；发灰太平才把 exterior.js hueLock mix 0.85→0.7（只允许一次）。2. 取 41222140159 seventh_ops。3. 沙盘铜碗灯蓝顶、东墙军绿油桶。
