@@ -2192,11 +2192,9 @@ export function planCitizenService(y) {
   // ① 引导台（盒体：木台身 + 黑玛瑙台面 + 铜踢脚；台面朝北，职员坐南）
   { const cx = 22.4, cz = -43.3, w = 1.8, d = 0.7;
     out.push({ fixed: true, m: '固定:引导台', x: cx, y, z: cz, yaw: 0, size: [w, 1.05, d], col: [w, 1.05, d], tag: '引导台', on: 'floor' });
-    out.push({ box: 'dz_wain', x: cx, y: y + 0.5, z: cz, w, h: 1.0, d, uv: 0.6, tag: '引导台', on: 'partv' });
+    out.push({ m: 'r2/guide_desk', x: cx, y, z: cz, yaw: 0, h: 1.0, tag: '引导台', on: 'partv' } /* 固定:引导台 的实体，同 vitrine_6080 用 partv */); // 批次36：dz_wain 方盒 + 铜条 → Blender 精建 r2/guide_desk（tools/blender/guide_desk.py：胡桃三联凸芯板 + 铜线脚 / 踢脚 + 中联铜牌框；职员侧抽屉柜 + 文件格 + 容膝洞）
     out.push({ box: 'onyx', x: cx, y: y + 1.025, z: cz - 0.03, w: w + 0.1, h: 0.05, d: d + 0.12, uv: 0.5, tag: '引导台', on: 'partv' });
-    out.push({ box: 'dz_brassDim', x: cx, y: y + 0.06, z: cz - d / 2 - 0.005, w, h: 0.12, d: 0.02, tag: '引导台', on: 'partv' });
-    out.push({ box: 'dz_brassDim', x: cx, y: y + 0.97, z: cz - d / 2 - 0.005, w, h: 0.03, d: 0.02, tag: '引导台', on: 'partv' });
-    out.push({ sign: '咨询 · 引导', sub: '请先取号，再到对应窗口', x: cx, y: y + 0.72, z: cz - d / 2 - 0.02, yaw: Math.PI, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
+    out.push({ sign: '咨询 · 引导', sub: '请先取号，再到对应窗口', x: cx, y: y + 0.58, z: cz - d / 2 - 0.036, yaw: Math.PI, size: [0.34, 0.12, 0.01], tag: '铜牌', on: 'sign' });
     out.push({ m: 'r2/dining_chair_02', x: cx + 0.2, y, z: cz + 0.75, yaw: Math.PI, h: 0.98, tag: '引导台', on: 'floor' });
     out.push({ m: 'r2/bankers_lamp', x: cx - 0.65, y: y + 1.05, z: cz + 0.1, yaw: Math.PI, h: 0.4, tag: '引导台', on: 'desk' });
     out.push({ m: 'r2/office_phone', x: cx + 0.62, y: y + 1.05, z: cz + 0.08, yaw: Math.PI, w: 0.22, tag: '引导台', on: 'desk' });
