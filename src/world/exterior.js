@@ -1142,6 +1142,10 @@ function innerVestibuleDoors(g, M, Y) {
   for (const sx of [-1, 1]) { for (let k = 0; k < 4; k++) { const px = sx * (6.3 + k * 2.45);
       box(g, woodDk, 0.42, 6.5, 0.14, px, Y + yB + 3.25, -29.42); box(g, wood, 0.26, 6.2, 0.05, px, Y + yB + 3.25, -29.33); box(g, brass, 0.03, 6.2, 0.02, px, Y + yB + 3.25, -29.3); }
     box(g, woodDk, 8.2, 0.32, 0.22, sx * 9.75, Y + 11.05, -29.4); box(g, brass, 8.2, 0.03, 0.24, sx * 9.75, Y + 10.9, -29.39); }
+  // 批次51 补：e51b 看图——饰面后仍剩「尖拱与右门扇之间」一条米黄竖带 = 后墙门洞内侧券面（x=+5 竖向侧壁，法线 −x 正对西偏机位）+ archPortal 浅色石券环。
+  // → 胡桃木门洞券套：内宽 9.94（盖住侧壁）、外宽 11.4（盖住浅色券环）、进深 1.6（z −30.5…−28.9）+ 铜内口线
+  const lin = new THREE.Mesh(archRingGeo(11.4, 5.67, 9.94, 5.67, 1.6), woodDk); lin.position.set(0, Y, -29.7); lin.castShadow = lin.receiveShadow = true; g.add(lin);
+  const linB = new THREE.Mesh(archRingGeo(10.06, 5.67, 9.92, 5.67, 1.64), brass); linB.position.set(0, Y, -29.7); g.add(linB);
 }
 
 
