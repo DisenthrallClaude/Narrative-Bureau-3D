@@ -69,7 +69,7 @@ export async function applyM14Training(ctx) {
   const crates = [], hide = [];
   const _m = new THREE.Matrix4(), _p = new THREE.Vector3(), _q = new THREE.Quaternion(), _s = new THREE.Vector3(), bb = new THREE.Box3();
   zone.traverse((o) => {
-    if (!o.isInstancedMesh || !/^props:r2\/plastic_(container|crate)/.test(o.name)) return;
+    if (!o.isInstancedMesh || !/^props:(r2\/)?plastic_(container|crate)/.test(o.name)) return;
     hide.push(o);
     const key = o.name; if (crates.some((c) => c.key === key)) return; // 同一模型多个子网格只取一次
     o.geometry.computeBoundingBox();
@@ -89,6 +89,7 @@ export async function applyM14Training(ctx) {
     if (MM.m5_olive && m === MM.m5_olive) return T.olive;
     if (D.r3_paintYellow && m === D.r3_paintYellow) return T.paintY;
     if (m.color && [0xc8a020, 0xd8a818].includes(m.color.getHex())) return T.paintY;
+    if (/^props:military_crate/.test(o.name) && m.map) { const k = 'mc' + m.uuid; if (!cache.has(k)) { const c = m.clone(); c.color.set(0xb08a68); c.userData = { ...m.userData, m14: true }; cache.set(k, c); } return cache.get(k); } // 橄榄军箱贴图 → 偏棕
     if (/portable_searchlight/.test(o.name) && m.map) { const k = 'sl' + m.uuid; if (!cache.has(k)) { const c = m.clone(); c.color.set(0x9a6a48); c.userData = { ...m.userData, m14: true }; cache.set(k, c); } return cache.get(k); }
     o.getWorldPosition(_w); const high = _w.y > roofY && o.geometry?.boundingSphere?.radius < 40;
     if (!m.color) return m;
