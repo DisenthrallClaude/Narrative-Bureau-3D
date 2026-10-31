@@ -84,7 +84,7 @@ jobs:
             CHROME="$CHROME" timeout 2400 node tools/walk.mjs --out out/walk/WALKTHROUGH.md 2>&1 | tee out/walk/walk.log; exit 0; fi
           if [ "$GRP" = "pick" ]; then # 批次16：拾取探针（EXTRA = 空格分隔的 NDC 坐标对）
             CHROME="$CHROME" node tools/_pick.mjs "$SHOT" $EXTRA 2>&1 | tee out/pick/$SHOT.log; exit 0; fi
-          CHROME="$CHROME" node tools/shot.mjs out/$GRP "$SHOT" --q ${{ inputs.quality }} --w ${{ inputs.width }} --h ${{ inputs.height }} --frames ${{ inputs.frames }} --fresh 1 --stimeout 3000000 --extra "$EXTRA" 2>&1 | tee out/$GRP/$SHOT.log
+          CHROME="$CHROME" node tools/shot.mjs out/$GRP "$SHOT" --q ${{ inputs.quality }} --w ${{ inputs.width }} --h ${{ inputs.height }} --frames ${{ inputs.frames }} --fresh 1 --gtimeout 1500000 --stimeout 600000 --extra "$EXTRA" 2>&1 | tee out/$GRP/$SHOT.log
           free -m
           test -f out/$GRP/$SHOT.png
       - uses: actions/upload-artifact@v4
