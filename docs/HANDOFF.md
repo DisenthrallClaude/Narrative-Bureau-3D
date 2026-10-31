@@ -1891,3 +1891,15 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 - 截图 run 41215990525（9454239）→ work/r3/m3/shots/r41215990525/m3/。俯视 m3_entry_top：展台/油灯、衣帽架、档案箱、装订机、壁柱、门套挂件两两无穿插。m1_entry_s：局徽已在门楣上方墙面；装订机铜件有暗铜高光但整体仍偏暗；走道毯仍读深褐近黑（Fabric023 贴图本身暗，下批可换贴图或去 map 直给底色）。
 - 疑似小人像（M1 sheet seventh_entry 装订机西北侧，约 x 1.4 z −63.5，棕发深色外套持蓝物的立像）：查遍 r3plan s7_entry / depths.js / m1 模型 / r2 资产名均无对应——filing_box 实测是箱子（54×84×52 原始单位）；来源未查明，见 m3_entry_ne 机位结果。
 - 未做：seventh_ops / seventh_rewrite / seventh_wrap 精建（时间用在遗留修上）；Drive v01/v02 未更新。Drive 新增 v06_m3_models.tar 1AY64jLX0qgAbofQ1fWfj4jLOFPx-gJiQ（m1 glb 压缩版 + 未压原件 + m1_seventh.js）。
+
+## 批次 M5 · 第七局 作战室 / 杀青室 / 回写台 Blender 精建（2026-10-31 23:46 CST 接手，约 35 分钟；与 r3-model-m2 / m4 并行，只动 seventh_ops / wrap / rewrite + m1 走道毯）
+- 提交 ab069f6。模型 tools/blender/m5_rooms.py（复用 m1_lib；`blender.sh -b -P m5_rooms.py -- public/assets/models/m5 <prev|-> [ops wrap rewrite]`）→ public/assets/models/m5/{ops 2.2 万, wrap 2.5 万, rewrite 3.1 万三角}.glb，世界坐标原点 (0,SY,0)，材质名沿用 m1_*。
+  - 三室通用壳：四壁石踢脚 + 胡桃框芯护墙板 + 腰线铜条 + 三级檐口（石/酒红褐楣/石）+ 四槽石壁柱（基座/铜箍/柱头）+ 墙角柱 + 胡桃纵梁（与原牛皮纸横梁成井字）+ 北门石门套两面（铜内框、酒红褐楣）。锚点处护墙留空：作战室南墙看板 x±4.2、东墙叛徒墙 z −126.3…−119.7；杀青室南墙镜 x±0.95；回写台西墙排字台段。
+  - 作战室：作战沙盘（−4.3, −121.3；2.4×3.0，石台座 + 胡桃框芯柜 + 铜压边 + 牛皮纸地形街区 + 酒红褐标旗 + 红线连标 + 铜链碗灯）；标图墙 = 叛徒墙外胡桃框 + 铜内唇 + 吊图铜轨 + 标题楣 + 图钉槽托。
+  - 杀青室：定稿台 = 原档案袋木台外包石台座 + 胡桃框芯 + 铜腰带（台面/档案袋锚点不动）；落地镜加石框酒红褐楣。
+  - 回写台：西墙回写排字台（z −166…−160.6，铸铁/胡桃字盘柜 12 抽、4 块斜面活字盘铜隔条、背板、排字手托、校样纸）；中央长桌外加石台座 + 胡桃裙板（台面/巨书不动）。
+- 接入 m1_seventh.js `buildM5Seventh`（depths.js 只在 seventh 块末尾加一行）：碰撞 = 全部壁柱、沙盘、排字台 world.box；沙盘加暖点光。剧情锚点/传送/zone 判定未动。顺手：第七局 greenLamp 绿罩 → s7Lamp 暗铜座烟褐罩（2 处）；作战室局徽 M.navy → M.leather（禁蓝绿）。
+- 遗留三件：①走道毯 m1_burgundy 去 Fabric023 → 纯色 0x6a2a20 / 粗糙 0.85（楣带/拱心石同材质一起变）。②入口"人像"：放大 r41215990525 seventh_entry（work/r3/m5/fig_crop.png）判断为**装订机西侧铜飞轮斜视 + 铜轮毂高光**，不是人物模型，未删。③回廊远端蓝灰：未单独复查；作战室原有蓝/绿件（navy 局徽、绿台灯）已去，是否就是来源待 m1_gutter_b 复拍。
+- Blender 预览（亲眼看，仅新件无原房间）：work/r3/m5/preview/m5_{ops_0-2,wrap_0-1,rewrite_0-1}.png、ops_sheet.jpg、wr_sheet.jpg——护墙/壁柱/檐口/门套对位，沙盘与排字台细节可读；纵梁偏稀（仅 4 m 一根）。平面图 work/r3/m5/plans/plan_{ops,wrap,rewrite}.png（**建模后补画**）。
+- Drive v07_m5_models.tar 1YCtDArqKQKwaCjKLvUDPfOi7FG0-uQa0。
+- 截图/走查已派 run 41217295963 / 41217297749（m5:seventh_ops,s7_ops_b,seventh_wrap,seventh_rewrite,m1_entry_s,m1_gutter_b + walk），**收尾时未出结果，游戏内效果未亲眼验收，sheet.jpg 未拼**。下批：取图验收 → 纵梁加密/天花格心 → walk 31/31 核对。
