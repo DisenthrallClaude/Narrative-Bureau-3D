@@ -186,7 +186,8 @@
 - 修：台地只留迎宾大道本身（|x|≤25、z 93–175，顶 −4.0，surface.js 不动），三边加花岗岩压顶（0.5×0.5 + 冠板）+ 东西两侧隐形坡道（world.ramp 宽 22 m，接 R160 路口）；其余墙外地坪降到 −4.40（路面 / 人行道 / 路缘都在其上分层）。广场正门前石材铺装（墙内 hero_plaza，y≈0）不动。
 - 环路材质：车道纯色暗盒 → Poly Haven asphalt_02（CC0）；人行道 PavingStones142 弹石（与地坪同料、分不出层）→ granite_tile 花岗岩分缝板（CC0）；InstancedMesh 单位盒 UV 会被实例缩放拉伸 → `worldUV()` 顶点着色器按世界 xz 投影 UV（3 m / 2 m 一张）；路缘改浅花岗岩 0x9a978f、比人行道高 4 cm。标线（InstancedMesh 平面 + polygonOffset）：中心双黄实线、两侧白虚线分道（3 m 线 / 3 m 空）、距路缘 0.5 m 白边线。
 - 候车亭组：亭身 / 街具落位 Y0+0.1 → +0.2（人行道顶）；对称成组——候车亭（弧长 34）居中，两侧垃圾桶（29.4 / 38.6）对称，报刊亭移到候车亭东侧同一后退线（弧长 45、r 171.6，原 41.5 在亭正后方被挡），旋转报架在报刊亭东侧（49）。ext_busstop 改到环路内侧人行道隔路正看（[39.5, −2.6, 111.8] → 组中心），让车道标线 / 路缘 / 人行道 / 亭 / 报刊亭同框；新机位 ext_green（西片街心绿地人视角，沿两列高干行道树看）。
-- 看图：ext_street / ext_busstop / ext_green / ext_house 在 run 41163326677（x39，4 机位串行）、ext_sky 在 41163955016，**截止本节未回**（见下方补记）。
+- **看图 ext_sky 改后**（work/r3/b39/r41163955016/x39s/ext_sky.png，9b6f55c，对比 work/r3/cmp39_ext_sky.jpg）：**墙外南侧两片街心绿地（草坪 + 两列行道树）完整露出；R160 环路沥青、中心双黄线、白色虚线分道、两侧人行道 / 路缘清楚分层，弧形接到大道台地；迎宾大道车道白线 + 花岗岩压顶边可读（上）**。剩余：城墙脚到绿地内缘（r 118–125）一圈是暗色素地坪（中下），下批可做墙根绿篱带或石材散水。
+- ext_street / ext_busstop / ext_green / ext_house：run 41163326677（x39，4 机位串行）跑到 25 分钟仍未回，未取消；另派并行单机位 run 41165118844（x39a–d，85b8bbe = 游戏代码同 9b6f55c），**截止本节未回**。
 ### 3 市民服务大厅（7a8dca6）
 - 东墙两樘尖拱窗的窗台 / 贴脸 / 滴水檐 / 拱心石 + 两道通长线脚、南墙两道线脚：stoneDark → 新材质 **r3_limestone**（dress.js：Concrete034 着色 0xcfc6b2 米灰石灰岩，粗糙 0.62）。
 - 南墙：挂钟 old_wall_clock h 0.9 → **1.35 m**；两块公示栏 1.2×1.6 → **1.7×2.25**（x 30/40 → 29.2/40.8 让开挂钟），各配洗墙射灯（1.6）+ 画框上沿铜灯槽 + 发光灯条，挂钟上方补一盏 1.4 暖光。
@@ -202,10 +203,10 @@
 ### 收尾
 - 走查：9b6f55c run 41163886265 **通过 31 / 失败 0 / 控制台错误 0**（work/r3/b39/r41163886265/walk/WALKTHROUGH.md）。
 - Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删同名旧卷再传 v03 1xohp11jSSq--Iz3buOXpQ7TEWB5g5vmX、v04 1wCquxAVfWyiGZJakYYA09a3JivRldqxt（含 lib_lectern.glb）；v01 / v02 在本 HANDOFF 提交后重传（见 PROGRESS-LOG）。
-- 对比图 `python3 work/r3/b39/cmp39.py` → work/r3/cmp39_*.jpg + 总拼图 work/r3/b39/sheet.jpg（未回的机位补跑即可）。
+- 对比图 `python3 work/r3/b39/cmp39.py` → 已出 cmp39_ext_sky / lib_lec / lib_vit / cs_r3.jpg + 总拼图 work/r3/b39/sheet.jpg（4 张）；外景 4 机位与 cs_r3_e / cs_r3_b 回来后重跑即补齐 6–8 张。
 - **注意派发格式**：disp.sh 的 `组:机位1,机位2` 会在**同一个 job 里串行**拍（tools/shot.mjs 支持逗号列表）；要并行必须 `组a:机位1;组b:机位2`。本批 x39 / c39 / l39 都写成了串行，所以另派了 c39b / l39a / l39v 并行。
 ### 下批先做
-1. 取回 41163326677（ext_street / ext_busstop / ext_green / ext_house）、41163955016（ext_sky）、41163500536（cs_r3_e）、41163933994 的 cs_r3_b，逐张验收地面分层 / 石灰岩线脚 / 挂钟公示栏；补跑 cmp39.py。
+1. 取回 41165118844 或 41163326677（ext_street / ext_busstop / ext_green / ext_house，人视角地面分层是否到位）、41163500536（cs_r3_e）、41163933994 的 cs_r3_b，逐张验收地面分层 / 石灰岩线脚 / 挂钟公示栏；补跑 cmp39.py。
 2. 讲经台补光 + 近景机位；陈列柜热斑。
 3. 阅读龛 ×3 / 星图台 / 地球仪（Math.random 球面）精建；台地边缘与环路交接处若显生硬，补一段石材踏步。
 
