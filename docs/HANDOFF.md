@@ -1920,3 +1920,26 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 - 游戏内截图（Actions，1600×900 high）：work/r3/m2/r41216239935/m2/archive_r3.png、archive_shelf.png；work/r3/m2/r41216457891/m2b/ab1_r3.png、ab1_east.png；拼图 work/r3/m2/sheet.jpg（左 4 张游戏图 + 右 Blender 预览）。archive_gallery 截止时未回图（run 41216239935 仍在跑，下批 `bash tools/gh_shots_fetch.sh 41216239935 work/r3/m2/r41216239935` 取）。
 - 亲眼判断：archive_r3 里藻井格阵列 + 四周檐部第一次让档案馆顶部读成「厚重的机关大厅天花」，替掉了原来的平板木梁格，透视下格子整齐、无穿插；未见悬空/穿墙。ab1_east 肋梁两端阶梯加腋落在东墙上、与冷光灯管错开；ab1_r3 肋梁跨过楼梯旁未穿钢梯。**问题**：① 藻井格心酒红褐在游戏里偏暗，读成深褐（可把 m1_burgundy 提到 0xa04434 或加一盏顶部暖补光）；② archive_r3 顶部中央一个过曝白色大光球（既有补光/吊灯，非本批）；③ 西墙高窗彩窗是蓝色玻璃（既有，违反「人造物禁蓝绿」，本批未动）；④ 东墙壁柱 / 门套在现有机位里只是远处小块，缺近景验证；⑤ 北墙管线在两张 B1 图里都不在画面内，未亲眼验收。
 - 未做：卡片目录柜 / 借阅柜台 / 阅览长桌 / 密集架手摇轮的 Blender hero 重建（本批只做了建筑壳）；B1 铁门、档案铁柜；藻井 / 门套近景机位。下批建议：加 archive_door（东门近景）与 archive_ceiling（仰拍）机位，并按上面①提亮格心。
+
+## 批次 M4 · 正门外观 / 门扇 / 叫号机（2026-10-31 23:36 CST 接手，约 35 分钟；与 r3-model-m2、r3-model-m3 并行，只动 exterior.js 外观色 + 门扇、hero.js 外观材质、eastwing.js 叫号机、r3plan.js 一盆绿植）
+### 提交
+9c67678 外观禁蓝 + 门扇色相锁；c044993 叫号机 Blender 重建 + 头顶暖点光 + 撤绿植；fb5c5ba 叫号机七段码前移修 z-fight。每次提交前 `npx vite build --outDir /tmp/m4dist` = 0。
+### 1 外观禁蓝（9c67678）
+- 招牌「叙事管理局」的「蓝底」= 立面 F_marbleDark 抛光冷黑石（0x2a2b30、env 0.9）映黄昏蓝天。改：文字后加暗铜底板（0x3a2716、金属 0.6 / 粗糙 0.5 / env 0.5，z −4.988，文字前移到 −4.972 防 z-fight）= 暗铜底金字；hero.js EXT.marbleDark → 暖黑哑光 0x28211b / 粗糙 0.5 / env 0.45。
+- 竖幅：局旗贴图 B01_02_局旗深蓝.png 用 HSV 把蓝色相（PIL 色相 128–200）重染为酒红褐、金线 / 金字不动 → 新文件 public/content/textures/b01/B01_02_局旗酒红.png（对比 work/r3/m4/flag_recolor.jpg）；exterior.js 5 处 `content.tex('tex_flag_bureau')` → `flagTexM4()`，无贴图时兜底色 0x14244d → 0x3e1a14。**只改外观，室内大厅垂旗仍用原深蓝贴图（manifest 未动）。**
+- 局徽底衬 M.navy（8 处，含玫瑰窗 / 鼓室 / 塔顶 / 喷泉局徽与一处 navy 胶囊体）→ 酒红褐呢 embBackM4()（0x3e1a14）。
+- hero.js 外观其余冷色：EXT.marble 0x9a9aa2→0x9c9790 env 1.0→0.6；EXT.slate 0x3c4250→0x403b38 env 0.6；EXT.lead 0x3a3e46→0x3d3a37 金属 0.6 env 0.5；EXT.iron 0x2b2d33→0x2c2723。
+### 2 门扇（9c67678）——新思路：色相锁
+- 不再调底色乘数，弃用批60 右扇克隆 dMR，两扇共享同一份 dM 铜材 + ironD。
+- 根因（批55–60 已逐路查明）：左扇底部紫 = 半球光天色 0x9a96c8 + 天空反射；右扇牛血红 = 2850K 暖光 × 铜色金属（金属反射 = 光色 × 底色）。三轮调底色只能挪一点。
+- 做法：门扇材质 onBeforeCompile 在 `dithering_fragment` 之后把出射色按亮度 L 重映射到统一暗古铜色相 HUE_M4 = (0.62,0.42,0.24)（mix 0.85）——各路光的明暗照常，色偏改不了色相 → 两扇、上下端同色。customProgramCacheKey 追加 `|hueM4`，链上原 weather 补丁。
+- 游戏内验收见下「截图」。
+### 3 叫号机（c044993 + fb5c5ba）
+- tools/blender/m4_queue_machine.py → public/assets/models/m4/queue_machine.glb（8.3k 三角）：铸铁阶梯底座 + 4 球足、倒角 0.03 古铜柜壳、正 / 侧面亮铜浮凸框 + 铆钉排、铸铁凹芯检修门 + 锁孔、古铜腰线、一体楔形斜台（铸铁嵌板、酒红褐取号钮配亮铜圈、亮铜唇出票口 + 半露纸票）、圆角古铜显示头（铸铁凹窗 + 玻璃 + 七段码 047 + 四角铆钉）、阶梯檐口 + 半圆顶饰。材质 qm4_*（不再被 walnutTone 改色）；游戏内 qm4_* env 0.5、粗糙 ≥0.45，七段码自发光 3.5→0.9。
+- eastwing.js：placeModel('m4/queue_machine') 原位原尺寸（height 1.4、碰撞 boundsOf 不变）；头顶前上方不投影暖点光 qm_rim_m4（0xffc488、1.6、射程 1.8）。
+- r3plan.js：叫号机旁 (20.85,−33) 绿萝撤掉（另两盆不动）。
+- Blender 预览：work/r3/m4/preview/m4_qm_{0,1,2}.png、m4_qm_sheet.jpg。
+- 游戏首拍 m4q（41216516542，c044993）：绿植已无 ✔、读成铆钉古铜立柜不再是木方盒 ✔；**七段码花屏**（段与玻璃前表面共面 z-fight）→ fb5c5ba 前移 4 mm，复拍 run 41217240272。
+### 4 广场洗墙
+- 取到 p60 ext_plaza（41215327273，58be4db）：亲眼看 + 像素统计 ≥250 的像素 0%，下半立面暖亮未过曝、石墙可读 → **地埋灯 1550 不改**。
+### 5 门廊 hero 模型——未做（时间不够）。
