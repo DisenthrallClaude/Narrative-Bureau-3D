@@ -72,7 +72,8 @@ function bronzeRim(G, tries = 0) {
   if (!gate) { if (tries < 60) setTimeout(() => bronzeRim(G, tries + 1), 500); return; }
   let rim = null, n = 0;
   gate.traverse((o) => {
-    if (!o.isMesh || !/^m2_bronze/.test(o.material?.name || '')) return;
+    // pbr() 把 material.name 设成贴图集名 Metal046A（铜框 m2_bronze 与左门座符刻板共用），按底色 r=0.45 / g=0.30 只认铜框
+    const m0 = o.material; if (!o.isMesh || !m0 || m0.name !== 'Metal046A' || Math.abs(m0.color.r - 0.45) > 0.01 || Math.abs(m0.color.g - 0.30) > 0.01) return;
     if (!rim) {
       const m = o.material; rim = m.clone(); rim.name = 'm2_bronze_i1rim'; rim.emissive = new THREE.Color(0xffa050); rim.emissiveIntensity = 0.16;
       const prev = m.onBeforeCompile, prevKey = m.customProgramCacheKey?.bind(m);

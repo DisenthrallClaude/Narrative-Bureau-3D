@@ -9,4 +9,5 @@
 | I1 | Kenney Impact Sounds | https://kenney.nl/assets/impact-sounds（官方 zip） | CC0 1.0 | sha256 029d734af1582474edf3a694d1b0cebc97c1c152f2f39fa34d4c2bafc5de77f8 | footstep_concrete/wood/carpet_000–003 → K_step_stone/wood/carpet_0–3；impactMetal_light_000–003 截 0.25 s → K_step_metal_0–3；impactWood_light_000、impactMetal_medium_000 混入 K_drawer / K_cabinet |
 | I1 | Kenney RPG Audio | https://kenney.nl/assets/rpg-audio（官方 zip） | CC0 1.0 | sha256 6dbeaf8544da958d8f2adcb4a4a4b76c1ade34a05f8ab9edccd327da7375f38b | bookFlip1–3、bookOpen → K_paper_0–2 / K_paper_open；doorOpen_1 / doorClose_1 → K_door_open/close；creak3 + 木撞 → K_drawer；metalLatch + 金属撞 → K_cabinet |
 | I1 | Kenney UI Audio | https://kenney.nl/assets/ui-audio（官方 zip） | CC0 1.0 | sha256 946fc23a63d535d693eb31b2eabb80c8c28d6351e2186b344ceb71b2cb1d5eb6 | 已下载备选，本批未入仓 |
+
 注：三个下载件共用同一份运行时（仅末尾 preset 不同），仓库只存一份 src/vendor/gdevs-vfx.js（来自 astral-gate.js，去掉末尾 preset/default 导出），preset 写在 src/world/e1_fx.js。原件与 metadata 存于项目工作区 work/r3/e1/fxlib/。库依赖 three 0.187.0，本项目 0.186.1：静态核对所用 THREE.* 符号全部存在，游戏内实测见 HANDOFF E1 节。
