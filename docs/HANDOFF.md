@@ -1956,6 +1956,23 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 ### 下批先做
 1. 取 41218178525 门扇两机位验收色相锁。2. 叫号机亮段调红、铜壳加一点高光。3. 正门门廊石门套 / 尖拱线脚 / 柱头 / 台阶 hero 模型（本批未做）。
 
+## 批次 M14 · B6 训练场第三轮收尾（续 M12；2026-11-01 01:32 CST 接手，约 35 分钟；与 r3-model-m13 并行，只动 training；独立 worktree /tmp/m14wt）
+- 提交：174f0f0（靶架 / 隔板 / 器材箱 Blender 模型 + 冷色件去蓝绿 + 黄线压暗 + 屋顶反光 + 窄开间对接门柱 + 2 机位）、87bcb94（墙脚蓝色周转箱补抓 + 橄榄军箱偏棕）。`npx vite build --outDir /tmp/m14dist` 均 0。`?nom14=1` 回旧（窄开间对接改在 m9_training.js，跟 `?nom9`）。
+- 新文件 src/world/m14_training.js：`applyM14Training(ctx)` 在 main.js applyM12Training 之后跑，只遍历 training 区，幂等。
+  1. 射击区：M5 程序化橄榄隔板（x −18+4.5i，z −141.9）同位套 m14/tr_baffle（铁框 + 胡桃凸芯板两格 + 帆布吸音芯 + 铜腰线 / 编号框，0.12×2.2×1.6，包住旧 0.08 板）×9；M5 平面靶纸（m5_target 合并网格）隐藏，原靶位 (x, tz=−150−(i%3)·1.6) 落地 m14/tr_target（橡木靶框 + 铸铁 T 座 + 帆布沙袋压脚 + 铁夹 + 顶部挂钩，靶纸贴原 m5_target 画布、UV 按包围盒 0..1）×8。射击台 / 射击线 / 碰撞未动；靶架无碰撞（在射击台后方）。
+  2. Props 名 `props:(r2/)?plastic_(container|crate)*`（墙脚蓝色周转箱、检录台 / 护具架塑料筐）隐藏，同位同朝向放 m14/tr_crate（橡木横板 + 暖黑铁包角 / 箍带 + 铸铁提手 + 铜牌，0.8×0.5×0.5，按原高度缩放 ≤1）。第一版正则带 r2/ 前缀漏掉 dress_m5 的 `plastic_container` → 87bcb94 修。
+  3. 副本门旁橄榄色"器材包"实为 r2/portable_searchlight（手提探照灯）→ 贴图色乘 0x9a6a48 读成棕皮革；props:military_crate 橄榄贴图乘 0xb08a68；m5_olive（隔板 / 沙袋墙 / 拖车板）→ 棕帆布 0x4a3626。
+  4. 浅色低饱和金属（metalness≥0.5、l>0.5、s<0.25，即读成白 / 发青的栏杆扶手）→ 暖黑铁 0x3a302a；低饱和冷灰（s>0.04 无贴图）→ 暖灰（补 M12 兜底 s>0.12 的漏网）。"栏杆上的蓝色线缆"未单独定位到网格，靠此规则兜。
+  5. 屋顶：y+9 以上金属件 env ≤0.25 / roughness ≥0.55 / metalness ≤0.5。
+  6. 黄线：r3_paintYellow（及 0xc8a020 / 0xd8a818）→ 暗黄 0x6e5422（器材柜 / 简报区边框）。
+  7. m9_training.js：电梯厅开口两侧窄开间 12.8/0.8 → 13.3/0.675（止于 ±10.6，与 M12 门柱 9.4…10.6 对接，不再交叠）。
+- Blender：tools/blender/m14_training.py（crate / target / baffle）→ public/assets/models/m14/tr_{crate,target,baffle}.glb（meshopt，42 / 35 / 43 KB，EXT_meshopt_compression 已核对）。预览 work/r3/m14/preview/（prev_sheet.jpg；靶架第一版中横档压在靶纸前已去掉）。
+- 第 1 项核对：run 41224349530 的 m12_tr_door 亲眼看——电梯厅开口里已是暖深灰混凝土，不再橄榄绿（M12 fd48776 已修），本批不需再改。同 run m9_tr_locker：器材柜仍偏浅米色（M12 LOCKER 0x5c5248 在画面里读得比预期亮），本批未再压。
+- 游戏内（run 41225506143，174f0f0）拼图 work/r3/m14/sheet.jpg（左 M12 改前 / 右 M14 改后 + 2 新机位 m14_tr_range / m14_tr_crate）：探照灯橄榄 → 深棕 ✔；检录台红色塑料筐 → 暗色木箱 ✔；北墙黄线明显压暗 ✔；门套 / 墙面无变化 ✔；射击区隔板读成深色木板、靶架在远处可见但整体偏暗（射击区灯光弱）；**墙脚两只蓝色周转箱仍在（正则漏抓）→ 87bcb94 修，复拍 run 41226229241（m14b：crate / wall / locker）写本节时未回**；屋顶蓝点改后不明显，但未 100% 确认来源（射灯头 / 旧黑钢梁小件）。m9_tr_locker 本 run 截图未产出。
+- 走查 run 41225508342（174f0f0）通过 31 / 失败 0 / 控制台错误 0（work/r3/m14/walk/walk/WALKTHROUGH.md）。Pages 174f0f0 Deploy success，m14 三个 glb 线上 200。
+- Drive：分卷文件夹下新建 v17_m14_models（1JhJhJppyL23kLDEqm4EMK9M5qdooeCMO）内 v17_m14_models.tar.gz（1NIgpXJHYs3RD_GnyE8nn4K6MqVUns-N5：3 glb + m14_training.py/js + m9_training.js + 预览）。未删旧卷。
+- 未完成：高窗采光井格栅样式（需改 m9 tr_bay 窗模型，未动）；器材柜仍偏浅；射击区偏暗（可加两盏暖射灯）；屋顶蓝点根因未定位；蓝色线缆没找到具体网格；靶架上方 M5 旧木横档（y+2.52）略高于新靶框顶（2.26），吊线对上但木档悬着约 26 cm。
+
 ## 批次 M12 · B6 训练场第二轮（续 M9；2026-11-01 00:56 CST 接手，约 35 分钟；与 r3-model-m10 / m11 并行，只动 training；独立 worktree /tmp/m12wt）
 - 提交：e62e989（课椅）、0c1a61e（器材柜 / 高窗）、0a5be1f（地面 / 副本门 / 电梯厅门套 / 屋架 / 兜底暖化 / 机位）、fd48776（电梯厅墙与地坪、柜再压暗、屋架消蓝点）。`npx vite build --outDir /tmp/m12dist` 均 0。`?nom12=1` 回旧（M12 全部；器材柜 / 高窗改动在 m9_training.js 内，跟 `?nom9`）。
 - 新文件 src/world/m12_training.js：`applyM12Training(ctx, world)` 在 main.js `buildR3(..., true)` 之后跑一遍，只遍历 training 区（含 B6 电梯厅），幂等：
