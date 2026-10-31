@@ -175,6 +175,36 @@
 - **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
 - 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
 
+## R3 批次47（2026-10-31 14:14 CST 接手，约 35 分钟）
+### 提交
+71b57d8 大厅隔离带去深蓝带；1bacf74 目录柜台灯 + 补光；a82055b UI 四项 + ui_shot 扩到 8 态；b45bf53 台灯补光前移降到 3.2 cd（**最终游戏代码**）。每次提交前本机 `npx vite build` 返回 0。r3plan archive **210 件 0 错**（2 警 cctv 离墙 0.40 m，旧有）→ work/r3/b47/plan_arch.png。
+### 1 正门大厅隔离带深蓝带（71b57d8）
+- 真因不在 interiors.js：R2 起大厅建筑与固定陈设走 **hero_hall.glb**（tools/blender/hall.py 第 313 行把旧 `navyBelt` 伸缩带烘焙进 GLB），interiors.js 的 bA 是丢弃批次，批次43 只改了 interiors 那份 → 游戏里 GLB 深蓝直带 + 新天鹅绒拉绳两根叠在同一对立柱上（work/r3/b47/crop_rope.png）。
+- 修：hero.js placeHero 加 `opts.hide`（按材质名整网格隐藏），大厅传 `hide: ['navyBelt']`（该材质只用于伸缩带）；hall.py 同行注释掉，下次重导 GLB 时不再生成。光照贴图里那条带的烘焙影子很淡，未重烘。
+- 重拍 hall_gates run **41175969170**（71b57d8）：**已回看图**（work/r3/b47/r41175969170/h47g/hall_gates.png，对比 work/r3/cmp47_hall_gates.jpg）——每段只剩深红天鹅绒下垂拉绳 + 铜立柱，深蓝直带全部消失 ✔（**中上**；拉绳在 SwiftShader 下略偏暗红平，无绒面高光，可接受）。
+### 2 UI 剩余 4 条（a82055b，style.css 末尾「批次47」块 + index.html #chapter + ui.js）
+- **HUD 目标栏**：半透明墨绿横向渐隐底 + 2 px 左铜线 + 上下 1 px 铜线渐隐；标题「当前目标」铜色菱形点 + 宋体小字；正文 15 px 思源宋体米白；副目标暖灰。区域标题改米白宋体 + 暗铜英文副标。**物品栏**：墨绿格 + 1 px 暗铜框 + 内描边，字签宋体米白。
+- **对话框**：藏青底 → 墨绿渐变叠 Paper006 纸纹（luminosity）+ 暗铜双线框 + 对角铜角花；说话人做成压在上框的铜签（铜渐变底、深褐字、上高光、投影），旁白暖灰；选项 / 「E 继续」同色系。
+- **文档阅读**：纸质档案（无 style 的 .paper）米黄档案纸 #e3d3ad + 内暗边；左侧两只装订孔；页眉「叙事管理局 · 京城总部　内部资料 · 注意保存　档号 NB-0731」+ 双线；正文「打字机字」= 西文 / 数字走 Courier New / Liberation Mono 等宽，汉字回落思源宋体，加 0.6 px 油墨晕（**项目内无中文打字机字体，未联网取字体**）；页码「— 第 1 / 3 页 —」宋体；右下红色圆形「叙事管理局 / 档案专用」印（multiply、−13°、斑驳遮罩，ui.js renderPage 对纯文字纸页自动加）。**终端类 .screen：定为琥珀荧光**（暖黑底 + #ffb648 字 + 辉光 + 扫描线 + 闪烁光标 + 铜框），不再科技蓝。dark / phone 样式未动。底部操作说明改宋体暖铜灰。
+- **章节卡**：纯黑 → 墨绿径向底 + 纸纹 + 内铜双框；上「档案号 NB-0001 · 第一卷」（含「终」则「结卷」）→ 铜细线（中点铜菱形）→ 52 px 思源宋体 700 米白标题 → 铜细线 → 副句暖米。
+- **加载画面局徽** 118 → 138 px（+17%）。
+- tools/ui_shot.mjs 增 dialog / terminal / chapter 三态（共 8 态）。看图 run **41176217726**（work/r3/b47/r41176217726/ui47/*.png，九宫 work/r3/b47/ui_grid.jpg）：全套无蓝、统一墨绿 / 暗铜 / 米白 ✔。评估：HUD 中上（目标栏清楚不抢画面）；对话框中上（铜签醒目）；档案纸中上（页眉档号字偏小偏淡，可再加 1 px）；终端琥珀中上；章节卡中上；加载中上。
+### 3 档案馆目录柜暖光（1bacf74 + b45bf53）
+- 目录柜台面（x X0+5.15，柜前沿后 0.24 m）放实体银行家台灯（bankerLamp：铜座 + 铜杆 + 绿玻璃罩 + 暖灯条），配不投影暖点光 0xffd29a。首档 5 cd 贴近上段抽屉面过曝（work/r3/b47/r41176050795/a47/archive_cat.png）→ 光源前移 0.75 m、上移 0.55 m、3.2 cd / 6.5 m。
+- 看图 b45bf53（work/r3/b47/r41176412315/a47b/archive_cat.png）：台灯落在台面上、绿罩读得清，上段抽屉一圈暖光池、下段卡片抽屉铜框也亮起来，柜体胡桃木纹从近乌木变为可读 ✔（**中上**）；远端左半柜仍偏暗（距台灯 >3 m，可接受）。
+### 4 外观复查（未完成验收）
+- 派了 ext_door_near（41176231223，组 e47a）、ext_door_mid（41176257463，组 e47c）；**shots.js 没有 ext_plaza 机位**（同 run 组 e47b 会空跑），用 ext_door_mid（广场中段斜看正门）代替。**ext_door_mid 已回**（work/r3/b47/r41176257463/e47c/ext_door_mid.png，a82055b）；ext_door_near（41176231223）截止 14:40 仍在拍，未亲眼验收。
+- ext_door_mid 看图列出最显眼问题（按严重度）：① **机位前景一根铸铁路灯杆 + 灯笼正挡在画面中线**，把「叙事管理局」匾额右半与门楣遮住（机位问题，[10, 2.2, 21] 正好站在路灯后；改机位或挪灯）；② 立面上层高窗玻璃读成**冷钴蓝**，与整体暖褐 / 夕照不协调（同大厅大屏旧问题，疑窗玻璃反射天空 HDR，建议窗玻璃改暖琥珀 / 降 envMapIntensity）；③ 门洞内是一整块平亮米黄面，无纵深（门厅内部看不到柱 / 灯，像贴图）；④ 门前台阶 + 基座一圈很暗，台阶踏面边缘读不出；⑤ 左侧附楼一列窗是纯白平面，无窗格无内景。门侧石雕人像按规则暂留。
+### 收尾
+- 走查：b45bf53 run **41176422578 通过 31 / 失败 0 / 控制台错误 0**（work/r3/b47/r41176422578/walk/WALKTHROUGH.md）。
+- Pages：**b45bf53 Deploy success（41176412880）**。
+- Drive「快照_分卷」：先删同名旧卷再传 v03 1HgyQuNNA2xUF2lS6ZXiuL7Z1DqWFEi7x、v04 1Fp5JVtb7EfMfzVUjVccyyIUPae084g46；v01 / v02 在本 HANDOFF 提交后传（见 PROGRESS-LOG）。
+- 对比图 `python3 work/r3/b47/cmp47.py` → work/r3/cmp47_hud / reader / loading / dialog / terminal / chapter / catalog(.jpg)（hall_gates 回来后重跑即生成 cmp47_hall_gates.jpg）+ 总拼图 work/r3/b47/sheet.jpg。
+### 下批先做
+1. 取 41175969170（hall_gates）确认深蓝带消失；取 41176231223 / 41176257463（ext_door_near / ext_door_mid）：`rm -rf /tmp/afz; bash tools/gh_shots_fetch.sh <run> work/r3/b48/r<run>`，列外观最显眼问题。
+2. 若要 ext_plaza 机位：shots.js 新增（广场人视角，例如 [0, 1.7, 40] 看 [0, 8, -5]）。
+3. 档案纸页眉档号字号 11 → 12 px、颜色加深；文档阅读 dark（第 3 页）样式未统一。
+
 ## R3 批次46（2026-10-31 13:55 CST 接手，约 35 分钟）
 ### 提交
 0a30a8d 目录柜 / 书车走 Wood051 木纹（首档过黑）；3f1cfae UI 截图工具 tools/ui_shot.mjs + shots.yml `ui*` 组；77c4b1d 加载画面 + 交互提示改造；2d82dca 暂停菜单同风格 + ui_shot 修正；a5a27ad 滑杆铜钮 + 胡桃再提一档（**最终游戏代码**）。每次提交前本机 `npx vite build` 返回 0。r3plan archive **210 件 0 错**（2 警：cctv 离墙 0.40 m，旧有）→ work/r3/b46/plan_arch.png。
