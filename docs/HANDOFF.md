@@ -1902,7 +1902,10 @@ db93279 阅卷中心收尾 + 殷泽 + 通缉卡照片 + 周闻机位 + shots.yml
 - 遗留三件：①走道毯 m1_burgundy 去 Fabric023 → 纯色 0x6a2a20 / 粗糙 0.85（楣带/拱心石同材质一起变）。②入口"人像"：放大 r41215990525 seventh_entry（work/r3/m5/fig_crop.png）判断为**装订机西侧铜飞轮斜视 + 铜轮毂高光**，不是人物模型，未删。③回廊远端蓝灰：未单独复查；作战室原有蓝/绿件（navy 局徽、绿台灯）已去，是否就是来源待 m1_gutter_b 复拍。
 - Blender 预览（亲眼看，仅新件无原房间）：work/r3/m5/preview/m5_{ops_0-2,wrap_0-1,rewrite_0-1}.png、ops_sheet.jpg、wr_sheet.jpg——护墙/壁柱/檐口/门套对位，沙盘与排字台细节可读；纵梁偏稀（仅 4 m 一根）。平面图 work/r3/m5/plans/plan_{ops,wrap,rewrite}.png（**建模后补画**）。
 - Drive v07_m5_models.tar 1YCtDArqKQKwaCjKLvUDPfOi7FG0-uQa0。
-- 截图/走查已派 run 41217295963 / 41217297749（m5:seventh_ops,s7_ops_b,seventh_wrap,seventh_rewrite,m1_entry_s,m1_gutter_b + walk），**收尾时未出结果，游戏内效果未亲眼验收，sheet.jpg 未拼**。下批：取图验收 → 纵梁加密/天花格心 → walk 31/31 核对。
+- 截图 run 41217295963（fb5c5ba，含 ab069f6）→ work/r3/m5/shots/r41217295963/m5/，拼图 work/r3/m5/sheet.jpg。亲眼看：走道毯已读酒红（入口/回廊都对，偏饱和）；作战室沙盘、标图墙框、壁柱、胡桃纵梁成形，无悬空穿墙，但牛皮纸大墙面仍主导、护墙板读成暗带；杀青室被书架遮满，壁柱/定稿台存在感低；回写台本机位看不到排字台（在西墙北段，需新机位）。**回廊远端地脚蓝灰条仍在（m1_gutter_b）——作战室蓝绿件已去仍未消，未修好，停**。s7_ops_b 右侧有他人白色上下铺（非本批）。
+- 提交 770c47f：纵梁 4 m→2.5 m + 与牛皮纸横梁交点铜角花（未游戏内复拍）。
+- 补充快修核对（M2 报告"档案箱 for 循环体被注释吃掉、衣帽架放 3 次"）：HEAD 与工作区 r3plan.js 2014–2016 行注释独占一行、for 循环体完整；node 直接执行 planS7Entry 输出 filing_box ×3（z −63.75/−63.78 叠放/−64.3）+ coat_rack ×1。俯视 m3_entry_top（r41215990525）档案箱、装订机、衣帽架、展台互不重叠。**代码无此 bug，未改动**。
+- walk run 41217815506（770c47f）已派，收尾时结果见汇报。Pages run 41217731959（770c47f）。
 
 ## 批次 M2 · 人事档案馆 + B1 密集库 Blender 精建（2026-10-31 23:32 CST 接手，约 35 分钟；与 r3-model-m1 / r3-build-lead-63 并行，只动 archive / archive_b1）
 - 平面功能规划：沿用 R3 档案馆布局（东门 → 借阅柜台 → 阅览长桌区 → 开架区 A/B → 西南卡片目录/叙事事件陈列 → 西北缩微阅读 → 员工区地胶 → 北侧楼梯上回廊 / 楼梯洞下 B1），本批精建件作为固定件登记后重跑检查：work/r3/m2/plans/plan_archive_m2.png（216 件 0 错误）、plan_archive_b1.png（110 件 0 错误）。
