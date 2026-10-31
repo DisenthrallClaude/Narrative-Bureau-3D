@@ -82,6 +82,8 @@ jobs:
           mkdir -p out/$GRP
           if [ "$GRP" = "walk" ]; then # 批次16：剧情走查前台跑完（本机 120 s 前台上限 + 后台会被回收）
             CHROME="$CHROME" timeout 2400 node tools/walk.mjs --out out/walk/WALKTHROUGH.md 2>&1 | tee out/walk/walk.log; exit 0; fi
+          if [ "$GRP" = "ui" ] || [ "${GRP#ui}" != "$GRP" ]; then # 批次46：UI 叠层截图（不渲 3D）
+            CHROME="$CHROME" node tools/ui_shot.mjs out/$GRP "$SHOT" 2>&1 | tee out/$GRP/ui.log; exit 0; fi
           if [ "$GRP" = "pick" ]; then # 批次16：拾取探针（EXTRA = 空格分隔的 NDC 坐标对）
             CHROME="$CHROME" node tools/_pick.mjs "$SHOT" $EXTRA 2>&1 | tee out/pick/$SHOT.log; exit 0; fi
           CHROME="$CHROME" node tools/shot.mjs out/$GRP "$SHOT" --q ${{ inputs.quality }} --w ${{ inputs.width }} --h ${{ inputs.height }} --frames ${{ inputs.frames }} --fresh 1 --gtimeout 1500000 --stimeout 600000 --extra "$EXTRA" 2>&1 | tee out/$GRP/$SHOT.log
