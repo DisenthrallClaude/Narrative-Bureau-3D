@@ -59,7 +59,7 @@
 · Caged Hanging Light (caged_hanging_light)
 · Mounted Fluorescent Lights (mounted_fluorescent_lights)
 
-【PBR 材质】ambientCG（CC0）：Granite003A、Marble006/012/016/021、Metal009/027/046A/048A、PavingStones142、Tiles138、Terrazzo005、Paper006、Cardboard004、Fabric023、Concrete034/036、Onyx013、Wood051、WoodFloor064、Carpet012、Leather026、Facade001、Grass001（批次28 草坪）
+【PBR 材质】ambientCG（CC0）：Granite003A、Marble006/012/016/021、Metal009/027/046A/048A、PavingStones142、Tiles138、Terrazzo005、Paper006、Cardboard004、Fabric023、Concrete034/036、Onyx013、Wood051、WoodFloor064、Carpet012、Leather026、Facade001、Grass001（批次28 草坪）、Bark007（批次35 内圈行道树树干）
 【HDRI】Poly Haven（CC0）：kloofendal_48d_partly_cloudy_puresky（Greg Zaal, Jarod Guest）、entrance_hall（Sergej Majboroda）、large_corridor（Sergej Majboroda）
 【PBR 材质】Poly Haven（CC0）：roof_slates_02（批次30 附楼屋面）及 assets/tex/ph/ 下其余 Poly Haven 材质。
 【自建模型】批次30 sec_counter_6080 / scan_gate_6080 / wait_bench_6080（tools/blender/hall_props.py，贴图取自上列 ambientCG CC0：Wood051 / Marble006 / Metal048A / Metal027 / Metal046A）

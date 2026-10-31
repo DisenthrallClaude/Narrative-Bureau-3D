@@ -672,21 +672,22 @@ function buildCity(g, M, ctx) {
 function streetModules(g, mods, at, Y0) { // 批次33：tools/blender/street_house.py 精建的三种立面模块，按开间实例化
   const MT = { sh_stone: new THREE.MeshStandardMaterial({ color: 0xc9c0ad, roughness: 0.85, envMapIntensity: 0.55 }) /* 批次34：窗套提亮 */, sh_glass: new THREE.MeshStandardMaterial({ color: 0x0b0d10, roughness: 0.12, metalness: 0.2, envMapIntensity: 1.0 }),
     sh_frame: new THREE.MeshStandardMaterial({ color: 0x4a1c12, roughness: 0.7 }), sh_iron: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.6, metalness: 0.6 }),
-    sh_conc: new THREE.MeshStandardMaterial({ color: 0x77736c, roughness: 0.9 }), sh_canvas: new THREE.MeshStandardMaterial({ color: 0xb2462a, roughness: 0.8, side: THREE.DoubleSide, envMapIntensity: 0.6 }) /* 批次34：帆布提亮 */ };
+    sh_conc: new THREE.MeshStandardMaterial({ color: 0xa29d93, roughness: 0.9 }) /* 批次35：阳台板提亮，暗铁栏前读得出 */, sh_canvas: new THREE.MeshStandardMaterial({ color: 0xb2462a, roughness: 0.8, side: THREE.DoubleSide, envMapIntensity: 0.6 }) /* 批次34：帆布提亮 */ };
   const litGlass = new THREE.MeshStandardMaterial({ color: 0x20180f, emissive: 0xffb060, emissiveIntensity: 1.6, roughness: 0.3 });
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), one = new THREE.Vector3(1, 1, 1);
   const plateG = new THREE.BoxGeometry(2.3, 2.1, 0.03); plateG.translate(0, 1.82, 0.0);
-  const plateM = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.86, envMapIntensity: 0.45 });
+  const plateM = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.86, envMapIntensity: 0.45, polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 4 }); // 批次35：阳台开间遮板往后推（深度偏移），不与门玻璃抢深度
   const plates = mods.filter((m) => m[5]); if (plates.length) { const im = new THREE.InstancedMesh(plateG, plateM, plates.length); plates.forEach((m, i) => { const [x, z] = at(m[7], m[2]); q.setFromAxisAngle(up, m[4]); m4.compose(new THREE.Vector3(x, Y0 + m[3], z), q, one); im.setMatrixAt(i, m4); im.setColorAt(i, new THREE.Color(m[5][0] * 0.93, m[5][1] * 0.93, m[5][2] * 0.93)); });
     im.computeBoundingSphere(); im.userData.noCull = true; im.receiveShadow = true; g.add(im); } // 阳台开间：遮住着色器画的窄窗，墙色同房屋三色
   // 批次34：ext_house 看图——窗套 / 窗台 20 m 外偏弱、雨棚几乎看不出 → 窗模块进深 ×2.2（窗套加厚、窗台出挑）、店面 ×1.9（雨棚出挑 ≈2 m）、阳台 ×1.3
-  const MSC = { sh_bay_win: new THREE.Vector3(1.04, 1.04, 2.2), sh_bay_bal: new THREE.Vector3(1, 1, 1.3), sh_shop: new THREE.Vector3(1, 1.06, 1.9) };
+  const MSC = { sh_bay_win: new THREE.Vector3(1.04, 1.04, 2.2), sh_bay_bal: new THREE.Vector3(1.15, 1, 1.5), sh_shop: new THREE.Vector3(1, 1.06, 2.6) }; // 批次35：阳台 ×1.3→宽 ×1.15 / 深 ×1.5（板深 1.43 m、宽 3.0 m）；雨棚出挑 ×1.9→×2.6（≈2.7 m）
+  const MSC_FLAT = {}; for (const k in MSC) MSC_FLAT[k] = new THREE.Vector3(MSC[k].x, MSC[k].y, 1); // 批次35：玻璃 / 木窗框不随进深放大——原 ×2.2 把玻璃推到墙面后 6 cm、阳台门玻璃离阳台底板仅 1.5 cm → 远处 z-fighting 白闪点；不放大后玻璃在墙面外 6 cm、窗框 8 cm
   for (const name of ['sh_bay_win', 'sh_bay_bal', 'sh_shop']) loadModel('r2/' + name).then((src) => { const list = mods.filter((m) => m[0] === name); if (!list.length) return;
     src.updateMatrixWorld(true);
     src.traverse((o) => { if (!o.isMesh) return; const mn = (o.material?.name || '').replace(/\.\d+$/, ''); const geo = o.geometry.clone().applyMatrix4(o.matrixWorld);
       const sets = mn === 'sh_glass' ? [[MT.sh_glass, list.filter((m) => !m[6])], [litGlass, list.filter((m) => m[6])]] : [[MT[mn] ?? MT.sh_stone, list]];
       for (const [mat, L] of sets) { if (!L.length) continue; const im = new THREE.InstancedMesh(geo, mat, L.length);
-        L.forEach((m, i) => { const [x, z] = at(m[1], m[2]); q.setFromAxisAngle(up, m[4]); m4.compose(new THREE.Vector3(x, Y0 + m[3], z), q, MSC[name]); im.setMatrixAt(i, m4); });
+        L.forEach((m, i) => { const [x, z] = at(m[1], m[2]); q.setFromAxisAngle(up, m[4]); m4.compose(new THREE.Vector3(x, Y0 + m[3], z), q, (mn === 'sh_glass' || mn === 'sh_frame') ? MSC_FLAT[name] : MSC[name]); im.setMatrixAt(i, m4); });
         im.computeBoundingSphere(); im.userData.noCull = true; im.castShadow = mn === 'sh_canvas' || mn === 'sh_conc'; im.receiveShadow = true; g.add(im); } });
     console.log('[NB] 街屋立面模块', name, list.length); });
 }
@@ -799,7 +800,13 @@ function buildStreetRows(g, M, place, rnd) {
   }
   streetModules(g, mods, at, Y0); console.log('[NB] 街屋模块实例', mods.length, '高干行道树', tallTrees.length);
   if (tallTrees.length) loadModel('r2/street_tree_tall').then((src) => { src.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(src); const sc = 9.5 / Math.max(0.01, bb.max.y - bb.min.y), S = new THREE.Vector3(sc, sc, sc), tq = new THREE.Quaternion();
-    src.traverse((o) => { if (!o.isMesh) return; const geo = o.geometry.clone(); for (const n of ['position', 'normal']) { const a = geo.getAttribute(n); if (!a || (a.array instanceof Float32Array && !a.normalized && !a.isInterleavedBufferAttribute)) continue; const f = new Float32Array(a.count * 3); for (let i = 0; i < a.count; i++) { f[i * 3] = a.getX(i); f[i * 3 + 1] = a.getY(i); f[i * 3 + 2] = a.getZ(i); } geo.setAttribute(n, new THREE.BufferAttribute(f, 3)); } /* 批次34 修：street_tree_tall 是 meshopt 量化 glb（Int16 归一化坐标），直接 applyMatrix4 会把米制坐标截断到 ±1 → 树缩成地上一团（ext_house 看图）；先解量化成 Float32 */ geo.applyMatrix4(o.matrixWorld); geo.translate(0, -bb.min.y, 0); const im = new THREE.InstancedMesh(geo, o.material, tallTrees.length);
+    src.traverse((o) => { if (!o.isMesh) return; const geo = o.geometry.clone(); for (const n of ['position', 'normal']) { const a = geo.getAttribute(n); if (!a || (a.array instanceof Float32Array && !a.normalized && !a.isInterleavedBufferAttribute)) continue; const f = new Float32Array(a.count * 3); for (let i = 0; i < a.count; i++) { f[i * 3] = a.getX(i); f[i * 3 + 1] = a.getY(i); f[i * 3 + 2] = a.getZ(i); } geo.setAttribute(n, new THREE.BufferAttribute(f, 3)); } /* 批次34 修：street_tree_tall 是 meshopt 量化 glb（Int16 归一化坐标），直接 applyMatrix4 会把米制坐标截断到 ±1 → 树缩成地上一团（ext_house 看图）；先解量化成 Float32 */ geo.applyMatrix4(o.matrixWorld); geo.translate(0, -bb.min.y, 0);
+      let mat = o.material; if (/trunk/.test(mat?.name || '')) { // 批次35：树干原贴图纵向拉伸、偏红 → ambientCG Bark007（CC0）按真实米制柱面重映射：u = 角度 × 半径 / 0.6 m、v = 高度 / 0.9 m（树高 9.5 m 缩放后）
+        const pa = geo.getAttribute('position'), uv = new Float32Array(pa.count * 2); let cx = 0, cz = 0; for (let i = 0; i < pa.count; i++) { cx += pa.getX(i); cz += pa.getZ(i); } cx /= pa.count; cz /= pa.count;
+        for (let i = 0; i < pa.count; i++) { const dx = (pa.getX(i) - cx) * sc, dz = (pa.getZ(i) - cz) * sc, r = Math.max(0.12, Math.hypot(dx, dz)); uv[i * 2] = (Math.atan2(dx, dz) + Math.PI) * Math.min(r, 0.35) / 0.6; uv[i * 2 + 1] = pa.getY(i) * sc / 0.9; }
+        geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); mat = pbr('Bark007', { repeat: [1, 1], color: 0xb8ad9c, env: 0.4 });
+        for (const t of [mat.map, mat.normalMap, mat.roughnessMap]) if (t) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.needsUpdate = true; } }
+      const im = new THREE.InstancedMesh(geo, mat, tallTrees.length);
       tallTrees.forEach(([x, z, yaw], i) => { tq.setFromAxisAngle(up, yaw + i * 0.9); m4.compose(new THREE.Vector3(x, Y0 + 0.2, z), tq, S); im.setMatrixAt(i, m4); });
       im.computeBoundingSphere(); im.userData.noCull = true; im.frustumCulled = false; im.castShadow = false; im.receiveShadow = true; g.add(im); }); });
   for (const [im, n] of [[houses, nh], [pars, np], [roofs, nf], [roads, nr], [walks, nw], [curbs, nc], [poles, nl], [arms, nl], [heads, nl], [stems, nt], [crowns, nt]]) { im.count = n; im.computeBoundingSphere(); im.userData.noCull = true; /* 批次30：ext_sky 看图——三圈街屋全没出现：InstancedMesh 没算 boundingSphere，DistCull 拿单位方块半径 0.87 m 当整排街屋 → 60 m 外全剔 */ im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; g.add(im); }
