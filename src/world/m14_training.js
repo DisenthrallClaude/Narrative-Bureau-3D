@@ -110,5 +110,14 @@ export async function applyM14Training(ctx) {
   });
   // 旧平面靶纸（M5 batch 内 m5_target 合并网格）隐藏，由 tr_target 落地靶架替代
   if (MM.m5_target) zone.traverse((o) => { if (o.isMesh && o.material === MM.m5_target && !o.isInstancedMesh) o.visible = false; });
+  // 批次 M16：射击区太暗 → 两盏暖色射灯（挂在射击台后上方，照靶架 / 隔板；左盏投影，右盏不投影）。?nom16=1 关
+  if (!new URLSearchParams(location.search).has('nom16')) {
+    for (const [sx, sh] of [[-9, true], [9, false]]) {
+      const l = new THREE.SpotLight(0xffc68c, 42, 24, 0.62, 0.7, 1.6); l.name = 'm16_range_spot';
+      l.position.set(sx, y + 6.4, -143.2); l.target.position.set(sx, y + 1.3, -151.2);
+      l.castShadow = sh; if (sh) { l.shadow.mapSize.set(1024, 1024); l.shadow.bias = -0.0006; l.shadow.normalBias = 0.02; l.shadow.camera.near = 1; l.shadow.camera.far = 24; }
+      zone.add(l, l.target);
+    }
+  }
   await Promise.all(jobs);
 }

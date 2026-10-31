@@ -8,6 +8,7 @@ import { mats } from './mats.js';
 import { vaultMats, tagMaterial } from './vault.js';
 import { dressMats, Props, hangingSign } from './dress.js';
 import { person } from './interiors.js';
+const M16_TR = typeof location !== 'undefined' && !new URLSearchParams(location.search).has('nom14') && !new URLSearchParams(location.search).has('nom16'); // 批次 M16：靶架木横档 / 吊线（跟 M14 靶架走）
 import { UNDER } from './rooms.js';
 
 const cvTex = (w, h, draw, rep) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; } return t; };
@@ -126,9 +127,9 @@ export async function buildM5(scene, world, ctx) {
     b.box('dz_pil', LN * LW, 1.05, 0.7, [LX0 + LN * LW / 2, y + 0.525, -141], { uv: 0.5, collide: true }); b.box('blackMetal', LN * LW + 0.1, 0.05, 0.8, [LX0 + LN * LW / 2, y + 1.07, -141], { uv: 1 });
     for (let i = 0; i <= LN; i++) { const x = LX0 + i * LW; b.box('m5_olive', 0.08, 2.2, 1.6, [x, y + 1.1, -141.9], { uv: 1 }); b.box('steel', 0.03, 0.05, 13, [x, y + 6.2, -148], { uv: 1 }); }
     for (let i = 0; i < LN; i++) { const x = LX0 + (i + 0.5) * LW, tz = -150 - (i % 3) * 1.6;
-      b.box('steel', 0.04, 0.04, 13, [x, y + 6.0, -148], { uv: 1 }); b.box('blackMetal', 0.3, 0.2, 0.3, [x, y + 5.85, tz], { uv: 1 }); b.add('steel', new THREE.CylinderGeometry(0.01, 0.01, 3.4, 4), { pos: [x, y + 4.1, tz] }, { uv: 1 });
+      b.box('steel', 0.04, 0.04, 13, [x, y + 6.0, -148], { uv: 1 }); b.box('blackMetal', 0.3, 0.2, 0.3, [x, y + 5.85, tz], { uv: 1 }); if (M16_TR) b.add('steel', new THREE.CylinderGeometry(0.01, 0.01, 3.41, 4), { pos: [x, y + 4.045, tz] }, { uv: 1 }); else b.add('steel', new THREE.CylinderGeometry(0.01, 0.01, 3.4, 4), { pos: [x, y + 4.1, tz] }, { uv: 1 }); // 批次 M16：吊线下延到 m14/tr_target 顶部挂钩（y+2.34）
       b.add('m5_target', new THREE.PlaneGeometry(0.75, 1.1), { pos: [x, y + 1.95, tz], rot: [0, 0, (i % 2 ? 0.03 : -0.02)] }, { uv: false });
-      b.box('wood', 0.9, 0.04, 0.04, [x, y + 2.52, tz], { uv: 1 });
+      if (!M16_TR) b.box('wood', 0.9, 0.04, 0.04, [x, y + 2.52, tz], { uv: 1 }); // 批次 M16：旧木横档（非剧情件）悬在新靶框顶上方约 26 cm → 移除，吊线直接挂靶框挂钩
       const num = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.3), tagMaterial(String(i + 1).padStart(2, '0'))); num.position.set(x, y + 1.25, -140.62); zt.add(num);
       stencil(zt, String(i + 1), x, y, -143.2, 0, 1.4, '#d8d8d0');
       for (let k = 0; k < 6; k++) b.box('dz_bakelite', 0.012, 0.035, 0.012, [x - 0.4 + k * 0.05, y + 1.1, -141.2], { uv: false }); }
