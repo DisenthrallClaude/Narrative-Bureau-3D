@@ -15,7 +15,8 @@ def gear(N, spokes, hole):
     return ''.join(s), r
 N1,N2,N3=32,20,14
 g1,r1=gear(N1,6,5); g2,r2=gear(N2,5,4); g3,r3=gear(N3,4,3)
-c1=(-26,16); th=-45; c2=(c1[0]+(r1+r2)*math.cos(math.radians(th)), c1[1]+(r1+r2)*math.sin(math.radians(th)))
+c1=(-38,18.5)  # 整组居中（三齿轮包围盒中心对准 0,0）
+th=-45; c2=(c1[0]+(r1+r2)*math.cos(math.radians(th)), c1[1]+(r1+r2)*math.sin(math.radians(th)))
 ph2=th+180-0.5*360/N2; th2=18; c3=(c2[0]+(r2+r3)*math.cos(math.radians(th2)), c2[1]+(r2+r3)*math.sin(math.radians(th2))); ph3=th2+180-0.5*360/N3
 T=24
 ticks=''.join(f'<line x1="{(118 if k%5 else 113)*math.cos(k*math.pi/60):.2f}" y1="{(118 if k%5 else 113)*math.sin(k*math.pi/60):.2f}" x2="{122*math.cos(k*math.pi/60):.2f}" y2="{122*math.sin(k*math.pi/60):.2f}"/>' for k in range(120))

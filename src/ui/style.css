@@ -37,14 +37,14 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #loading::before { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1; /* 整屏极轻暗角，让左区与画面同一光感 */
   background: radial-gradient(ellipse 90% 85% at 62% 45%, transparent 55%, rgba(8,6,4,.42) 100%), linear-gradient(0deg, rgba(8,6,4,.38), transparent 30%); }
 #loading .veil { position: absolute; inset: 0; z-index: 2; pointer-events: none; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
-  background: linear-gradient(90deg, rgba(14,10,8,.58) 0%, rgba(14,10,8,.40) 22%, rgba(14,10,8,.18) 30%);
+  background: linear-gradient(90deg, rgba(14,10,8,.62) 0%, rgba(14,10,8,.46) 22%, rgba(14,10,8,.2) 30%);
   -webkit-mask-image: linear-gradient(95deg, #000 0, #000 24%, rgba(0,0,0,.6) 29%, transparent 33%); mask-image: linear-gradient(95deg, #000 0, #000 24%, rgba(0,0,0,.6) 29%, transparent 33%); }
 #loading .cut { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; }
 #loading .cut line { stroke: var(--gold); stroke-width: 1; opacity: .32; stroke-dasharray: 1600; stroke-dashoffset: 1600; animation: draw 2.4s .4s var(--ease) forwards; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
-#loading .home { position: absolute; z-index: 4; left: 5.2vw; top: 50%; transform: translateY(-50%); width: min(25vw, 440px); min-width: 300px; transition: opacity .9s ease, transform 1.2s var(--ease); }
+#loading .home { position: absolute; z-index: 4; left: 5.2vw; top: 50%; transform: translateY(-50%); width: min(21vw, 380px); min-width: 270px; transition: opacity .9s ease, transform 1.2s var(--ease); }
 #loading .home > * { animation: rise 1.2s var(--ease) both; }
-#loading .eyebrow { font-size: 11px; letter-spacing: .5em; color: var(--copper); animation-delay: .3s !important; }
+#loading .eyebrow { font-size: 11px; letter-spacing: .5em; color: #c79a66; animation-delay: .3s !important; }
 #loading .eyebrow::before { content: ''; display: inline-block; width: 28px; height: 1px; margin: 0 14px 3px 0; background: var(--copper); vertical-align: middle; }
 #loading h1.nb { margin: 26px 0 0 -.04em; font-family: var(--title); font-weight: 600; font-size: clamp(40px, 3.9vw, 66px); line-height: 1.04; letter-spacing: .1em; color: var(--ink);
   text-shadow: 0 2px 24px rgba(0,0,0,.45); animation-delay: .45s !important; }
@@ -56,7 +56,7 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #loading #start em { font-style: normal; font-family: var(--latin); font-size: 10px; letter-spacing: .4em; color: var(--gold); }
 #loading #start::after { content: ''; position: absolute; left: -1px; top: -1px; width: 10px; height: 10px; border-left: 1px solid var(--gold2); border-top: 1px solid var(--gold2); }
 #loading #start:hover { background: rgba(201,168,112,.16); border-color: var(--gold); }
-#loading .foot { margin-top: 30px; font-size: 11px; letter-spacing: .26em; color: var(--faint); animation-delay: 1.1s !important; }
+#loading .foot { margin-top: 30px; font-size: 11px; letter-spacing: .2em; color: rgba(239,231,216,.5); animation-delay: 1.1s !important; }
 #loading .mark { position: absolute; z-index: 4; right: 40px; bottom: 32px; font-family: var(--latin); font-size: 10px; letter-spacing: .5em; color: rgba(239,231,216,.55); text-shadow: 0 1px 4px rgba(0,0,0,.7); animation: fadeIn 1.4s 1.2s both; transition: opacity .8s; }
 
 /* ————— 开始 → 齿轮加载 ————— */
@@ -94,7 +94,7 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
   font-size: 13.5px; letter-spacing: .14em; color: var(--ink); background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid rgba(201,168,112,.18); border-radius: 2px; animation: fadeIn .35s ease both; }
 #prompt:empty { display: none; }
 #prompt b.key, #prompt b { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border: 1px solid var(--line2); font-family: var(--latin); font-weight: 600; font-size: 11px; color: var(--gold2); }
-#obj { position: absolute; left: 34px; top: 30px; max-width: 360px; padding-left: 14px; border-left: 1px solid var(--line2); color: var(--ink); text-shadow: 0 1px 6px rgba(0,0,0,.75), 0 0 2px rgba(0,0,0,.6); opacity: .62; transition: opacity 1.2s ease; }
+#obj { position: absolute; left: 34px; top: 30px; max-width: 460px; padding-left: 14px; border-left: 1px solid var(--line2); color: var(--ink); text-shadow: 0 1px 6px rgba(0,0,0,.75), 0 0 2px rgba(0,0,0,.6); opacity: .62; transition: opacity 1.2s ease; }
 #obj.flash { opacity: 1; }
 #obj .t { font-size: 10px; letter-spacing: .4em; color: var(--gold); margin-bottom: 6px; }
 #obj .t b { font-family: var(--latin); font-weight: 600; letter-spacing: .4em; margin-right: 10px; }
@@ -174,7 +174,7 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #reader .paper.phone .home { width: 110px; height: 3px; margin: 18px auto 0; border-radius: 2px; background: rgba(239,231,216,.22); }
 
 /* ————— 暂停：画面虚化，左侧竖排标题 + 右侧细线条目 ————— */
-#pause { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; background: rgba(8,6,4,.46); backdrop-filter: blur(16px) saturate(1.05); -webkit-backdrop-filter: blur(16px) saturate(1.05); animation: fadeIn .5s ease both; }
+#pause { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; background: rgba(8,6,4,.64); backdrop-filter: blur(16px) saturate(1.05); -webkit-backdrop-filter: blur(16px) saturate(1.05); animation: fadeIn .5s ease both; }
 #pause .panel { display: flex; gap: 64px; align-items: flex-start; width: min(860px, 88vw); max-height: 88vh; }
 #pause .spine { flex: 0 0 200px; padding-top: 6px; border-right: 1px solid var(--line); min-height: 320px; }
 #pause h1 { margin: 0; font-family: var(--title); font-weight: 600; font-size: 34px; letter-spacing: .2em; color: var(--ink); }
