@@ -66,7 +66,7 @@ export function buildM1Seventh(zone, world, Y, gcur, D, M) {
   return Promise.all(jobs);
 }
 
-// ---------- 批次 M5：作战室 / 杀青室 / 回写台 精建壳（public/assets/models/m5/{ops,wrap,rewrite}.glb，tools/blender/m5_rooms.py）----------
+// ---------- 批次 M5 → M8：作战室 / 杀青室 / 回写台 精建壳（public/assets/models/m5/{ops,wrap,rewrite}.glb，tools/blender/m5_rooms.py；M8 起加载 m8/*.glb，tools/blender/m8_rooms.py：护墙 1.2 m + 壁骨分格 + 天花格心）----------
 // 原牛皮纸房间、全部锚点（看板/叛徒墙/K 笔记/档案袋/落地镜/巨书）、传送与 zone 判定不动；凸出件（壁柱/沙盘/排字台）补碰撞。
 export function buildM5Seventh(zone, world, Y, D, M) {
   const MAT = m1Mats(D, M);
@@ -77,6 +77,10 @@ export function buildM5Seventh(zone, world, Y, D, M) {
   for (const z of [-168.2, -173.6, -179.0, -183.4]) pil(-8.7, z); for (const z of [-163.0, -168.2, -173.6, -179.0, -183.4]) pil(8.7, z);
   for (const x of [-5, -1, 1, 5]) pil(x, -185.7, true);                                                       // 回写台壁柱
   world.box(-8.35, Y + 0.8, -163.3, 0.9, 1.6, 5.3);                                                           // 回写排字台
-  point(zone, 0xffc890, 3, [-4.3, Y + 3.0, -121.3], 6);                                                       // 沙盘碗灯
-  return Promise.all(['ops', 'wrap', 'rewrite'].map((n) => loadModel('m5/' + n).then((src) => { const o = src.clone(true); o.traverse((m) => { if (m.isMesh) { m.material = pick(MAT, m.material); m.castShadow = false; m.receiveShadow = true; } }); o.position.set(0, Y, 0); o.name = 'm5_' + n; zone.add(o); })));
+  // 批次 M8：作战室机关陈设（平面 work/r3/m8/plans/plan_ops_m8.png）——西墙电话台 ×3、南墙西段标图柜 ×3、北墙西段行军床 ×2
+  for (const z of [-123.55, -125.65, -127.1]) world.box(-9.31, Y + 0.4, z, 0.58, 0.8, 0.95);
+  world.box(-7.25, Y + 0.52, -133.35, 4.4, 1.04, 0.9);
+  for (const x of [-6.9, -4.3]) world.box(x, Y + 0.26, -112.82, 1.95, 0.52, 0.7);
+  point(zone, 0xffc890, 3, [-4.3, Y + 3.0, -121.3], 6);                                                       // 沙盘碗灯（M8：三盏铜链灯组）
+  return Promise.all(['ops', 'wrap', 'rewrite'].map((n) => loadModel('m8/' + n).then((src) => { const o = src.clone(true); o.traverse((m) => { if (m.isMesh) { m.material = pick(MAT, m.material); m.castShadow = false; m.receiveShadow = true; } }); o.position.set(0, Y, 0); o.name = 'm8_' + n; zone.add(o); })));
 }

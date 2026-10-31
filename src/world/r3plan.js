@@ -1749,8 +1749,10 @@ export function planS7Ops(y) {
   out.push({ m: 'r2/binoculars', x: 3.6, y: y + 0.79, z: -128.6, yaw: 1.2, w: 0.2, tag: '地图台', on: 'shelf' });
   out.push({ m: 'r2/glass_ashtray', x: 2.9, y: y + 0.79, z: -128.1, yaw: 0, w: 0.12, tag: '地图台', on: 'shelf' });
   // ④ 休整角（西南，入口西侧）：双层铁床 ×2（床头靠南隔墙）+ 储物柜 ×2 + 小桌（收音机/保温壶）——与外界隔绝的值守常驻
-  for (const x of [-6.9, -4.3]) out.push({ m: 'r2/simple_bunk_bed', x, y, z: Z1 - 0.66, yaw: 0, h: 1.75, tag: '休整角', on: 'floor', col: [1.96, 1.75, 1.22] });
-  for (const x of [-7.2, -6.1]) out.push({ m: 'r2/locker_equipment', x, y, z: -120.6, yaw: 0, h: 1.9, tag: '休整角', on: 'floor', col: [1.1, 1.9, 0.47] });
+  F7(out, '行军床 ×2（M8 Blender，替白色双层铁床）', -5.6, Z1 - 0.62, 4.6, 0.7, y, 0, 0.52);
+  F7(out, '作战沙盘（M5）', -4.3, -121.3, 2.56, 3.16, y, 0, 1.0);
+  F7(out, '电话台 ×3（M8）', -9.31, -125.3, 0.58, 4.6, y, 0, 0.8); F7(out, '标图柜 ×3（M8）', -7.25, -133.35, 4.4, 0.9, y, 0, 1.04);
+  for (const x of [-7.2, -6.1]) out.push({ m: 'r2/locker_equipment', x, y, z: -119.0, /* M8：原 −120.6 与 M5 沙盘穿 3 cm → 北移 */ yaw: 0, h: 1.9, tag: '休整角', on: 'floor', col: [1.1, 1.9, 0.47] });
   out.push({ m: 'r2/small_wooden_table_01', x: -4.6, y, z: -117.4, yaw: 0.1, h: 0.72, tag: '休整角', on: 'floor', col: [0.8, 0.72, 0.6] });
   out.push({ m: 'r2/vintage_radio', x: -4.75, y: y + 0.72, z: -117.45, yaw: 0.2, w: 0.36, tag: '休整角', on: 'shelf' });
   out.push({ m: 'r2/modified_thermos', x: -4.3, y: y + 0.72, z: -117.3, yaw: 0, h: 0.3, tag: '休整角', on: 'shelf' });
@@ -1771,7 +1773,7 @@ export function planS7Wrap(y) {
   const out = []; const X0 = -7.8, X1 = 7.8, Z0 = -157.8, Z1 = -134.2, H = 5.4;
   const room = { name: '第七局 · 杀青室（批次7）', x0: X0, x1: X1, z0: Z0, z1: Z1, y, H, doors: [{ wall: 'N', a: -1.4, b: 1.4, label: '门（← 作战室）' }], windows: [],
     rooms: [['档案列 西', -6.8, -146], ['档案列 东', 6.8, -146], ['空白档案袋台', 0, -146], ['落地镜', 0, -157]], aisles: [{ label: '中轴（门 → 档案袋台）', x0: -1.2, x1: 1.2, z0: -144.9, z1: -134.2 }] };
-  for (let r = 0; r < 4; r++) for (const sx of [-1, 1]) F7(out, '书脊架', sx * 7.4, -138 - r * 4.6, 0.6, 3.6, y, 0, 4.4);
+  for (let r = 0; r < 4; r++) for (const sx of [-1, 1]) F7(out, '书脊架', sx * 7.4, -138 - r * 4.6, 0.6, 3.3, y, 0, 3.0); // M8：架 4.4→3.0 m、3.6→3.3 m，让出壁柱与上部分格墙
   F7(out, '档案袋台', 0, -146, 3.4, 0.9, y, 0, 0.9); for (let k = 0; k < 6; k++) F7(out, '木凳', -1.6 + (k % 2) * 3.2, -138 - Math.floor(k / 2) * 6, 0.5, 0.5, y, 0, 0.45);
   F7(out, '落地镜', 0, -157.6, 1.5, 0.2, y, 0, 2.6);
   // 档案列之间：滑梯（木梯靠架）、档案盒推车、地上待归档盒
