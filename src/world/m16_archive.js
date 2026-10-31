@@ -17,9 +17,9 @@ export function m16Mats() {
     m16_stoneBase: pbr('Granite003A', { color: 0x4a4038, roughness: 0.7, env: 0.35, rn: true }),
     m16_bronze: pbr('Metal046A', { color: 0x8a6038, metalness: 1, roughness: 0.5, env: 0.5 }),   // 大面暗铜：粗糙 ≥0.45 / env 0.5
     m16_brass: pbr('Metal046A', { color: 0xb08250, metalness: 1, roughness: 0.45, env: 0.5 }),   // 小件铜线 / 铭牌
-    m16_leather: pbr('Leather026', { color: 0x5a3422, roughness: 0.62, env: 0.3, rn: true }),   // 深棕皮面（非绿呢）
+    m16_leather: pbr('Leather026', { color: 0x9a5434, roughness: 0.66, env: 0.25, rn: true }),   // 深棕皮面（非绿呢）
     m16_iron: pbr('Metal046A', { color: 0x2e2a26, metalness: 0.6, roughness: 0.55, env: 0.45 }),
-    m16_lampGlow: new THREE.MeshStandardMaterial({ color: 0x2a1c10, emissive: 0xffc890, emissiveIntensity: 0.85, roughness: 0.8 }),
+    m16_lampGlow: new THREE.MeshStandardMaterial({ color: 0x2a1c10, emissive: 0xffc890, emissiveIntensity: 0.95, roughness: 0.8 }),
   };
   MM.m16_lampGlow.userData.noShadow = true;
   for (const [k, m] of Object.entries(MM)) m.name = k;

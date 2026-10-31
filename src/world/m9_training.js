@@ -25,7 +25,7 @@ function mats() {
   };
 }
 // M12：器材柜单独一套暖灰烤漆（原 0xa79b8b 在游戏里读成白色现代铁柜）
-const LOCKER = { m6_enamel: new THREE.MeshStandardMaterial({ color: 0x423b35, metalness: 0.1, roughness: 0.7, envMapIntensity: 0.35 }), m6_enamelDark: new THREE.MeshStandardMaterial({ color: 0x29231f, metalness: 0.1, roughness: 0.7, envMapIntensity: 0.35 }) }; // 批次 M16：0x5c5248 / env 0.5 在画面里仍读成浅米色 （run 41226229241 m9_tr_locker 亲眼看与地面同亮）→ 暖灰中间调 0x423b35、粗糙 0.7、env 0.35
+const LOCKER = { m6_enamel: new THREE.MeshStandardMaterial({ color: 0x302a25, metalness: 0.05, roughness: 0.72, envMapIntensity: 0.35 }), m6_enamelDark: new THREE.MeshStandardMaterial({ color: 0x1e1a17, metalness: 0.05, roughness: 0.72, envMapIntensity: 0.35 }) }; // 批次 M16：0x5c5248 / env 0.5 在画面里仍读成浅米色 （run 41226229241 m9_tr_locker 亲眼看与地面同亮）→ 0x423b35 复拍 41227158198 仍只略暗 → 0x302a25 / 0x1e1a17、粗糙 0.72、env 0.35（训练场曝光高，立面读得比色值亮）
 const pick = (MAT, m) => MAT[(m?.name || '').replace(/\.\d+$/, '')] ?? m;
 function bake(src, mxs, MAT) {
   const byMat = new Map(); src.updateMatrixWorld(true);
