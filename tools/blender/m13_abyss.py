@@ -26,6 +26,7 @@ def pal():
         stoneD=mat('m13_stoneDark', (0.19, 0.17, 0.15), 0.75),
         porph=mat('m13_porph', (0.17, 0.06, 0.045), 0.6),
         bronze=mat('m2_bronze', (0.23, 0.15, 0.08), 0.5, 1.0),
+        relief=mat('m13_bronzeRelief', (0.32, 0.22, 0.12), 0.5, 0.6),
     )
 
 HS = 10.6            # 起拱高
@@ -70,6 +71,14 @@ def voussoirs(m, wi, wo, zf, zb, n, gap=0.02, key=None):
             b0g, b1g = lerp(b0, b1, gb), lerp(b1, b0, gb if i < n - 1 else 0)
             q = [a0g, b0g, b1g, a1g] if side == -1 else [a1g, b1g, b0g, a0g]
             prism(m, q, zf - (0.0 if i % 2 else 0.02), zb)
+    # 拱石背衬：连续无缝拱环，径向内缩 3 cm、前脸退 5 cm → 灰缝看进去是暗石而不是穿透到背景
+    for side in (-1, 1):
+        m2 = 24
+        for i in range(m2):
+            t0, t1 = i / m2, (i + 1) / m2
+            a0, a1 = arc_pt(wi + 0.06, t0, side), arc_pt(wi + 0.06, t1, side)
+            b0, b1 = arc_pt(wo - 0.06, t0, side), arc_pt(wo - 0.06, t1, side)
+            prism(CORE, [a0, b0, b1, a1] if side == -1 else [a1, b1, b0, a0], zf - 0.05, zb + 0.01)
     if key is not None:
         # 拱心石：跨拱顶，较拱石外凸 0.12、上下各出 0.25
         ap_i = arc_pt(wi, 1.0, -1); ap_o = arc_pt(wo, 1.0, -1)
@@ -78,6 +87,7 @@ def voussoirs(m, wi, wo, zf, zb, n, gap=0.02, key=None):
 
 def jamb(m, x0, x1, zf, zb, y0, y1, course=0.82, gap=0.018):
     """拱脚以下的门侧墩：错缝条石（每皮宽度交替）。"""
+    prism(CORE, [(x0 + 0.03, y0), (x1 - 0.03, y0), (x1 - 0.03, y1), (x0 + 0.03, y1)], zf - 0.05, zb + 0.01)  # 背衬（灰缝不透）
     y = y0; k = 0
     while y < y1 - 0.05:
         yt = min(y1, y + course)
@@ -139,16 +149,16 @@ def socles(P):
             box(P['stoneD'], 0.025, SOC_H - 0.6, 0.01, x=xc + dx, y=SOC_H / 2, z=SOC_F + 0.003)
     # 左座：暗铜符刻浮雕板（与右侧铭牌对称；纯几何刻纹，无文字无人形）
     x0, y0, zf = -7.2, 1.8, SOC_F + 0.05
-    box(P['bronze'], 1.3, 1.6, 0.05, x=x0, y=y0, z=SOC_F + 0.025, bev=0.012)
-    box(P['bronze'], 1.12, 1.42, 0.02, x=x0, y=y0, z=zf + 0.01)
+    box(P['relief'], 1.3, 1.6, 0.05, x=x0, y=y0, z=SOC_F + 0.025, bev=0.012)
+    box(P['relief'], 1.12, 1.42, 0.02, x=x0, y=y0, z=zf + 0.01)
     for i in range(5):  # 横刻纹
         w = [0.8, 0.5, 0.9, 0.4, 0.7][i]
-        box(P['bronze'], w, 0.05, 0.03, x=x0 + [0, -0.12, 0.05, 0.18, -0.06][i], y=y0 - 0.5 + i * 0.25, z=zf + 0.03, bev=0.008)
+        box(P['relief'], w, 0.05, 0.03, x=x0 + [0, -0.12, 0.05, 0.18, -0.06][i], y=y0 - 0.5 + i * 0.25, z=zf + 0.03, bev=0.008)
     for i in range(4):  # 竖刻纹
-        box(P['bronze'], 0.05, [0.4, 0.7, 0.3, 0.55][i], 0.03, x=x0 - 0.36 + i * 0.24, y=y0 + [0.2, -0.1, 0.35, 0.0][i], z=zf + 0.03, bev=0.008)
-    cyl(P['bronze'], 0.16, 0.03, x=x0, y=y0 + 0.5, z=zf + 0.03, axis='z', n=24)
+        box(P['relief'], 0.05, [0.4, 0.7, 0.3, 0.55][i], 0.03, x=x0 - 0.36 + i * 0.24, y=y0 + [0.2, -0.1, 0.35, 0.0][i], z=zf + 0.03, bev=0.008)
+    cyl(P['relief'], 0.16, 0.03, x=x0, y=y0 + 0.5, z=zf + 0.03, axis='z', n=24)
     for (dx, dy) in ((-0.58, -0.73), (0.58, -0.73), (-0.58, 0.73), (0.58, 0.73)):
-        cyl(P['bronze'], 0.035, 0.04, x=x0 + dx, y=y0 + dy, z=zf + 0.03, axis='z', n=10)
+        cyl(P['relief'], 0.035, 0.04, x=x0 + dx, y=y0 + dy, z=zf + 0.03, axis='z', n=10)
     # 右座：铜铭牌外框（铭牌本体是游戏端 doc 平面 1.2×1.5 @ (7.2, 1.8, −77.88)；框只做四边，不遮牌面）
     for (w, h, dx, dy) in ((1.4, 0.07, 0, 0.8), (1.4, 0.07, 0, -0.8), (0.07, 1.67, 0.665, 0), (0.07, 1.67, -0.665, 0)):
         box(P['bronze'], w, h, 0.06, x=7.2 + dx, y=1.8 + dy, z=SOC_F + 0.03, bev=0.01)
@@ -220,7 +230,8 @@ def shaft(P):
     box(P['stoneD'], 14.4, 0.4, 0.4, x=0, y=8.2, z=-54.15, bev=0.03)
 
 def build():
-    S = reset(); P = pal()
+    global CORE
+    S = reset(); P = pal(); CORE = P['stoneD']
     portal(P); socles(P); facade(P); shaft(P)
     ob = finish(S, f'{OUT}/abyss_gate.glb', 'abyss_gate', cube=2.0)
     return S, ob

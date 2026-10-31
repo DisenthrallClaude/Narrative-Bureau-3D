@@ -12,7 +12,8 @@ function mats() {
     m13_stone: pbr('Concrete034', { color: 0x8a7e70, roughness: 0.82, env: 0.4 }),
     m13_stoneDark: pbr('Concrete034', { color: 0x5a5148, roughness: 0.78, env: 0.4 }),
     m13_porph: pbr('Concrete034', { color: 0x5e2a22, roughness: 0.6, env: 0.4 }),
-    m2_bronze: pbr('Metal046A', { color: 0x8a6238, metalness: 0.9, roughness: 0.5, env: 0.5 }),
+    m2_bronze: pbr('Metal046A', { color: 0xa87a48, metalness: 0.75, roughness: 0.48, env: 0.5 }), // 墨渊环境暗，0x8a6238/0.9 金属在截图里读成黑条 → 提亮一档
+    m13_bronzeRelief: pbr('Metal046A', { color: 0xb08458, metalness: 0.6, roughness: 0.5, env: 0.5 }), // 左门座符刻板：纯 0.9 金属在墨渊暗环境里读成黑洞
   };
 }
 const pick = (MAT, m) => MAT[(m?.name || '').replace(/\.\d+$/, '')] ?? m;
