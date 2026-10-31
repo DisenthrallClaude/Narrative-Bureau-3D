@@ -200,6 +200,20 @@
 - 区域标题金箔字在亮场景上对比依赖投影；手机消息样式（phone）未重做。
 - **Drive 上传未做**（按分工由 lead-58 做）。
 
+## R3 批次57（2026-10-31 22:29 CST 接手，约 35 分钟；续批次56；与 lead-58〔批次55〕、ui-redesign-u1 并行，只动场景文件）
+- **提交**：242f736 屏幕 / da479b8 配色 / c98a7c8 联络官室 / 3e6dd95 图片比例 / ed0d416 + 798f5ca 民居 / 0b54a70 悬空图展架（每条 vite build 0）。
+- **电脑屏幕**（src/engine/assets.js `SCR_DRAW` / `screenUI` / `crtUI` / `SCR_ZONE`；src/world/dress.js `Props.build` 屏幕分组；r3build.js `P.scr = SCR_ZONE(id)`）：6 种机关终端界面（0 档案检索 / 1 叫号队列 / 2 值班日志 / 3 电报收发 / 4 业务菜单表单 / 5 局徽待机），琥珀荧光与暖白交替，640×320 = monitor.glb 屏面 UV（u 0.039–0.966, v 0–0.994）× 物理宽高比 1.85 → 不拉伸；材质直接替换原 decal_screen 网格 → 无 z-fighting。按区：citizen/gate/plaza=叫号+菜单，archive/library=检索，command/security/interrog/b4/b5=日志+电报，其他混排；同区内按实例轮换（每种一组 InstancedMesh）。CRT（r2/crt_computer_monitor 的 monitor_glass）用 repeat/offset 把界面铺进其图集块 u .752–.909 / v .606–.816（**朝向未在游戏内核对**）。指挥中心监控台 crtMat k=1/3 改值班日志 / 电报文字。
+  - 看图：pub_edit（41211196197/e）屏为局徽待机暖白，正常；**archive_loan（借阅柜台）那台显示器仍是原浅蓝贴图 + 便签**——不是 Props/placeModel 路径实例（plan 里只有「固定:借阅柜台」锚点），来源网格未查到；下批用 tools/_pick.mjs 拾取这台显示器查实际 mesh/材质名再接 screenUI。
+- **配色**：r2/metal_stool_01 红面 → 棕皮（r3build 后处理 onBeforeCompile 只换偏红像素，铁腿不动；cs_win 看图已是深棕红皮）；dz_rugGreen → 酒红褐底 + 驼色纹；r3_rackGreen → 暗铜褐 0x4a3c30。看图新发现档案馆阅览桌 r2/reading_table_6080 的 hp_baize 绿呢紧挨酒红地毯（红配绿）→ assets.js loadModel 里改深棕皮（提交见下，**未复拍**）。
+- **联络官室**：A 室衣帽架 z −101.95→−98.85、B 室文件柜 z −107.05→−104.05（并与衣帽架成组靠隔断），audit 表1 → 0；liaison_office 看图衣帽架已在门扇范围外。
+- **图片比例**（AUDIT-56 表3）：32 张全部改原图比例（东廊势力档案 0.8×1→1.6×0.9、地铁灯杆竖幅 0.55×0.825、训练场局旗 1.4×2.1 上沿贴吊杆、杀青室档案墙 1.4×0.79、4:3 横版三类、预警流程方图、公告栏、公示栏 1.875×2.5、访客须知、样张、候车亭海报 1.067×1.6）；复跑 audit 表3 → 0。表4 悬空：B5 值守区两张、训练场两张调度单（离墙 0.42 m 级）加落地展架；东廊局史挂框 / 安检大厅局徽主墙 / s7 N02 离墙 3.5–92 cm，疑挂在 hero GLB 墙或壁柱上，**未游戏内核对**。
+- **民居**（src/world/exterior.js 街屋循环，仅 R160 内圈即局旁）：`'ABACABAD'[k%8]`——A 12 m 3 层坡顶红褐砖 + 中间阳台 + 陶瓦褐屋面；B 9 m 2 层平顶 + 0.9 m 女儿墙、米灰水刷石、只开窗；C 15 m 4 层坡顶暖灰抹灰 + 隔层阳台 + 临街坡两个老虎窗；D 9 m 2 层深木构竖板 + 坡顶。材质经新增实例属性 aTyp 传给 houseMat 着色器（aTyp=0 时回落原位置 hash）；冷灰抹灰全局改暖灰。底层店面雨棚 / 店招沿用原模块。未用 Blender（无新模型）。ext_house（ABAC 版）看图：红褐砖 3 层带阳台、灰色 4 层带老虎窗成排可见，黄昏下砖色偏粉。
+- 截图：41211196197（a cs_r3 / b cs_win / c archive_loan / d cc_r3_c / e pub_edit / f liaison_office / g ext_house / w walk，ed0d416）、41211491299（h ext_house / i ext_street，798f5ca 含 D）。批次56 的 41210206261 cs_r3 超 25 分钟已取消（archive_r3 已取回：work/r3/b56/r41210206261/b/）。取图 `bash tools/gh_shots_fetch.sh <run> work/r3/b57/r<run>`。
+
+## R3 批次56（2026-10-31 22:21 CST，审计批）
+- 提交 fa76cb3：候号座椅 4.2→3.7 m、5 号窗等候 4.2→3.5 m 东移（离屏风 ≥0.75 m）；全局去红配绿 8 个材质（档案馆灰绿墙→米灰 0x8c8274 等，详见 docs/AUDIT-56.md §5）；tools/audit56.sh + audit56.py；docs/AUDIT-56.md。
+- 批次57 取图：archive_r3 档案馆大墙已是米灰暖调（不再灰绿）。
+
 ## R3 批次55（2026-10-31 22:07 CST 接手，约 35 分钟；与 UI 子代理 U1、审计 b56 并行，只动场景文件）
 ### 提交
 ede2af4 左门扇下半偏紫根因修；d3bdad5 填单台 / 叫号机胡桃木再压深偏冷；308f0d7 报刊架 / 毛毡垫去墨绿；**7bf68f4 市民大厅窗口台面精修 + cs_win 机位（最终场景代码）**。每次提交前本机 `npx vite build` 返回 0。

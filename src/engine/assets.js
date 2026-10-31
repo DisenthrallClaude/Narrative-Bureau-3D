@@ -52,6 +52,7 @@ export function loadModel(name) {
             }
             /* 批次44：书脊压暗改在 tools/blender/lib_nook.py 里降饱和重导，运行时 ×0.5 去掉 */ // 批次43：lib_nook 书脊在游戏里偏粉 / 青（线性色值直出偏浅）→ 压暗一半，读成旧精装深红 / 墨绿 / 藏青
             if (m && /decal_screen/.test(m.name || '')) { o.material = screenUI(0); o.userData.screen = 'flat'; o.castShadow = false; return; }
+            if (m && m.name === 'hp_baize') { o.material = m.clone(); o.material.color.setRGB(0.075, 0.042, 0.024); o.material.roughness = Math.max(m.roughness ?? 0.8, 0.6); } // 批次57：档案馆阅览桌（r2/reading_table_6080）绿呢紧挨酒红地毯 = 红配绿 → 深棕皮
             if (m && m.name === 'monitor_glass') { o.material = crtUI(2); o.userData.screen = 'crt'; o.castShadow = false; return; } // 批次57：CRT 玻璃换终端界面 // M5：显示器原贴图是粉紫色桌面，换成局内系统界面
             if (m && m.isMeshBasicMaterial) {
               o.material = new THREE.MeshStandardMaterial({ map: m.map, color: m.color, roughness: 0.85, metalness: 0, side: m.side, transparent: m.transparent, alphaTest: m.alphaTest });
