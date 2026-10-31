@@ -1603,7 +1603,7 @@ export function planTraining(y) {
     out.push({ m: 'r2/several_folders', x: x + sx * 0.1, y: y + 0.76, z: z + 0.05, yaw: yaw, h: 0.3, tag: '检录台', on: 'desk' });
     out.push({ m: 'r2/bankers_lamp', x: x + sx * 0.25, y: y + 0.76, z: z - 0.15, yaw: yaw + Math.PI, h: 0.4, tag: '检录台', on: 'desk' });
     out.push({ m: 'r2/plastic_crate_01', x: x + sx * 1.0, y, z: z - 0.9, yaw: 0.1, h: 0.3, tag: '检录台', on: 'floor' });
-    pic(out, 'textures/b07/B07_副本投放调度单.png', x - sx * 0.0, y + 1.7, -92.25, Math.PI, 0.8, 0.6, 'black'); /* 批次57：4:3 横版 */ light(out, x, y + 3.2, z, 0xfff0d8, 1.6, 7); }
+    pic(out, 'textures/b07/B07_副本投放调度单.png', x - sx * 0.0, y + 1.7, -92.25, Math.PI, 0.8, 0.6, 'black', { stand: true, fy: y }); /* 批次57：4:3 横版 + 落地展架（AUDIT 表4 悬空） */ light(out, x, y + 3.2, z, 0xfff0d8, 1.6, 7); }
   stanchions(out, [[-2.9, -98.0], [-2.9, -101.0], [-2.9, -104.0]], y, '分流'); stanchions(out, [[2.9, -98.0], [2.9, -101.0], [2.9, -104.0]], y, '分流');
   // ② 战术简报区：控制塔成绩榜（南面）前 4 排 × 4 课桌（中间过道 x −22），讲台 + 立式黑板 + 投放调度单
   { let k = 0; for (const z of [-106.4, -108.2, -110.0, -111.8]) for (const x of [-25.9, -24.5, -19.5, -18.1]) { out.push({ m: 'r2/schooldesk_01', x, y, z, yaw: Math.PI, w: 0.7, tag: '简报区', on: 'floor', col: [0.7, 0.75, 0.5] }); if (k % 5 !== 3) out.push({ m: 'r2/schoolchair_01', x: x + (hash(x, z) - 0.5) * 0.08, y, z: z - 0.5, yaw: (hash(z, x) - 0.5) * 0.12, h: 0.82, tag: '简报区', on: 'floor' }); k++; } }
@@ -1835,8 +1835,8 @@ export function planB5Deep(y) {
   out.push({ m: 'r2/office_phone', x: 4.2, y: y + 0.76, z: -101.8, yaw: ROT.E, w: 0.22, tag: '值守台', on: 'desk' });
   out.push({ m: 'r2/bankers_lamp', x: 4.15, y: y + 0.76, z: -103.25, yaw: ROT.E, h: 0.4, tag: '值守台', on: 'desk' });
   out.push({ m: 'r2/metal_storage_cabinet', x: -4.4, y, z: -100.75, yaw: 0, h: 1.9, tag: '值守台', on: 'floor', col: [1.0, 1.9, 0.65] });
-  pic(out, 'textures/b07/B07_分级收容制度.png', -2.9, y + 1.8, Z1 - 0.42, Math.PI, 0.6, 0.8, 'black');
-  pic(out, 'textures/b07/B07_畸变物上交须知.png', 2.9, y + 1.8, Z1 - 0.42, Math.PI, 0.8, 0.6, 'black'); // 批次57：4:3 横版
+  pic(out, 'textures/b07/B07_分级收容制度.png', -2.9, y + 1.8, Z1 - 0.42, Math.PI, 0.6, 0.8, 'black', { stand: true, fy: y }); // 批次57：离墙 0.42 m 无支撑 → 落地展架
+  pic(out, 'textures/b07/B07_畸变物上交须知.png', 2.9, y + 1.8, Z1 - 0.42, Math.PI, 0.8, 0.6, 'black', { stand: true, fy: y }); // 批次57：4:3 横版 + 落地展架（原离墙 0.42 m 悬空）
   // 法阵四周铜立柱隔离带（八角）
   { const pts = []; for (let k = 0; k < 8; k++) { const a = (k / 8) * Math.PI * 2 + Math.PI / 8; pts.push([Math.cos(a) * 4.3, -117 + Math.sin(a) * 4.3]); } stanchions(out, pts, y, '法阵隔离带'); }
   // 北墙：装甲柜 / 保险柜列（正面朝南）+ 转运车 + 气体灭火瓶
