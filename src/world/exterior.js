@@ -669,6 +669,26 @@ function buildCity(g, M, ctx) {
 
 // 批次28 E3：近排 1960–80 年代街屋立面（两圈沿环路连续临街，非随机撒点）+ 车行道 / 人行道路沿 / 成列路灯 / 行道树。
 // 立面全部在着色器里按楼内局部米制坐标画：底层商铺橱窗 + 招牌带、上层分格木窗（窗套 + 窗台 + 雨渍）、楼板腰线、檐口；亮窗稀疏（黄昏 12%）。
+function streetModules(g, mods, at, Y0) { // 批次33：tools/blender/street_house.py 精建的三种立面模块，按开间实例化
+  const MT = { sh_stone: new THREE.MeshStandardMaterial({ color: 0x8c8678, roughness: 0.9, envMapIntensity: 0.4 }), sh_glass: new THREE.MeshStandardMaterial({ color: 0x0b0d10, roughness: 0.12, metalness: 0.2, envMapIntensity: 1.0 }),
+    sh_frame: new THREE.MeshStandardMaterial({ color: 0x4a1c12, roughness: 0.7 }), sh_iron: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.6, metalness: 0.6 }),
+    sh_conc: new THREE.MeshStandardMaterial({ color: 0x77736c, roughness: 0.9 }), sh_canvas: new THREE.MeshStandardMaterial({ color: 0x6a2418, roughness: 0.85, side: THREE.DoubleSide }) };
+  const litGlass = new THREE.MeshStandardMaterial({ color: 0x20180f, emissive: 0xffb060, emissiveIntensity: 1.6, roughness: 0.3 });
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), one = new THREE.Vector3(1, 1, 1);
+  const plateG = new THREE.BoxGeometry(2.3, 2.1, 0.03); plateG.translate(0, 1.82, 0.0);
+  const plateM = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.86, envMapIntensity: 0.45 });
+  const plates = mods.filter((m) => m[5]); if (plates.length) { const im = new THREE.InstancedMesh(plateG, plateM, plates.length); plates.forEach((m, i) => { const [x, z] = at(m[7], m[2]); q.setFromAxisAngle(up, m[4]); m4.compose(new THREE.Vector3(x, Y0 + m[3], z), q, one); im.setMatrixAt(i, m4); im.setColorAt(i, new THREE.Color(m[5][0] * 0.93, m[5][1] * 0.93, m[5][2] * 0.93)); });
+    im.computeBoundingSphere(); im.userData.noCull = true; im.receiveShadow = true; g.add(im); } // 阳台开间：遮住着色器画的窄窗，墙色同房屋三色
+  for (const name of ['sh_bay_win', 'sh_bay_bal', 'sh_shop']) loadModel('r2/' + name).then((src) => { const list = mods.filter((m) => m[0] === name); if (!list.length) return;
+    src.updateMatrixWorld(true);
+    src.traverse((o) => { if (!o.isMesh) return; const mn = (o.material?.name || '').replace(/\.\d+$/, ''); const geo = o.geometry.clone().applyMatrix4(o.matrixWorld);
+      const sets = mn === 'sh_glass' ? [[MT.sh_glass, list.filter((m) => !m[6])], [litGlass, list.filter((m) => m[6])]] : [[MT[mn] ?? MT.sh_stone, list]];
+      for (const [mat, L] of sets) { if (!L.length) continue; const im = new THREE.InstancedMesh(geo, mat, L.length);
+        L.forEach((m, i) => { const [x, z] = at(m[1], m[2]); q.setFromAxisAngle(up, m[4]); m4.compose(new THREE.Vector3(x, Y0 + m[3], z), q, one); im.setMatrixAt(i, m4); });
+        im.computeBoundingSphere(); im.userData.noCull = true; im.castShadow = mn === 'sh_canvas' || mn === 'sh_conc'; im.receiveShadow = true; g.add(im); } });
+    console.log('[NB] 街屋立面模块', name, list.length); });
+}
+
 function buildStreetRows(g, M, place, rnd) {
   const hs = (k) => { const x = Math.sin(k * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
   const boxG = new THREE.BoxGeometry(1, 1, 1); boxG.translate(0, 0.5, 0);
@@ -737,7 +757,7 @@ function buildStreetRows(g, M, place, rnd) {
   const crownG = new THREE.IcosahedronGeometry(1, 1); crownG.translate(0, 1, 0); const stemG = new THREE.CylinderGeometry(0.14, 0.2, 1, 6); stemG.translate(0, 0.5, 0);
   const crowns = new THREE.InstancedMesh(crownG, leafMat, NL), stems = new THREE.InstancedMesh(stemG, trunkMat, NL);
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0), Y0 = -4.4;
-  let nh = 0, np = 0, nr = 0, nw = 0, nc = 0, nl = 0, nt = 0;
+  let nh = 0, np = 0, nr = 0, nw = 0, nc = 0, nl = 0, nt = 0; const mods = [];
   const at = (R, th) => [Math.sin(th) * R, -35 + Math.cos(th) * R];
   // 两圈环路：R 为车行道中心线；内侧、外侧各一排临街街屋
   for (const R of [160, 245, 305]) { // 批次29：ext_sky 看图——R212 / 300 两圈都在城墙到画框之外，墙外 120–200 m 一片空地 → 改三圈 160 / 245 / 305（相邻圈街屋背靠背留 ≥4 m 后巷）
@@ -759,12 +779,23 @@ function buildStreetRows(g, M, place, rnd) {
       while (s < C && nh < NH) { const w = 12 + Math.floor(hs(k + R) * 4) * 3, d = 14 + Math.floor(hs(k * 3.3 + R) * 3) * 2, fl = 4 + Math.floor(hs(k * 7.7 + R + sd) * 4);
         const h = 4.2 + (fl - 1) * 3.2 + 0.9; const th = (s + w / 2) / front; const rc = front + sd * d / 2; const [x, z] = at(rc, th);
         if (place(x, z) && place(...at(front, th))) { q.setFromAxisAngle(up, th); m4.compose(new THREE.Vector3(x, Y0, z), q, new THREE.Vector3(w, h, d)); houses.setMatrixAt(nh++, m4);
+          if (R === 160) { // 批次33：最内圈街屋贴 Blender 精建立面模块（窗套 / 窗台 / 阳台铁栏 / 店面雨棚），对齐着色器开间网格（窗 3.4 m、店 5 m）
+            const yaw = th + (sd < 0 ? 0 : Math.PI), fr = front - sd * 0.16, sdv = ((x * 0.0137 + z * 0.0071) % 1 + 1) % 1, typ = Math.floor(hs(k * 5.1 + R + sd) * 3);
+            const pal = sdv < 0.34 ? [0.40, 0.40, 0.41] : sdv < 0.67 ? [0.46, 0.27, 0.21] : [0.68, 0.64, 0.57];
+            const c0 = s + w / 2; // 局部 +x = 弧长增加方向，u 处的角度 = (c0 + u) / front
+            for (let u = -5 * Math.floor((w / 2 - 2.5) / 5); u <= w / 2 - 2.5 + 1e-3; u += 5) mods.push(['sh_shop', fr, (c0 + u) / front, 0, yaw, null, false]);
+            const kb = Math.floor((w / 2 - 1.7) / 3.4 - 0.5 + 1e-3), bays = []; for (let b = -kb - 1; b <= kb; b++) bays.push(3.4 * (b + 0.5));
+            bays.forEach((u, b) => { const mid = Math.abs(u) < 1.8;
+              for (let f = 0; f < fl - 1; f++) { const bal = typ === 1 ? mid : typ === 2 ? (b % 2 === 0 && f % 2 === 0) : false;
+                mods.push([bal ? 'sh_bay_bal' : 'sh_bay_win', fr, (c0 + u) / front, 4.2 + f * 3.2, yaw, bal ? pal : null, hs(b * 7.3 + f * 3.1 + k + R) < lit, front - sd * 0.015]); } });
+          }
           // 批次32：平顶 + 水箱间方块 → 出挑檐口（0.35 m 厚、每边出 0.45 m）+ 两坡屋面（屋脊平行街道、坡比 ≈0.38、檐口再出 0.4 m）；屋面三色成排（石板灰 / 陶瓦褐 / 铅灰）
           m4.compose(new THREE.Vector3(x, Y0 + h - 0.35, z), q, new THREE.Vector3(w + 0.9, 0.35, d + 0.9)); if (np < NH * 2) pars.setMatrixAt(np++, m4);
           if (nf < NH) { m4.compose(new THREE.Vector3(x, Y0 + h, z), q, new THREE.Vector3(w + 1.6, d * 0.38, d + 1.7)); roofs.setMatrixAt(nf, m4); roofs.setColorAt(nf++, ROOFC[k % 3]); } }
         s += w + 0.4; k++; if (k % 6 === 0) s += 10; }
     }
   }
+  streetModules(g, mods, at, Y0);
   for (const [im, n] of [[houses, nh], [pars, np], [roofs, nf], [roads, nr], [walks, nw], [curbs, nc], [poles, nl], [arms, nl], [heads, nl], [stems, nt], [crowns, nt]]) { im.count = n; im.computeBoundingSphere(); im.userData.noCull = true; /* 批次30：ext_sky 看图——三圈街屋全没出现：InstancedMesh 没算 boundingSphere，DistCull 拿单位方块半径 0.87 m 当整排街屋 → 60 m 外全剔 */ im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; g.add(im); }
 }
 
