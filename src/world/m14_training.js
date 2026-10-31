@@ -53,6 +53,7 @@ function instanced(src, mats4, name, over = {}) {
 }
 const MX = (x, y, z, yaw = 0, s = 1) => new THREE.Matrix4().compose(new THREE.Vector3(x, y, z), new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw), new THREE.Vector3(s, s, s));
 const _hsl = {};
+const S2_BAF = typeof location === 'undefined' || !/[?&]nos2=1/.test(location.search); // 批次 S2：隔板朝向修正 + 帆布芯暖灰褐
 
 export async function applyM14Training(ctx) {
   const zone = ctx?.zones?.training; if (!M14_TRAIN || !zone || zone.userData.m14) return;
@@ -61,9 +62,9 @@ export async function applyM14Training(ctx) {
   const jobs = [];
   // —— 1 射击区（M5：LX0 −18，8 道 × 4.5 m；隔板 x = −18 + 4.5 i，z −141.9；靶 tz = −150 − (i%3)·1.6）——
   const baf = [], tgt = [];
-  for (let i = 0; i <= 8; i++) baf.push(MX(-18 + i * 4.5, y, -141.9, Math.PI / 2));
+  for (let i = 0; i <= 8; i++) baf.push(MX(-18 + i * 4.5, y, -141.9, S2_BAF ? 0 : Math.PI / 2)); // 批次 S2：模型本身薄边在 x（0.12×2.2×1.6，长边沿 z），旧 yaw π/2 把隔板横成沿 x 的 1.6 m 黑面（画面中央「两只大黑柜」）→ yaw 0 回到与旧板同向、同位包住旧板
   for (let i = 0; i < 8; i++) tgt.push(MX(-18 + (i + 0.5) * 4.5, y, -150 - (i % 3) * 1.6, 0));
-  jobs.push(loadModel('m14/tr_baffle').then((s) => zone.add(instanced(s, baf, 'm14_tr_baffle'))).catch((e) => console.warn('M14 baffle', e)));
+  jobs.push(loadModel('m14/tr_baffle').then((s) => zone.add(instanced(s, baf, 'm14_tr_baffle', S2_BAF ? { m14_canvas: new THREE.MeshStandardMaterial({ name: 's2_canvas', color: 0x5e4c3c, roughness: 0.92, metalness: 0, envMapIntensity: 0.3 }) } : {}))).catch((e) => console.warn('M14 baffle', e)));
   jobs.push(loadModel('m14/tr_target').then((s) => zone.add(instanced(s, tgt, 'm14_tr_target', MM.m5_target ? { m14_paper: MM.m5_target } : {}))).catch((e) => console.warn('M14 target', e)));
   // —— 2 塑料周转箱 / 塑料筐 → 器材箱（同位、同朝向、按原高度缩放，最大 1）——
   const crates = [], hide = [];
