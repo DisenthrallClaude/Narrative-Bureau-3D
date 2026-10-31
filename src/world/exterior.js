@@ -494,12 +494,14 @@ async function heroFacade(g, M, world, ctx, add) {
   facadeBounce(gHi, gLo, Y); facadeTroughs(g, Y); // 批次50：下半立面暖反弹光（广场铺地被地埋灯 / 投光照亮后回弹到石墙下段），让远景下半立面石材纹理可读
   // 门洞内：敞开的大门门扇——批次30 看 ext_door_near：原深色木 + 亮铜框读成「棕木板 + 霓虹描边」→ 暗古铜门扇 + 浅一档铜芯板 + 哑光铜框 + 铁箍铜泡钉
   const DW = 7, DH = 9;
+  // 批次52：ext_door_mid 左门扇（转 72° 后正对西偏机位）金属环境反射映出天空 → 偏蓝竖面；门扇三种铜材克隆后环境反射压到 0.25 倍、底色略暖，读成暖深古铜
+  const dM = {}; for (const k of ['bronzeDoor', 'bronzePanel', 'bronzeFrame']) { const c = M[k].clone(); if (Object.prototype.hasOwnProperty.call(M[k], 'onBeforeCompile')) c.onBeforeCompile = M[k].onBeforeCompile; if (Object.prototype.hasOwnProperty.call(M[k], 'customProgramCacheKey')) c.customProgramCacheKey = M[k].customProgramCacheKey; c.envMapIntensity = (M[k].envMapIntensity ?? 1) * 0.25; c.color.multiply(new THREE.Color(1.08, 1.0, 0.88)); dM[k] = c; }
   for (const sx of [-1, 1]) {
     const leaf = new THREE.Group(); const w = DW / 2, h = DH;
-    const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), M.bronzeDoor); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), dM.bronzeDoor); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
     for (const fz of [-1, 1]) {
-      for (let c = 0; c < 2; c++) for (let r = 0; r < 4; r++) { const pw = w * 0.38, ph = r === 3 ? 1.9 : 1.55, px = sx * -(w * 0.27 + c * w * 0.46), py = 0.9 + r * 1.95 + ph / 2; const pnl = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.06), M.bronzePanel); pnl.position.set(px, py, fz * 0.16); leaf.add(pnl); const fr = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.12, ph + 0.12, 0.03), M.bronzeFrame); fr.position.set(px, py, fz * 0.145); leaf.add(fr); }
-      for (const k of [0, 2, 4]) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.12, 0.05), M.iron); strap.position.set(sx * -w / 2, 0.55 + k * 1.95, fz * 0.17); leaf.add(strap); for (let r = 0; r < 5; r++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 6), M.bronzePanel); st.position.set(sx * -(0.3 + r * 0.7), 0.55 + k * 1.95, fz * 0.2); leaf.add(st); } }
+      for (let c = 0; c < 2; c++) for (let r = 0; r < 4; r++) { const pw = w * 0.38, ph = r === 3 ? 1.9 : 1.55, px = sx * -(w * 0.27 + c * w * 0.46), py = 0.9 + r * 1.95 + ph / 2; const pnl = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.06), dM.bronzePanel); pnl.position.set(px, py, fz * 0.16); leaf.add(pnl); const fr = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.12, ph + 0.12, 0.03), dM.bronzeFrame); fr.position.set(px, py, fz * 0.145); leaf.add(fr); }
+      for (const k of [0, 2, 4]) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.12, 0.05), M.iron); strap.position.set(sx * -w / 2, 0.55 + k * 1.95, fz * 0.17); leaf.add(strap); for (let r = 0; r < 5; r++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 6), dM.bronzePanel); st.position.set(sx * -(0.3 + r * 0.7), 0.55 + k * 1.95, fz * 0.2); leaf.add(st); } }
     }
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 8, 24), M.gold); ring.position.set(sx * -(w - 0.5), h * 0.45, 0.2); leaf.add(ring);
     leaf.position.set(sx * DW / 2, Y, -6.2); leaf.rotation.y = sx * -1.25; g.add(leaf);
@@ -905,7 +907,7 @@ function buildStreetRows(g, M, place, rnd) {
   const roofMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.78, side: THREE.DoubleSide, envMapIntensity: 0.4 });
   const roofs = new THREE.InstancedMesh(roofG, roofMat, NH); const ROOFC = [new THREE.Color(0x34363a), new THREE.Color(0x5a3426), new THREE.Color(0x45474b)]; let nf = 0;
   const lineG = new THREE.PlaneGeometry(1, 1); lineG.rotateX(-Math.PI / 2);
-  const paintW = new THREE.MeshStandardMaterial({ color: 0xdcdad2, roughness: 0.6, envMapIntensity: 0.4, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  const paintW = new THREE.MeshStandardMaterial({ color: 0x9c9284, roughness: 0.82, envMapIntensity: 0.25, /* 批次52：略旧米白 */ polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
   const paintY = new THREE.MeshStandardMaterial({ color: 0xd8a624, roughness: 0.6, envMapIntensity: 0.4, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
   const linesW = new THREE.InstancedMesh(lineG, paintW, NSEG * 4), linesY = new THREE.InstancedMesh(lineG, paintY, NSEG * 2); let nlw = 0, nly = 0;
   const roads = new THREE.InstancedMesh(boxG, roadMat, NSEG), walks = new THREE.InstancedMesh(boxG, walkMat, NSEG * 2), curbs = new THREE.InstancedMesh(boxG, curbMat, NSEG * 2);
@@ -1183,15 +1185,15 @@ function facadeBounce(gHi, gLo, Y) {
         .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
         { float hgt = smoothstep(${(Y + 16).toFixed(1)}, ${(Y + 0.5).toFixed(1)}, vNbBw.y) * smoothstep(${(Y - 1.5).toFixed(1)}, ${(Y - 0.2).toFixed(1)}, vNbBw.y);
           float reg = smoothstep(-16.0, -12.0, vNbBw.z) * (1.0 - smoothstep(36.0, 40.0, abs(vNbBw.x)));
-          totalEmissiveRadiance += diffuseColor.rgb * vec3(1.0, 0.72, 0.46) * (0.30 * hgt * hgt + 0.06 * hgt) * reg;
+          totalEmissiveRadiance += min(diffuseColor.rgb * vec3(1.0, 0.72, 0.46) * (1.1 * hgt * hgt + 0.2 * hgt) * reg, vec3(0.12)); /* 批次52：石材反照率仅 ≈0.035（0x4a4744 × 贴图），原 0.30 系数折合 <0.01 → 看不出；×3.7 并封顶 */
           /* 批次51：实体铜灯槽洗墙（灯槽见 facadeTroughs）——灯槽口以上墙面掠射光：槽口最亮、向上指数衰减 ≈ 6 m，每 1.2 m 一盏灯的扇贝纹 */
           float ax = abs(vNbBw.x), yt = ax < 15.2 ? ${(Y + 0.06).toFixed(2)} : (ax < 30.5 ? 2.2 : 2.0);
           float seg = (step(4.4, ax) * (1.0 - step(15.2, ax))) + (step(15.4, ax) * (1.0 - step(28.6, ax))) + (step(31.8, ax) * (1.0 - step(40.2, ax)));
           float dy = vNbBw.y - yt, up = smoothstep(-0.02, 0.25, dy) * exp(-max(dy, 0.0) / 6.0);
           float scal = 0.7 + 0.3 * pow(abs(cos(3.14159 * vNbBw.x / 1.2)), 2.0) * exp(-max(dy, 0.0) / 1.6);
-          totalEmissiveRadiance += diffuseColor.rgb * vec3(1.0, 0.70, 0.40) * 0.85 * up * scal * seg * step(vNbBw.z, -4.8) * step(-12.0, vNbBw.z); }`);
+          totalEmissiveRadiance += min(diffuseColor.rgb * vec3(1.0, 0.70, 0.40) * 7.5 * up * scal * seg * step(vNbBw.z, -4.8) * step(-12.0, vNbBw.z), vec3(0.42, 0.29, 0.17)); } /* 批次52：e51c 看图洗墙完全不可读（反照率太低）→ 0.85 → 7.5，封顶防过曝 */`);
     };
-    c.customProgramCacheKey = () => (pk ? pk() : '') + '|bnc50';
+    c.customProgramCacheKey = () => (pk ? pk() : '') + '|bnc52';
     cache.set(m, c); return c;
   };
   for (const gr of [gHi, gLo]) gr.traverse((o) => { if (o.isMesh && o.material && !Array.isArray(o.material)) o.material = patch(o.material); });

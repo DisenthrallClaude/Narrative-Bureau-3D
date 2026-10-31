@@ -470,7 +470,7 @@ export async function buildSurface(scene, world, ctx) {
         const kerb = new THREE.MeshStandardMaterial({ color: 0x77746f, roughness: 0.75 }), band = new THREE.MeshStandardMaterial({ color: 0x3a3a3e, roughness: 0.6 });
         for (const sx of [-1, 1]) { const k = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.14, RL), kerb); k.position.set(sx * 6.11, Y + 0.09, RC); k.castShadow = k.receiveShadow = true; zone.add(k);
           for (let z = RZ0 + 1; z < RZ1; z += 1) { const j = new THREE.Mesh(new THREE.BoxGeometry(0.23, 0.142, 0.01), band); j.position.set(sx * 6.11, Y + 0.09, z); zone.add(j); } }
-        const paint = new THREE.MeshStandardMaterial({ color: 0xd8d6cf, roughness: 0.6, envMapIntensity: 0.4, polygonOffset: true, polygonOffsetFactor: -2 });
+        const paint = new THREE.MeshStandardMaterial({ color: 0x9c9284, roughness: 0.82, envMapIntensity: 0.25, polygonOffset: true, polygonOffsetFactor: -2 }); /* 批次52：ext_street 标线过白抢眼 → 略旧米白（压亮度、加粗糙） */
         const line = (x, z, w, d) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), paint); m.rotation.x = -Math.PI / 2; m.position.set(x, Y + 0.0612, z); m.receiveShadow = true; zone.add(m); };
         for (const sx of [-1, 1]) line(sx * 3.6, (RZ0 + 129) / 2, 0.15, 129 - RZ0); // 车道 / 停车带分界线（停车带宽 2.3 m）
         for (let z = RZ0 + 1.5; z < 128; z += 6) line(0, z + 1.5, 0.15, 3); // 虚线分道线 3 m 线 / 3 m 空
