@@ -71,6 +71,7 @@ export const SHOTS = {
   cs_qm: { pos: [22.6, 1.8 + 1.5, -37.4], look: [22, 1.8 + 1.05, -35], fov: 55, zone: 'citizen_service', lite: 1 }, // 批次53：叫号机近景验收（七段码 / 一体斜台）
   cs_fd: { pos: [28.4, 1.8 + 2.6, -41.6], look: [30.2, 1.8 + 1.0, -39], fov: 58, zone: 'citizen_service', lite: 1 }, // 批次54：抬到候号区玻璃隔断上方俯拍填单台（胡桃木纹）
   cs_fd2: { pos: [31.6, 1.8 + 2.4, -36.0], look: [30.2, 1.8 + 1.0, -39], fov: 58, zone: 'citizen_service', lite: 1 }, // 批次54：填单台北侧俯拍
+  cs_win: { pos: [34.6, 1.8 + 1.75, -49.4], look: [34.3, 1.8 + 1.0, -51.8], fov: 60, zone: 'citizen_service', lite: 1 }, // 批次55：3 号窗口职员侧台面近景（文件盘 / 橡皮章 / 台灯 / 电话 / 文件夹）
   cs_r3_c: { pos: [23.5, 1.8 + 1.6, -46.1], look: [22.3, 1.8 + 0.6, -43.2], fov: 60, zone: 'citizen_service' }, // 批次36：西门内看引导台正面（Blender 精建 guide_desk 验收）
   cs_r3_e: { pos: [38.5, 1.8 + 1.7, -40.3], look: [56, 1.8 + 3.6, -40.3], fov: 72, zone: 'citizen_service', lite: 1 }, // 批次38：东墙两樘高窗线脚 + 来信投递验收
   cs_r3_b: { pos: [47.5, 1.8 + 1.7, -49.6], look: [27, 1.8 + 1.0, -37], fov: 74, zone: 'citizen_service', lite: 1 }, // 东北角回看候号区/填单台

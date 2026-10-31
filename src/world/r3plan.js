@@ -2211,6 +2211,9 @@ export function planCitizenService(y) {
     out.push({ m: 'r2/bankers_lamp', x: x - 1.7, y: y + 1.11, z: ZM + 1.3, yaw: 0, h: 0.4, tag: '窗口', on: 'desk' });
     out.push({ m: 'r2/office_phone', x: x + 1.6, y: y + 1.11, z: ZM + 1.3, yaw: 0, w: 0.22, tag: '窗口', on: 'desk' });
     out.push({ m: 'r2/several_folders', x: x + 0.9, y: y + 1.11, z: ZM + 1.25, yaw: 0.1, h: 0.28, tag: '窗口', on: 'desk' });
+    // 批次55 精修：职员侧台面补办件小物——左手文件盘（待办件）、右手橡皮章；全部在灯 / 电话 / 文件夹之间，中间 0.8 m 留给递件台面
+    out.push({ m: 'r2/document_letter_tray_documents_organizer', x: x - 1.0, y: y + 1.11, z: ZM + 1.28, yaw: 0, w: 0.3, tag: '窗口', on: 'desk' });
+    out.push({ m: 'r2/old_victorian_rubber_stamp', x: x + 0.45, y: y + 1.11, z: ZM + 1.36, yaw: 0.4, h: 0.1, tag: '窗口', on: 'desk' });
     out.push({ m: 'r2/service_window', x, y, z: ZM + 1.6, yaw: 0, h: 2.995, tag: '服务窗口', on: 'partv' }); // 批次37：blackMarble 方盒 + 玛瑙板 + 平玻璃 → Blender 精建 r2/service_window（tools/blender/service_window.py：胡桃框芯板柜台 + 黑石台面 + 铜框玻璃隔窗 / 圆格栅传声孔 / 铜传递槽 + 编号铜牌框 + 叫号灯座）
     light(out, x, y + 3.9, ZM + 2.4, 0xfff0dc, 1.3, 6); } // 批次37：窗口上方冷白 0xeef2ff → 暖白，与顶部主光同色温（冷色只留叫号屏 / LED）
   wear(out, 21.0, 49.8, -49.3, -48.4, y + 0.0005);
