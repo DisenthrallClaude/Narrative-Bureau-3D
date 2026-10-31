@@ -23,15 +23,17 @@ export function warmB1(G) {
     let c = m;
     if (m && (m.isMeshStandardMaterial || m.isMeshLambertMaterial || m.isMeshPhongMaterial)) {
       c = m.clone(); c.onBeforeCompile = m.onBeforeCompile; c.name = (m.name || '') + '_e2w';
+      const cart = /storage_cart/i.test(m.name || ''); // I1：B1 推车橄榄绿 → 暖灰 / 暗铁（全去色 × 0.78/0.74/0.70）；其余中性转暖 0.55 → 0.4
+      if (cart) { c.metalness = Math.max(c.metalness ?? 0, 0.55); c.roughness = Math.min(c.roughness ?? 1, 0.6); }
       if (c.emissive && c.emissiveIntensity > 0 && c.emissive.b > c.emissive.r * 0.98 && c.emissive.b > 0.05) c.emissive.setHex(WARM); // 冷光灯管 → 暖
       const prev = m.onBeforeCompile, prevKey = m.customProgramCacheKey?.bind(m);
       c.onBeforeCompile = function (s, r) {
         if (prev) prev.call(this, s, r);
         s.fragmentShader = s.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
         { vec3 c0 = diffuseColor.rgb; float l0 = dot(c0, vec3(.299, .587, .114)); float cool = clamp((c0.b - c0.r) * 8.0, 0.0, 1.0);
-          diffuseColor.rgb = mix(c0, l0 * vec3(1.10, 0.98, 0.80), max(cool, 0.55)); }`);
+          diffuseColor.rgb = mix(c0, l0 * vec3(1.10, 0.98, 0.80), max(cool, ${cart ? '1.0' : '0.4'}))${cart ? ' * vec3(0.78, 0.74, 0.70)' : ''}; }`);
       };
-      c.customProgramCacheKey = () => (prevKey ? prevKey() : '') + '|e2w';
+      c.customProgramCacheKey = () => (prevKey ? prevKey() : '') + (cart ? '|e2wc' : '|e2w4');
       nm++;
     }
     cache.set(m, c); return c;
@@ -40,7 +42,7 @@ export function warmB1(G) {
     if (o.isLight && o.color && o.color.b >= o.color.r * 0.98) { o.color.setHex(WARM); nl++; }
     if (o.isMesh && o.material && !o.userData.e2w) { o.userData.e2w = true; o.material = Array.isArray(o.material) ? o.material.map(warmMat) : warmMat(o.material); }
   });
-  console.log('[E2] B1 warm', nm, 'mats', nl, 'lights');
+  console.log('[E2] B1 warm', nm, 'mats', nl, 'lights', [...cache.keys()].filter((m) => /storage_cart/i.test(m?.name || '')).length, 'cart');
   return nm;
 }
 
@@ -62,6 +64,30 @@ export function amberize(group) {
   return n;
 }
 
+// —— I1：深渊门铜框暖色自发光描边（新方案只试一次）——复制 m2_bronze 材质，仅 m13_abyss_gate 内替换；
+// 自发光 0xffa050 × 0.16，按菲涅尔加权（掠射边缘亮、正面弱）→ 竖向铜框中上段也有一道暖边，不依赖点光照射。?e1off=bronzerim 关
+function bronzeRim(G, tries = 0) {
+  if (E2_OFF.has('bronzerim')) return;
+  let gate = null; G.scene.traverse((o) => { if (!gate && o.name === 'm13_abyss_gate') gate = o; });
+  if (!gate) { if (tries < 60) setTimeout(() => bronzeRim(G, tries + 1), 500); return; }
+  let rim = null, n = 0;
+  gate.traverse((o) => {
+    if (!o.isMesh || !/^m2_bronze/.test(o.material?.name || '')) return;
+    if (!rim) {
+      const m = o.material; rim = m.clone(); rim.name = 'm2_bronze_i1rim'; rim.emissive = new THREE.Color(0xffa050); rim.emissiveIntensity = 0.16;
+      const prev = m.onBeforeCompile, prevKey = m.customProgramCacheKey?.bind(m);
+      rim.onBeforeCompile = function (s, r) {
+        if (prev) prev.call(this, s, r);
+        s.fragmentShader = s.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+        { float fr = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition))); totalEmissiveRadiance *= 0.35 + 1.65 * fr * fr; }`);
+      };
+      rim.customProgramCacheKey = () => (prevKey ? prevKey() : '') + '|i1rim';
+    }
+    o.material = rim; n++;
+  });
+  console.log('[I1] bronze rim', n, 'meshes');
+}
+
 // —— 4. 深渊门内侧竖向铜框贴边暖光（不投影） ——
 export function gateRim(G, AY = -300) {
   if (!E2 || E2_OFF.has('gaterim')) return 0;
@@ -71,5 +97,6 @@ export function gateRim(G, AY = -300) {
   for (const s of [-1, 1]) for (const y of [3.0, 7.6]) {
     const l = new THREE.PointLight(0xffb070, 4, 2.0, 2); l.castShadow = false; l.position.set(s * 5.8, AY + y, -79.0); l.name = 'e2_gate_rim'; zone.add(l); n++;
   }
+  bronzeRim(G);
   return n;
 }
