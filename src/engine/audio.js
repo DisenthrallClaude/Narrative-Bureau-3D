@@ -107,12 +107,18 @@ export class Audio {
   interact(spot) {
     let t = ''; try { t = typeof spot?.prompt === 'function' ? spot.prompt() : (spot?.prompt ?? ''); } catch { /* */ }
     t = `${t} ${spot?.id ?? ''}`;
-    for (const [re, set, v] of KINTER) if (re.test(t)) return this.kfx(set, v, 0.95 + Math.random() * 0.1).then((ok) => ok || this.sfx('S15', 0.5));
+    for (const [re, set, v] of KINTER) if (re.test(t)) {
+      if (set === 'door_open') setTimeout(() => { if (this.running) this.kfx('door_close', 0.45, 0.97 + Math.random() * 0.06); }, 1150); // 批次 S2：门开后约 1.15 s 自动回关（门无独立关闭事件）
+      return this.kfx(set, v, 0.95 + Math.random() * 0.1).then((ok) => ok || this.sfx('S15', 0.5));
+    }
     return this.kfx('ui_confirm', 0.35).then((ok) => ok || this.sfx('S15', 0.5));
   }
   /** UI 钩子：悬停/点击（只接音效，不动样式）；AudioContext 未解锁前悬停静默，点击先 resume */
   bindUI() {
     if (this._ui) return; this._ui = true;
+    // 批次 S2：阅读器开合 / 暂停菜单关闭（ui.js 派发 nb:reader / nb:pause 事件，不互相 import）
+    window.addEventListener('nb:reader', (e) => { if (!this.running) return; if (e.detail === 'open') this.kfx('paper_open', 0.5); else this.kfx('ui_back', 0.32); });
+    window.addEventListener('nb:pause', (e) => { if (this.running && e.detail === 'close') this.kfx('ui_back', 0.3); });
     const SEL = 'button, .btn, .seg span, #dlgch div, #dlg .choices div';
     let last = null, lt = 0;
     document.addEventListener('pointerover', (e) => {

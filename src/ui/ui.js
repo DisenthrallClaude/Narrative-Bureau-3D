@@ -110,13 +110,14 @@ function renderPage() {
   p.onShow?.();
 }
 export function openReader(pg, { onClose } = {}) {
-  pages = pg; pi = 0; ui.state = 'reader'; $('reader').classList.remove('hidden'); renderPage();
+  pages = pg; pi = 0; ui.state = 'reader'; $('reader').classList.remove('hidden'); renderPage(); window.dispatchEvent(new CustomEvent('nb:reader', { detail: 'open' })); // 批次 S2：K_paper_open
   if (window.__NB_AUTO__) { for (let k = 1; k < pages.length; k++) readerFlip(1); window.__NB_AUTO__.log?.push('阅读 ' + pg.length + ' 页：' + (pg[0]?.title ?? '')); return new Promise((res) => { readerDone = () => { onClose?.(); res(); }; setTimeout(closeReader, 0); }); }
   return new Promise((res) => { readerDone = () => { onClose?.(); res(); }; });
 }
 export function readerFlip(d) { const n = Math.max(0, Math.min(pages.length - 1, pi + d)); if (n !== pi) { pi = n; renderPage(); return true; } return false; }
 export function readerNextOrClose() { if (!readerFlip(1)) closeReader(); }
-export function closeReader() { $('reader').classList.add('hidden'); ui.state = 'play'; const d = readerDone; readerDone = null; d?.(); }
+export function closeReader() { const was = !$('reader').classList.contains('hidden'); $('reader').classList.add('hidden'); ui.state = 'play'; if (was) window.dispatchEvent(new CustomEvent('nb:reader', { detail: 'close' })); // 批次 S2：阅读器关闭音 K_ui_back
+  const d = readerDone; readerDone = null; d?.(); }
 $('reader').addEventListener('wheel', (e) => readerFlip(e.deltaY > 0 ? 1 : -1));
 $('reader').addEventListener('click', (e) => { if (e.target.id === 'reader') closeReader(); else readerNextOrClose(); });
 
@@ -147,7 +148,7 @@ export function initPause({ quality, setQuality, tod, setTod, setSens, setFov, s
   $('fpsseg').onclick = (e) => { const v = e.target.dataset.v; if (v == null) return; $('fpsseg').querySelectorAll('span').forEach((s) => s.classList.toggle('on', s.dataset.v === v)); setFps(v === '1'); };
   $('showcred').onclick = () => { const c = $('credits'); c.textContent = credits; c.classList.toggle('hidden'); };
 }
-export function showPause(on) { $('pause').classList.toggle('hidden', !on); if (on) ui.state = 'pause'; else if (ui.state === 'pause') ui.state = 'play'; }
+export function showPause(on) { if (!on && !$('pause').classList.contains('hidden')) window.dispatchEvent(new CustomEvent('nb:pause', { detail: 'close' })); $('pause').classList.toggle('hidden', !on); if (on) ui.state = 'pause'; else if (ui.state === 'pause') ui.state = 'play'; }
 export function onResume(fn) { $('resume').onclick = fn; }
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
