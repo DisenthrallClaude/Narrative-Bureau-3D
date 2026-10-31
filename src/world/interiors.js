@@ -9,7 +9,7 @@ import { lightShaft, dust, CanvasScreen, time, roseGlassTexture } from '../engin
 import { content } from '../engine/content.js';
 import { FLOOR, T, HERO } from './exterior.js';
 import { placeHero, hallMats } from './hero.js';
-import { M16_ARCH, m16Dress } from './m16_archive.js';
+import { M16_ARCH, M17_ARCH, m16Dress } from './m16_archive.js';
 import { buildM2Archive, buildM2ArchiveB1, M2_ARCHIVE, M6_LAMP } from './m2_archive.js';
 export const HERO_HALL = HERO && !new URLSearchParams(location.search).has('legacyhall');
 
@@ -621,6 +621,7 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
     else add(placeModel('r2/reading_table_6080', { width: 5.63, pos: [tx, Y, tz] }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); return o; }));
     world.box(tx, Y + 0.4, tz, 5.6, 0.8, 1.5);
     for (const ex of [-1.4, 1.4]) { if (!M16_ARCH) bankerLamp(b, zone, M2_ARCHIVE ? M6_LAMP(M) : M, tx + ex, Y + 0.82, tz); ctx.archiveLamps.push([tx + ex, tz]); } // 批次 M6：绿罩 → 铜罩
+    if (M16_ARCH && M17_ARCH) for (const ex of [-1.4, 1.4]) { const pl = new THREE.PointLight(0xffc48a, 1.6, 1.8, 2); pl.position.set(tx + ex, Y + 0.82 + 0.28, tz); pl.castShadow = false; pl.name = 'm17_tableLamp'; zone.add(pl); } // 批次 M17：每盏台灯下一盏小暖点光（不投影），桌面皮面读出暖光池
     for (const ex of [-1.6, 0, 1.6]) for (const ez of [-1, 1]) woodChair(b, tx + ex, Y, tz + ez * 1.05, ez);
     // 桌面散落档案
     if (r % 2 === 0) add(placeModel('binder', { width: 0.42, pos: [tx - 0.6 * sx, Y + 0.83, tz + 0.2], rotY: 0.3 }));
@@ -632,6 +633,7 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   // 批次32：借阅柜台方块 → Blender 精建 r2/loan_counter_6080（公众面 +X：胡桃木 7 间凸起芯板 + 铜钮 + 铜踢脚 + 铜扶脚杆；黑石台面铜包边；职员面开放格架），台面顶对齐原 Y+1.11
   world.box(kx, Y + 0.525, kz, 1.2, 1.05, 7);
   if (M16_ARCH) add(placeModel('m16/loan_counter', { width: 7.21, pos: [kx, Y - 0.02, kz], rotY: Math.PI / 2 }).then(m16Dress)); // 批次 M16：hero 柜台（框芯正面 / 石台面嵌皮 / 铜踢脚包角 / 借阅窗口格栅铭牌），外包同旧件
+  if (M16_ARCH && M17_ARCH) { const cw = new THREE.PointLight(0xffc08a, 5, 4.5, 2); cw.position.set(kx + 2.0, Y + 1.0, kz); cw.castShadow = false; cw.name = 'm17_counterWash'; zone.add(cw); } // 批次 M17：柜台公众面（+X）前方低强度暖洗光，照出框芯 / 铜踢脚 / 扶脚杆
   else add(placeModel('r2/loan_counter_6080', { width: 7.21, pos: [kx, Y - 0.02, kz], rotY: Math.PI / 2 }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); return o; }));
   // 台面：登记簿（摊开）、印章、放大镜、订书机、显示器
   const ledger = new THREE.Group();
