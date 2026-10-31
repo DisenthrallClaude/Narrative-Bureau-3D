@@ -67,8 +67,9 @@ export function gateRim(G, AY = -300) {
   if (!E2 || E2_OFF.has('gaterim')) return 0;
   const zone = zoneGroup(G, 'abyss'); if (!zone) { console.warn('[E2] 缺 abyss 分组'); return 0; }
   let n = 0;
-  for (const s of [-1, 1]) for (const y of [3.2, 8.4]) {
-    const l = new THREE.PointLight(0xffb070, 6, 3.6, 2); l.castShadow = false; l.position.set(s * 5.3, AY + y, -79.4); l.name = 'e2_gate_rim'; zone.add(l); n++;
+  // 一拍（x ±5.3 / z −79.4 / 6 / 3.6 m）实拍：铜框只略亮，光主要打在折页面上成两团亮斑 → 二拍（最后一次）贴近门洞侧壁、离折页面 ≥1.7 m、缩照距
+  for (const s of [-1, 1]) for (const y of [3.0, 7.6]) {
+    const l = new THREE.PointLight(0xffb070, 4, 2.0, 2); l.castShadow = false; l.position.set(s * 5.8, AY + y, -79.0); l.name = 'e2_gate_rim'; zone.add(l); n++;
   }
   return n;
 }
