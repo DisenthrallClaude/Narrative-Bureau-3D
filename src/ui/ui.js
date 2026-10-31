@@ -13,7 +13,7 @@ export function loadProgress(p, tip) { $('loadbar').style.width = `${Math.round(
 export function loadDone(onStart) {
   $('loadtip').textContent = '点击「进入」开始（建议佩戴耳机）';
   const b = $('start'); b.classList.remove('hidden'); const pc = $('loadpct'); if (pc) pc.textContent = '100%';
-  b.onclick = () => { $('loading').style.opacity = 0; setTimeout(() => $('loading').classList.add('hidden'), 1200); $('hud').classList.remove('hidden'); onStart(); };
+  b.onclick = () => { $('loading').classList.add('open'); setTimeout(() => $('loading').classList.add('hidden'), 1500); $('hud').classList.remove('hidden'); onStart(); };
 }
 
 export function setPrompt(text, key = 'E') { $('prompt').innerHTML = text ? (key ? `<b class="key">${key}</b><span class="pt">${text.replace(/^按\s*E\s*/, '')}</span>` : `<span class="pt">${text}</span>`) : ''; $('cross').classList.toggle('on', !!text); }
@@ -39,6 +39,7 @@ export function updateInventory() {
 }
 
 // —— 对话 ——
+const replay = (el) => { el.classList.remove('in'); void el.offsetWidth; el.classList.add('in'); };
 let dlgResolve = null, dlgAdvance = null;
 // 批次12（用户要求不放人物模型）：场景里不再有人形，NPC 台词改为经由终端 / 广播 / 对讲 / 纸条传达——说话人后标注渠道
 const CHANNEL = { 殷泽: '安检广播', 叶寻: '窗口对讲', 齐凌云: '局长室内线', 齐仇: '收容库终端', 周闻: '指挥台对讲', 周也: '装备库留言', 干事: '窗口对讲', 职员甲: '窗口对讲', 职员乙: '窗口对讲', 卫队员: '对讲机', 大妈: '留在台上的纸条', 老人: '来信', 宿管: '宿管窗口纸条' };
@@ -74,6 +75,7 @@ export function dialog(lines, { auto = false } = {}) {
       const mm = line.match(/^([^：（]{1,8}(?:（[^）]*）)?)：(.*)$/);
       if (mm && !line.startsWith('（')) { const who = mm[1].replace(/（[A-Z]）/, ''); $('dlgwho').textContent = CHANNEL[who] ? `${who} · ${CHANNEL[who]}` : who; $('dlgline').textContent = mm[2]; $('dlgline').className = 'line'; }
       else { $('dlgwho').textContent = ''; $('dlgline').textContent = line; $('dlgline').className = 'line narr'; }
+      replay($('dlg'));
       i++;
       if (window.__NB_AUTO__) { setTimeout(adv, 0); return; }
       if (auto) setTimeout(adv, 2600);
@@ -94,6 +96,7 @@ function renderPage() {
   el.className = 'paper ' + (p.style ?? '');
   const txt = (p.text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/「本条不存在。」/g, '<span class="red">「本条不存在。」</span>');
   el.innerHTML = `${p.title ? `<h2>${p.title}</h2>` : ''}${p.img ? `<img class="full" src="${p.img}">` : ''}${p.text ? `<div class="txt">${txt}</div>` : ''}${p.stamp ? `<div class="stamp">${p.stamp}</div>` : ''}${!p.style && !p.img ? '<div class="seal">叙事管理局<br>档案专用</div>' : ''}${pages.length > 1 ? `<div class="pg">${pi + 1} / ${pages.length}</div>` : ''}`;
+  replay(el);
   p.onShow?.();
 }
 export function openReader(pg, { onClose } = {}) {
@@ -137,9 +140,22 @@ export function initPause({ quality, setQuality, tod, setTod, setSens, setFov, s
 export function showPause(on) { $('pause').classList.toggle('hidden', !on); if (on) ui.state = 'pause'; else if (ui.state === 'pause') ui.state = 'play'; }
 export function onResume(fn) { $('resume').onclick = fn; }
 
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+const CN = '一二三四五六七八九十';
+/** U1：章节卡 = 扉页。「第一章 · 报到」→ CAPITVLVM I + 彩饰首字「报」+「到」 */
+export function chapterLayout(a, b) {
+  const parts = String(a).split(/\s*[·・]\s*/); let head = '', ttl = String(a);
+  if (parts.length > 1) { head = parts[0]; ttl = parts.slice(1).join(' · '); }
+  const m = head.match(/第([一二三四五六七八九十]+)章/); let no = head ? head : 'LIBER PRIMVS';
+  if (m) { const n = m[1].length === 1 ? CN.indexOf(m[1]) + 1 : (m[1].startsWith('十') ? 10 + CN.indexOf(m[1][1]) + 1 : 0); no = `CAPITVLVM ${ROMAN[n - 1] ?? ''} · ${head}`; }
+  if (/终/.test(String(a) + (b ?? ''))) no = 'EXPLICIT · 结卷';
+  const chars = [...ttl]; $('chapi').textContent = chars[0] ?? ''; $('chapa').textContent = chars.slice(1).join('');
+  $('chapb').textContent = b ?? ''; $('chapno').textContent = no;
+}
 export function chapterCard(a, b, ms = 6000) {
   if (window.__NB_AUTO__) { window.__NB_AUTO__.log?.push('章节卡 ' + a + ' / ' + (b ?? '')); ms = 50; }
-  return new Promise((res) => { $('chapa').textContent = a; $('chapb').textContent = b ?? ''; $('chapno').textContent = /终/.test(a + (b ?? '')) ? '档案号 NB-0001 · 结卷' : '档案号 NB-0001 · 第一卷'; $('chapter').classList.add('on'); setTimeout(() => { $('chapter').classList.remove('on'); setTimeout(res, 2000); }, ms); });
+  return new Promise((res) => { chapterLayout(a, b); const c = $('chapter'); c.classList.remove('out'); c.classList.add('on'); setTimeout(() => { c.classList.add('out'); setTimeout(() => { c.classList.remove('on', 'out'); res(); }, 1400); }, ms); });
 }
+window.__NB_chapterLayout = chapterLayout;
 export function fade(on) { $('fade').classList.toggle('on', on); }
 export function setFpsText(t) { $('fps').textContent = t; }

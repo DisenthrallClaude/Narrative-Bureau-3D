@@ -25,15 +25,15 @@ for (const st of states) {
     $('loading').classList.add('hidden'); $('hud').classList.remove('hidden');
     $('objm').textContent = '前往西翼人事档案馆，向管理员领取本人入职档案'; $('objo').textContent = '';
     $('inv').innerHTML = ['工作证', '钥匙', '便签'].map((n) => `<div class="it"><div style="font-size:22px;text-align:center;line-height:54px;color:#d8b469">${n[0]}</div><span>${n}</span></div>`).join('');
-    if (st === 'dialog') { $('dlg').classList.remove('hidden'); $('dlgwho').textContent = '叶寻 · 档案馆'; $('dlgline').textContent = '你的档案在甲字七号屉。别翻别人的——翻了，也要登记。'; return; }
+    if (st === 'dialog') { $('dlg').classList.remove('hidden'); $('dlgwho').textContent = '叶寻 · 档案馆'; $('dlgline').textContent = '你的档案在甲字七号屉。别翻别人的——翻了，也要登记。'; $('dlg').classList.add('in'); return; }
     if (st === 'reader_dark') { $('reader').classList.remove('hidden'); $('paper').className = 'paper dark'; $('paper').innerHTML = '<h2>内部通报 · 第三页</h2><div class="txt">经查，监测指挥中心本周叫号记录中有一条无法归档的条目。\n该条目编号与在编人员重复，来源不明。\n\n请各处室勿私自查阅、勿转述。\n\n<span class="red">「本条不存在。」</span></div><div class="pg">3 / 3</div>'; return; } // 批次48
     if (st === 'terminal') { $('reader').classList.remove('hidden'); $('paper').className = 'paper screen'; $('paper').innerHTML = '<h2>监测终端 · 叫号记录</h2><div class="txt">&gt; QUERY  NB-0731\n&gt; 状态：待报到\n&gt; 所属：京城总部 · 监测指挥中心（实习）\n&gt; 备注：本条不存在。\n&gt; </div><div class="pg">1 / 2</div>'; return; }
-    if (st === 'chapter') { $('hud').classList.add('hidden'); $('chapa').textContent = '第一章 · 报到'; $('chapb').textContent = '你又一次来报到了。'; $('chapter').style.transition = 'none'; $('chapter').classList.add('on'); return; }
+    if (st === 'chapter') { $('hud').classList.add('hidden'); if ($('chapi')) { $('chapno').textContent = 'CAPITVLVM I · 第一章'; $('chapi').textContent = '报'; $('chapa').textContent = '到'; } else $('chapa').textContent = '第一章 · 报到'; $('chapb').textContent = '你又一次来报到了。'; $('chapter').style.transition = 'none'; $('chapter').classList.add('on'); return; }
     if (st === 'hud') { $('prompt').innerHTML = '<b class="key">E</b><span class="pt">查阅 卡片目录柜 · 甲字 07 屉</span>'; $('cross').classList.add('on'); $('arean').textContent = '人事档案馆'; $('areae').textContent = 'PERSONNEL ARCHIVE'; $('area').classList.add('on'); return; }
     if (st === 'reader') { $('reader').classList.remove('hidden'); $('paper').className = 'paper'; $('paper').innerHTML = '<h2>入职登记表 · 第一页</h2><div class="txt">姓名：＿＿＿＿　　编号：NB-0731\n所属：叙事管理局 京城总部 · 监测指挥中心（实习）\n\n凡本局在编人员，所经手之一切文本，须如实登记、逐页装订、按期归档。\n任何未经登记之叙事，视同不存在。\n\n<span class="red">「本条不存在。」</span></div><div class="pg">1 / 3</div><div class="seal">叙事管理局<br>档案专用</div>'; return; }
     if (st === 'pause') { $('pause').classList.remove('hidden'); $('qseg').innerHTML = '<span>低</span><span class="on">中</span><span>高</span>'; $('todseg').firstElementChild.classList.add('on'); }
   }, { st, bg });
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(st === 'chapter' || st === 'loading' || st === 'menu' ? 3200 : 1500); // U1：入场动画最长约 2.9 s
   try { await page.screenshot({ path: path.join(out, `${st}.png`), timeout: 90000 }); console.log('ui shot', st); } catch (e) { console.log('ui shot fail', st, e.message.slice(0, 120)); }
   await page.close();
 }
