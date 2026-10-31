@@ -698,14 +698,14 @@ function buildStreetRows(g, M, place, rnd) {
   const lit = TOD.label === '白昼' ? 0.02 : 0.12;
   const houseMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.86, metalness: 0, envMapIntensity: 0.45 });
   houseMat.onBeforeCompile = (sh) => {
-    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vLm; varying vec3 vLn; varying float vSd; varying float vH;')
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vLm; varying vec3 vLn; varying float vSd; varying float vH; varying float vW;')
       .replace('#include <begin_vertex>', `#include <begin_vertex>
         vec3 isc = vec3(1.0); vSd = 0.0;
         #ifdef USE_INSTANCING
         isc = vec3(length(instanceMatrix[0].xyz), length(instanceMatrix[1].xyz), length(instanceMatrix[2].xyz)); vSd = fract(instanceMatrix[3].x * 0.0137 + instanceMatrix[3].z * 0.0071);
         #endif
-        vLm = transformed * isc; vLn = normal; vH = isc.y;`);
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLm; varying vec3 vLn; varying float vSd; varying float vH;\nfloat h2(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5);}')
+        vLm = transformed * isc; vLn = normal; vH = isc.y; vW = isc.x;`);
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLm; varying vec3 vLn; varying float vSd; varying float vH; varying float vW;\nfloat h2(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5);}')
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
         { float wall = 1.0 - step(0.5, abs(vLn.y));
           float u = abs(vLn.x) > 0.5 ? vLm.z : vLm.x; float y = vLm.y; float side = abs(vLn.x) > 0.5 ? 1.0 : 0.0;
@@ -714,28 +714,32 @@ function buildStreetRows(g, M, place, rnd) {
           // 面砖 / 砖缝
           vec2 tg = fract(vec2(u / 0.6, y / 0.3)); col *= 0.93 + 0.07 * step(0.08, tg.x) * step(0.1, tg.y);
           vec3 em = vec3(0.0);
+          // 批次36：临街正面（局部 ±Z 面）由立面模块覆盖的范围——店面 5 m 开间、楼层 3.4 m 开间，与 buildStreetRows 的模块排布同式；范围外着色器不再画大块暗窗 / 白亮橱窗（ext_tree 看图：模块外的残开间是一整块暗玻璃 + 白光条）
+          float front = step(0.5, abs(vLn.z));
+          float shopCov = 5.0 * floor((vW * 0.5 - 2.5) / 5.0) + 2.5, winCov = 3.4 * (floor((vW * 0.5 - 1.7) / 3.4 - 0.5 + 0.001) + 1.0);
+          float keepShop = 1.0 - front * step(shopCov, abs(u)), keepWin = 1.0 - front * step(winCov, abs(u));
           if (y < 4.2) { // 底层商铺
             float bay = floor(u / 5.0 + 0.5 + side * 7.0 + vSd * 13.0); float bx = fract(u / 5.0 + 0.5);
-            float glass = step(0.08, bx) * step(bx, 0.92) * step(0.45, y) * step(y, 3.0);
+            float glass = step(0.08, bx) * step(bx, 0.92) * step(0.45, y) * step(y, 3.0) * keepShop;
             float sign = step(0.04, bx) * step(bx, 0.96) * step(3.15, y) * step(y, 3.95);
             vec3 sc = h2(vec2(bay, 1.0)) < 0.33 ? vec3(0.62, 0.10, 0.08) : h2(vec2(bay, 1.0)) < 0.66 ? vec3(0.10, 0.22, 0.48) : vec3(0.12, 0.36, 0.22);
             col = mix(col * 0.75, vec3(0.05, 0.06, 0.07), glass); col = mix(col, sc, sign);
             float shopOn = step(0.55, h2(vec2(bay, 7.0 + vSd)));
-            em += glass * shopOn * vec3(1.0, 0.72, 0.42) * 1.4 + sign * vec3(1.0, 0.9, 0.8) * sc * 1.6 * step(0.4, h2(vec2(bay, 3.0)));
+            em += glass * shopOn * (1.0 - front) * vec3(1.0, 0.72, 0.42) * 1.4 /* 批次36：正面橱窗亮光交给模块 litGlass */ + sign * vec3(1.0, 0.9, 0.8) * sc * 1.6 * step(0.4, h2(vec2(bay, 3.0)));
             col *= 1.0 - 0.25 * step(y, 0.45); // 水刷石勒脚
           } else if (y > vH - 0.9) { col *= y > vH - 0.6 ? 0.55 : 1.15; // 檐口 + 檐下线脚
           } else {
             float fy = (y - 4.2) / 3.2; float cy = floor(fy); float f = fract(fy);
             float cx = floor(u / 3.4); float fx = fract(u / 3.4);
-            float win = step(0.22, fx) * step(fx, 0.78) * step(0.28, f) * step(f, 0.82);
-            float frame = step(0.18, fx) * step(fx, 0.82) * step(0.24, f) * step(f, 0.86) - win;
+            float win = step(0.22, fx) * step(fx, 0.78) * step(0.28, f) * step(f, 0.82) * keepWin;
+            float frame = (step(0.18, fx) * step(fx, 0.82) * step(0.24, f) * step(f, 0.86)) * keepWin - win;
             float mull = win * (step(abs(fx - 0.5), 0.015) + step(abs(f - 0.6), 0.015));
             col *= 1.0 - 0.18 * step(f, 0.07); // 楼板腰线
             col *= 1.0 - 0.14 * step(0.3, fx) * step(fx, 0.7) * step(f, 0.24) * (1.0 - f / 0.24); // 窗台下雨渍
             col = mix(col, vec3(0.85, 0.83, 0.78), frame * 0.7);
             col = mix(col, vec3(0.04, 0.05, 0.06), win); col = mix(col, vec3(0.30, 0.18, 0.10), mull);
             float on = step(1.0 - ${lit.toFixed(2)}, h2(vec2(cx + side * 31.0, cy) + vSd * 17.0));
-            em += win * (1.0 - mull) * on * (1.0 - step(0.5, abs(vLn.z))) /* 批次36：临街正面 / 背面的亮窗交给模块 litGlass（稳定少量暖窗），着色器只在山墙侧面画亮窗——去掉正面窗后再叠一层亮窗的白闪点 */ * mix(vec3(1.0, 0.66, 0.36), vec3(1.0, 0.86, 0.62), h2(vec2(cx, cy * 3.1))) * 2.0;
+            em += win * (1.0 - mull) * on * (1.0 - step(0.5, abs(vLn.z))) /* 批次36：临街正面 / 背面的亮窗交给模块 litGlass（稳定少量暖窗），着色器只在山墙侧面画亮窗——去掉正面窗后再叠一层亮窗的白闪点 */ * mix(vec3(1.0, 0.6, 0.3), vec3(1.0, 0.76, 0.5), h2(vec2(cx, cy * 3.1))) * 1.3; /* 批次36：山墙亮窗 2.0 → 1.3、偏暖（原过曝成白块） */
           }
           col = mix(vec3(0.16, 0.16, 0.17), col, wall); // 平屋面
           diffuseColor.rgb *= col; totalEmissiveRadiance += em * wall;
@@ -786,7 +790,7 @@ function buildStreetRows(g, M, place, rnd) {
             const yaw = th + (sd < 0 ? 0 : Math.PI), fr = front - sd * 0.16, sdv = ((x * 0.0137 + z * 0.0071) % 1 + 1) % 1, th3 = hs(k * 5.1 + R + sd), typ = th3 < 0.2 ? 0 : th3 < 0.6 ? 1 : 2; /* 批次34：阳台户型 80%（ext_house 画面里没见阳台） */
             const pal = sdv < 0.34 ? [0.40, 0.40, 0.41] : sdv < 0.67 ? [0.46, 0.27, 0.21] : [0.68, 0.64, 0.57];
             const c0 = s + w / 2; // 局部 +x = 弧长增加方向，u 处的角度 = (c0 + u) / front
-            for (let u = -5 * Math.floor((w / 2 - 2.5) / 5); u <= w / 2 - 2.5 + 1e-3; u += 5) mods.push(['sh_shop', fr, (c0 + u) / front, 0, yaw, null, false]);
+            for (let u = -5 * Math.floor((w / 2 - 2.5) / 5); u <= w / 2 - 2.5 + 1e-3; u += 5) mods.push(['sh_shop', fr, (c0 + u) / front, 0, yaw, null, hs(u * 1.7 + k * 2.3 + R + sd) < 0.45]); /* 批次36：约 45% 店面橱窗暖光（模块 litGlass，按户 hash 稳定） */
             const kb = Math.floor((w / 2 - 1.7) / 3.4 - 0.5 + 1e-3), bays = []; for (let b = -kb - 1; b <= kb; b++) bays.push(3.4 * (b + 0.5));
             bays.forEach((u, b) => { const mid = Math.abs(u) < 1.8;
               for (let f = 0; f < fl - 1; f++) { const bal = typ === 1 ? mid : typ === 2 ? (b % 2 === 0 && f % 2 === 0) : false;
