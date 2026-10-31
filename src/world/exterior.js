@@ -670,7 +670,7 @@ function buildCity(g, M, ctx) {
 // 批次28 E3：近排 1960–80 年代街屋立面（两圈沿环路连续临街，非随机撒点）+ 车行道 / 人行道路沿 / 成列路灯 / 行道树。
 // 立面全部在着色器里按楼内局部米制坐标画：底层商铺橱窗 + 招牌带、上层分格木窗（窗套 + 窗台 + 雨渍）、楼板腰线、檐口；亮窗稀疏（黄昏 12%）。
 function streetModules(g, mods, at, Y0) { // 批次33：tools/blender/street_house.py 精建的三种立面模块，按开间实例化
-  const MT = { sh_stone: new THREE.MeshStandardMaterial({ color: 0xc9c0ad, roughness: 0.85, envMapIntensity: 0.55 }) /* 批次34：窗套提亮 */, sh_glass: new THREE.MeshStandardMaterial({ color: 0x0b0d10, roughness: 0.12, metalness: 0.2, envMapIntensity: 1.0 }),
+  const MT = { sh_stone: new THREE.MeshStandardMaterial({ color: 0xc9c0ad, roughness: 0.85, envMapIntensity: 0.55 }) /* 批次34：窗套提亮 */, sh_glass: new THREE.MeshStandardMaterial({ color: 0x0b0d10, roughness: 0.22, metalness: 0, envMapIntensity: 0.9 }) /* 批次36：去金属度、粗糙度略升，防远处镜面高光闪点 */,
     sh_frame: new THREE.MeshStandardMaterial({ color: 0x4a1c12, roughness: 0.7 }), sh_iron: new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.6, metalness: 0.6 }),
     sh_conc: new THREE.MeshStandardMaterial({ color: 0xa29d93, roughness: 0.9 }) /* 批次35：阳台板提亮，暗铁栏前读得出 */, sh_canvas: new THREE.MeshStandardMaterial({ color: 0xb2462a, roughness: 0.8, side: THREE.DoubleSide, envMapIntensity: 0.6 }) /* 批次34：帆布提亮 */ };
   const litGlass = new THREE.MeshStandardMaterial({ color: 0x20180f, emissive: 0xffb060, emissiveIntensity: 1.6, roughness: 0.3 });
@@ -680,11 +680,11 @@ function streetModules(g, mods, at, Y0) { // 批次33：tools/blender/street_hou
   const plates = mods.filter((m) => m[5]); if (plates.length) { const im = new THREE.InstancedMesh(plateG, plateM, plates.length); plates.forEach((m, i) => { const [x, z] = at(m[7], m[2]); q.setFromAxisAngle(up, m[4]); m4.compose(new THREE.Vector3(x, Y0 + m[3], z), q, one); im.setMatrixAt(i, m4); im.setColorAt(i, new THREE.Color(m[5][0] * 0.93, m[5][1] * 0.93, m[5][2] * 0.93)); });
     im.computeBoundingSphere(); im.userData.noCull = true; im.receiveShadow = true; g.add(im); } // 阳台开间：遮住着色器画的窄窗，墙色同房屋三色
   // 批次34：ext_house 看图——窗套 / 窗台 20 m 外偏弱、雨棚几乎看不出 → 窗模块进深 ×2.2（窗套加厚、窗台出挑）、店面 ×1.9（雨棚出挑 ≈2 m）、阳台 ×1.3
-  const MSC = { sh_bay_win: new THREE.Vector3(1.04, 1.04, 2.2), sh_bay_bal: new THREE.Vector3(1.15, 1, 1.5), sh_shop: new THREE.Vector3(1, 1.06, 2.6) }; // 批次35：阳台 ×1.3→宽 ×1.15 / 深 ×1.5（板深 1.43 m、宽 3.0 m）；雨棚出挑 ×1.9→×2.6（≈2.7 m）
+  const MSC = { sh_bay_win: new THREE.Vector3(1.04, 1.04, 1.5), sh_bay_bal: new THREE.Vector3(1.15, 1, 1.35), sh_shop: new THREE.Vector3(1, 1.06, 1.9) }; // 批次36：模块翻正后真实出挑——窗套 / 窗台 ×1.5、阳台板 1.28 m、雨棚 ≈2.1 m（人行道宽 4 m） // 批次35：阳台 ×1.3→宽 ×1.15 / 深 ×1.5（板深 1.43 m、宽 3.0 m）；雨棚出挑 ×1.9→×2.6（≈2.7 m）
   const MSC_FLAT = {}; for (const k in MSC) MSC_FLAT[k] = new THREE.Vector3(MSC[k].x, MSC[k].y, 1); // 批次35：玻璃 / 木窗框不随进深放大——原 ×2.2 把玻璃推到墙面后 6 cm、阳台门玻璃离阳台底板仅 1.5 cm → 远处 z-fighting 白闪点；不放大后玻璃在墙面外 6 cm、窗框 8 cm
   for (const name of ['sh_bay_win', 'sh_bay_bal', 'sh_shop']) loadModel('r2/' + name).then((src) => { const list = mods.filter((m) => m[0] === name); if (!list.length) return;
     src.updateMatrixWorld(true);
-    src.traverse((o) => { if (!o.isMesh) return; const mn = (o.material?.name || '').replace(/\.\d+$/, ''); const geo = o.geometry.clone().applyMatrix4(o.matrixWorld);
+    src.traverse((o) => { if (!o.isMesh) return; const mn = (o.material?.name || '').replace(/\.\d+$/, ''); const geo = o.geometry.clone().applyMatrix4(o.matrixWorld); geo.rotateY(Math.PI); /* 批次36 ★根因：Blender +Y 朝街导出后是 glTF −Z（不是 +Z）——三批来阳台板 / 铁栏 / 雨棚 / 窗套全部朝楼内长进墙里，只有退进的玻璃和窗框露在墙外（pick 前读 glb：sh_shop 玻璃 z=+0.08、雨棚 z<0）。绕 Y 转 180° 让模块正面朝街 */
       const sets = mn === 'sh_glass' ? [[MT.sh_glass, list.filter((m) => !m[6])], [litGlass, list.filter((m) => m[6])]] : [[MT[mn] ?? MT.sh_stone, list]];
       for (const [mat, L] of sets) { if (!L.length) continue; const im = new THREE.InstancedMesh(geo, mat, L.length);
         L.forEach((m, i) => { const [x, z] = at(m[1], m[2]); q.setFromAxisAngle(up, m[4]); m4.compose(new THREE.Vector3(x, Y0 + m[3], z), q, (mn === 'sh_glass' || mn === 'sh_frame') ? MSC_FLAT[name] : MSC[name]); im.setMatrixAt(i, m4); });
@@ -735,7 +735,7 @@ function buildStreetRows(g, M, place, rnd) {
             col = mix(col, vec3(0.85, 0.83, 0.78), frame * 0.7);
             col = mix(col, vec3(0.04, 0.05, 0.06), win); col = mix(col, vec3(0.30, 0.18, 0.10), mull);
             float on = step(1.0 - ${lit.toFixed(2)}, h2(vec2(cx + side * 31.0, cy) + vSd * 17.0));
-            em += win * (1.0 - mull) * on * mix(vec3(1.0, 0.66, 0.36), vec3(1.0, 0.86, 0.62), h2(vec2(cx, cy * 3.1))) * 2.0;
+            em += win * (1.0 - mull) * on * (1.0 - step(0.5, abs(vLn.z))) /* 批次36：临街正面 / 背面的亮窗交给模块 litGlass（稳定少量暖窗），着色器只在山墙侧面画亮窗——去掉正面窗后再叠一层亮窗的白闪点 */ * mix(vec3(1.0, 0.66, 0.36), vec3(1.0, 0.86, 0.62), h2(vec2(cx, cy * 3.1))) * 2.0;
           }
           col = mix(vec3(0.16, 0.16, 0.17), col, wall); // 平屋面
           diffuseColor.rgb *= col; totalEmissiveRadiance += em * wall;
@@ -802,9 +802,9 @@ function buildStreetRows(g, M, place, rnd) {
   if (tallTrees.length) loadModel('r2/street_tree_tall').then((src) => { src.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(src); const sc = 9.5 / Math.max(0.01, bb.max.y - bb.min.y), S = new THREE.Vector3(sc, sc, sc), tq = new THREE.Quaternion();
     src.traverse((o) => { if (!o.isMesh) return; const geo = o.geometry.clone(); for (const n of ['position', 'normal']) { const a = geo.getAttribute(n); if (!a || (a.array instanceof Float32Array && !a.normalized && !a.isInterleavedBufferAttribute)) continue; const f = new Float32Array(a.count * 3); for (let i = 0; i < a.count; i++) { f[i * 3] = a.getX(i); f[i * 3 + 1] = a.getY(i); f[i * 3 + 2] = a.getZ(i); } geo.setAttribute(n, new THREE.BufferAttribute(f, 3)); } /* 批次34 修：street_tree_tall 是 meshopt 量化 glb（Int16 归一化坐标），直接 applyMatrix4 会把米制坐标截断到 ±1 → 树缩成地上一团（ext_house 看图）；先解量化成 Float32 */ geo.applyMatrix4(o.matrixWorld); geo.translate(0, -bb.min.y, 0);
       let mat = o.material; if (/trunk/.test(mat?.name || '')) { // 批次35：树干原贴图纵向拉伸、偏红 → ambientCG Bark007（CC0）按真实米制柱面重映射：u = 角度 × 半径 / 0.6 m、v = 高度 / 0.9 m（树高 9.5 m 缩放后）
-        const pa = geo.getAttribute('position'), uv = new Float32Array(pa.count * 2); let cx = 0, cz = 0; for (let i = 0; i < pa.count; i++) { cx += pa.getX(i); cz += pa.getZ(i); } cx /= pa.count; cz /= pa.count;
-        for (let i = 0; i < pa.count; i++) { const dx = (pa.getX(i) - cx) * sc, dz = (pa.getZ(i) - cz) * sc, r = Math.max(0.12, Math.hypot(dx, dz)); uv[i * 2] = (Math.atan2(dx, dz) + Math.PI) * Math.min(r, 0.35) / 0.6; uv[i * 2 + 1] = pa.getY(i) * sc / 0.9; }
-        geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); mat = pbr('Bark007', { repeat: [1, 1], color: 0xb8ad9c, env: 0.4 });
+        const pa = geo.getAttribute('position'), uv = new Float32Array(pa.count * 2); /* 批次36：按 0.4 m 高度分层求各层中心（原用整棵树均值，分叉枝干绕错中心 → 纹理横向拉成平涂） */ const BAND = 0.4 / sc, cen = new Map(); for (let i = 0; i < pa.count; i++) { const k = Math.floor(pa.getY(i) / BAND), c = cen.get(k) ?? [0, 0, 0]; c[0] += pa.getX(i); c[1] += pa.getZ(i); c[2]++; cen.set(k, c); }
+        for (let i = 0; i < pa.count; i++) { const c = cen.get(Math.floor(pa.getY(i) / BAND)), cx = c[0] / c[2], cz = c[1] / c[2]; const dx = (pa.getX(i) - cx) * sc, dz = (pa.getZ(i) - cz) * sc, r = Math.max(0.12, Math.hypot(dx, dz)); uv[i * 2] = (Math.atan2(dx, dz) + Math.PI) * Math.min(r, 0.35) / 0.6; uv[i * 2 + 1] = pa.getY(i) * sc / 0.9; }
+        geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); mat = pbr('Bark007', { repeat: [1, 1], color: 0x8f8574, env: 0.35, normalScale: 1.8 }); /* 批次36：压暗 + 法线加强，近景读出树皮沟纹 */
         for (const t of [mat.map, mat.normalMap, mat.roughnessMap]) if (t) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.needsUpdate = true; } }
       const im = new THREE.InstancedMesh(geo, mat, tallTrees.length);
       tallTrees.forEach(([x, z, yaw], i) => { tq.setFromAxisAngle(up, yaw + i * 0.9); m4.compose(new THREE.Vector3(x, Y0 + 0.2, z), tq, S); im.setMatrixAt(i, m4); });

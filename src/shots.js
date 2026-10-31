@@ -121,6 +121,7 @@ export const SHOTS = {
   ext_street: { pos: [0, 1.7, 96], look: [0, 3, 135], fov: 75, zone: 'plaza' },
   ext_side: { pos: [44, 26, 40], look: [10, 18, -20], fov: 66, zone: 'plaza' }, // 批次27：原 [70,10,20] 贴着附楼墙
   ext_booth: { pos: [6.5, 1.7, 66.5], look: [13, 1.6, 75], fov: 60, zone: 'plaza' }, // 批次27 E5 东岗亭近景
+  ext_tree: { pos: [73.9, -4.4 + 1.6, 110.9], look: [75.4, -4.4 + 2.4, 113.9], fov: 50, zone: 'plaza' }, // 批次36：R160 内圈行道树树干近景（树皮 Bark007 验收）
   ext_house: { pos: [70.1, -4.4 + 1.7, 106.6], look: [84.9, -4.4 + 7, 113.4], fov: 65, zone: 'plaza' }, // 批次33：最内圈街屋立面模块近看（路心 R160 外看）
   ext_sky: { pos: [0, 40, 200], look: [0, 20, -40], fov: 50, zone: 'plaza' },
   heli_r3: { pos: [96.5, 12.4 + 1.8, -56.0], look: [80, 12.4 + 0.6, -80], fov: 70, zone: 'helipad' }, // 批次23 屋顶停机坪：东南角 → H / 楼梯间 / 设备房
@@ -132,6 +133,7 @@ export const SHOTS = {
   zone_top: { pos: [35, 15.8 + 40, -46.49], look: [35, 15.8, -46.5], fov: 50, clipY: 15.8 + 5.2, zone: 'zone_control' },
   ec_corner: { pos: [26.6, 1.8 + 1.6, -112.0], look: [19.0, 1.8 + 1.4, -114.2], fov: 70, zone: 'east_cloister' }, // 东西段公告栏 → 食堂口
   ec_top: { pos: [23.2, 1.8 + 46, -95.79], look: [23.2, 1.8, -95.8], fov: 50, clipY: 1.8 + 4.4, zone: 'east_cloister' },
+  cc_r3_c: { pos: [37.6, 8.8 + 1.8 + 1.55, -56.5], look: [35, 8.8 + 1.8 + 0.7, -58.8], fov: 62, zone: 'command_center' }, // 批次36：平台前沿看北，正对值班长台精建（芯板立面 / 交换机 / 背墙挂图 / 壁灯）
   cc_top: { pos: [35, 8.8 + 34, -46.49], look: [35, 8.8, -46.5], fov: 50, clipY: 8.8 + 4.6, zone: 'command_center' },
   canteen_r3: { pos: [-3.0, 1.8 + 1.65, -111.6], look: [6, 1.8 + 1.3, -136], fov: 76 },
   canteen_line: { pos: [-7.0, 1.8 + 1.6, -134.8], look: [6, 1.8 + 1.1, -138.6], fov: 72 },
