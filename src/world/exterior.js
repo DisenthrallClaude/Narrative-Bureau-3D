@@ -496,12 +496,20 @@ async function heroFacade(g, M, world, ctx, add) {
   const DW = 7, DH = 9;
   // 批次52：ext_door_mid 左门扇（转 72° 后正对西偏机位）金属环境反射映出天空 → 偏蓝竖面；门扇三种铜材克隆后环境反射压到 0.25 倍、底色略暖，读成暖深古铜
   const dM = {}; for (const k of ['bronzeDoor', 'bronzePanel', 'bronzeFrame']) { const c = M[k].clone(); if (Object.prototype.hasOwnProperty.call(M[k], 'onBeforeCompile')) c.onBeforeCompile = M[k].onBeforeCompile; if (Object.prototype.hasOwnProperty.call(M[k], 'customProgramCacheKey')) c.customProgramCacheKey = M[k].customProgramCacheKey; c.envMapIntensity = (M[k].envMapIntensity ?? 1) * 0.12; c.metalness = Math.min(c.metalness, 0.55); c.color.multiply(new THREE.Color(1.15, 1.0, 0.8)); /* 批次53：×0.25 后 e52b 左门扇仍偏紫蓝 (85,62,69) → 金属度压到 0.55（让暖色漫反射占主导）、环境反射 ×0.12 */ dM[k] = c; }
+  // 批次55：pick（run 41208753549）查左门扇下半首个命中 = 本门扇 dM 铜材 + 下 / 中两道铁箍 M.iron（Metal046A 冷蓝灰 0x2b2d33、金属度 1、环境反射全量，批52/53 都没动它）。
+  // 根因不是底色：门扇转 72° 后立在门廊深处，下半落在券口 / 雕像阴影里，直射暖光到不了，只剩黄昏半球光天色 0x9a96c8（淡紫，×1.45）+ 天空环境反射 → 紫。
+  // 真实情况门廊券顶 / 石壁挡住了大半天空 → 用常量 aoMap 给门扇所有材质（含铁箍改用的暖黑铁克隆）做「门廊天空遮蔽」：只压间接光（半球光 + 环境反射）到 22%，直射灯不变。
+  const skyOcc = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1); skyOcc.needsUpdate = true;
+  const occ = (c) => { if (!c.aoMap) { c.aoMap = skyOcc; c.aoMapIntensity = 0.78; } else c.aoMapIntensity = Math.max(c.aoMapIntensity ?? 1, 1) * 1.8; c.needsUpdate = true; return c; };
+  for (const k in dM) occ(dM[k]);
+  const ironD = M.iron.clone(); if (Object.prototype.hasOwnProperty.call(M.iron, 'onBeforeCompile')) ironD.onBeforeCompile = M.iron.onBeforeCompile; if (Object.prototype.hasOwnProperty.call(M.iron, 'customProgramCacheKey')) ironD.customProgramCacheKey = M.iron.customProgramCacheKey;
+  ironD.color.set(0x2a2420); occ(ironD); // 铁箍：冷蓝灰 → 暖黑铁（共享 M.iron 不动）
   for (const sx of [-1, 1]) {
     const leaf = new THREE.Group(); const w = DW / 2, h = DH;
     const slab = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.28), dM.bronzeDoor); slab.position.set(sx * -w / 2, h / 2, 0); slab.castShadow = slab.receiveShadow = true; leaf.add(slab);
     for (const fz of [-1, 1]) {
       for (let c = 0; c < 2; c++) for (let r = 0; r < 4; r++) { const pw = w * 0.38, ph = r === 3 ? 1.9 : 1.55, px = sx * -(w * 0.27 + c * w * 0.46), py = 0.9 + r * 1.95 + ph / 2; const pnl = new THREE.Mesh(new THREE.BoxGeometry(pw, ph, 0.06), dM.bronzePanel); pnl.position.set(px, py, fz * 0.16); leaf.add(pnl); const fr = new THREE.Mesh(new THREE.BoxGeometry(pw + 0.12, ph + 0.12, 0.03), dM.bronzeFrame); fr.position.set(px, py, fz * 0.145); leaf.add(fr); }
-      for (const k of [0, 2, 4]) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.12, 0.05), M.iron); strap.position.set(sx * -w / 2, 0.55 + k * 1.95, fz * 0.17); leaf.add(strap); for (let r = 0; r < 5; r++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 6), dM.bronzePanel); st.position.set(sx * -(0.3 + r * 0.7), 0.55 + k * 1.95, fz * 0.2); leaf.add(st); } }
+      for (const k of [0, 2, 4]) { const strap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, 0.12, 0.05), ironD); strap.position.set(sx * -w / 2, 0.55 + k * 1.95, fz * 0.17); leaf.add(strap); for (let r = 0; r < 5; r++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 6), dM.bronzePanel); st.position.set(sx * -(0.3 + r * 0.7), 0.55 + k * 1.95, fz * 0.2); leaf.add(st); } }
     }
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 8, 24), M.gold); ring.position.set(sx * -(w - 0.5), h * 0.45, 0.2); leaf.add(ring);
     leaf.position.set(sx * DW / 2, Y, -6.2); leaf.rotation.y = sx * -1.25; g.add(leaf);
