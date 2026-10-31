@@ -653,7 +653,7 @@ function buildArchive(zone, zoneB1, world, ctx, M, add, addB1) {
   // 柜台后档案柜（GLB）
   for (let k = 0; k < 4; k++) add(placeModel('file_cabinet', { height: 1.45, pos: [X0 + 1.0, Y, kz - 3 + k * 2], rotY: Math.PI / 2 }));
   add(placeModel('r2/arch_catalog', { height: 2.2, pos: [X0 + 4.6, Y, Z1 + 6.5], rotY: 0 }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); world.boundsOf(o, 0.85); return o; })); // 批次45：大档案柜组 filing_cabinets 方块 → Blender 精建卡片目录柜 r2/arch_catalog（6 联 6.48 m：下段 210 只卡片抽屉 + 铜标签框 / 卡签 / 铜拉环，1.0 m 胡桃台面铜包边，上段 48 只大档案抽屉 + 铜吊环，联间壁柱 + 檐口铜线；tools/blender/arch_catalog.py）
-  { const lx = X0 + 5.15, lz = Z1 + 6.5 + 0.26, ty = Y + 1.05; bankerLamp(b, zone, M, lx, ty, lz); point(zone, 0xffd29a, 5, [lx, ty + 0.3, lz + 0.35], 6.5); } // 批次47：目录柜台面实体银行家台灯（铜座 + 绿罩）+ 不投影暖补光（柜区原只有远处吊灯，柜面近乌木）
+  { const lx = X0 + 5.15, lz = Z1 + 6.5 + 0.26, ty = Y + 1.05; bankerLamp(b, zone, M, lx, ty, lz); point(zone, 0xffd29a, 3.2, [lx, ty + 0.55, lz + 0.75], 6.5); } // 批次47：目录柜台面实体银行家台灯（铜座 + 绿罩）+ 不投影暖补光（柜区原只有远处吊灯，柜面近乌木）
   // 叶寻与影子
   const yx = person(M, { coat: 0x2a2620, clue: 'chair', name: '叶寻' }); yx.position.set(kx - 1.1, Y, kz); yx.rotation.y = Math.PI / 2; zone.add(yx); ctx.yexun = yx;
   const shadowMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.82, depthWrite: false });
