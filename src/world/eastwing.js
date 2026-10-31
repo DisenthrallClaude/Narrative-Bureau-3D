@@ -1,7 +1,7 @@
 // 东翼（M2）：1F 市民服务与污染举报窗口、叙事高考报名大厅；2F 全国现实稳定度监测指挥中心、阅卷中心；3F 禁区封锁调度厅、副本投放调度室；东侧楼梯井
 import * as THREE from 'three';
 import { Batch } from '../engine/batch.js';
-import { placeModel } from '../engine/assets.js';
+import { placeModel, loadModel } from '../engine/assets.js';
 import { mats } from './mats.js';
 import { Frame, archRingGeo, archShape, emblem, goldText } from './gothic.js';
 import { CanvasScreen, lightShaft, dust } from '../engine/fx.js';
@@ -196,15 +196,21 @@ export function buildEastWing(scene, world, ctx) {
   // ================= 2F 监测指挥中心 =================
   const ccz0 = ZA, ccz1 = -61, ccz = (ccz0 + ccz1) / 2;
   // 阶梯式席位（向北升高）
+  const ccSeats = []; // 批次34：24 台 r2/cc_console 按席位实例化（按材质 10 个 InstancedMesh）
+  queueMicrotask(() => loadModel('r2/cc_console').then((src) => { src.updateMatrixWorld(true); const m4 = new THREE.Matrix4();
+    src.traverse((o) => { if (!o.isMesh || !ccSeats.length) return; const geo = o.geometry.clone().applyMatrix4(o.matrixWorld); const mn = (o.material?.name || '').replace(/\.\d+$/, '');
+      const mat = (mn.startsWith('cc_lamp') ? Object.assign(o.material, { emissive: o.material.color.clone(), emissiveIntensity: 1.4 }) : o.material);
+      const im = new THREE.InstancedMesh(geo, mat, ccSeats.length); ccSeats.forEach(([x, y, z], i) => { m4.makeTranslation(x, y, z); im.setMatrixAt(i, m4); });
+      im.computeBoundingSphere(); im.userData.noCull = true; im.castShadow = mn === 'cc_walnut' || mn === 'cc_steel' || mn === 'cc_bakelite'; im.receiveShadow = true; zone.add(im); }); }).catch((e) => console.warn('[NB] cc_console', e)));
   for (let r = 0; r < 4; r++) {
     const z = ccz0 - 9 - r * 3.6, h = r * 0.45;
     if (h > 0) { b.box('carpet', XS - X0, h, 3.6, [(X0 + XS) / 2, F2 + h / 2, z], { uv: 0.4, collide: true }); b.box('gold', XS - X0, 0.04, 0.04, [(X0 + XS) / 2, F2 + h, z + 1.8], { uv: 1 }); }
     for (let k = 0; k < 6; k++) {
       const x = X0 + 3 + k * 4.6;
-      b.box('blackMetal', 3.6, 0.06, 1.0, [x, F2 + h + 0.76, z + 0.6], { uv: 1 });
-      b.box('blackMetal', 0.1, 0.72, 0.8, [x - 1.7, F2 + h + 0.38, z + 0.6], { uv: 1 }); b.box('blackMetal', 0.1, 0.72, 0.8, [x + 1.7, F2 + h + 0.38, z + 0.6], { uv: 1 });
+      // 批次34：黑方板台面 + 两块黑侧板 + 黑盒显示器 → Blender 精建 r2/cc_console（tools/blender/cc_console.py：胡桃木台面 + 绿呢垫 + 灰绿钢抽屉柜铜拉手 + 斜面仪表条 + 三台 CRT 外壳），见下方 InstancedMesh
+      ccSeats.push([x, F2 + h, z + 0.6]);
       world.box(x, F2 + h + 0.4, z + 0.6, 3.6, 0.8, 1.0);
-      for (let m = -1; m <= 1; m++) { const mon = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.52, 0.04), M.screenOff); mon.position.set(x + m * 0.95, F2 + h + 1.12, z + 0.95); mon.rotation.y = -m * 0.25 + Math.PI; zone.add(mon); const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.84, 0.46), consoleMaterial((r * 6 + k) * 3 + m + 1)); scr.position.set(x + m * 0.95, F2 + h + 1.12, z + 0.925); scr.rotation.y = -m * 0.25 + Math.PI; zone.add(scr); }
+      for (let m = -1; m <= 1; m++) { const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.84, 0.46), consoleMaterial((r * 6 + k) * 3 + m + 1)); scr.position.set(x + m * 0.95 - Math.sin(-m * 0.25) * 0.004, F2 + h + 1.12, z + 0.921); scr.rotation.y = -m * 0.25 + Math.PI; zone.add(scr); }
       add(placeModel('office_chair', { height: 1.0, pos: [x, F2 + h, z - 0.2], rotY: Math.PI }));
     }
   }
