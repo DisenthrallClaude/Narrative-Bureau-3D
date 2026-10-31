@@ -119,8 +119,8 @@ export async function applyM14Training(ctx) {
       zone.add(l, l.target);
     }
     if (!new URLSearchParams(location.search).has('nom17')) { // 批次 M17：靶档正上方一盏顶光（不投影），靶架 / 靶纸可读，四周仍暗
-      const t = new THREE.SpotLight(0xffc896, 70, 12, 0.85, 0.7, 1.6); t.name = 'm17_range_top';
-      t.position.set(0, y + 7.0, -150.2); t.target.position.set(0, y + 1.2, -151.4); t.castShadow = false; zone.add(t, t.target);
+      const t = new THREE.SpotLight(0xffc896, 120, 10, 1.0, 0.7, 1.6); t.name = 'm17_range_top'; // 二拍：y+7 / 70 几乎看不出 → 降到 y+4.2、120（靶面约 13 lx）
+      t.position.set(0, y + 4.2, -150.6); t.target.position.set(0, y + 1.2, -151.4); t.castShadow = false; zone.add(t, t.target);
     }
   }
   await Promise.all(jobs);
