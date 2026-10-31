@@ -21,8 +21,9 @@ function m2Mats() {
     m2_bronze: pbr('Metal046A', { color: 0xb08250, metalness: 1, roughness: 0.48, env: 0.5 }), // 大面金属 roughness ≥0.45 / env ≈0.5
     m1_burgundy: pbr('Fabric023', { color: 0xc25a40, roughness: 0.8, env: 0.3 }), // 批次 M6：0x8a3428 在游戏里读成深褐 → 提亮（藻井格心/楣带/楣板）
     m1_paper: pbr('Fabric023', { color: 0xe0d2b4, roughness: 0.9, env: 0.2 }),
-    m6_enamel: pbr('Metal046A', { color: 0x948a7e, metalness: 0.35, roughness: 0.5, env: 0.5 }), // 钢制烤漆暖灰
-    m6_enamelDark: pbr('Metal046A', { color: 0x5e564c, metalness: 0.35, roughness: 0.52, env: 0.45 }),
+    // 钢制烤漆暖灰：Metal046A 贴图 + metalness 0.35 在 B1（env 0.3）里读成黑漆 → 素色烤漆（非金属感，roughness 0.5、env 0.5）
+    m6_enamel: new THREE.MeshStandardMaterial({ color: 0xa79b8b, metalness: 0.12, roughness: 0.5, envMapIntensity: 0.5, name: 'm6_enamel' }),
+    m6_enamelDark: new THREE.MeshStandardMaterial({ color: 0x6f665a, metalness: 0.12, roughness: 0.52, envMapIntensity: 0.5, name: 'm6_enamelDark' }),
     m1_iron: pbr('Metal046A', { color: 0x2e2a26, metalness: 0.8, roughness: 0.5, env: 0.45 }),
     m6_rubber: new THREE.MeshStandardMaterial({ color: 0x141210, roughness: 0.85 }),
   };
