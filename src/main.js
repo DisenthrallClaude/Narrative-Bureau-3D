@@ -177,10 +177,32 @@ async function boot() {
     started = true; UI.ui.state = 'play'; document.getElementById('loading').classList.add('hidden'); window.__NB_READY__ = true; return;
   }
   UI.loadDone(start);
+  menuLive(); // U2：加载完成后主菜单右侧换成实时 3D 广场机位
+}
+
+// —— U2：主菜单实时广场机位（右侧 59% 区域；setViewOffset 把画面中心移到右栏中心）——
+const MENU_A = new THREE.Vector3(12, 9, 94), MENU_B = new THREE.Vector3(-3, 6.5, 80), MENU_LOOK = new THREE.Vector3(0, 40, -13), MENU_FOV = 56;
+let menuOn = false, menuT = 0, playerFov = 70, enterK = 1; const enterFrom = { pos: new THREE.Vector3(), q: new THREE.Quaternion(), fov: 56, off: 0 };
+const menuOffset = () => (innerWidth > innerHeight * 1.1 ? -0.205 : 0);
+function menuLive() { if (SHOT || TEST) return; playerFov = camera.fov; menuOn = true; menuT = 0; document.getElementById('loading').classList.add('live'); }
+function menuCamera(dt) {
+  menuT += dt; const k = 0.5 - 0.5 * Math.cos(menuT * Math.PI * 2 / 90); // 90 s 往返，余弦缓入缓出
+  camera.position.lerpVectors(MENU_A, MENU_B, k); camera.position.y += Math.sin(menuT * 0.21) * 0.25;
+  camera.up.set(0, 1, 0); camera.lookAt(MENU_LOOK);
+  camera.fov = MENU_FOV; camera.setViewOffset(innerWidth, innerHeight, menuOffset() * innerWidth, 0, innerWidth, innerHeight);
+}
+function enterBlend(dt) { // 进入：菜单机位 → 玩家视角，1.6 s smoothstep
+  enterK = Math.min(1, enterK + dt / 1.6); const e = enterK * enterK * (3 - 2 * enterK);
+  const pq = camera.quaternion.clone(), pp = camera.position.clone();
+  camera.position.lerpVectors(enterFrom.pos, pp, e); camera.quaternion.copy(enterFrom.q).slerp(pq, e);
+  camera.fov = enterFrom.fov + (playerFov - enterFrom.fov) * e; const o = enterFrom.off * (1 - e);
+  if (enterK < 1 && o) camera.setViewOffset(innerWidth, innerHeight, o * innerWidth, 0, innerWidth, innerHeight); else { camera.clearViewOffset(); }
+  camera.updateProjectionMatrix();
 }
 
 let started = false;
 async function start() {
+  if (menuOn) { menuOn = false; enterK = 0; enterFrom.pos.copy(camera.position); enterFrom.q.copy(camera.quaternion); enterFrom.fov = camera.fov; enterFrom.off = menuOffset(); }
   started = true; UI.ui.state = 'play';
   audio.resume(); audio.setZone('plaza');
   lock();
@@ -392,11 +414,13 @@ function loop() {
     stepAcc += player.stepDist - before;
     if (stepAcc > (input.run ? 0.95 : 0.72)) { stepAcc = 0; audio.footstep(world.surfaceAt(player.pos.clone().add(new THREE.Vector3(0, 0.3, 0)))); }
     player.applyCamera(camera);
+    if (enterK < 1) enterBlend(dt);
     setZone(zoneAt(player.pos));
     const spot = inter.update(dt, player.pos, UI.ui.state === 'play' && !G.frozen);
     UI.setPrompt(spot ? (typeof spot.prompt === 'function' ? spot.prompt() : spot.prompt) : '');
     for (const f of G.onUpdate) f(dt, t);
   }
+  if (menuOn && !started) menuCamera(dt);
   // 太阳阴影跟随相机
   const focus = camera.position.clone(); focus.y = 0;
   sun.target.position.copy(focus); sun.position.copy(focus).addScaledVector(SUN_DIR, 300);

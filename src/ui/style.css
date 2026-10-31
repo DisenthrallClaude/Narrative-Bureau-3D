@@ -294,3 +294,11 @@ canvas#c { position: fixed; inset: 0; width: 100vw; height: 100vh; display: bloc
 #fade.on { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01s !important; animation-delay: 0s !important; transition-duration: .01s !important; } }
+
+/* —— U2：主菜单右栏实时 3D（加载完成后 #loading.live：静态图淡出，露出 canvas 上的广场机位；金框 / 暗角 / 题注保留）—— */
+#loading.live { background: transparent; }
+#loading.live .hero { background: transparent; }
+#loading.live .hero img { opacity: 0; transition: opacity 2.4s ease .3s; animation: none; transform: scale(1.04); }
+#loading.live .hero::before { background: linear-gradient(90deg, rgba(241,230,207,.42) 0%, rgba(241,230,207,0) 12%), linear-gradient(0deg, rgba(30,18,8,.5) 0%, rgba(30,18,8,0) 24%), radial-gradient(ellipse at 50% 42%, transparent 58%, rgba(30,18,8,.36) 100%); }
+#loading.live .hero figcaption b::after { content: '　·　VIVA'; color: var(--verm); }
+#loading.open .hero { opacity: 0; transition: opacity 1.2s ease; }

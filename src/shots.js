@@ -133,6 +133,7 @@ export const SHOTS = {
   ext_door_near: { pos: [0, 1.7, 9], look: [0, 6, -2], fov: 70, zone: 'plaza', lite: 1 }, // 批次49：lite（关闭不入镜点光；批次48 该机位 >35 min） // 批次26 外观诊断 ×6
   ext_door_mid: { pos: [-4, 1.8, 18], look: [0, 13, -5], fov: 66, zone: 'plaza', lite: 1 }, // 批次48：原 [10,2.2,21] 正站在 (10,6) 路灯后、灯杆挡匾额 → 挪到中轴西 4 m（路灯 (−10,6) 偏到画左 37°，旗杆 / 泉都在画外）；批次27：原 [0,3,34] 镜头埋进泉心雕像
   ext_plaza: { pos: [0, 1.7, 56], look: [0, 17, -8], fov: 70, zone: 'plaza' }, // 批次48：补登记（此前未定义，截图走了缺省机位）
+  menu_hero: { pos: [4, 8, 88], look: [0, 40, -13], fov: 56, zone: 'plaza' }, // U2：主菜单右栏静态兜底图（竖向裁切，尖塔完整）
   ext_bird: { pos: [55, 60, 95], look: [0, 0, 20], fov: 55, zone: 'plaza' },
   ext_street: { pos: [0, 1.7, 96], look: [0, 3, 135], fov: 75, zone: 'plaza' },
   ext_side: { pos: [44, 26, 40], look: [10, 18, -20], fov: 66, zone: 'plaza' }, // 批次27：原 [70,10,20] 贴着附楼墙
