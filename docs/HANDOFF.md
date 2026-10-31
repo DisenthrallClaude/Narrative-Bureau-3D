@@ -2113,21 +2113,22 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 1. B1 薄雾重定点位 + 软粒子（见上）。2. 浮晶改色需在片元里乘色（或换「符網結界 magic-barrier」）。3. 深渊门星纹若要更明显：detail 1.5 或叠一层「渦光黑洞」核心（亮度仍 <1）。
 
 ## 批次 M17 · 主线二轮精修：档案馆长桌/柜台新方案 + 射击区顶光 + 正门门廊尖拱/门楣/台阶 Blender 重建 + 主线审计（2026-11-01 02:22 CST 接手，约 35 分钟；与特效批 E1 并行，未碰 E1 文件 / UI / game-intranet；独立 worktree /tmp/m17wt，sparse 不检出 screenshots/）
-- 提交：ee8a8d2（A 档案馆）、ba489e1（B 射击区）、4a2ec98（C 门廊 + 台阶）、de7d565（D 审计修）。每次提交前 `npx vite build --outDir /tmp/m17dist` = 0，build 后即删。`?nom17=1` 关闭本批全部改动（同 run 拍改前）。
+- 提交：ee8a8d2（A 档案馆）、ba489e1 + 818e04c（B 射击区两拍）、4a2ec98（C 门廊 + 台阶）、de7d565（D 审计修）。每次提交前 `npx vite build --outDir /tmp/m17dist` = 0，build 后即删。`?nom17=1` 关闭本批全部改动（同 run 拍改前）。
 - **A 档案馆**（m16_archive.js `M17_ARCH`，interiors.js）：皮面弃 Leather026 → 纯色 MeshStandardMaterial 0x6a3a22（粗糙 0.6 + 64² 程序化亮度噪声 0.88–1.0，repeat 6）；胡桃 0x74492f→0x8a5a3c、深胡桃 0x40291c→0x5a3a26；m16_lampGlow 内衬自发光 0.95→0.6；每盏台灯下不投影暖点光 m17_tableLamp（1.6 / 1.8 m，Y+1.10）；铜件 m16_bronze 0xa87a4c 金属 0.75 粗糙 0.48、m16_brass 0xbc8f5a 金属 0.75 粗糙 0.45（env 0.5）；柜台公众面 +X 前不投影暖洗光 m17_counterWash（kx+2.0, Y+1.0, 5 / 4.5 m）。
   - 亲眼看（run 41229779856，m17 改后 / m17o 改前）：m16_table 皮面读成暖红棕（不再灰），两盏台灯下出现暖光池、灯罩可见 ✔（皮面在光池中心略偏橙粉，可接受）；m16_loan_win 柜台框芯前脸明显提亮成暖胡桃 ✔，铜踢脚在画面下沿只是一条暗铜细线，扶脚杆仍不显（中等改善）。
-- **B 射击区**（m14_training.js）：靶档正上方不投影暖顶光 m17_range_top（SpotLight 70 / 12 m / 0.85 rad，(0, y+7.0, −150.2) → (0, y+1.2, −151.4)）。亲眼看 m14_tr_range：**改前改后几乎看不出差别**（只试一次，未追加；下批可把它降到 y+4.5、强度 150，或在每两个靶位上方挂工业灯罩点光）。
+- **B 射击区**（m14_training.js）：靶档正上方不投影暖顶光 m17_range_top（SpotLight 70 / 12 m / 0.85 rad，(0, y+7.0, −150.2) → (0, y+1.2, −151.4)）。亲眼看 m14_tr_range（41229779856）：改前改后几乎看不出差别 → 二拍 818e04c 降到 (0, y+4.2, −150.6)、120 / 10 m / 1.0 rad，复拍 run 41230892386（m17b）**仍看不出变化**——两次失败，按规则停。怀疑不是强度问题而是这盏灯根本没生效（训练场区灯数预算 / 灯光裁剪或该机位 zone 灯管理把新灯剔掉；M16 两盏射灯 42→130 也只「中等」），下批先在浏览器里查 zone 下 m17_range_top 是否 visible / 是否计入 renderer 的灯数，再调。
 - **C 正门**：tools/blender/m17_portal.py（`blender.sh -b -P m17_portal.py -- <outdir> <prev|-> [视角序号]`）→ public/assets/models/m17/portal.glb（39.1k 三角，2.5 MB→0.84 MB meshopt）+ steps.glb（52.2k 三角，3.2→0.87 MB），EXT_meshopt_compression 已核对、材质名 m17_*。
   - portal：五重等边尖拱券面重建（每重 ~0.58 m 分块券石，截面 = 圆棍 r0.15 + 两侧凹槽 + 平带，后部包住原 hero_facade portal() 方截面券与圆棍；暗灰缝芯；奇数重四瓣犬齿饰带；最外重 14×2 卷叶 + 暗铜嵌线；每重拱心石，最外重大拱心石 + 暗铜圆饰）；门楣本体 = 7 块错缝平拱（x ±3.34、Y 8.55–9.42、前面 z+0.10）+ 加高中央拱心块 + 三级檐口 + 暗铜线 + 小铜牌。放 (0, FLOOR, −5) 进 facade_hi，不加碰撞（全在门洞净空外 / 上方）。
   - steps：10 级踏步（尺寸与 buildFrontSteps 逐级相同）、前沿磨损圆角（中线 ±9 m 行走带半径 3→6 cm）、踏面中段凹陷 ≤1.1 cm、两道暗铜防滑条嵌入；平台 1.2 m 错缝铺装；两侧颊墙改斜压顶 + 勒脚 + 凹框线、柱墩（基座 / 墩身四面凹芯 / 两级檐 + 暗铜线 / 低锥顶）。exterior.js buildFrontSteps 的 **world.box 碰撞一行未改**，只把 Batch 可见件换成 glb（加载失败回退旧 Batch）。石材 Granite003A 深灰 0x8a8276/0x6e675e/0x948b7e/0x7a7268、暗铜 0x4a3420 金属 0.6 粗糙 0.5 env 0.5，无蓝。
   - 规划图 work/r3/m17/plans/m17_portal_plan.png（立面 + 台阶平面；注意：是与建模同时画的，不是严格先画后建）；Blender 预览 work/r3/m17/preview/m17_portal_0.png（正立面：分块券石 / 拱心石 / 门楣读得出）、m17_portal_3.png（台阶低角度：圆角前沿 / 错缝 / 颊墙柱墩）。侧面近景视角 1/2/4 因时间没渲。
   - 游戏内：run 41230603725（m17 / m17o：ext_door_near、ext_door_mid + walk）写本节时仍在跑，**门廊游戏内效果未亲眼验收**。
 - **D 审计**（tools/audit56.sh → docs/audit/m17_audit56.md）：落地件↔墙 0、图片比例 0；落地件互插 90 处，主线区只有 director 办公桌↔椅 7 cm、archive_b1 古董桌↔俱乐部椅 7 cm（椅子推进桌下，误报），其余在 abyss_core（椅入桌下 / 书堆在桌面，误报）；图片无墙 12 张：training 4 面局旗 = 吊在天花横杆上（悬空误报），**但贴图是「局旗深蓝」→ 真问题，已换酒红褐重染版**（de7d565）；s7_entry N02 挂画、east_cloister / security_hall 挂框靠 hero glb 墙（规划数据里没有，误报，未逐张拍图核）。audit56 不含配色扫描，红配绿/蓝只做了上面这一处人工处理；r3plan.js:432 另一处局旗深蓝（非本批主线区）、:1906 metro 灯杆竖幅仍用深蓝贴图，未动。
+- 走查：run 41230603725 的 walk（4a2ec98，含新台阶）**通过 31 / 失败 0 / 控制台 0**（work/r3/m17/r41230603725/walk/WALKTHROUGH.md）。
 - Pages：4a2ec98 Deploy 41230603986 success，线上 m17/portal.glb 200。
 - 拼图 work/r3/m17/sheet.jpg（左改前 &nom17=1 / 右改后；末行 Blender 预览；脚本 `python3 sheet.py r41229779856 r41230603725`，门图回来重跑）。
 - Drive：分卷 1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq 下新建 v21_m17_models（1WGZHBGZy0hgxP2M1JirWBS3tIBYgV4vQ）内 v21_m17_models.tar.gz（18Xxu4P1kRY2b7VMccRzjXrdVwnEi6zLE：m17 两 glb 原始 + meshopt、m17_portal.py、改动 js、预览、对比图）。未删任何旧卷。
 ### 下批先做
-1. `bash tools/gh_shots_fetch.sh 41230603725 work/r3/m17/r41230603725`：看 ext_door_near / mid——新券面是否完全包住原券（原卷叶在偶数重会从圆棍里露出，属预期）、有无 z-fight、台阶深灰是否与平台/狮座衔接；walk 是否 31/31、控制台 0。
+1. `bash tools/gh_shots_fetch.sh 41230603725 work/r3/m17/r41230603725`：看 ext_door_near / mid（截至 02:52 仍在跑，超 25 分钟即取消重派 lite）——新券面是否完全包住原券（原卷叶在偶数重会从圆棍里露出，属预期）、有无 z-fight、台阶深灰是否与平台/狮座衔接。
 2. 射击区顶光无效（见 B）。3. 柜台扶脚杆仍不显。
 
 ## 批次 M16 · 训练场尾巴 + 档案馆借阅柜台 / 阅览长桌 hero（2026-11-01 01:49 CST 接手，约 35 分钟；与 M15 并行，未碰局长室 / 深渊门 / UI / game-intranet；独立 worktree /tmp/m16wt）
