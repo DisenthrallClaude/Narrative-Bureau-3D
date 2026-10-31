@@ -191,17 +191,18 @@ fe558fd 亮窗压深琥珀 + 窗台暗带 + 半放百叶 / 正立面下段暖反
 - **内门改 Blender 模型**：tools/blender/inner_door.py → public/assets/models/r2/inner_door.glb（4.8×5.6×0.12，2×3 凸芯板 + 铜压线 / 推板铜钉 / 踢板 / 合页筒；原点门轴下端，沿 −X 展开，左扇游戏内 scale.x=−1）。Blender 预览 work/r3/b50/prev/inner_door.png（修掉复制模板残留的服务窗口几何 + 中梃共面闪烁后验收 ✔）。assets.js 胡桃木盒投影 UV 正则加 `id_`。
 - **未解决**：ext_door_mid 门洞内右侧那块**米黄平亮竖面仍在**（work/r3/b50/crop_mid2.jpg 左半）。三处衬板都没压到它 → 它不是前墙侧壁、也不是 GLB 门洞侧壁；从透视看是**正对镜头（法线 +z）、约 8 m 宽、落地**的一面墙，位于后墙尖拱右侧，但该处护墙板没出现在画面里——疑似另一个几何（大厅 hero_hall.glb 南墙？或门廊 rectLight 照亮的别的面）。下批先用调试色（逐个材质染红）定位再改，别再盲贴。
 ### 4 重拍
-- fe558fd run **41182401343**：e50a ext_door_near、e50b ext_door_mid 已回并亲眼看过；e50c ext_side / e50d ext_plaza 截止（16:2x）仍在渲染。
+- fe558fd run **41182401343**：e50a ext_door_near、e50b ext_door_mid、e50c ext_side 已回并亲眼看过；e50d ext_plaza 截止（16:25）仍在渲染。
+- **ext_side**（e50c，对比 work/r3/b50/side_ab.jpg 上49下50 / cmp50_ext_side.jpg）：附楼 + 塔身长窗明显变深变暖琥珀，每扇下段窗台暗带读得出，不再浅奶油 ✔（**中上**）；门廊周边下段石墙略暖，反弹光在此俯视机位不明显（等 ext_plaza 判）。
 - f8de87f run **41183314669**：e50f ext_door_mid 已回看过；e50g ext_door_near / e50h ext_side 截止仍在渲染。
 - 21f1843 run 41182796849（e50e ext_door_near）同上未回。
 - 看图：**ext_door_near**（work/r3/b50/r41182401343/e50a，对比 work/r3/b50/near_ab.jpg 上批49 下批50）：门楣上方新增铜格栅鼓室 + 圆花，门洞纵深层次更完整 ✔（中上）。**ext_door_mid**（e50f）：鼓室铜格栅 ✔、内门凸芯板门扇可读 ✔、长窗琥珀带竖棂横档 + 百叶暗带 ✔；右侧米黄平亮面 ✘。
-- 已出：work/r3/cmp50_ext_door_near.jpg、cmp50_ext_door_mid.jpg（批49 vs 批50）；总拼图 work/r3/b50/sheet.jpg（6 张：近景 / 中景 / 鼓室特写 / 门洞特写 / 琥珀长窗特写 / 内门 Blender 预览）。重跑：`python3 work/r3/b50/cmp50.py <run目录> [附加图…]`。
+- 已出：work/r3/cmp50_ext_door_near.jpg、cmp50_ext_door_mid.jpg（批49 vs 批50）；cmp50_ext_side.jpg；总拼图 work/r3/b50/sheet.jpg（7 张：近景 / 中景 / 侧俯 / 鼓室特写 / 门洞特写 / 琥珀长窗特写 / 内门 Blender 预览）。重跑：`python3 work/r3/b50/cmp50.py <run目录> [附加图…]`。
 ### 收尾
-- 走查：前两次误把 `walk` 当机位派成 `after:walk`（只拍了一张，非走查），已取消；**正确写法 `disp.sh "walk:walk"`**。f8de87f 走查 run **41184051132**（16:18 派出）结果见 PROGRESS-LOG。
+- 走查：前两次误把 `walk` 当机位派成 `after:walk`（只拍了一张，非走查），已取消；**正确写法 `disp.sh "walk:walk"`**。f8de87f 走查 run **41184051132 通过 31 / 失败 0 / 控制台错误 0**（work/r3/b50/r41184051132/walk/WALKTHROUGH.md）。
 - Pages：**f8de87f Deploy success（41183306763）**。
 - Drive「快照_分卷」：先删同名旧卷再传 v03 1N-n6TqPgUM8NhvKNL4X7E4yG_mQa9bBQ、v04 1bgqrQBW1N9EtD01ZRzHBgV4C7HuolCcT（已含 r2/inner_door.glb，旧 1dr2… 已删；v01 / v02 在本 HANDOFF 提交后传）。
 ### 下批先做
-1. 取回 41182401343 / 41183314669 / 41182796849 剩余图 + 走查 41184051132（`rm -rf /tmp/afz; bash tools/gh_shots_fetch.sh <run> work/r3/b50/r<run>`），重跑 cmp50.py；重点看 ext_plaza 下半立面反弹光是否可读 / 过曝、ext_side 窗色。
+1. 取回 41182401343 / 41183314669 / 41182796849 剩余图 （`rm -rf /tmp/afz; bash tools/gh_shots_fetch.sh <run> work/r3/b50/r<run>`），重跑 cmp50.py；重点看 ext_plaza 下半立面反弹光是否可读 / 过曝、ext_side 窗色。
 2. 门洞右侧米黄平亮面：调试染色定位后再处理。
 3. 亮窗饱和度：若仍偏灰，可让窗加色 toneMapped 前乘 1.15 并再压 G。
 4. 门洞右侧亮面定位后，可考虑把护墙板也改 Blender 模型。
