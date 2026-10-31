@@ -199,11 +199,11 @@
 ### 4 正门大厅
 - 本批未排查 / 未改。已派诊断机位 hall + hall_gates **41165905378（h40 / h40g，f6a4e87）——截止本节未回**，下批取回后列清单。
 ### 收尾
-- 走查 **41165882900（walk，f6a4e87）——截止本节未回**（PROGRESS-LOG 记为待取）。Pages：**f6a4e87 Deploy success（41165810132）**。
-- Drive「快照_分卷」：先删同名旧卷再传 v03 **11xG3b7OFTjAgajf8JXsH0hZ6RmoY5ygL**、v04 **1A0zWdCEL4p7AB7V_VgO2yEydDfmOKKK1**（含 lib_pulpit_lamp.glb）；v01 / v02 在本 HANDOFF 提交后重传（见 PROGRESS-LOG）。
+- 走查 f6a4e87 run 41165882900 **通过 31 / 失败 0 / 控制台错误 0**（work/r3/b40/r41165882900/walk/WALKTHROUGH.md）。Pages：**f6a4e87 Deploy success（41165810132）**。
+- Drive「快照_分卷」：先删同名旧卷再传 v01 1ciAooyriQHlhBo1hnpMhdRD7srtMdgTQ、v02 1INrZTRArs2Eccnxwvy7tCMu-gt4lH1JH、v03 11xG3b7OFTjAgajf8JXsH0hZ6RmoY5ygL、v04 1A0zWdCEL4p7AB7V_VgO2yEydDfmOKKK1（含 lib_pulpit_lamp.glb）。
 - 对比图 `python3 work/r3/b40/cmp40.py` → work/r3/cmp40_lib_lec_n / lib_vit / ext_busstop / ext_house.jpg + 总拼图 work/r3/b40/sheet.jpg（6 张：lib_lec_n / lib_lec_s / lib_vit / ext_busstop / ext_green / ext_house）；ext_sky / cs_r3_e / hall 回来后重跑即补齐。
 ### 下批先做
-1. 取回 41165813007（ext_sky 墙脚）、41165273980（cs_r3_e）、41165905378（hall / hall_gates）、41165882900（walk）；cs_r3_b 重派单机位。
+1. 取回 41165813007（ext_sky 墙脚）、41165273980（cs_r3_e）、41165905378（hall / hall_gates）；cs_r3_b 重派单机位。
 2. 陈列柜热斑（柜前低位点光）；旋转报架换模型；讲经台机位再拉近。
 3. 正门大厅排查清单 + 精建 1 处；藏书阁阅读龛 / 地球仪精建。
 
