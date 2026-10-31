@@ -1,7 +1,7 @@
 // 布景加密工具包（M4）：护墙板/壁柱/踢脚/檐口、藻井天花、地毯与拼花、成组家具、GLB 实例化（InstancedMesh）
 // 所有静态几何走 Batch 合批；重复的 GLB 小件走 Props（每个子网格一个 InstancedMesh）
 import * as THREE from 'three';
-import { loadModel, pbr, loadTex } from '../engine/assets.js';
+import { loadModel, pbr, loadTex, screenUI, crtUI } from '../engine/assets.js';
 // 批次7：Poly Haven 实拍 PBR（col/nrm/arm，arm.g=粗糙度）→ 墙面石膏/护墙板/墙布/混凝土
 export const phm = (name, o = {}) => { const m = new THREE.MeshStandardMaterial({ map: loadTex(`assets/tex/ph/${name}_col.webp`, { srgb: true }), normalMap: loadTex(`assets/tex/ph/${name}_nrm.webp`), roughnessMap: loadTex(`assets/tex/ph/${name}_arm.webp`), color: o.color ?? 0xffffff, roughness: o.roughness ?? 1, envMapIntensity: o.env ?? 0.4 }); if (o.ns) m.normalScale.set(o.ns, o.ns); m.name = 'ph_' + name; return m; };
 import { weather } from '../engine/weather.js';
@@ -149,6 +149,11 @@ export class Props {
       const meshes = []; src.traverse((o) => { if (o.isMesh) meshes.push(o); });
       const inst = list.map((it) => { const s = it.h ? it.h / size.y : it.w ? it.w / size.x : it.d ? it.d / size.z : (it.s ?? 1); const sv = it.fit ? V3(it.fit[0] / size.x, it.fit[1] / size.y, it.fit[2] / size.z) : V3(s, s, s); return new THREE.Matrix4().compose(V3(...it.pos), new THREE.Quaternion().setFromEuler(new THREE.Euler(it.rx ?? 0, it.yaw ?? 0, it.rz ?? 0, 'YXZ')), sv).multiply(center); });
       for (const m of meshes) {
+        if (m.userData.screen && list.length) { // 批次57：屏面按本区内容表轮换（每种一组 InstancedMesh），同一区里相邻电脑显示不同界面
+          const kinds = this.scr ?? [0, 2, 3, 4, 1, 5], groups = new Map(); list.forEach((it, i) => { const k = it.scr ?? kinds[i % kinds.length]; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(i); });
+          for (const [k, idx] of groups) { const im = new THREE.InstancedMesh(m.geometry, m.userData.screen === 'crt' ? crtUI(k) : screenUI(k), idx.length);
+            idx.forEach((i, j) => im.setMatrixAt(j, new THREE.Matrix4().multiplyMatrices(inst[i], m.matrixWorld))); im.instanceMatrix.needsUpdate = true; im.castShadow = false; im.receiveShadow = false; im.computeBoundingSphere(); im.name = 'props:' + name; parent.add(im); out.push(im); }
+          continue; }
         const im = new THREE.InstancedMesh(m.geometry, m.material, list.length);
         inst.forEach((mt, i) => im.setMatrixAt(i, new THREE.Matrix4().multiplyMatrices(mt, m.matrixWorld)));
         im.instanceMatrix.needsUpdate = true; im.castShadow = shadow && list.length < 300; im.receiveShadow = true; im.computeBoundingSphere(); im.name = 'props:' + name;

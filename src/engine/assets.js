@@ -51,7 +51,8 @@ export function loadModel(name) {
               else if (/Alumin/.test(m.name || '')) o.material = new THREE.MeshStandardMaterial({ name: 'np_alu', color: 0x8d939a, roughness: 0.38, metalness: 0.85, side: THREE.DoubleSide });
             }
             /* 批次44：书脊压暗改在 tools/blender/lib_nook.py 里降饱和重导，运行时 ×0.5 去掉 */ // 批次43：lib_nook 书脊在游戏里偏粉 / 青（线性色值直出偏浅）→ 压暗一半，读成旧精装深红 / 墨绿 / 藏青
-            if (m && /decal_screen/.test(m.name || '')) { o.material = screenUI(0); o.userData.screen = true; o.castShadow = false; return; } // M5：显示器原贴图是粉紫色桌面，换成局内系统界面
+            if (m && /decal_screen/.test(m.name || '')) { o.material = screenUI(0); o.userData.screen = 'flat'; o.castShadow = false; return; }
+            if (m && m.name === 'monitor_glass') { o.material = crtUI(2); o.userData.screen = 'crt'; o.castShadow = false; return; } // 批次57：CRT 玻璃换终端界面 // M5：显示器原贴图是粉紫色桌面，换成局内系统界面
             if (m && m.isMeshBasicMaterial) {
               o.material = new THREE.MeshStandardMaterial({ map: m.map, color: m.color, roughness: 0.85, metalness: 0, side: m.side, transparent: m.transparent, alphaTest: m.alphaTest });
             }
@@ -93,7 +94,7 @@ export async function placeModel(name, opts = {}) {
   obj.position.y -= opts.align === 'center' ? c.y : box.min.y;
   if (opts.rotY) wrap.rotation.y = opts.rotY;
   if (opts.pos) wrap.position.set(...opts.pos);
-  obj.traverse((o) => { if (o.userData.screen) o.material = screenUI(_scrK++); });
+  obj.traverse((o) => { if (o.userData.screen) o.material = o.userData.screen === 'crt' ? crtUI(_scrK++) : screenUI(_scrK++); });
   if (opts.material) obj.traverse((o) => { if (o.isMesh) o.material = opts.material; });
   if (opts.shadow === false) obj.traverse((o) => { if (o.isMesh) o.castShadow = false; });
   wrap.userData.size = box.getSize(new THREE.Vector3());
@@ -151,16 +152,44 @@ export async function fetchJSON(path) {
   try { const r = await fetch(`${BASE}${path}`, { cache: 'no-cache' }); if (!r.ok) return null; return await r.json(); } catch { return null; }
 }
 
-// —— 显示器界面池：档案检索 / 现实稳定度曲线 / 内部邮件 / 锁屏局徽（canvas 自绘，自发光）——
+// —— 批次57：显示器界面池（机关终端风：琥珀荧光 / 暖白，640×320 = 屏面 UV 0.039–0.966 × 物理宽高比 1.85 → 不拉伸）——
+// 0 档案检索 1 叫号队列 2 值班日志 3 电报收发 4 表单/菜单 5 局徽待机；按区域分配见 SCR_ZONE
 let _scrK = 1; const _scr = [];
+function termCanvas(W, H, warm, draw) { const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const fg = warm ? '#efe6cf' : '#ffb347', dim = warm ? '#9a917c' : '#a8702a', bg = warm ? '#16130e' : '#120a03';
+  const g = c.createRadialGradient(W / 2, H / 2, 10, W / 2, H / 2, W * 0.6); g.addColorStop(0, warm ? '#24201a' : '#221406'); g.addColorStop(1, bg); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  const mx = Math.round(W * 0.05); draw(c, W, H, { fg, dim, mx, mono: (sz, b = '') => `${b} ${sz}px "NB Sans", monospace` });
+  for (let y = 0; y < H; y += 3) { c.fillStyle = 'rgba(0,0,0,0.22)'; c.fillRect(0, y, W, 1); } return cv; }
+function termHead(c, W, o, t, r) { c.fillStyle = o.fg; c.fillRect(o.mx, 10, W - o.mx * 2, 26); c.fillStyle = '#1a1208'; c.font = o.mono(17, 700); c.fillText(t, o.mx + 8, 29); c.textAlign = 'right'; c.fillText(r, W - o.mx - 8, 29); c.textAlign = 'left'; }
+function termFoot(c, W, H, o, t) { c.strokeStyle = o.dim; c.lineWidth = 1; c.beginPath(); c.moveTo(o.mx, H - 34); c.lineTo(W - o.mx, H - 34); c.stroke(); c.fillStyle = o.dim; c.font = o.mono(14); c.fillText(t, o.mx + 4, H - 14); c.fillStyle = o.fg; c.fillRect(W - o.mx - 16, H - 28, 10, 16); }
+const SCR_DRAW = [
+  (c, W, H, o) => { termHead(c, W, o, '档案检索 ARCH-SRCH', '库：B1 总档'); c.font = o.mono(16); c.fillStyle = o.fg; c.fillText('查询> 编号=A-03*  状态=全部', o.mx + 4, 62);
+    c.fillStyle = o.dim; c.fillText('编号     题名               密级  架位', o.mx + 4, 90);
+    [['A-0301', '京城旧报合订·一九七九', '内部', '07-3-12'], ['A-0314', '叙事污染区调查记录', '机密', '11-1-04'], ['A-0327', '市民来函登记簿（卷三）', '一般', '02-5-21'], ['A-0341', '外勤人员周也履历', '机密', '09-2-08'], ['A-0358', '东廊修缮图纸', '一般', '04-4-17']].forEach((r, i) => { const y = 116 + i * 26; if (i === 1) { c.fillStyle = o.fg; c.fillRect(o.mx, y - 18, W - o.mx * 2, 24); c.fillStyle = '#1a1208'; } else c.fillStyle = o.fg; c.fillText(`${r[0]}   ${r[1].padEnd(13, '　')} ${r[2]}  ${r[3]}`, o.mx + 4, y); });
+    termFoot(c, W, H, o, '共 27 条  第 1/6 页   F3 调阅  F5 借出登记'); },
+  (c, W, H, o) => { termHead(c, W, o, '市民服务 · 叫号队列', '10:42'); c.fillStyle = o.dim; c.font = o.mono(15); c.fillText('窗口   当前号   业务          等候', o.mx + 4, 62);
+    [['1', 'A027', '来函登记', '3'], ['2', 'A031', '证明开具', '5'], ['3', 'B012', '档案查询', '2'], ['4', '——', '暂停服务', '-'], ['5', 'C004', '投诉受理', '1']].forEach((r, i) => { const y = 92 + i * 30; c.fillStyle = i === 3 ? o.dim : o.fg; c.font = o.mono(i === 0 ? 22 : 18, i === 0 ? 700 : ''); c.fillText(`${r[0]}号   ${r[1]}    ${r[2].padEnd(6, '　')}   ${r[3]}人`, o.mx + 4, y); });
+    termFoot(c, W, H, o, '已办 118  待办 11   [呼叫] [重呼] [过号]'); },
+  (c, W, H, o) => { termHead(c, W, o, '值班日志 DUTY-LOG', '十月卅一日 夜班'); c.font = o.mono(15);
+    [['21:00', '交接班完毕，在岗 6 人，无遗留事项'], ['21:37', '东廊 03 号探头画面抖动，已报修'], ['22:05', 'B5 收容区读数 0.82，正常范围'], ['22:18', '接市民来电一次，已登记转办'], ['22:40', '巡查档案馆北门，门禁正常'], ['23:02', '电报室收到外勤简报 2 份']].forEach((r, i) => { const y = 64 + i * 27; c.fillStyle = o.dim; c.fillText(r[0], o.mx + 4, y); c.fillStyle = o.fg; c.fillText(r[1], o.mx + 70, y); });
+    termFoot(c, W, H, o, '值班员：　　签字待补   F2 新增  F9 打印'); },
+  (c, W, H, o) => { termHead(c, W, o, '电报收发 TLX-07', '线路 03 ●在线'); c.font = o.mono(15); c.fillStyle = o.dim; c.fillText('收报 0417   发自：外勤二组   等级：急', o.mx + 4, 62);
+    c.fillStyle = o.fg; ['ZCZC 0417 BJ', '目标区域读数回落 已撤离两名市民', '旧书店现场封存完毕 请派车接收证物', '请示：是否扩大巡查至西街', 'NNNN'].forEach((t, i) => c.fillText(t, o.mx + 4, 92 + i * 26));
+    c.fillStyle = o.dim; c.fillText('发报队列：2   回执：0416 已签收', o.mx + 4, 92 + 5 * 26 + 6); termFoot(c, W, H, o, '[F1 收报] [F2 拟稿] [F4 发送] [F8 存档]'); },
+  (c, W, H, o) => { termHead(c, W, o, '业务办理 · 主菜单', '终端 CS-02'); c.font = o.mono(17);
+    ['1  来函来访登记', '2  证明材料开具', '3  档案调阅申请', '4  遗失声明登记', '5  投诉与建议', '0  退出'].forEach((t, i) => { const y = 66 + i * 28; if (i === 2) { c.fillStyle = o.fg; c.fillRect(o.mx, y - 20, W * 0.46, 26); c.fillStyle = '#1a1208'; } else c.fillStyle = o.fg; c.fillText(t, o.mx + 8, y); });
+    c.strokeStyle = o.dim; c.strokeRect(W * 0.55, 48, W * 0.4, 170); c.fillStyle = o.dim; c.font = o.mono(14); ['申请人：', '证件号：', '事由：', '经办：'].forEach((t, i) => { c.fillText(t, W * 0.57, 76 + i * 38); c.fillRect(W * 0.66, 80 + i * 38, W * 0.26, 1); });
+    termFoot(c, W, H, o, '请输入序号后按回车'); },
+  (c, W, H, o) => { const cx = W / 2; c.strokeStyle = o.fg; c.lineWidth = 3; c.beginPath(); c.arc(cx, 138, 62, 0, 7); c.stroke(); c.fillStyle = o.fg; c.beginPath(); c.moveTo(cx, 80); c.lineTo(cx + 14, 138); c.lineTo(cx, 196); c.lineTo(cx - 14, 138); c.closePath(); c.fill();
+    c.textAlign = 'center'; c.font = o.mono(22, 700); c.fillText('叙 事 管 理 局', cx, 240); c.fillStyle = o.dim; c.font = o.mono(15); c.fillText('终端已锁定 · 请插入工作证', cx, 270); c.textAlign = 'left'; },
+];
+export const SCR_ZONE = (id) => /citizen|gate|plaza|reception/.test(id) ? [1, 4, 1, 4, 5] : /archive|library/.test(id) ? [0, 0, 4, 0, 5] : /command|security|interrog|b4|b5/.test(id) ? [2, 3, 2, 3, 0] : [0, 2, 3, 4, 1, 5];
 export function screenUI(k) {
-  if (!_scr.length) {
-    const mk = (draw) => { const cv = document.createElement('canvas'); cv.width = 512; cv.height = 320; const c = cv.getContext('2d'); draw(c, 512, 320); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.flipY = false; return new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.55, roughness: 0.25, metalness: 0 }); };
-    const head = (c, w, t) => { c.fillStyle = '#0a1426'; c.fillRect(0, 0, w, 320); c.fillStyle = '#16284a'; c.fillRect(0, 0, w, 30); c.fillStyle = '#c9a052'; c.font = '700 18px "NB Sans", sans-serif'; c.fillText(t, 12, 21); };
-    _scr.push(mk((c, w) => { head(c, w, '叙事管理局 · 档案检索系统'); c.font = '15px "NB Sans", sans-serif'; ['编号　姓名　　状态　　等级', 'A-0127　叶寻　　在册　　B', 'A-0341　周也　　外勤　　A', 'C-1102　齐仇　　收容　　—', 'X-0007　——　　无数据　—', 'A-0912　殷泽　　在册　　A'].forEach((r, i) => { c.fillStyle = i ? (i === 4 ? '#e05a4a' : '#b8c8e8') : '#7f93b8'; c.fillText(r, 16, 62 + i * 30); }); c.fillStyle = '#c9a052'; c.fillRect(16, 250, 200, 26); c.fillStyle = '#0a1426'; c.fillText('检索：第七', 24, 268); }));
-    _scr.push(mk((c, w) => { head(c, w, '现实稳定度 · 京城 24h'); c.strokeStyle = '#2a4a7a'; for (let x = 20; x < w; x += 40) { c.beginPath(); c.moveTo(x, 40); c.lineTo(x, 300); c.stroke(); } c.strokeStyle = '#5ab0ff'; c.lineWidth = 2; c.beginPath(); for (let x = 20; x < w - 10; x += 6) { const y = 150 + Math.sin(x * 0.05) * 30 + Math.sin(x * 0.17) * 10 + (x > 380 ? (x - 380) * 0.5 : 0); x === 20 ? c.moveTo(x, y) : c.lineTo(x, y); } c.stroke(); c.fillStyle = '#e8c87a'; c.font = '700 40px "NB Sans", sans-serif'; c.fillText('97.3%', 330, 90); c.fillStyle = '#e05a4a'; c.font = '15px "NB Sans", sans-serif'; c.fillText('通州区　95.8%　↓', 330, 290); }));
-    _scr.push(mk((c, w) => { head(c, w, '内部邮件'); c.font = '15px "NB Sans", sans-serif'; ['【通知】117 号：本周加试阅卷安排', '【人事】新人报到：请于 9:00 前领证', '【后勤】食堂 21:00 后不供应「回忆」', '【机要】B7 —— 无数据', '【宣传】新闻通稿第三稿待审'].forEach((r, i) => { c.fillStyle = i === 3 ? '#e05a4a' : '#cfd8ea'; c.fillText(r, 16, 66 + i * 38); c.fillStyle = '#1c2c4a'; c.fillRect(16, 76 + i * 38, w - 32, 1); }); }));
-    _scr.push(mk((c, w) => { c.fillStyle = '#05080f'; c.fillRect(0, 0, w, 320); c.strokeStyle = '#c9a052'; c.lineWidth = 3; c.beginPath(); c.arc(w / 2, 140, 60, 0, 7); c.stroke(); c.beginPath(); c.moveTo(w / 2, 70); c.lineTo(w / 2 + 14, 140); c.lineTo(w / 2, 210); c.lineTo(w / 2 - 14, 140); c.closePath(); c.fillStyle = '#c9a052'; c.fill(); c.beginPath(); c.moveTo(w / 2 - 70, 140); c.lineTo(w / 2, 126); c.lineTo(w / 2 + 70, 140); c.lineTo(w / 2, 154); c.closePath(); c.fill(); c.font = '900 20px \"NB Title\", \"NB Serif\", serif'; c.textAlign = 'center'; c.fillText('叙事管理局　·　已锁定', w / 2, 260); }));
-  }
+  if (!_scr.length) SCR_DRAW.forEach((d, i) => { const cv = termCanvas(640, 320, i % 2 === 1 && i !== 1, d); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.flipY = false; t.anisotropy = 4;
+    _scr.push(new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.85, roughness: 0.25, metalness: 0, name: 'scr' + i })); });
   return _scr[k % _scr.length];
 }
+const _crt = new Map();
+export function crtUI(k) { k %= SCR_DRAW.length; if (!_crt.has(k)) { screenUI(0); const t = _scr[k].emissiveMap.clone(); t.needsUpdate = true; // CRT 玻璃 UV 在图集 u .752–.909 / v .606–.816 一块 → repeat/offset 把整张界面铺进这块（玻璃物理 4:3，裁两侧保持不拉伸）
+    t.repeat.set(1 / 0.157 * 0.667, 1 / 0.21); t.offset.set(-0.752 / 0.157 * 0.667 + 0.1665, -0.606 / 0.21); _crt.set(k, new THREE.MeshStandardMaterial({ color: 0x000000, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: 0.85, roughness: 0.2, side: THREE.DoubleSide, name: 'crt' + k })); }
+  return _crt.get(k); }

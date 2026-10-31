@@ -2,7 +2,7 @@
 // 批次2：隔墙碰撞、门牌（铜牌）、挂画/海报（content 贴图 + 画框）、补光点灯、窗光、壁灯；金属件做旧、台灯/吊灯灯罩自发光
 import * as THREE from 'three';
 import { Batch } from '../engine/batch.js';
-import { loadTex } from '../engine/assets.js';
+import { loadTex, SCR_ZONE } from '../engine/assets.js';
 import { Props } from './dress.js';
 import { PLANS, R3 } from './r3plan.js';
 import { UPPER } from './upper.js';
@@ -38,7 +38,7 @@ export async function buildR3(ctx, world, MAT, late = false) {
     // 批次7：surface 组（宿舍/机库/地铁口/碑廊共用一个大组）里的 R3 陈设各自成子组，main.js setZone 按所在区只显示相关子组（降面数、少灯）
     let zone = zone0; if (zn === 'surface') { zone = new THREE.Group(); zone.name = 'r3_' + id; zone0.add(zone); ctx.r3groups = ctx.r3groups ?? {}; ctx.r3groups[id] = zone; }
     ctx._r3built.add(id);
-    const plan = PLANS[id](yf()); const P = new Props(), b = new Batch();
+    const plan = PLANS[id](yf()); const P = new Props(), b = new Batch(); P.scr = SCR_ZONE(id); /* 批次57：屏幕内容按区域功能 */
     for (const it of plan.items) {
       const yaw = it.yaw ?? 0;
       if (it.fixed) { if (it.col) world.box(it.x, it.y + it.col[1] / 2, it.z, it.col[0], it.col[1], it.col[2], yaw); continue; }
@@ -202,8 +202,9 @@ function crtMat(seed) { const k = seed % 6; return cvMat('crt' + k, 320, 240, (c
   const amber = k % 3 === 2, base = amber ? [255, 170, 60] : [150, 235, 170]; const g = c.createRadialGradient(W / 2, H / 2, 20, W / 2, H / 2, W * 0.62); g.addColorStop(0, `rgba(${base.map((v) => v * 0.28 | 0)},1)`); g.addColorStop(1, '#030503'); c.fillStyle = g; c.fillRect(0, 0, W, H);
   c.strokeStyle = `rgba(${base},0.55)`; c.lineWidth = 2; // 走廊监控画面（透视线框）
   if (k % 2 === 0) { const vx = W / 2 + (r() - 0.5) * 60, vy = H * 0.45; for (const [x, y] of [[18, 14], [W - 18, 14], [18, H - 14], [W - 18, H - 14]]) { c.beginPath(); c.moveTo(x, y); c.lineTo(vx, vy); c.stroke(); } c.strokeRect(vx - 40, vy - 30, 80, 60); for (let i = 1; i < 5; i++) { const t = i / 5; c.beginPath(); c.moveTo(18 + (vx - 40 - 18) * t, H - 14 + (vy + 30 - H + 14) * t); c.lineTo(W - 18 + (vx + 40 - W + 18) * t, H - 14 + (vy + 30 - H + 14) * t); c.stroke(); } }
+  else if (k === 1 || k === 3) { c.font = '15px monospace'; c.fillStyle = `rgba(${base},0.9)`; const L = k === 1 ? ['21:00 交接班 在岗6人', '21:37 东廊03 画面抖动 报修', '22:05 B5 读数0.82 正常', '22:40 档案馆北门 巡查正常', '23:02 收外勤简报2份'] : ['ZCZC 0417 BJ 急', '读数回落 已撤离市民2名', '旧书店现场封存完毕', '请派车接收证物', 'NNNN  回执0416已签']; L.forEach((t, i) => c.fillText(t, 30, 74 + i * 30)); c.fillText(k === 1 ? '值班日志' : '电报 TLX-07', W - 130, H - 26); } // 批次57：指挥中心台屏加值班日志 / 电报
   else { c.beginPath(); for (let x = 20; x < W - 20; x += 4) c.lineTo(x, H * 0.55 + Math.sin(x * 0.05 + k) * 30 * r()); c.stroke(); for (let y = 40; y < H - 20; y += 30) { c.globalAlpha = 0.25; c.beginPath(); c.moveTo(20, y); c.lineTo(W - 20, y); c.stroke(); c.globalAlpha = 1; } }
-  c.fillStyle = `rgba(${base},0.9)`; c.font = '700 18px monospace'; c.fillText(['3F-07', 'B2-11', '东廊-03', '广场-01', 'B5-02', '机库-04'][k], 30, 38); c.fillText('●REC', W - 90, 38);
+  c.fillStyle = `rgba(${base},0.9)`; c.font = '700 18px monospace'; c.fillText(['3F-07', 'B2-11', '东廊-03', '广场-01', 'B5-02', '机库-04'][k], 30, 38); if (k !== 1 && k !== 3) c.fillText('●REC', W - 90, 38);
   for (let y = 0; y < H; y += 3) { c.fillStyle = 'rgba(0,0,0,0.28)'; c.fillRect(0, y, W, 1); } c.restore();
   c.strokeStyle = '#2a2b28'; c.lineWidth = 10; c.strokeRect(5, 5, W - 10, H - 10); }, 0.9); }
 function mapWallMat(title, aspect, seed) { return cvMat('map' + seed, 1536, Math.round(1536 / aspect), (c, W, H) => { const r = rnd(seed * 31 + 5);
