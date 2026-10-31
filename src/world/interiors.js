@@ -474,7 +474,8 @@ function buildHall(zone, world, ctx, M, add) {
 // ---------------- R2 精修安检大厅（tools/blender/hall.py → bake_lm.py：Cycles 烘焙光照贴图 + 反射探针）----------------
 function heroHall(zone, world, ctx, M) {
   const Y = FLOOR;
-  ctx.heroHallJob = placeHero(zone, world, './assets/hero/hero_hall.glb', { mats: hallMats(), lm: './assets/hero/hero_hall_lm.webp', lmInPlace: true, lmOpts: { intensity: 1.0, rgbmRange: 8.0 }, castShadow: false });
+  ctx.heroHallJob = placeHero(zone, world, './assets/hero/hero_hall.glb', { mats: hallMats(), lm: './assets/hero/hero_hall_lm.webp', lmInPlace: true, lmOpts: { intensity: 1.0, rgbmRange: 8.0 }, castShadow: false, cut: [-1, 1].map((sx) => ({ mats: ['leatherBlack', 'steel'], box: [sx > 0 ? 14.2 : -15.6, Y - 0.2, -64.2, sx > 0 ? 15.6 : -14.2, Y + 1.3, -56.8] })) /* 批次33：两侧廊黑皮机场排椅（hall.py beam_seating ±14.9, z −59/−62）删掉，换 wait_bench_6080 */ });
+  for (const sx of [-1, 1]) for (const z of [-59.0, -62.2]) placeModel('r2/wait_bench_6080', { width: 2.9, rotY: -sx * Math.PI / 2, pos: [sx * 14.95, Y, z] }).then((o) => { zone.add(o); world.boundsOf?.(o, 0.85); }); // 坐面朝中殿，两张成排
   ctx.hallFloorMats = [hallMats().floorNave, hallMats().marbleDark, hallMats().floorAisle];
   // 吊挂指示牌文字（牌体在 GLB 里，双面金字）
   const signs = [[0, Y + 6.2, -36.2, 7.2, 0.75, 0, '安 检 通 道　　SECURITY'], [-14.7, Y + 4.6, -50.5, 3.6, 0.6, Math.PI / 2, '← 人事档案馆'], [14.7, Y + 4.6, -46.0, 3.6, 0.6, Math.PI / 2, '东翼　市民服务 →'], [14.7, Y + 4.4, -70.5, 3.2, 0.6, Math.PI / 2, '人工复检']];
@@ -881,9 +882,11 @@ function tagMat(name) {
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.8 });
 }
 /** 边几 + 摊开档案夹 + 回形针证件照 + 打字机名签；(x, z) 为边几中心（person 局部坐标，面朝 +Z） */
+let _oldBronze = null;
 function dossierStand(g, M, name, x, z, flip = false) { // flip：相框朝 −Z（周闻：椅前是值班长台，玩家从椅后平台过来）
   const k = IDPHOTO[name]; if (!k) return;
-  const wood = M.wood ?? new THREE.MeshStandardMaterial({ color: 0x4a3020, roughness: 0.6 }); const brass = M.brass ?? M.gold;
+  const wood = M.wood ?? new THREE.MeshStandardMaterial({ color: 0x4a3020, roughness: 0.6 });
+  const brass = (_oldBronze ??= new THREE.MeshStandardMaterial({ color: 0x5a4630, metalness: 0.8, roughness: 0.6 })); // 批次33：旧铜（原 M.brass 偏亮橙）
   const kraft = new THREE.MeshStandardMaterial({ color: 0xa47e4e, roughness: 0.9 });
   const add = (geo, m, px, py, pz, rx = 0, ry = 0, rz = 0) => { const me = new THREE.Mesh(geo, m); me.position.set(x + px, py, z + pz); me.rotation.set(rx, ry, rz); me.castShadow = me.receiveShadow = true; g.add(me); return me; };
   const TOP = 0.62; // 批次32：几面放大 0.56×0.42 → 0.62×0.52，后半放立式铜框相片座，前半摊档案夹
@@ -954,7 +957,7 @@ export function person(M, { coat = 0x1a1d26, cap = false, material = null, clue 
     placeModel('r4/exam_chair', { height: 0.84 }).then((o) => { o.traverse((m) => { if (m.isMesh) m.castShadow = m.receiveShadow = true; }); g.add(o); });
     placeModel('r4/wool_coat', { height: 0.886 }).then((o) => { o.position.set(0, 0.01, -0.28); g.add(coatTint(o)); });
     if (cap) add(new THREE.CylinderGeometry(0.11, 0.12, 0.06, 16), cloth, 0.08, 0.485, 0.06);
-    if (name) dossierStand(g, M, name, 0.62, 0.05, flipDossier); // 批次31（用户 07:20）：证件照从椅上拿掉 → 椅旁边几上的人事档案夹
+    if (name) dossierStand(g, M, name, 0.62, flipDossier ? -0.14 : 0.05, flipDossier); /* 批次33：周闻（flip）边几后移 19 cm，离值班台 ≈28 cm */ // 批次31（用户 07:20）：证件照从椅上拿掉 → 椅旁边几上的人事档案夹
     return g; }
   if (clue === 'coat' || clue === 'hanger') { // 衣帽架 / 制服挂架
     if (clue === 'coat') { add(new THREE.CylinderGeometry(0.02, 0.025, 1.75, 10), wood, 0, 0.875, 0); add(new THREE.CylinderGeometry(0.2, 0.22, 0.03, 20), wood, 0, 0.015, 0);

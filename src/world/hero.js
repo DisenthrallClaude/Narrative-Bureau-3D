@@ -156,6 +156,19 @@ export function hallMats() {
  * 载入精修 GLB 到 group：按材质名换材质；*_col.glb 作碰撞几何。
  * opts.vao：顶点 AO；opts.lm：光照贴图 url；opts.mats：材质表
  */
+function cutTris(o, b) { // b = [x0,y0,z0,x1,y1,z1] 世界坐标；三角形心落在盒内则删（非索引化后重建）
+  o.updateMatrixWorld(true); let geo = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone();
+  const P = geo.attributes.position, v = new THREE.Vector3(), keep = [];
+  for (let t = 0; t < P.count; t += 3) { v.set(0, 0, 0); for (let k = 0; k < 3; k++) v.add(new THREE.Vector3().fromBufferAttribute(P, t + k)); v.multiplyScalar(1 / 3).applyMatrix4(o.matrixWorld);
+    if (!(v.x > b[0] && v.x < b[3] && v.y > b[1] && v.y < b[4] && v.z > b[2] && v.z < b[5])) keep.push(t); }
+  if (keep.length * 3 === P.count) return;
+  const out = new THREE.BufferGeometry();
+  const G = ['getX', 'getY', 'getZ', 'getW'];
+  for (const [name, a] of Object.entries(geo.attributes)) { const n = a.itemSize, arr = new Float32Array(keep.length * 3 * n);
+    keep.forEach((t, i) => { for (let j = 0; j < 3; j++) for (let k = 0; k < n; k++) arr[(i * 3 + j) * n + k] = a[G[k]](t + j); }); out.setAttribute(name, new THREE.BufferAttribute(arr, n)); }
+  out.computeBoundingSphere(); out.computeBoundingBox(); o.geometry = out; console.log('[NB] cutTris', o.name, P.count / 3 - keep.length);
+}
+
 export async function placeHero(group, world, url, opts = {}) {
   const [g, gc] = await Promise.all([loadGLB(url), opts.col !== false ? loadGLB(url.replace('.glb', '_col.glb')) : Promise.resolve(null)]);
   if (!g) return null;
@@ -166,6 +179,7 @@ export async function placeHero(group, world, url, opts = {}) {
   g.scene.traverse((o) => {
     if (!o.isMesh) return;
     const mn = (o.material?.name || '').replace(/\.\d+$/, '');
+    if (opts.cut) for (const c of opts.cut) if (c.mats.includes(mn)) cutTris(o, c.box); // 批次33：按世界包围盒删掉烘焙进 GLB 的某些摆件三角
     let m = table[mn];
     if (!m) { missing.add(mn); m = table.trim ?? o.material; }
     if (lm && !/^(glass|screenEmit|COL)/.test(mn)) { if (opts.lmInPlace) { if (!m.userData.lm) lightmapPatch(m, lm, opts.lmOpts); } else { const key = mn + '|lm'; table[key] = table[key] ?? lightmapPatch(m.clone(), lm, opts.lmOpts); m = table[key]; } }
