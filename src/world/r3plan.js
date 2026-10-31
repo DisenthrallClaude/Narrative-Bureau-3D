@@ -2265,11 +2265,12 @@ export function planCitizenService(y) {
   out.push({ box: 'dz_wain', x: 34.3, y: y + 4.58, z: -52.42, w: 27.4, h: 0.18, d: 0.16, uv: 0.5, tag: '檐线', on: 'partv' });
   out.push({ box: 'dz_brassDim', x: 34.3, y: y + 4.475, z: -52.335, w: 27.4, h: 0.025, d: 0.02, tag: '檐线', on: 'partv' });
   out.push({ wtext: '全 心 全 意　为 市 民 叙 事 服 务', x: 34.3, y: y + 5.55, z: -52.48, yaw: 0, w: 10.5, h: 0.72, size: [10.9, 0.92, 0.1], tag: '标语', on: 'pic' });
+  // 批次43：cs_r3_b（批次41 回图）挂钟 / 公示栏在南墙仍偏小 → 挂钟 1.35 → 1.6 m（再大挂钟模型进深超墙，r3plan 越界 / 离墙二选一）、公示栏 1.7×2.25 → 2.1×2.5（中心 x 28.9 / 41.1，夹在 3.55 / 6.25 两道线脚之间），画灯随之上移加宽
   // 批次39：cs_r3_b 看图——挂钟 / 公示栏远看偏小偏暗 → 挂钟 0.9 → 1.35 m、公示栏 1.2×1.6 → 1.7×2.25（中心 x 29.2 / 40.8 让开挂钟），各补一盏洗墙射灯 + 挂钟顶灯；石线脚改米灰石灰岩
-  out.push({ m: 'r2/old_wall_clock', x: 35, y: y + 4.85, z: -32.56, yaw: ROT.N, h: 1.35, tag: '挂钟', on: 'wall' });
-  pic(out, 'textures/b01/T01_正门大厅告示牌.png', 29.2, y + 4.75, -32.45, Math.PI, 1.7, 2.25, 'wood', { tag: '公示栏' });
-  pic(out, 'textures/b01/B01_18_档案馆规章铜牌.png', 40.8, y + 4.75, -32.45, Math.PI, 1.7, 2.25, 'wood', { tag: '公示栏' });
-  for (const x of [29.2, 40.8]) { light(out, x, y + 6.1, -33.6, 0xfff0dc, 1.6, 5); out.push({ box: 'dz_brassDim', x, y: y + 6.02, z: -32.62, w: 0.9, h: 0.05, d: 0.22, tag: '画灯', on: 'partv' }); out.push({ box: 'r3_globe', x, y: y + 5.98, z: -32.72, w: 0.8, h: 0.025, d: 0.05, tag: '画灯', on: 'partv' }); }
+  out.push({ m: 'r2/old_wall_clock', x: 35, y: y + 4.85, z: -32.59, yaw: ROT.N, h: 1.6, tag: '挂钟', on: 'wall' });
+  pic(out, 'textures/b01/T01_正门大厅告示牌.png', 28.9, y + 4.9, -32.45, Math.PI, 2.1, 2.5, 'wood', { tag: '公示栏' });
+  pic(out, 'textures/b01/B01_18_档案馆规章铜牌.png', 41.1, y + 4.9, -32.45, Math.PI, 2.1, 2.5, 'wood', { tag: '公示栏' });
+  for (const x of [28.9, 41.1]) { light(out, x, y + 6.1, -33.6, 0xfff0dc, 1.8, 5.5); out.push({ box: 'dz_brassDim', x, y: y + 6.02 + 0.1, z: -32.62, w: 1.1, h: 0.05, d: 0.22, tag: '画灯', on: 'partv' }); out.push({ box: 'r3_globe', x, y: y + 5.98 + 0.1, z: -32.72, w: 1.0, h: 0.025, d: 0.05, tag: '画灯', on: 'partv' }); }
   light(out, 35, y + 6.0, -33.8, 0xfff0dc, 1.4, 5);
   for (const yy of [3.55, 6.25]) out.push({ box: 'r3_limestone', x: 35, y: y + yy, z: -32.47, w: 30.6, h: 0.12, d: 0.1, uv: 0.5, tag: '线脚', on: 'partv' });
   // 批次39：cs_r3_e 看图——stoneDark 线脚在黑大理石墙上几乎看不出 → 米灰石灰岩 r3_limestone；批次38：东墙两樘尖拱高窗（z −36 / −44.6，窗洞 y+2.0…4.6，eastwing.js）补线脚——石窗台 + 两侧石贴脸 + 拱顶滴水檐 + 拱心石；墙面 y+4.95（拱顶上）/ 6.25 两道通长石线脚，与南墙同高同料
