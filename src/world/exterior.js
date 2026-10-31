@@ -711,6 +711,23 @@ function shopSigns(g, mods, at, Y0) {
     L.forEach(([fr, th, yaw], i) => { const sd = Math.abs(((yaw - th) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)) > 1 ? 1 : -1; const [x, z] = at(fr - sd * 0.38, th); q.setFromAxisAngle(up, yaw); m4.compose(new THREE.Vector3(x, Y0 + 3.6, z), q, one); im.setMatrixAt(i, m4); });
     im.computeBoundingSphere(); im.userData.noCull = true; im.frustumCulled = false; im.castShadow = false; im.receiveShadow = true; g.add(im); });
 }
+// 批次38：南大道路口（内圈 R160 环路与南轴相接处）两侧成组街具——外侧人行道上 60–80 年代铁皮候车亭（Blender 精建 r2/bus_shelter_6080，前 +Z 朝车行道）+ 人行道后报刊亭（复用 r2/simple_90_s_kiosk）+ 旋转报架 + 垃圾桶；东西对称成组，不随机
+function busStops(g, at, Y0) {
+  const sign = (() => { const cv = document.createElement('canvas'); cv.width = 384; cv.height = 576; const c = cv.getContext('2d');
+    c.fillStyle = '#f2efe6'; c.fillRect(0, 0, 384, 576); c.fillStyle = '#a3170f'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.font = '900 64px "NB Title", "NB Serif", serif'; c.fillText('公共汽车', 192, 70); c.fillRect(30, 118, 324, 6);
+    c.fillStyle = '#1a1a1a'; c.font = '900 58px "NB Title", "NB Serif", serif'; c.fillText('局南门站', 192, 186);
+    c.font = '700 40px "NB Serif", serif'; ['3 路  南站—局北门', '11 路  环城路', '24 路  地铁B口'].forEach((t, i) => c.fillText(t, 192, 278 + i * 66));
+    c.fillStyle = '#a3170f'; c.fillRect(30, 470, 324, 4); c.fillStyle = '#333'; c.font = '600 32px "NB Serif", serif'; c.fillText('首班 5:30　末班 22:00', 192, 516);
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.6 }); })();
+  for (const sx of [1, -1]) {
+    const put = (name, r, arc, h, extra) => { const th = sx * arc / r; const [x, z] = at(r, th); placeModel(name, { height: h, pos: [x, Y0 + 0.1, z], rotY: th + Math.PI }).then((w) => { w.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); w.userData.noCull = true; g.add(w); extra?.(w); }); };
+    put('r2/bus_shelter_6080', 168.6, 34, 3.02, (w) => { const o = w.children[0]; const m = new THREE.Mesh(new THREE.PlaneGeometry(0.54, 0.81), sign); m.position.set(2.35 + o.position.x, 1.95, 0.75 + 0.032 + o.position.z); w.add(m); });
+    put('r2/simple_90_s_kiosk', 173.2, 41.5, 2.6);
+    put('r2/44_pocket_rotating_newspaper_stand', 171.2, 45.2, 1.6);
+    put('r2/garbage_bin', 169.2, 38.4, 1.0);
+  }
+}
 function buildStreetRows(g, M, place, rnd) {
   const hs = (k) => { const x = Math.sin(k * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
   const boxG = new THREE.BoxGeometry(1, 1, 1); boxG.translate(0, 0.5, 0);
@@ -857,7 +874,7 @@ function buildStreetRows(g, M, place, rnd) {
       const lawn = new THREE.Mesh(new THREE.RingGeometry(125, 149, 48, 1, st, T1 - T0), gm); lawn.rotation.x = -Math.PI / 2; lawn.position.set(0, Y0 + 0.08, -35); lawn.receiveShadow = true; lawn.userData.noCull = true; g.add(lawn);
       for (const r of [124.7, 149.3]) { const kerb = new THREE.Mesh(new THREE.RingGeometry(r - 0.3, r + 0.3, 48, 1, st, T1 - T0), curbMat); kerb.rotation.x = -Math.PI / 2; kerb.position.set(0, Y0 + 0.12, -35); kerb.userData.noCull = true; g.add(kerb); }
       for (const r of [129, 145]) for (let a = T0 + 6 / r; a <= T1 - 4 / r; a += 12 / r) { const th = sgn * a; const [x, z] = at(r, th); tallTrees.push([x, z, th]); } } }
-  streetModules(g, mods, at, Y0); shopSigns(g, mods, at, Y0); console.log('[NB] 街屋模块实例', mods.length, '高干行道树', tallTrees.length);
+  streetModules(g, mods, at, Y0); shopSigns(g, mods, at, Y0); busStops(g, at, Y0); console.log('[NB] 街屋模块实例', mods.length, '高干行道树', tallTrees.length);
   if (tallTrees.length) loadModel('r2/street_tree_tall').then((src) => { src.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(src); const sc = 9.5 / Math.max(0.01, bb.max.y - bb.min.y), S = new THREE.Vector3(sc, sc, sc), tq = new THREE.Quaternion();
     src.traverse((o) => { if (!o.isMesh) return; const geo = o.geometry.clone(); for (const n of ['position', 'normal']) { const a = geo.getAttribute(n); if (!a || (a.array instanceof Float32Array && !a.normalized && !a.isInterleavedBufferAttribute)) continue; const f = new Float32Array(a.count * 3); for (let i = 0; i < a.count; i++) { f[i * 3] = a.getX(i); f[i * 3 + 1] = a.getY(i); f[i * 3 + 2] = a.getZ(i); } geo.setAttribute(n, new THREE.BufferAttribute(f, 3)); } /* 批次34 修：street_tree_tall 是 meshopt 量化 glb（Int16 归一化坐标），直接 applyMatrix4 会把米制坐标截断到 ±1 → 树缩成地上一团（ext_house 看图）；先解量化成 Float32 */ geo.applyMatrix4(o.matrixWorld); geo.translate(0, -bb.min.y, 0);
       let mat = o.material; if (/trunk/.test(mat?.name || '')) { // 批次35：树干原贴图纵向拉伸、偏红 → ambientCG Bark007（CC0）按真实米制柱面重映射：u = 角度 × 半径 / 0.6 m、v = 高度 / 0.9 m（树高 9.5 m 缩放后）
