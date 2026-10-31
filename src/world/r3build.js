@@ -163,6 +163,7 @@ export async function buildR3(ctx, world, MAT, late = false) {
         const nm = m.name.slice(6);
         if (nm.includes('ceiling_light') || nm.includes('smoke')) m.castShadow = false;
         if (nm.includes('18th_century_bench')) { const tint = (x) => { const c = x.clone(); c.color = new THREE.Color(0x5a3f30); return c; }; m.material = Array.isArray(m.material) ? m.material.map(tint) : tint(m.material); } // 批次13：歌剧院长凳粉色绒面 + 白漆框 → 压成深胡桃木 + 暗酒红
+        if (nm === 'r2/metal_stool_01') { const re = (x) => { const c = x.clone(); c.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n{ vec3 q = diffuseColor.rgb; float rr = q.r - max(q.g, q.b); if (rr > 0.06) { float l = dot(q, vec3(0.3, 0.59, 0.11)); diffuseColor.rgb = mix(q, vec3(0.30, 0.19, 0.115) * (0.55 + l * 2.4), smoothstep(0.06, 0.16, rr)); } }'); }; c.customProgramCacheKey = () => 'stoolBrown'; return c; }; m.material = Array.isArray(m.material) ? m.material.map(re) : re(m.material); } // 批次57：高脚凳红面 → 棕皮（只换偏红像素，铁腿不动）
         if (AGE[nm]) m.material = Array.isArray(m.material) ? m.material.map((x) => ageMat(x, nm)) : ageMat(m.material, nm);
         if (nm.includes('bankers_lamp') || nm.includes('ceiling_light')) m.material = Array.isArray(m.material) ? m.material.map((x) => glowMat(x, nm)) : glowMat(m.material, nm);
       }

@@ -56,7 +56,7 @@ export function dressMats(M) {
     dz_parquet: W(new THREE.MeshStandardMaterial({ map: parquet(), roughness: 0.42, envMapIntensity: 0.5 }), { macro: 0.15, dust: 0.15 }),
     dz_rugRed: new THREE.MeshStandardMaterial({ map: rugTex('#6a1c1f', '#2e0e11', '#b08a40'), normalMap: loadTex('assets/tex/Carpet012g_normal.webp', { repeat: [7, 7] }), normalScale: new THREE.Vector2(0.6, 0.6), roughness: 1 }), // 批次12：原底 #4a1418 + 边 #1a1a2a（蓝黑）在暖光下发黑 → 提亮酒红、边改深牛血红，加 Carpet012g 绒面法线
     dz_rugNavy: new THREE.MeshStandardMaterial({ map: rugTex('#14203e', '#3a1014', '#b08a40'), roughness: 1 }),
-    dz_rugGreen: new THREE.MeshStandardMaterial({ map: rugTex('#163024', '#121418', '#a08040'), roughness: 1 }),
+    dz_rugGreen: new THREE.MeshStandardMaterial({ map: rugTex('#4e2a20', '#1e1410', '#a8885a'), roughness: 1 }), // 批次57：墨绿地毯 → 酒红褐底 + 驼色纹（名字沿用避免改引用）
     dz_paper: new THREE.MeshStandardMaterial({ color: 0xe6dfcc, roughness: 0.85 }),
     dz_paper2: new THREE.MeshStandardMaterial({ color: 0xd8cfb4, roughness: 0.85 }),
     dz_bakelite: new THREE.MeshStandardMaterial({ color: 0x0b0b0d, roughness: 0.25, metalness: 0.1 }),
@@ -118,7 +118,7 @@ export function dressMats(M) {
     r3_consoleSteel: W(new THREE.MeshStandardMaterial({ color: 0x5a6356, roughness: 0.55, metalness: 0.35, envMapIntensity: 0.5 }), { macro: 0.18, grime: 0.3, tarnish: 0.2 }), // 批次16：监控台灰绿喷漆钢
     r3_clerestory: new THREE.MeshStandardMaterial({ color: 0x7a817f, emissive: 0xb4bec2, emissiveIntensity: 0.1, roughness: 0.55 }), // 批次17：exam_top 看图 0.22 仍像白灯箱 → 底色压到中灰、自发光 0.1。批次16：阅卷中心北墙高窗磨砂天光
     r3_warnRed: new THREE.MeshStandardMaterial({ color: 0x5a0a08, emissive: 0xff2a18, emissiveIntensity: 2.2, roughness: 0.4 }), // 批次19 B3：收容格警示灯
-    r3_rackGreen: W(new THREE.MeshStandardMaterial({ color: 0x3b463f, roughness: 0.55, metalness: 0.45, envMapIntensity: 0.45 }), { macro: 0.2, grime: 0.35, tarnish: 0.3, ground: 1.0 }), // 批次19 B3：深灰绿钢架（替代蓝橙仓储货架）
+    r3_rackGreen: W(new THREE.MeshStandardMaterial({ color: 0x4a3c30 /* 批次57：深灰绿 → 暗铜褐 */, roughness: 0.55, metalness: 0.45, envMapIntensity: 0.45 }), { macro: 0.2, grime: 0.35, tarnish: 0.3, ground: 1.0 }), // 批次19 B3：深灰绿钢架（替代蓝橙仓储货架）
     r3_bunkerConc: W(phm('concrete_wall_008', { color: 0x8a8a84, env: 0.25 }), { macro: 0.3, grime: 0.45, streak: 0.35, ground: 1.2 }), // 批次19 B3：收容格隔墙混凝土
     r3_crateOlive: W(new THREE.MeshStandardMaterial({ color: 0x4d5639, roughness: 0.62, metalness: 0.35, envMapIntensity: 0.4 }), { macro: 0.2, grime: 0.3, tarnish: 0.2, ground: 0.6 }), // 批次20 B3：军绿涂装钢证物箱（替代暖光下像藤箱的黑铝箱）
     r3_crateGrey: W(new THREE.MeshStandardMaterial({ color: 0x6f7678, roughness: 0.5, metalness: 0.5, envMapIntensity: 0.45 }), { macro: 0.2, grime: 0.25, tarnish: 0.25 }), // 批次20 B3：冷灰涂装钢证物箱
