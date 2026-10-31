@@ -13,6 +13,7 @@ import { vaultMats, tagMaterial } from './vault.js';
 import { dressMats, Props, hangingSign, paperStack, folderStack, greenLamp, spineMaterial, spineShelf } from './dress.js';
 import { m5Mats } from './dress_m5.js';
 import { UNDER } from './rooms.js';
+import { buildM1Seventh } from './m1_seventh.js';
 
 export const AY = -300, SY = -500; // 墨渊 / 装订线 地坪
 const rnd = (() => { let s = 23; return () => ((s = (s * 16807) % 2147483647) / 2147483647); })();
@@ -218,6 +219,7 @@ export async function buildDepths(scene, world, ctx) {
       if (i % 8 === 4) point(zone, 0xc02018, 3, [mid.x, Y + 6.5, mid.z], 9); }
     b.add('dp_red', new THREE.TubeGeometry(new THREE.CatmullRomCurve3(gpts.map((p) => p.clone().setY(Y + 7.6))), 80, 0.05, 5), null, { uv: false });
     { const p = gcur.getPoint(0.5); const mt = plane(zone, docMat('doc_gutter_mirror_text', new THREE.MeshStandardMaterial({ map: cvTex(512, 256, (c, w, h) => { c.fillStyle = '#e9e1cc'; c.fillRect(0, 0, w, h); c.save(); c.translate(w, 0); c.scale(-1, 1); c.fillStyle = '#5a1010'; c.font = '900 40px "NB Title", "NB Serif", serif'; c.fillText('第七局人员守则', 40, 70); c.font = '28px "NB Serif", serif'; c.fillText('一、我们不存在', 40, 130); c.fillText('二、所以我们记得', 40, 180); c.restore(); }), roughness: 0.9 })), 2.6, 1.3, p.x - 1.74, Y + 2.4, p.z, Math.PI / 2 * 0 + Math.atan2(1, 0)); anchor('doc_gutter_mirror_text', mt, 3); }
+    jobs.push(buildM1Seventh(zone, world, Y, gcur, D, M)); // 批次 M1：入口 + 回廊 Blender 精建壳（m1_seventh.js）
     // 作战室 seventh_ops（z −112…−134，x −10…10）
     const room = (z0, z1, x0, x1, h, floor = 'dp_kraft') => { b.box(floor, x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, Y - 0.15, (z0 + z1) / 2], { uv: 0.45, collide: true }); b.box('dp_kraft', x1 - x0, 0.3, z0 - z1, [(x0 + x1) / 2, Y + h + 0.15, (z0 + z1) / 2], { uv: 0.2 }); /* M6：页缝天花（纸背）而非纯黑 */ for (const x of [x0, x1]) b.box('dp_kraft', 0.4, h, z0 - z1, [x, Y + h / 2, (z0 + z1) / 2], { uv: 0.45, collide: true }); };
     room(-112, -134, -10, 10, 6);
