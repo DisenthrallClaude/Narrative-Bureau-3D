@@ -230,6 +230,8 @@ b579016 菜单实时 3D 机位 + menu_hero 机位；dc5a93d（羊皮纸手机 / 
 - **民居**（src/world/exterior.js 街屋循环，仅 R160 内圈即局旁）：`'ABACABAD'[k%8]`——A 12 m 3 层坡顶红褐砖 + 中间阳台 + 陶瓦褐屋面；B 9 m 2 层平顶 + 0.9 m 女儿墙、米灰水刷石、只开窗；C 15 m 4 层坡顶暖灰抹灰 + 隔层阳台 + 临街坡两个老虎窗；D 9 m 2 层深木构竖板 + 坡顶。材质经新增实例属性 aTyp 传给 houseMat 着色器（aTyp=0 时回落原位置 hash）；冷灰抹灰全局改暖灰。底层店面雨棚 / 店招沿用原模块。未用 Blender（无新模型）。ext_house（ABAC 版）看图：红褐砖 3 层带阳台、灰色 4 层带老虎窗成排可见，黄昏下砖色偏粉。
 - 截图：41211196197（a cs_r3 / b cs_win / c archive_loan / d cc_r3_c / e pub_edit / f liaison_office / g ext_house / w walk，ed0d416）、41211491299（h ext_house / i ext_street，798f5ca 含 D）。批次56 的 41210206261 cs_r3 超 25 分钟已取消（archive_r3 已取回：work/r3/b56/r41210206261/b/）。取图 `bash tools/gh_shots_fetch.sh <run> work/r3/b57/r<run>`。
 
+- 收尾核对（22:59）：walk 31/31 控制台 0（lead-58 的 41212165022 跑在 a16a1ab，已含本批全部提交）；Pages 51fb6f0 success（含 efcb60b）；Drive 快照 v01 1RBvM49kfB7CP1XIVJauLkGNnIoEk_M-0 / v02 1M5nyt0ZhAzVG8rUc5y3cpzNfL7DemRoE / v03 19fxS24F0-sSt9J_84JC8oSzlzEHR5MDY / v04 1KqFxj7i5-Uk06JxOPcsNuHx_Ba6-FSBB（先删旧卷）；拼图 work/r3/b57/sheet.jpg（8 张）。**cs_r3 长椅在 41211196197 a 组截至 22:59 仍未出图 → 长椅是否仍插屏风未验收**，下批先取该 artifact。
+
 ## R3 批次56（2026-10-31 22:21 CST，审计批）
 - 提交 fa76cb3：候号座椅 4.2→3.7 m、5 号窗等候 4.2→3.5 m 东移（离屏风 ≥0.75 m）；全局去红配绿 8 个材质（档案馆灰绿墙→米灰 0x8c8274 等，详见 docs/AUDIT-56.md §5）；tools/audit56.sh + audit56.py；docs/AUDIT-56.md。
 - 批次57 取图：archive_r3 档案馆大墙已是米灰暖调（不再灰绿）。
