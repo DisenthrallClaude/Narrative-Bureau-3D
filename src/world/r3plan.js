@@ -1582,6 +1582,7 @@ export function planDorm3(y0) {
 export const PLANS = { floor3_office: (Y) => fixYaw(planFloor3Office(Y)), floor2_liaison: (Y) => fixYaw(planFloor2Liaison(Y)), floor2_pub: (Y) => fixYaw(planFloor2Pub(Y)), director: (Y) => fixYaw(planDirector(Y)), gate: (Y) => fixYaw(planGate(Y)), archive: (Y) => fixYaw(planArchive(Y)), command_center: withX6('command_center', (Y) => fixYaw(planCommand(Y))), canteen: (Y) => fixYaw(planCanteen(Y)), b1: (Y) => fixYaw(planB1(Y)), b2: (Y) => fixYaw(planB2(Y)), archive_b1: (Y) => fixYaw(planArchiveB1(Y)), b4: withX6('b4', (Y) => fixYaw(planB4(Y))), b5: withX6('b5', (Y) => fixYaw(planB5(Y))), b6: withX6('b6', (Y) => fixYaw(planB6(Y))), b7: withX6('b7', (Y) => fixYaw(planB7(Y))), medical: withX6('medical', (Y) => fixYaw(planMedical(Y))), dorm: (Y) => fixYaw(planDorm(Y)), dorm2: (Y) => fixYaw(planDorm2(Y)), dorm3: (Y) => fixYaw(planDorm3(Y)), interrogation: (Y) => fixYaw(planInterrogation(Y)), hangar: (Y) => fixYaw(planHangar(Y)), security_hall: (Y) => fixYaw(planSecurityHall(Y)), plaza: (Y) => fixYaw(planPlaza(Y)) };
 
 // ================= 批次7 · 新做区：训练场 / 地铁口 / 无字碑廊 / 第七局（作战室·杀青室）/ 墨渊（倒悬书城·考场母本） =================
+const M9_TR = typeof location !== 'undefined' && !new URLSearchParams(location.search).has('nom9'); // 批次 M9：训练场讲台/器材柜改 Blender hero（m9_training.js）
 const F7 = (out, label, x, z, w, d, y, yaw = 0, h = 1) => out.push({ fixed: true, m: '固定:' + label, x, y, z, yaw, size: [w, h, d], col: [w, h, d], tag: label, on: 'floor' });
 // —— B6 训练场主场（x −32…32，z −156…−92，层高 16）——
 export function planTraining(y) {
@@ -1609,7 +1610,7 @@ export function planTraining(y) {
   stanchions(out, [[-2.9, -98.0], [-2.9, -101.0], [-2.9, -104.0]], y, '分流'); stanchions(out, [[2.9, -98.0], [2.9, -101.0], [2.9, -104.0]], y, '分流');
   // ② 战术简报区：控制塔成绩榜（南面）前 4 排 × 4 课桌（中间过道 x −22），讲台 + 立式黑板 + 投放调度单
   { let k = 0; for (const z of [-106.4, -108.2, -110.0, -111.8]) for (const x of [-25.9, -24.5, -19.5, -18.1]) { out.push({ m: 'r2/schooldesk_01', x, y, z, yaw: Math.PI, w: 0.7, tag: '简报区', on: 'floor', col: [0.7, 0.75, 0.5] }); if (k % 5 !== 3) out.push({ m: 'r2/schoolchair_01', x: x + (hash(x, z) - 0.5) * 0.08, y, z: z - 0.5, yaw: (hash(z, x) - 0.5) * 0.12, h: 0.82, tag: '简报区', on: 'floor' }); k++; } }
-  out.push({ m: 'r2/lectern', x: -22, y, z: -104.0, yaw: Math.PI, h: 1.15, tag: '简报区', on: 'floor', col: [0.6, 1.15, 0.5] });
+  if (M9_TR) F7(out, '讲台（M9 hero）', -22, -104.0, 0.82, 0.64, y, Math.PI, 1.15); else out.push({ m: 'r2/lectern', x: -22, y, z: -104.0, yaw: Math.PI, h: 1.15, tag: '简报区', on: 'floor', col: [0.6, 1.15, 0.5] });
   out.push({ m: 'r2/standing_chalkboard_01', x: -16.4, y, z: -106.6, yaw: -2.2, h: 1.8, tag: '简报区', on: 'floor' });
   floorZ(out, 'r3_epoxy', -27.2, -16.6, -113.0, -103.2, y, { border: 0.12, bmat: 'r3_paintYellow' });
   for (const z of [-106, -111]) light(out, -22, y + 4.0, z, 0xfff2e0, 2.0, 9);
@@ -1617,7 +1618,7 @@ export function planTraining(y) {
   for (const z of [-107.0, -109.0]) out.push({ m: 'office_desk', x: 7.6, y, z, yaw: ROT.E, h: 0.76, tag: '领用柜台', on: 'floor', col: [0.91, 0.76, 1.93] });
   for (const [z, m, sz] of [[-106.4, 'r2/metal_toolbox', { w: 0.42 }], [-107.4, 'r2/signal_flashlight', { w: 0.25 }], [-108.3, 'r2/binoculars', { w: 0.2 }], [-109.4, 'r2/medical_box', { w: 0.4 }]]) out.push({ m, x: 7.5, y: y + 0.76, z, yaw: ROT.W, ...sz, tag: '领用柜台', on: 'desk' });
   out.push({ m: 'r2/old_computer_chair', x: 8.5, y, z: -108.0, yaw: ROT.W, h: 0.92, tag: '领用柜台', on: 'floor' });
-  for (let k = 0; k < 5; k++) out.push({ m: 'r2/locker_equipment', x: 12.7, y, z: -103.6 - k * 1.12, yaw: ROT.W, h: 1.9, tag: '更衣柜', on: 'floor', col: [0.5, 1.9, 1.1] });
+  for (let k = 0; k < 5; k++) { if (M9_TR) F7(out, '器材柜（M9 hero）', 12.7, -103.6 - k * 1.02, 1.0, 0.5, y, ROT.W, 1.9); else out.push({ m: 'r2/locker_equipment', x: 12.7, y, z: -103.6 - k * 1.12, yaw: ROT.W, h: 1.9, tag: '更衣柜', on: 'floor', col: [0.5, 1.9, 1.1] }); }
   out.push({ m: 'r2/hallway_bench', x: 10.9, y, z: -106.0, yaw: 0, h: 0.45, tag: '更衣柜', on: 'floor', col: [0.4, 0.45, 1.6] });
   for (const z of [-110.9, -115.3]) { out.push({ m: 'r2/double_metal_shelving_unit', x: 11.6, y, z, yaw: ROT.W, h: 2.0, tag: '护具架', on: 'floor', col: [0.8, 2.0, 2.4] });
     for (const [dz, dy, m, sz] of [[-1.2, 0.42, 'r2/wooden_military_crate', { w: 0.8 }], [0.9, 0.42, 'r2/plastic_crate_03', { h: 0.3 }], [-0.4, 1.02, 'r2/plastic_crate_01', { h: 0.28 }], [0.5, 1.02, 'r2/metal_toolbox', { w: 0.45 }], [0, 1.6, 'r2/cardboard_transport_shipping_box', { w: 0.5 }]]) out.push({ m, x: 11.6, y: y + dy, z: z + dz, yaw: ROT.W + 0.05, ...sz, tag: '护具架', on: 'shelf' }); }

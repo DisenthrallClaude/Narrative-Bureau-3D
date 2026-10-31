@@ -11,6 +11,7 @@ const lightShaftLite = (x, y0, z, y1, r0, r1, color, intensity) => lightShaft({ 
 import { FLOOR } from './exterior.js';
 import { UPPER } from './upper.js';
 import { UNDER } from './rooms.js';
+import { buildM9Training, M9_TRAIN } from './m9_training.js';
 import { dressMats, spineMaterial, Props, wallDress, wallSeg, coffered, bunkerCeiling, rug, floorInlay, deskSet, paperStack, folderStack, telephone, bin, plantPot, cabinetRow, spineShelf, hangingSign, greenLamp } from './dress.js';
 
 const Y = FLOOR;
@@ -285,7 +286,8 @@ export async function buildDressing(scene, world, ctx) {
     const zone = zoneOf('training'), b = new Batch(), P = new Props(), y = UNDER.B6, X = 32, Z0 = -92, Z1 = -156, H = 16;
     // 墙面：深色模块护墙板 + 竖向蓝色灯条
     const tech = { style: 'bunker', over: { low: 'dz_tileB', up: 'dz_tileB', trim: 'dz_blueGlow', pilW: 0.4 }, pitch: 8 };
-    WX(b, -X, Z0 - 0.2, Z1 + 0.2, 1, y, H, tech); WX(b, X, Z0 - 0.2, Z1 + 0.2, -1, y, H, tech); WZ(b, Z1 + 0.2, -X, X, 1, y, H, { ...tech, pilSkip: [[-3, 3]] }); WZ(b, Z0 - 0.2, -X, X, -1, y, H, { ...tech, skip: [[-9.4, 9.4]] });
+    if (!M9_TRAIN) { WX(b, -X, Z0 - 0.2, Z1 + 0.2, 1, y, H, tech); WX(b, X, Z0 - 0.2, Z1 + 0.2, -1, y, H, tech); WZ(b, Z1 + 0.2, -X, X, 1, y, H, { ...tech, pilSkip: [[-3, 3]] }); WZ(b, Z0 - 0.2, -X, X, -1, y, H, { ...tech, skip: [[-9.4, 9.4]] }); }
+    else { WZ(b, Z1 + 0.2, -X, X, 1, y, H, { ...tech, over: { ...tech.over, trim: 'dz_brassDim' }, pilSkip: [[-3, 3]], skip: [[-X, -8], [8, X]] }); jobs.push(buildM9Training(zone, world, y)); } // 批次 M9：东西南北墙改 Blender 开间 tr_bay（南墙中段 ±8 m 靶档区保留原墙、灯条改暗铜）
     // 环形检修马道（高 7 m）+ 栏杆 + 托架
     for (const [cx, cz, w, d] of [[-X + 0.9, (Z0 + Z1) / 2, 1.6, Z0 - Z1], [X - 0.9, (Z0 + Z1) / 2, 1.6, Z0 - Z1], [0, Z1 + 0.9, 2 * X, 1.6]]) { b.box('dz_grate', w, 0.06, d, [cx, y + 7, cz], { uv: 2 }); }
     for (const sx of [-1, 1]) { const x = sx * (X - 1.7); b.box('steel', 0.05, 0.05, Z0 - Z1, [x, y + 8.05, (Z0 + Z1) / 2], { uv: 1 }); for (let z = Z0 - 1; z > Z1; z -= 2) { b.box('steel', 0.04, 1.05, 0.04, [x, y + 7.53, z], { uv: 1 }); b.box('blackMetal', 1.6, 0.12, 0.08, [sx * (X - 0.9), y + 6.9, z], { uv: 1 }); } }
