@@ -201,8 +201,12 @@
 - 走查：b107a79 run 41158213353 **通过 31 / 失败 0 / 控制台错误 0**（work/r3/b36/r41158213353/walk/WALKTHROUGH.md）；最终 966522a 见 PROGRESS-LOG。
 - Drive「快照_分卷」1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq：先删同名旧卷再传 v03 1MG-dtWT6eWVrELpxZvO7-4ROrZhW2Nhi、v04 1O6tYfDnYuDQ3FGvwywEh73tYZ1Ygb_B2（含 guide_desk.glb）；v01 / v02 在本 HANDOFF 提交后重传（见 PROGRESS-LOG）。
 - 对比图 `python3 work/r3/b36/cmp36.py` → work/r3/cmp36_*.jpg。
+### 补看图（HANDOFF 首次提交后）
+- **cs_r3_c（b107a79，work/r3/b36/r41158213353/s36d/cs_r3_c.png，cmp36_cs_r3_c.jpg）**：引导台胡桃木纹 + 三联铜框芯板 + 铜踢脚 + 黑玛瑙台面，台灯 / 文件盘 / 电话在台上，朝北迎进门人流，不压通道（上）；中联铜牌框里「咨询 · 引导」字看不清（只见金色板，中下，下批核铜牌是否被框挡 / 字太暗）。木纹同一套贴图也作用于值班长台。
+- **id_yinze（966522a 磨亮点版，work/r3/b36/r41158531523/i36e/id_yinze.png，对比 work/r3/b36/yinze_final.jpg）**：框更深、带竖向环境反射条，**但整体仍读成上了清漆的红木 / 漆木，不是铜（中下）**——大厅环境反射以暗褐为主，铜的反射色被染成木色。下批：反照率改偏黄亮的黄铜 0xc9a061 级 + 框边单独一圈更亮的磨亮倒角材质，或给相框单配一张小 PMREM 环境（含亮窗 / 灯）。
+- cc_r3_c 改后（b107a79，run 41158213353 c36d）、cs_r3（4e91f3e，run 41157277743 s36b，已跑 >20 分钟）截止本节未回。
 ### 下批先做
-1. 取回本批未回的图（见 PROGRESS-LOG）看：cc_r3_c 木纹 + 挂图出墙、cs_r3_c 引导台、id_yinze 磨亮点版。
+1. 取回 cc_r3_c（41158213353 c36d：木纹 + 挂图出墙）与 cs_r3（41157277743 s36b）；超 25 分钟未回则取消重派。铜相框按上条再改。
 2. 市民服务大厅 5 个服务窗口台 Blender 精建（清单 1-①），并近景核投放口穿模。
 3. 外景墙外空地（ext_sky）按功能填；山墙亮窗 / 招牌带平涂再处理。
 
