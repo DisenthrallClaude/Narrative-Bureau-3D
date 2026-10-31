@@ -24,7 +24,7 @@ const modelCache = new Map();
 export const ALIAS = { lion_justice: 'r2/lion_palais_de_justice_d_orl_ans_france', gargoyle_a: 'r2/gargoyle_3dst27', gargoyle_b: 'r2/gargoyle_statue_photogrammetry' };
 /** 加载 GLB，返回原始 scene（缓存）。unlit 扫描件转为 PBR。 */
 const _woodMats = {};
-const WOOD_TONE = { 'r2/lib_vitrine': [0x7c5434, 0x9a6a44], 'r2/lib_globe': [0x6a4630, 0xb07a4c] }; // 批次43：陈列柜底柜芯板（sw_walnutDarkVit → 0x4a3020 近黑）、地球仪三弯腿看图偏黑 → 按模型提亮木纹 albedo（不再加灯）
+const WOOD_TONE = { 'r2/lib_vitrine': [0x7c5434, 0x9a6a44], 'r2/lib_globe': [0x6a4630, 0xb07a4c], 'r2/arch_catalog': [0x3a2416, 0x5e3c24], 'r2/arch_bookcart': [0x3a2416, 0x5e3c24] }; // 批次46：档案馆目录柜 / 书车 ac_walnut 纯色直出在游戏里读成米色胶合板 → 走盒投影 Wood051 + 压暗胡桃 // 批次43：陈列柜底柜芯板（sw_walnutDarkVit → 0x4a3020 近黑）、地球仪三弯腿看图偏黑 → 按模型提亮木纹 albedo（不再加灯）
 function woodBox(o, m, model) { // 物体空间盒投影 UV（0.5 m 一格，按法线主轴取面），木纹沿长边
   const g = o.geometry, pa = g.getAttribute('position'), na = g.getAttribute('normal'); if (!pa || !na) return;
   const uv = new Float32Array(pa.count * 2);
@@ -45,7 +45,7 @@ export function loadModel(name) {
         g.scene.traverse((o) => {
           if (o.isMesh) {
             const m = o.material;
-            if (m && /^(dd|gd|sw)_walnut/.test(m.name || '')) { woodBox(o, m, name); return; } // 批次36：Blender 精建台体（值班长台 / 引导台）的胡桃木面是无 UV 纯色 → cc_r3_c 看图像橙色塑料；补盒投影 UV + Wood051 木纹
+            if (m && /^(dd|gd|sw|ac)_walnut/.test(m.name || '')) { woodBox(o, m, name); return; } // 批次36：Blender 精建台体（值班长台 / 引导台）的胡桃木面是无 UV 纯色 → cc_r3_c 看图像橙色塑料；补盒投影 UV + Wood051 木纹
             if (name === 'r2/44_pocket_rotating_newspaper_stand' && m) { // 批次39：旋转报架原模型 FrontColor 纯白无贴图 + 双面薄片 → 黄昏 / 室内都发白、像半透明线框（ext_busstop、cs 表格取阅架）；改旧新闻纸灰米色 + 阳极铝真金属
               if (m.name === 'FrontColor') o.material = new THREE.MeshStandardMaterial({ name: 'np_paper', color: 0x8c8474, roughness: 0.92, side: THREE.DoubleSide });
               else if (/Alumin/.test(m.name || '')) o.material = new THREE.MeshStandardMaterial({ name: 'np_alu', color: 0x8d939a, roughness: 0.38, metalness: 0.85, side: THREE.DoubleSide });
