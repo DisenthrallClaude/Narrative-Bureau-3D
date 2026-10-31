@@ -2097,6 +2097,21 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 1. 折页面目前是平白纸面（emissive 0.18）在暗石门里过曝 → 特效批换星纹之门/漩涡。
 2. 局长室蓝色藏青挂幅/地毯/桌上蓝件换色。
 
+## 批次 E1 · 特效批第一轮（2026-11-01 02:02 CST 接手，约 35 分钟，实际约 40 分钟；与 r3-model-m16 并行，未碰其文件 / UI / game-intranet；独立 worktree /tmp/e1wt）
+- 素材：00GameDevs Three.js 特效库（MIT）。读 https://00gamedevs.com/ai/integration.zh-TW.md + catalog.v2.json（contentVersion ef7ce13c…），下载 astral-gate / ground-fog / arcane-matrix 并 SHA-256 校验全部一致，已回报 /api/agent-usage。原件 + metadata 存 work/r3/e1/fxlib/。
+- 兼容：库依赖 three 0.187，本项目 0.186.1 → 未升级 three。静态核对所用 42 个 THREE.* 符号在 0.186 全部存在；游戏内实拍正常（无着色器报错、无 bloom 黑屏）。三个下载件共用同一运行时（仅末尾 preset 不同）→ 仓库只存一份 src/vendor/gdevs-vfx.js（动态 import，独立 chunk 429 KB / gzip 130 KB，不进主包），preset 在 src/world/e1_fx.js。署名：public/assets/CREDITS.txt + 新建 docs/ASSET-SOURCES.md。
+- 接入（src/world/e1_fx.js，main.js 两行：预编译前 `await initE1FX(G,{quality})`，主循环 `G.e1fx?.update(dt)`）：只在 G.zone 等于对应区时 visible + update；low 档降密度 / 细节、雾团减半、浮晶 3；开关 `?nofx=1`、`?e1off=gate,fog,runes`、运行时 `G.e1fx.set(name,bool)`；`?e1adv=秒` 截图连帧用。init 时先推进 2 s 进入稳定态并随全场景 compileAsync 预热（同 kit/warm.js 思路）。
+  1. **深渊门**：星紋之門去掉自带门框（layers 31），只留星纹膜 + 微粒，色 #a8742c、speed 0.35，×7.2 贴折页面前 6 cm（z −80.74）。一拍 ×5.6 椭圆边落在门洞内读成暗斑 → 二拍放大到椭圆边藏在石拱侧壁后。亲眼看：门洞是暖琥珀膜 + 稀疏星点 + 很淡的同心漩涡环，书城仍透出，亮度克制；**星纹 / 漩涡读得偏弱**（低存在感，符合要求，但「旋转星纹」不明显）。
+     铜框 / 符刻板（只试这一次）：m2_bronze / m13_bronzeRelief 加暗金自发光 0x8a5a22 × 0.12（`?noe1glow=1` 关）。亲眼看：左门座符刻板由近黑 → 可读的暖褐 ✔；右铭牌框变暖；门洞内侧竖向铜框由黑 → 深褐，有改善但仍偏暗。
+  2. **档案馆 B1 薄雾**：一拍 5 团在密集架后，看不见；二拍沿西墙通道 ×1.8、密度 0.45 → 太浓成土墙、贴墙出硬边、挡住尽头桌椅；三拍（e0a2533）4 团离墙、×1.4、密度 0.2 → 只剩密集架前一缕，几乎看不见。**同一问题三次未调好，按规则停**。下批建议：点位放通道中线 z≈−36.5、×1.4、密度 0.3，并加软粒子（深度淡出）防贴墙硬边。
+  3. **回写台浮符矩阵**：浮符矩陣 quantity 5、×1.8、抬 0.6 m、围绕排字台（0, −500, −174）；一拍地面方格矩阵在暗红地面上读成白砖线太抢 → 二拍隐藏地面层。亲眼看：5 枚小浮晶 + 小环在桌面上方缓慢旋转漂浮，数量少、不挡剧情物件；**但浮晶本体读成米白色，不是琥珀**——color 参数对实体晶体只影响很少（主片元着色器混白），未再改。
+- 提交：8de6589（接入）、53c0346（二拍）、e0a2533（雾三拍）；每次 `npx vite build --outDir /tmp/e1dist` = 0。
+- walk：run 41227972831（8de6589）31/31、控制台 0；run 41228978369（53c0346）31/31、控制台 0。注意 walk 是 test 模式不渲染，WebGL 报错靠截图日志核：截图 log 无 error/warn。Pages：8de6589 Deploy success（41227951417），线上 index 已含 e1fx_ 与 gdevs-vfx chunk。
+- 截图（1280×720 high，Actions）：改前 `&nofx=1&noe1glow=1` run 41227972831（e1b）；一拍 e1a；二拍 run 41228978369（e1c / e1c2 t+2s / e1c3 t+4s）；雾三拍 run 41229744326（e1d2）。拼图 work/r3/e1/sheet.jpg（改前|改后）、work/r3/e1/frames.jpg（连帧）；脚本 work/r3/e1/sheet.py。
+- 性能：新增 draw call 深渊门 2、B1 雾 4（instanced）、回写台 2；只在本区画。截图统计 seventh_rewrite 58 calls / 64.6k tris。门膜面积大（近全屏半透明一层），核显 low 档降密度 / 细节。
+### 下批先做
+1. B1 薄雾重定点位 + 软粒子（见上）。2. 浮晶改色需在片元里乘色（或换「符網結界 magic-barrier」）。3. 深渊门星纹若要更明显：detail 1.5 或叠一层「渦光黑洞」核心（亮度仍 <1）。
+
 ## 批次 M16 · 训练场尾巴 + 档案馆借阅柜台 / 阅览长桌 hero（2026-11-01 01:49 CST 接手，约 35 分钟；与 M15 并行，未碰局长室 / 深渊门 / UI / game-intranet；独立 worktree /tmp/m16wt）
 - 提交：309b4f2（训练场：器材柜 / 射灯 / 木横档）、93ab39b（档案馆柜台 + 长桌 hero + 机位）、00adeed（高窗采光井格栅）、eeb4f0d（射灯 42→130、柜台石面压深）、08d50eb（器材柜再压、长桌皮面提棕、台灯光板）。每次提交前 `npx vite build --outDir /tmp/m16dist` = 0，build 后即删。`?nom16=1` 关闭本批（器材柜色在 m9_training.js 里跟 `?nom9`，高窗格栅是 tr_bay 模型本身，无开关）。
 - A1 核对：run 41226229241（87bcb94）m14_tr_crate / m9_tr_wall 亲眼看——墙脚两只蓝色周转箱已变成暗色木箱，画面里不再有蓝箱 ✔，不需再修。
