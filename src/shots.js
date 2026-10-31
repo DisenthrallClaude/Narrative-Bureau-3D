@@ -245,6 +245,8 @@ export const SHOTS = {
   abyss_tide: { pos: [36, -298.3, -130], look: [62, -300, -146], fov: 72 },
   // R3 批次8
   m1_entry_s: { pos: [-1.2, -498.4, -64.0], look: [0.6, -497.6, -53.5], fov: 72, zone: 'seventh_entry' }, // 批次 M1：入口南望（门套 + 装订机 + 藻井）
+  m3_entry_top: { pos: [0, -500 + 22, -59.99], look: [0, -500, -60], fov: 40, clipY: -500 + 5.6, zone: 'seventh_entry' }, // 批次 M3：入口俯视（陈设穿插核对）
+  m3_entry_ne: { pos: [-0.8, -498.4, -57.5], look: [1.8, -498.9, -63.6], fov: 60, zone: 'seventh_entry' }, // 批次 M3：装订机北侧近景（疑似人像核对）
   m1_gutter_b: { pos: [8.6, -498.3, -86], look: [7.0, -496.8, -98], fov: 75, zone: 'seventh_gutter' }, // 批次 M1：回廊拱肋
   seventh_entry: { pos: [0.6, -500 + 1.7, -54.4], look: [-0.6, -500 + 1.3, -66], fov: 74, zone: 'seventh_entry' },
   abyss_core_b: { pos: [-2, -280 + 1.7, -236], look: [14, -280 + 1.0, -222], fov: 76, zone: 'abyss_core' },  // 收尾：原机位在书环巨书内（距中心 17.8 m），移到书桌环与书环之间（12.8 m）

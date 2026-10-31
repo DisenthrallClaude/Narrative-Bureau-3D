@@ -2010,10 +2010,11 @@ export function planS7Entry(y) {
     rooms: [['收件台（西墙）', -2.3, -58], ['归还档案（东墙）', 2.3, -62]], aisles: [{ label: '页缝中轴', x0: -1.3, x1: 1.3, z0: -66.8, z1: -53.6 }] };
   F7(out, '打孔卡', -2.9, -61, 0.2, 0.3, y + 1.2, 0, 0.1);
   out.push({ m: 'r2/lectern', x: -2.3, y, z: -57.6, yaw: ROT.E, h: 1.15, tag: '收件台', on: 'floor', col: [0.6, 1.15, 0.5] });
-  out.push({ m: 'r2/1800s_kerosene_desk_lamps_type_b', x: -2.3, y: y + 1.15, z: -57.2, yaw: ROT.E, h: 0.4, tag: '收件台', on: 'shelf' });
-  for (const [z, dy] of [[-62.0, 0], [-62.05, 0.3], [-63.0, 0]]) out.push({ m: 'r2/filing_box', x: 2.4, y: y + dy, z, yaw: ROT.W + z * 0.1, w: 0.4, tag: '归还档案', on: dy ? 'shelf' : 'floor', col: [0.4, 0.3, 0.32] });
+  out.push({ m: 'r2/vintage_oil_lamp', x: -2.3, y: y + 1.15, z: -57.4, yaw: ROT.E, h: 0.38, tag: '收件台', on: 'shelf' }); // M3：原 6 盏煤油灯套组（含蓝玻璃、排长 2 m 顶到壁柱）→ 单盏油灯
+  // M3：归还档案箱原 z −62 与装订机（z −62.1…−59.9）相穿 → 挪到壁柱与屏墙之间
+  for (const [z, dy] of [[-63.75, 0], [-63.78, 0.3], [-64.3, 0]]) out.push({ m: 'r2/filing_box', x: 2.4, y: y + dy, z, yaw: ROT.W + z * 0.1, w: 0.4, tag: '归还档案', on: dy ? 'shelf' : 'floor', col: [0.4, 0.3, 0.32] });
   out.push({ m: 'r2/coat_rack_bowler_hat', x: 2.4, y, z: -56.4, yaw: ROT.W, h: 1.8, tag: '衣帽架', on: 'floor' });
-  pic(out, 'textures/emblems/N02.jpg', 0, y + 5.6, -53.45, Math.PI, 1.0, 1.0, 'black');
+  pic(out, 'textures/emblems/N02.jpg', 0, y + 7.75, -53.45, Math.PI, 1.0, 1.0, 'black'); // M3：原 y+5.6 宽 1 m 嵌进门套石柱（内皮 ±0.35）→ 升到门楣檐口之上的墙面
   light(out, -2.0, y + 1.8, -57.6, 0xffc890, 1.2, 6); light(out, 0, y + 6.5, -60, 0xe8d0b0, 1.4, 10);
   return { room, items: out };
 }

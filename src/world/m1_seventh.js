@@ -10,17 +10,17 @@ let MM = null;
 function m1Mats(D, M) {
   if (MM) return MM;
   MM = {
-    m1_walnut: pbr('Wood051', { color: 0x5a3826, roughness: 0.5, env: 0.35 }),
-    m1_walnutDark: pbr('Wood051', { color: 0x37231a, roughness: 0.45, env: 0.3 }),
+    m1_walnut: pbr('Wood051', { color: 0x5a3826, roughness: 0.58, env: 0.15 }), // M3：回廊远端护墙掠射反出冷色 env → 压 env、提粗糙
+    m1_walnutDark: pbr('Wood051', { color: 0x3c271c, roughness: 0.6, env: 0.12 }),
     m1_stone: pbr('Concrete034', { color: 0xa09484, roughness: 0.78, env: 0.4 }),
-    m1_stoneDark: pbr('Concrete034', { color: 0x5e554c, roughness: 0.7, env: 0.4 }),
-    m1_bronze: pbr('Metal046A', { color: 0xa87a4a, metalness: 1, roughness: 0.34, env: 1.3 }), // 首拍（41214853132 m1_entry_s）装订机铜件读成黑 → 提亮
-    m1_burgundy: pbr('Fabric023', { color: 0x9a3026, roughness: 0.85, env: 0.2 }), // 首拍走道毯近黑 → 提亮
+    m1_stoneDark: pbr('Concrete034', { color: 0x5e554c, roughness: 0.75, env: 0.2 }),
+    m1_bronze: pbr('Metal046A', { color: 0xb08250, metalness: 0.85, roughness: 0.48, env: 0.5 }), // M3：暗古铜——粗糙 ≥0.45 / env≈0.5，靠底色 + 金属 0.85 留漫反射不发黑
+    m1_burgundy: pbr('Fabric023', { color: 0xa83a2c, roughness: 0.9, env: 0.15 }), // 首拍走道毯近黑 → 提亮（M3 再提一档）
     m1_kraft: D.dp_kraft,
     m1_iron: M.blackMetal,
     m1_thread: D.dp_red,
     m1_paper: D.dp_page,
-    m1_lampGlow: new THREE.MeshStandardMaterial({ color: 0x2a1a0a, emissive: 0xffc890, emissiveIntensity: 2.2, roughness: 0.4 }),
+    m1_lampGlow: new THREE.MeshStandardMaterial({ color: 0x2a1a0a, emissive: 0xffc890, emissiveIntensity: 0.95, roughness: 0.4 }),
   };
   return MM;
 }

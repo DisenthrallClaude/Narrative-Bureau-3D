@@ -19,6 +19,8 @@ function ageMat(m, k) { const key = m.uuid + k; if (_aged.has(key)) return _aged
 function glowMat(m, name) {
   const key = m.uuid + ':glow'; if (_aged.has(key)) return _aged.get(key); let n = m;
   if (name.includes('bankers_lamp') && m.name === 'green_glass') { n = m.clone(); n.map = null; n.color = new THREE.Color(0x7a4614); n.emissive = new THREE.Color(0xc0701e); n.emissiveIntensity = 0.75; } // 批次59：绿玻璃罩紧挨红按钮 / 酒红地毯（cc_r3_c 红配绿）→ 琥珀玻璃罩
+  if (name.includes('kerosene') && /BlueGlass|Real_Glass/.test(m.name)) { n = m.clone(); n.map = null; n.color = new THREE.Color(m.name === 'BlueGlass' ? 0x8a5420 : 0x6a5040); n.roughness = 0.15; }
+  if (name.includes('vintage_oil_lamp') && m.name === 'vintage_oil_lamp_glass') { n = m.clone(); n.color = new THREE.Color(0xb07a3a); } // M3：灯罩压琥珀（防冷蓝透射） // 煤油灯蓝玻璃 / 冷透明罩 → 琥珀 / 烟褐
   if (name.includes('ceiling_light') && /Emmision|Bulb/.test(m.name)) { n = m.clone(); n.emissive = new THREE.Color(0xffd49a); n.emissiveIntensity = 2.2; n.toneMapped = true; }
   _aged.set(key, n); return n;
 }
@@ -165,7 +167,7 @@ export async function buildR3(ctx, world, MAT, late = false) {
         if (nm.includes('18th_century_bench')) { const tint = (x) => { const c = x.clone(); c.color = new THREE.Color(0x5a3f30); return c; }; m.material = Array.isArray(m.material) ? m.material.map(tint) : tint(m.material); } // 批次13：歌剧院长凳粉色绒面 + 白漆框 → 压成深胡桃木 + 暗酒红
         if (nm === 'r2/metal_stool_01') { const re = (x) => { const c = x.clone(); c.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n{ vec3 q = diffuseColor.rgb; float rr = q.r - max(q.g, q.b); if (rr > 0.06) { float l = dot(q, vec3(0.3, 0.59, 0.11)); diffuseColor.rgb = mix(q, vec3(0.30, 0.19, 0.115) * (0.55 + l * 2.4), smoothstep(0.06, 0.16, rr)); } }'); }; c.customProgramCacheKey = () => 'stoolBrown'; return c; }; m.material = Array.isArray(m.material) ? m.material.map(re) : re(m.material); } // 批次57：高脚凳红面 → 棕皮（只换偏红像素，铁腿不动）
         if (AGE[nm]) m.material = Array.isArray(m.material) ? m.material.map((x) => ageMat(x, nm)) : ageMat(m.material, nm);
-        if (nm.includes('bankers_lamp') || nm.includes('ceiling_light')) m.material = Array.isArray(m.material) ? m.material.map((x) => glowMat(x, nm)) : glowMat(m.material, nm);
+        if (nm.includes('bankers_lamp') || nm.includes('ceiling_light') || nm.includes('kerosene') || nm.includes('vintage_oil_lamp')) m.material = Array.isArray(m.material) ? m.material.map((x) => glowMat(x, nm)) : glowMat(m.material, nm);
       }
     }));
     ctx.r3 = ctx.r3 ?? {}; ctx.r3[id] = plan;
