@@ -2096,3 +2096,19 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 ### 下批先做
 1. 折页面目前是平白纸面（emissive 0.18）在暗石门里过曝 → 特效批换星纹之门/漩涡。
 2. 局长室蓝色藏青挂幅/地毯/桌上蓝件换色。
+
+## 批次 M15 · 局长室去蓝 + 深渊门第二轮（续 M11/M13；2026-11-01 01:44 CST 接手，约 35 分钟；与 r3-model-m14 并行，未碰训练场 / UI / game-intranet；独立 worktree /tmp/m15wt）
+- **A 局长室禁蓝**（65b521a）：dressing.js 机要室隔墙西面局徽挂毯 M.navy → 酒红褐呢 0x4a1a14（局徽底同色）；壁炉角地毯 + r3plan 会客区地毯 dz_rugNavy → dz_rugGreen（批次57 已重染为酒红褐底驼纹）；upper.js 镇纸局徽底 navy → 酒红褐；密码键盘绿光 0x30ff70 → 琥珀 0xff9a40。
+  - m11_director.js 新增 `warmSweepDirector(zone)`：局长室所有 Props 实例（'props:*'，dressing 与 r3build 两处 P.build 完成后调用）克隆材质 + shader 把蓝/青/绿像素映射成酒红褐（保留明暗），蓝绿自发光改琥珀；玻璃防风烛台 candle_holder（透射玻璃反天光成蓝）改不透射暖琥珀釉。壳体/窗/天空盒不受影响。`?nom15=1` 关。
+  - 复拍 run 41226480156（m15:m11_dir_desk / ceil / west）：挂毯、两块地毯、桌上烛台均已暖色；窗外冷蓝山 = 天空盒，按要求保留；窗玻璃未见冷反光。
+- **B 深渊门**（dff2914）：
+  1. 铜件新思路（只试这一次）：m2_bronze 线性 (0.45,0.30,0.16) 金属 0.4 粗糙 0.5；符刻板 (0.47,0.32,0.17) 金属 0.35；门座两盏不投影暖补光 (±7.4, +3.6, −74.6) 10/8 m。结果：右座铭牌铜框读成暖古铜（成功）；左座符刻板从黑洞变为可辨暗褐（部分）；**门洞内圈铆钉门框（门侧竖带）仍偏黑**——它朝向门洞内侧，补光照不到。按规则不再追加方案。
+  2. 折页面（depths.js，仅 M13 下）：color 乘子 0x8a6c48 + 暖自发光 0x3a2814×0.45，roughness 0.95 → 暖羊皮纸、不再过曝；opacity 仍 0.92，门后书城隐约透出（特效批再定）。文字纹理保留但较淡。
+  3. 门槛石（m13_abyss.py）：板厚 0.12、顶 +0.06 露出地面，前缘暗铜护边；无碰撞，通行带 / 触发器不变。glb meshopt 392 KB，18.99k 三角。
+  4. 扶壁两盏暖洗墙光 (±10.6, +17.5, −74.8) 34/17 m，不投影：拱肩与外层拱石有明暗层次。
+- walk run 41226487349（dff2914）31/31、控制台 0。Pages 41226459735（dff2914）success，线上 index-DhWolL6b.js 含 M15 代码。npx vite build 0。
+- 拼图 work/r3/m15/sheet.jpg（改前 M13 / 改后 M15；脚本 work/r3/m15/sheet.py）。
+- Drive：分卷 1E-Py1Tft5JVc_Wg3iSWVmgWEesionXgq 下新建 v18_m15_models（1a542RWaLJR_qyv0znLLkmv3wsnS6iX0U），v18_m15_models.tgz（1XSv73Q25PeaYgHNU2_XJfaff_aJJ9n-F：raw/meshopt glb、py、两个 js、其余文件 diff）。
+### 下批先做
+1. 深渊门门洞内圈铜门框仍黑：可试在门洞内侧（x 0, z −79.5, y 5）加一盏低强度暖光，或门框单独弱自发光 0.08（M15 未试）。
+2. 折页面特效（星纹 / 漩涡），并决定透明度（现在门后书城透出）。
