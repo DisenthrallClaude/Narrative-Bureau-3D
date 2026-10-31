@@ -175,6 +175,30 @@
 - **主体全部完成后，建筑外观（主楼外立面 + 广场 + 城景）第一优先精修到顶级**（3A/CG 级，庄重厚重，60–80 年代机关建筑气质；不要蓝色调地面/反光）。
 - 游戏里**不放人物 3D 模型**（雕像/半身像艺术品暂保留待确认）；**人物图片（档案海报、白底立绘、证件照）全部保留并多用**。
 
+## R3 批次45（2026-10-31 13:43 CST 接手，约 35 分钟）
+### 提交
+7ae5be6 截图 lite 扩到室内慢机位；469120b 大厅大屏蓝横条（z-fighting）修复；b1d26e8 档案馆卡片目录柜 + 书车 Blender 精建 + archive_cat / archive_cart 机位（**最终游戏代码**）。每次提交前本机 `npx vite build` 返回 0。r3plan archive：大档案柜组 / 书车均为固定锚点（F 6.6×0.9、1.25×0.7），新模型 6.6×0.86 / 1.33×0.56 在锚点内，未改 plan 条目（本批未重画 plan 图）。
+### 1 取回 41172004421（h44g hall_gates，c555b1b）
+- 已回：work/r3/b45/r41172004421/h44g/hall_gates.png（整机位 1456 s ≈ 24 分钟）。日志：37 s 世界建好 → lite 只关掉 **42 / 173** 盏点光（hall 机位能关 80；hall_gates 低机位斜看整个中殿 + 地面反射镜像，光球几乎都触视锥）→ **首帧 565 s**（着色器编译 + 131 盏点光）→ 3 帧 + warm 3 帧 JS 侧 0.3 s 就「渲完」→ **canvas grab 等 GPU 队列 886 s**；画面 1037 万三角 / 4159 draw calls。结论：慢在 SwiftShader 软光栅本身（点光数 × 三角数），lite 冻结只省后续帧；要再快只能截图模式下裁远处 zone / 降点光阴影（会改成片，未做）。
+- 7ae5be6：cs_r3、cs_r3_b、cs_r3_e、cc_r3 / cc_r3_b / cc_r3_c、archive*（含新 2 个）、lib_*、library 统一 `lite: 1`（共 26 个机位带 lite；只改截图流程，游戏画面不变）。
+### 2 大厅大屏蓝横条（469120b）
+- 看图 hall_gates 局部（work/r3/cmp45_screen_crop.jpg）：琥珀屏面上叠着**蓝色竖栅 + 横线**，hall 正看是几道蓝横条，且蓝条不受琥珀混合影响 → 不在 canvas 里。真因：屏面 PlaneGeometry 在 SZ±0.26，黑铁箱体（0.5 厚）前脸在 ±0.25，**间距 1 cm，25 m 外深度精度不够 → z-fighting**，blackMetal 金属面反射天空 HDR = 蓝。修：屏面外移到 ±0.31 + 屏材质 polygonOffset(−2,−2)。
+- 重拍 run **41173862139**（h45 hall / h45g hall_gates，469120b）截止 13:56 仍在拍（约 10–25 分钟），**未亲眼验收**。
+### 3 档案馆（b1d26e8）
+- **大档案柜组**（x −51.4，z −63.5，原 filing_cabinets GLB 方块）→ Blender 精建 `r2/arch_catalog`（tools/blender/arch_catalog.py，bmesh 直接拼，34.8k 三角）：6 联 × 1.08 m；下段 7 行 × 5 列卡片抽屉（每只：胡桃面板 + 铜标签框 + 米白卡签 + 铜座 + 铜拉环）；1.0 m 胡桃台面 + 铜包边；上段退进 0.5 m 深，4 行 × 2 列大档案抽屉（凹芯 + 铜标签框 + 铜吊环）；联间深色壁柱 + 柱头铜线、每联顶铜号牌、檐口三道线脚 + 铜线；底座踢脚 + 铜线。预览 work/r3/b45/prev/arch_catalog_0/1.png：抽屉格、铜框卡签、拉环都读得清（中上；预览光下胡桃偏浅，游戏里会压暗）。
+- **书车 ×2**（−32/−45、−44.5/−59）→ `r2/arch_bookcart`（636 三角）：三层胡桃搁板顶面 0.27 / 0.67 / 1.02（与原牛皮档案盒 + folderStack 高度对齐，内容保留）+ 前后铜挡条 + 凹芯端板 + 铜推把 + 4 只铜叉橡胶脚轮。预览 arch_bookcart_0.png（中上）。非 R3 分支保留旧方块。
+- 新机位 archive_cat（[-49.4, 3.4, -60.4] 看 [-51.6, 2.8, -63.3]）、archive_cart（[-43.0, 3.3, -57.2] 看书车）。重拍 run **41174202288**（archive / archive_west / archive_cat / archive_cart，b1d26e8）截止仍在拍，**游戏内未亲眼验收**（需看：柜体是否落地、朝向 +Z 是否正对阅览区、胡桃是否过黑、书车上档案盒是否落在搁板上）。
+### 4 UI 精修（加载画面 / 主菜单）——**未做**（时间用完）。
+### 收尾
+- 走查：b1d26e8 run **41174238672** 截止仍在跑（约 20–40 分钟），结果下批取。
+- Pages：**b1d26e8 Deploy success（41174202752）**。
+- Drive「快照_分卷」：先删同名旧卷再传 v04 1NrXv-BXLh7Mx0zXykCz3vRog1WJbTQye（294.6 MB，含 arch_catalog / arch_bookcart）、v03 1r_VpI4KPfBD9M4RKhkKXK5eRn9zNH2pQ（137.1 MB）、v02 1JjjC6luwY6oEXW1RWzAwWhC7w9x5NGea；v01 在本 HANDOFF 提交后重传（见 PROGRESS-LOG）。
+- 对比图 work/r3/cmp45_hall_gates_before / screen_crop / catalog_prev / catalog_prev_near / bookcart_prev.jpg + 总拼图 work/r3/b45/sheet.jpg（改后游戏内图未回，暂为改前 + Blender 预览）。
+### 下批先做
+1. 取 41173862139（hall / hall_gates，看蓝条是否消失）、41174202288（archive 四机位，看目录柜 / 书车）、41174238672（walk）：`rm -rf /tmp/afz; bash tools/gh_shots_fetch.sh <run> work/r3/b46/r<run>`。
+2. 若目录柜偏黑：assets.js WOOD_TONE 加 'r2/arch_catalog' / 'r2/arch_bookcart'（同 lib_vitrine 做法），不加灯。
+3. UI 精修起步（批次45 任务 4 原样顺延）。
+
 ## R3 批次44（2026-10-31 13:15 CST 接手，约 35 分钟）
 ### 提交
 c555b1b 截图低开销 lite（仅截图模式）；30b0391 大厅两侧拱廊补光；8f5be72 星图台 UV 修复 + 提亮 + lib_star 机位 / 书脊 Blender 降饱和重导 / 城墙外背街人行道 + 沥青；7f8badb 大厅大屏琥珀混合挪到两分支之后（**最终游戏代码**）。每次提交前本机 `npx vite build` 返回 0；r3plan library 88 件 **0 错 0 警**（work/r3/b44/plan_lib.png）。
