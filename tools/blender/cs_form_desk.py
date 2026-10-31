@@ -6,15 +6,22 @@ import bpy, bmesh, sys, math
 from mathutils import Vector
 argv = sys.argv[sys.argv.index('--') + 1:]; OUT, PREV, TA, TB = argv[0], argv[1], argv[2], argv[3]
 bpy.ops.wm.read_factory_settings(use_empty=True); S = bpy.context.scene
-def mat(name, col, rough=0.5, metal=0.0, tex=None, alpha=None, trans=0.0):
+import os
+TEXD = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tex')
+def mat(name, col, rough=0.5, metal=0.0, tex=None, alpha=None, trans=0.0, nrm=None):
     m = bpy.data.materials.new(name); m.use_nodes = True; b = m.node_tree.nodes['Principled BSDF']
     b.inputs['Base Color'].default_value = (*col, 1); b.inputs['Roughness'].default_value = rough; b.inputs['Metallic'].default_value = metal
     if tex:
         t = m.node_tree.nodes.new('ShaderNodeTexImage'); t.image = bpy.data.images.load(tex); m.node_tree.links.new(t.outputs['Color'], b.inputs['Base Color'])
+    if nrm:  # 批次53：木纹法线
+        t = m.node_tree.nodes.new('ShaderNodeTexImage'); t.image = bpy.data.images.load(nrm); t.image.colorspace_settings.name = 'Non-Color'
+        nm = m.node_tree.nodes.new('ShaderNodeNormalMap'); nm.inputs['Strength'].default_value = 0.6
+        m.node_tree.links.new(t.outputs['Color'], nm.inputs['Color']); m.node_tree.links.new(nm.outputs['Normal'], b.inputs['Normal'])
     if alpha is not None:
         b.inputs['Alpha'].default_value = alpha; m.blend_method = 'BLEND'
     return m
-M = dict(walnut=mat('fd_walnut', (0.19, 0.095, 0.045), 0.42), walnutD=mat('fd_walnutDark', (0.10, 0.05, 0.025), 0.5),
+# 批次53：胡桃木改贴木纹（tex/fd_walnut*.jpg = ambientCG CC0 Wood051 调色版 walnut.jpg 按原平涂色线性均值缩放）+ 法线
+M = dict(walnut=mat('fd_walnut', (1, 1, 1), 0.42, tex=os.path.join(TEXD, 'fd_walnut.jpg'), nrm=os.path.join(TEXD, 'walnut_n.jpg')), walnutD=mat('fd_walnutDark', (1, 1, 1), 0.5, tex=os.path.join(TEXD, 'fd_walnutD.jpg'), nrm=os.path.join(TEXD, 'walnut_n.jpg')),
          brass=mat('fd_brass', (0.80, 0.60, 0.30), 0.28, 1.0), brassD=mat('fd_brassDim', (0.50, 0.37, 0.19), 0.4, 1.0),
          steel=mat('fd_steel', (0.55, 0.55, 0.56), 0.3, 1.0), ink=mat('fd_ink', (0.03, 0.03, 0.035), 0.35),
          formA=mat('fd_formA', (1, 1, 1), 0.8, 0, TA), formB=mat('fd_formB', (1, 1, 1), 0.8, 0, TB),
@@ -106,6 +113,13 @@ for e in (-1, 1):
     box('ink', 0.002, 0.05, 0.24, e * (BW / 2 + 0.026), 0.86, 0)
 for o in list(S.objects):
     for md in list(o.modifiers): bpy.context.view_layer.objects.active = o; bpy.ops.object.modifier_apply(modifier=md.name)
+def uv_cube(o, s):  # 批次53：木构件按 0.8 m 一张立方投影 UV
+    bpy.ops.object.select_all(action='DESELECT'); bpy.context.view_layer.objects.active = o; o.select_set(True)
+    bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+    bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
+    bpy.ops.uv.cube_project(cube_size=s, correct_aspect=True, clip_to_bounds=False, scale_to_bounds=False); bpy.ops.object.mode_set(mode='OBJECT')
+for o in list(S.objects):
+    if o.type == 'MESH' and o.data.materials and o.data.materials[0].name.startswith('fd_walnut'): uv_cube(o, 0.8)
 for o in S.objects:
     if o.type == 'MESH' and 'UVMap' not in o.data.uv_layers: o.data.uv_layers.new(name='UVMap')
 bpy.ops.object.select_all(action='SELECT'); bpy.context.view_layer.objects.active = S.objects[0]
