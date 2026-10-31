@@ -20,7 +20,7 @@ function mats() {
     m1_burgundy: pbr('Fabric023', { color: 0x6a2a20, roughness: 0.8, env: 0.3 }),
     m11_leather: pbr('Fabric023', { color: 0x4a1a14, roughness: 0.6, env: 0.35 }),
     m11_velvet: pbr('Fabric023', { color: 0x5a1c16, roughness: 0.88, env: 0.25 }),
-    m11_coffer: pbr('Fabric023', { color: 0x3a1a12, roughness: 0.8, env: 0.3 }),
+    m11_coffer: pbr('Fabric023', { color: 0x5a2c1e, roughness: 0.8, env: 0.3 }), // M13 验收：格心 0x3a1a12 读成黑洞、天花压暗 → 提亮一档
     m11_wallcloth: pbr('Fabric023', { color: 0x7e6a56, roughness: 0.88, env: 0.3 }),
     m11_books: pbr('Fabric023', { color: 0x5a3020, roughness: 0.85, env: 0.25 }),
     m6_enamelDark: noEnvBlue(new THREE.MeshStandardMaterial({ color: 0x5a5248, metalness: 0.12, roughness: 0.52, envMapIntensity: 0.5 })),
@@ -42,7 +42,8 @@ export function buildM11Director(zone, world, y) {
   if (!M11_DIR || !zone) return Promise.resolve();
   const MAT = mats(), jobs = [];
   jobs.push(place(zone, MAT, 'dr_shell', [0, y, 0], 0, false));
-  jobs.push(place(zone, MAT, 'dr_desk', [0, y, -104], 0, true));
+  jobs.push(place(zone, { ...MAT, m2_bronze: pbr('Metal046A', { color: 0xb88a52, metalness: 0.85, roughness: 0.46, env: 0.5 }) }, 'dr_desk', [0, y, -104], 0, true)); // M13 验收：台面铜饰在机位里几乎看不见 → 大班台单独提亮铜
+  { const L = new THREE.PointLight(0xffd6a0, 4, 3.2, 2); L.castShadow = false; L.position.set(0.9, y + 1.45, -104.3); zone.add(L); } // M13：大班台上方不投影暖光（台灯光区）
   jobs.push(place(zone, MAT, 'dr_cred', [0, y, -110.85], 0, true));
   jobs.push(place(zone, MAT, 'dr_flag', [2.4, y, -106.0], 0, true));
   for (const z of [-101.5, -102.05, -102.6]) jobs.push(place(zone, MAT, 'dr_cab', [6.53, y, z], -Math.PI / 2, true));
