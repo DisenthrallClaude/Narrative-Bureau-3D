@@ -8,7 +8,7 @@ import { mats } from './mats.js';
 import { Frame, archRingGeo, archSolidGeo, archShape, archApex, lancetWindow, pinnacle, spire, tower, gableRoof, bayWall, flyingButtress, emblem, goldText } from './gothic.js';
 import { waterMaterial, waterfallMaterial, bannerMaterial, CanvasScreen, time } from '../engine/fx.js';
 import { content } from '../engine/content.js';
-import { placeHero } from './hero.js';
+import { placeHero, phMat } from './hero.js';
 export const HERO = !new URLSearchParams(location.search).has('legacy'); // R2：主楼外观改用 Blender 精修 GLB（?legacy 回到旧版程序化外观对比）
 
 export const T = (n) => { if (window.__SHOT__) console.log('[NB]', n, (performance.now() / 1000).toFixed(1)); };
@@ -60,7 +60,13 @@ export async function buildExterior(scene, world, ctx) {
   // 南端大台阶（下到迎宾大道 y=-4）
   for (let i = 0; i < 20; i++) { if (HERO) world.box(0, -0.1 - i * 0.2, 81 + i * 0.6, 44, 0.2, 0.6); else b.box('plazaTile', 44, 0.2, 0.6, [0, -0.1 - i * 0.2, 81 + i * 0.6], { uv: 0.4, collide: true }); }
   world.ramp([0, -0.05, 80.6], [0, -4.05, 93], 44);
-  b.box('paving', 300, 0.5, 400, [0, -4.25, 290], { uv: 0.2, collide: true });
+  // 批次39 ★根因：原整块 300×400 弹石箱顶面在 y −4.0，比墙外环路 / 人行道 / 路缘（Y0 −4.4，顶 −4.34 / −4.2 / −4.16）和街心绿地（−4.32）高 0.4 m，
+  //   把 |x|<150、z>90 的 R160 / R245 / R305 南段全部埋住 → 人视角满眼弹石。改：迎宾大道台地只留大道本身（|x|≤25、z 93–175，顶 −4.0，surface.js Y=−4 不动），
+  //   其余墙外地坪降到环路基面 −4.40（路面 / 人行道 / 路缘都在它之上分层），台地边缘花岗岩压顶 + 隐形坡道接环路。
+  b.box('paving', 50, 0.5, 82, [0, -4.25, 134], { uv: 0.2, collide: true });
+  for (const sx of [-1, 1]) { b.box('stone', 0.5, 0.5, 82.5, [sx * 25.2, -4.17, 134], { uv: 0.5, collide: true }); b.box('stone', 0.56, 0.06, 82.5, [sx * 25.2, -3.9, 134], { uv: 0.5 }); world.ramp([sx * 31, -4.4, 123], [sx * 25.4, -3.88, 123], 22); }
+  b.box('stone', 50.9, 0.5, 0.5, [0, -4.17, 175.2], { uv: 0.5, collide: true }); b.box('stone', 50.9, 0.06, 0.56, [0, -3.9, 175.2], { uv: 0.5 });
+  b.box('paving', 300, 0.1, 400, [0, -4.45, 290], { uv: 0.2, collide: true });
   // 台阶两侧跌水
   for (const sx of [-1, 1]) {
     const al = Math.atan2(4, 12.6);
@@ -721,11 +727,16 @@ function busStops(g, at, Y0) {
     c.fillStyle = '#a3170f'; c.fillRect(30, 470, 324, 4); c.fillStyle = '#333'; c.font = '600 32px "NB Serif", serif'; c.fillText('首班 5:30　末班 22:00', 192, 516);
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.6 }); })();
   for (const sx of [1, -1]) {
-    const put = (name, r, arc, h, extra) => { const th = sx * arc / r; const [x, z] = at(r, th); placeModel(name, { height: h, pos: [x, Y0 + 0.1, z], rotY: th + Math.PI }).then((w) => { w.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); w.userData.noCull = true; g.add(w); extra?.(w); }); };
+    const put = (name, r, arc, h, extra) => { /* 批次39：人行道顶 Y0+0.2（原 +0.1 陷进 10 cm） */ const th = sx * arc / r; const [x, z] = at(r, th); placeModel(name, { height: h, pos: [x, Y0 + 0.2, z], rotY: th + Math.PI }).then((w) => { w.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); w.userData.noCull = true; g.add(w); extra?.(w); }); };
     put('r2/bus_shelter_6080', 168.6, 34, 3.02, (w) => { const o = w.children[0]; const m = new THREE.Mesh(new THREE.PlaneGeometry(0.54, 0.81), sign); m.position.set(2.35 + o.position.x, 1.95, 0.75 + 0.032 + o.position.z); w.add(m); });
-    put('r2/simple_90_s_kiosk', 173.2, 41.5, 2.6);
-    put('r2/44_pocket_rotating_newspaper_stand', 171.2, 45.2, 1.6);
-    put('r2/garbage_bin', 169.2, 38.4, 1.0);
+    // 批次39：成组对称——候车亭（弧长 34）居中，西侧垃圾桶（29.4）、东侧垃圾桶（38.6）对称；报刊亭移到候车亭东侧同一后退线（弧长 45，r 171.6，原 41.5 在候车亭正后方被挡），旋转报架在报刊亭门前东侧（49）
+    put('r2/simple_90_s_kiosk', 171.6, 45, 2.6);
+    put('r2/44_pocket_rotating_newspaper_stand', 170.0, 49, 1.6, (w) => w.traverse((o) => { if (!o.isMesh) return; const n = o.material?.name || '';
+      /* 批次39：原模型 FrontColor 纯白无贴图 + 双面薄片 → 黄昏下发白、像半透明线框；改旧新闻纸灰米色 + 阳极铝真金属 */
+      if (n === 'FrontColor') o.material = new THREE.MeshStandardMaterial({ color: 0x8c8474, roughness: 0.92, side: THREE.DoubleSide });
+      else if (/Alumin/.test(n)) o.material = new THREE.MeshStandardMaterial({ color: 0x8d939a, roughness: 0.38, metalness: 0.85, side: THREE.DoubleSide });
+      else if (o.material) { o.material = o.material.clone(); o.material.transparent = false; o.material.opacity = 1; o.material.depthWrite = true; } }));
+    put('r2/garbage_bin', 169.2, 38.6, 1.0); put('r2/garbage_bin', 169.2, 29.4, 1.0);
   }
 }
 function buildStreetRows(g, M, place, rnd) {
@@ -810,8 +821,27 @@ function buildStreetRows(g, M, place, rnd) {
         }`);
   };
   const parMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3c, roughness: 0.9 });
-  const roadMat = new THREE.MeshStandardMaterial({ color: 0x1e1f22, roughness: 0.82 });
-  const walkMat = M.paving; const curbMat = new THREE.MeshStandardMaterial({ color: 0x77767a, roughness: 0.8 });
+  // 批次39：环路车道 = 纯色暗盒 → Poly Haven asphalt_02（CC0）沥青；人行道 = 弹石 PavingStones142（与墙外地坪同料、分不出层）→ granite_tile 花岗岩分缝板（CC0）；
+  //   InstancedMesh 单位盒 UV 会被实例缩放拉伸 → 世界坐标 xz 投影 UV（worldUV）。路缘改浅花岗岩、高出人行道 4 cm。
+  const worldUV = (m, s) => { for (const t of [m.map, m.normalMap, m.roughnessMap]) if (t) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; }
+    m.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace('#include <project_vertex>', `#include <project_vertex>
+      { vec4 nbW = vec4(transformed, 1.0);
+        #ifdef USE_INSTANCING
+        nbW = instanceMatrix * nbW;
+        #endif
+        nbW = modelMatrix * nbW; vec2 nbUv = nbW.xz * ${s.toFixed(4)};
+        #ifdef USE_MAP
+        vMapUv = nbUv;
+        #endif
+        #ifdef USE_NORMALMAP
+        vNormalMapUv = nbUv;
+        #endif
+        #ifdef USE_ROUGHNESSMAP
+        vRoughnessMapUv = nbUv;
+        #endif
+      }`); }; m.customProgramCacheKey = () => 'nbwuv' + s; return m; };
+  const roadMat = worldUV(phMat('asphalt_02', { color: 0x6a6866, roughness: 0.9, env: 0.35, normalScale: 1.6 }), 1 / 3);
+  const walkMat = worldUV(phMat('granite_tile', { color: 0x8e8a82, roughness: 0.7, env: 0.75, normalScale: 2.4 }), 1 / 2); const curbMat = new THREE.MeshStandardMaterial({ color: 0x9a978f, roughness: 0.72 });
   const leafMat = M.hedge; const trunkMat = M.iron;
   const NH = 760, NSEG = 1000;
   const houses = new THREE.InstancedMesh(boxG, houseMat, NH), pars = new THREE.InstancedMesh(boxG, parMat, NH * 2);
@@ -821,6 +851,10 @@ function buildStreetRows(g, M, place, rnd) {
     roofG.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); roofG.computeVertexNormals(); }
   const roofMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.78, side: THREE.DoubleSide, envMapIntensity: 0.4 });
   const roofs = new THREE.InstancedMesh(roofG, roofMat, NH); const ROOFC = [new THREE.Color(0x34363a), new THREE.Color(0x5a3426), new THREE.Color(0x45474b)]; let nf = 0;
+  const lineG = new THREE.PlaneGeometry(1, 1); lineG.rotateX(-Math.PI / 2);
+  const paintW = new THREE.MeshStandardMaterial({ color: 0xdcdad2, roughness: 0.6, envMapIntensity: 0.4, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  const paintY = new THREE.MeshStandardMaterial({ color: 0xd8a624, roughness: 0.6, envMapIntensity: 0.4, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  const linesW = new THREE.InstancedMesh(lineG, paintW, NSEG * 4), linesY = new THREE.InstancedMesh(lineG, paintY, NSEG * 2); let nlw = 0, nly = 0;
   const roads = new THREE.InstancedMesh(boxG, roadMat, NSEG), walks = new THREE.InstancedMesh(boxG, walkMat, NSEG * 2), curbs = new THREE.InstancedMesh(boxG, curbMat, NSEG * 2);
   const poleG = new THREE.CylinderGeometry(0.12, 0.16, 7, 6); poleG.translate(0, 3.5, 0); const armG = new THREE.BoxGeometry(0.1, 0.1, 1.6); armG.translate(0, 7, -0.7); const headG = new THREE.BoxGeometry(0.4, 0.18, 0.7); headG.translate(0, 6.9, -1.4);
   const lampMat = new THREE.MeshStandardMaterial({ color: 0xffe2b0, emissive: 0xffc27a, emissiveIntensity: TOD.label === '白昼' ? 0.2 : 2.6 });
@@ -836,6 +870,11 @@ function buildStreetRows(g, M, place, rnd) {
     const placeR = (x, z) => place(x, z) || (R === 160 && z > 90 && Math.abs(x) > 26 && Math.abs(x) < 70); // 批次37：内圈环路在南大道两侧（原整片剔除成平褐空地）接续到大道路口 |x| 26 m，街屋仍不进南轴
     for (let s = 0; s < C; s += 6) { const th = s / R; const [x, z] = at(R, th); if (!placeR(x, z)) continue; q.setFromAxisAngle(up, th);
       if (nr < NSEG) { m4.compose(new THREE.Vector3(x, Y0, z), q, new THREE.Vector3(6.3, 0.06, roadW)); roads.setMatrixAt(nr++, m4); }
+      { // 批次39：标线——中心双黄实线、两侧白色虚线分道（3 m 线 / 3 m 空）、路边白实线（距路缘 0.5 m）
+        const L = (rr, len, wd, im) => { const [lx, lz] = at(rr, th); m4.compose(new THREE.Vector3(lx, Y0 + 0.062, lz), q, new THREE.Vector3(len, 1, wd)); im.setMatrixAt(im === linesY ? nly++ : nlw++, m4); };
+        if (nly < NSEG * 2 - 1) { L(R - 0.13, 6.3, 0.12, linesY); L(R + 0.13, 6.3, 0.12, linesY); }
+        if (nlw < NSEG * 4 - 3) { for (const sd of [-1, 1]) { L(R + sd * 3.0, 3, 0.13, linesW); L(R + sd * (roadW / 2 - 0.5), 6.3, 0.15, linesW); } }
+      }
       for (const sd of [-1, 1]) { const rr = R + sd * (roadW / 2 + walkW / 2); const [wx, wz] = at(rr, th); if (nw < NSEG * 2) { m4.compose(new THREE.Vector3(wx, Y0, wz), q, new THREE.Vector3(6.3 * rr / R, 0.2, walkW)); walks.setMatrixAt(nw++, m4); }
         const rc = R + sd * (roadW / 2 + 0.12); const [cx, cz] = at(rc, th); if (nc < NSEG * 2) { m4.compose(new THREE.Vector3(cx, Y0, cz), q, new THREE.Vector3(6.3, 0.24, 0.26)); curbs.setMatrixAt(nc++, m4); } }
     }
@@ -885,7 +924,7 @@ function buildStreetRows(g, M, place, rnd) {
       const im = new THREE.InstancedMesh(geo, mat, tallTrees.length);
       tallTrees.forEach(([x, z, yaw], i) => { tq.setFromAxisAngle(up, yaw + i * 0.9); m4.compose(new THREE.Vector3(x, Y0 + 0.2, z), tq, S); im.setMatrixAt(i, m4); });
       im.computeBoundingSphere(); im.userData.noCull = true; im.frustumCulled = false; im.castShadow = false; im.receiveShadow = true; g.add(im); }); });
-  for (const [im, n] of [[houses, nh], [pars, np], [roofs, nf], [roads, nr], [walks, nw], [curbs, nc], [poles, nl], [arms, nl], [heads, nl], [stems, nt], [crowns, nt]]) { im.count = n; im.computeBoundingSphere(); im.userData.noCull = true; /* 批次30：ext_sky 看图——三圈街屋全没出现：InstancedMesh 没算 boundingSphere，DistCull 拿单位方块半径 0.87 m 当整排街屋 → 60 m 外全剔 */ im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; g.add(im); }
+  for (const [im, n] of [[houses, nh], [pars, np], [roofs, nf], [roads, nr], [walks, nw], [curbs, nc], [poles, nl], [arms, nl], [heads, nl], [stems, nt], [crowns, nt], [linesW, nlw], [linesY, nly]]) { im.count = n; im.computeBoundingSphere(); im.userData.noCull = true; /* 批次30：ext_sky 看图——三圈街屋全没出现：InstancedMesh 没算 boundingSphere，DistCull 拿单位方块半径 0.87 m 当整排街屋 → 60 m 外全剔 */ im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; g.add(im); }
 }
 
 function aircraft(M, s) {
