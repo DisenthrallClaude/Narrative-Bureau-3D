@@ -80,7 +80,7 @@ function collectCollider(root) {
     if (!o.isMesh || o.isInstancedMesh || !o.geometry?.attributes?.position) return;
     const top = (() => { let a = o; while (a.parent && a.parent !== root) a = a.parent; return a.userData.mod; })();
     if (!/^(terrain|temple|acropolis|aqueducts)$/.test(top ?? '')) return;
-    if (top === 'terrain' && !o.castShadow && !o.userData.near) return; // 只取近处地形块
+    if (top === 'terrain' && !o.userData.castShadow) return; // 只取近处地形块
     let g = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone();
     const pa = g.attributes.position, f = new Float32Array(pa.count * 3); for (let i = 0; i < pa.count; i++) { f[i * 3] = pa.getX(i); f[i * 3 + 1] = pa.getY(i); f[i * 3 + 2] = pa.getZ(i); } // 量化 / 交错位置统一转 Float32，避免合并失败
     g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(f, 3)); g.applyMatrix4(o.matrixWorld); geos.push(g);
