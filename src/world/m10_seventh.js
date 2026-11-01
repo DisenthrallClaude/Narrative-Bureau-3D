@@ -22,7 +22,7 @@ function tune(o, name) {
     // 掠射 env 高光 + 偏蓝半球光 → 读成蓝灰。改：外壳深墨褐 0x3a2a1e、粗糙 0.5、env 0；内侧暖白 env 0；灯头铜 env 0.1（仅 pendant；?nor5f=1 回旧）
     if (name === 'pendant' && !NO_R5F) {
       if (mt.name === 'm10_enamelBlack') { mt.color.setHex(0x3a2a1e); mt.roughness = 0.5; mt.metalness = 0; mt.envMapIntensity = 0; }
-      if (mt.name === 'm10_enamelIn') { mt.color.setHex(0xf2e4c8); mt.envMapIntensity = 0; mt.polygonOffset = true; mt.polygonOffsetFactor = -2; mt.polygonOffsetUnits = -4; m.receiveShadow = false; } // 罩口内暗斑带蓝边：env 归 0 后不变 → 判为外壳与内衬共面深度打架 / 自阴影，内衬前推 + 不收阴影
+      if (mt.name === 'm10_enamelIn') { mt.color.setHex(0xf2e4c8); mt.envMapIntensity = 0; } // R5-F 二的 polygonOffset 已撤：内衬与外壳仅隔 ~4 mm，前推后从外侧也盖过黑壳 → 整罩发白
       if (mt.name === 'm10_bronze') { mt.envMapIntensity = 0.1; mt.roughness = Math.max(mt.roughness, 0.55); }
     }
   });
