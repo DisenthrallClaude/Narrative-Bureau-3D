@@ -12,6 +12,8 @@
 // 剧情锚点、触发器、传送、zone 判定不动；`?nor4a=1` 关闭（M10 椅子恢复）。
 import * as THREE from 'three';
 import { Props } from './dress.js';
+import { pbr } from '../engine/assets.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 export const NO_R4A = typeof location !== 'undefined' && /[?&]nor4a=1/.test(location.search);
 
@@ -22,12 +24,33 @@ export function buildR4Seventh(zone, world, Y, M10) {
   const PI = Math.PI;
 
   // ① 作战室 ——————————————————————————————
+  // 批次 R5-D：会商长桌（4 张 2.2×4 m 黑色台面，depths.js 顶面 Y+0.73…0.79）原本无腿悬空 → 程序几何暗胡桃实木桌体：
+  // 每桌 4 条 0.11 m 方腿（内收 0.1 m）+ 0.14 m 高围裙（台面下、内收 0.06 m）+ 两端与中央 H 形横枨 + 台面外沿胡桃封边，腿脚暗铜包脚（粗糙 0.5）。
+  // 碰撞仍用 depths.js 原整桌盒 world.box(…, 2.2, 0.8, 4)，椅子在长边外 0.65 m，与腿 / 围裙不相交。
+  {
+    const walnut = pbr('Wood051', { color: 0x4a2f1f, roughness: 0.62, env: 0.15 }), brass = pbr('Metal046A', { color: 0x7a5a3a, metalness: 0.8, roughness: 0.5, env: 0.3 });
+    const gw = [], gb = [];
+    const bx = (arr, w, h, d, x, y, z) => { const g = new THREE.BoxGeometry(w, h, d); const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * Math.max(w, d) / 0.8, uv.getY(i) * Math.max(h, Math.min(w, d)) / 0.8); g.translate(x, y, z); arr.push(g); };
+    for (let k = 0; k < 4; k++) {
+      const cx = k * 2.6, cz = -120, hw = 1.1, hd = 2.0;
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const lx = cx + sx * (hw - 0.155), lz = cz + sz * (hd - 0.155); bx(gw, 0.11, 0.62, 0.11, lx, Y + 0.05 + 0.31, lz); bx(gb, 0.125, 0.05, 0.125, lx, Y + 0.025, lz); }
+      for (const sx of [-1, 1]) bx(gw, 0.04, 0.14, 2 * hd - 0.22, cx + sx * (hw - 0.12), Y + 0.66, cz); // 长边围裙
+      for (const sz of [-1, 1]) bx(gw, 2 * hw - 0.22, 0.14, 0.04, cx, Y + 0.66, cz + sz * (hd - 0.12)); // 短边围裙
+      for (const sx of [-1, 1]) bx(gw, 0.06, 0.08, 2 * hd - 0.42, cx + sx * (hw - 0.155), Y + 0.2, cz); // 两侧纵枨（腿间）
+      bx(gw, 2 * hw - 0.42, 0.08, 0.07, cx, Y + 0.2, cz); // 中央横枨（H 形）
+      for (const sx of [-1, 1]) bx(gw, 0.05, 0.075, 2 * hd + 0.04, cx + sx * (hw + 0.02), Y + 0.7575, cz); // 台面封边（长边，顶面 Y+0.795）
+      for (const sz of [-1, 1]) bx(gw, 2 * hw + 0.09, 0.075, 0.05, cx, Y + 0.7575, cz + sz * (hd + 0.02)); // 封边（短边）
+    }
+    for (const [arr, mat, nm] of [[gw, walnut, 'r5d_tableWalnut'], [gb, brass, 'r5d_tableBrass']]) { const m = new THREE.Mesh(mergeGeometries(arr, false), mat); m.name = nm; m.castShadow = false; m.receiveShadow = true; zone.add(m); }
+  }
   if (M10) M10.chairs.length = 0; // 会商长桌 12 + K 的桌 1 把 M10 转椅由本批接管
   for (let k = 0; k < 4; k++) {
     const x = k * 2.6;
     for (const dx of [-0.5, 0.5]) {
-      P.add('r2/woodenchair_01', [x + dx, Y, -117.45], { h: 0.95, yaw: PI }); // 南侧，面朝 −z
-      P.add('r2/woodenchair_01', [x + dx, Y, -122.55], { h: 0.95, yaw: 0 }); // 北侧，面朝 +z
+      // R5-D：哥特高背梯形木椅（woodenchair_01 宽/高仅 0.30，h 0.95 时座宽 ≈0.29 m，房间尺度下太细）→ 实木扶手椅 literary_club_chair（宽 ≈0.76、深 ≈0.72），
+      // 椅心离桌沿 0.65 m（椅前沿离桌沿 ≈0.29 m，扶手 < 台面底 0.73 m），仍成排面朝桌
+      P.add('r2/literary_club_chair_preview', [x + dx, Y, -117.35], { h: 1.0, yaw: PI }); // 南侧，面朝 −z
+      P.add('r2/literary_club_chair_preview', [x + dx, Y, -122.65], { h: 1.0, yaw: 0 }); // 北侧，面朝 +z
     }
     P.add('r4a/typewriter', [x + 0.45, Y + 0.79, -118.42], { w: 0.42, yaw: 0 });
     if (k % 2 === 0) P.add('r2/rotary_telephone', [x - 0.55, Y + 0.79, -118.4], { h: 0.13, yaw: 0.0 });
@@ -74,11 +97,21 @@ export function buildR4Seventh(zone, world, Y, M10) {
     const x = sx * 4.8, face = sx > 0 ? -PI / 2 : PI / 2; // 桌面件正面朝向椅子（室内中轴一侧）
     // 首拍 woodentable_02 实际只有约 0.6 m 宽（小边几）→ 换 S1 同款 1970 年代钢制办公桌（2.0×0.95，同暗铜褐漆），使用侧朝椅子
     P.add('s1/metal_office_desk', [x, Y, z], { w: 2.0, yaw: sx > 0 ? -PI / 2 : PI / 2 }); world.box(x, Y + 0.4, z, 0.95, 0.8, 2.0);
-    P.add('r2/woodenchair_01', [sx * 3.85, Y, z], { h: 0.95, yaw: sx > 0 ? PI / 2 : -PI / 2 });
+    P.add('r2/literary_club_chair_preview', [sx * 3.8, Y, z], { h: 1.0, yaw: sx > 0 ? PI / 2 : -PI / 2 }); // R5-D：同作战室换实木扶手椅（椅前沿离桌 ≈0.17 m）
     P.add('r4a/desk_lamp', [x + sx * 0.15, Y + 0.79, z - 0.7], { h: 0.45, yaw: face });
     if (j === 0) { P.add('r4a/typewriter', [x, Y + 0.79, z + 0.05], { w: 0.4, yaw: face }); P.add('s1/book_encyclopedia_set_01', [x + sx * 0.2, Y + 0.79, z + 0.7], { w: 0.45, yaw: face }); }
     else { P.add('r4a/tea_service', [x, Y + 0.79, z + 0.1], { w: 0.42, yaw: face }); P.add('r4a/correspondence_set', [x + sx * 0.05, Y + 0.79, z + 0.7], { d: 0.36, yaw: face + PI / 2 }); }
     lamp(x - sx * 0.3, Y + 1.7, z, 1.3, 3.6);
+  }
+
+  // R5-D：杀青室北墙（镜子 |x|<0.75 与 S1 钢桌 |x|>4 之间、两幅挂画 x ±2.6 正下方）各一只矮柜背贴护墙，
+  // 西：留声机，东：古籍档案摞（Above the Desk）；顶面 ≤1.2 m < 挂画下沿 1.36 m，离 S1 椅（z −156.2，x ±5）> 1 m，不进中轴与镜前锚点盒
+  for (const sx of [-1, 1]) {
+    const x = sx * 2.6, z = -157.45;
+    P.add('r4a/lower_cabinet', [x, Y, z], { w: 1.0, yaw: 0 }); world.box(x, Y + 0.385, z, 1.0, 0.77, 0.48);
+    if (sx < 0) P.add('r4a/gramophone', [x + 0.05, Y + 0.77, z + 0.02], { h: 0.42, yaw: 0.35 });
+    else P.add('r4a/antique_book_stack', [x - 0.1, Y + 0.77, z + 0.02], { h: 0.36, yaw: -0.15 });
+    lamp(x, Y + 1.9, z + 0.9, 0.9, 3.2);
   }
 
   return P.build(zone).then((ms) => {
