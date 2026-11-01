@@ -36,9 +36,33 @@ export function warmLock(mat, hue = [0.62, 0.5, 0.38], { mix = 0.82, gain = 1.0,
 }
 
 /** 正门门楼两侧尖塔（hero_facade 内 F_trim，x ±6.3…7.7、y 19.3…25.7、z −4.1…−2.6）：背光面吃黄昏半球紫光 + 天空反射 → 偏紫灰、边缘发蓝。
- *  只在这两个世界盒内把 trim 石材锁到暖石色相（略提亮），其余线脚不动 */
+ *  只在这两个世界盒内（用 weather() 已有的世界坐标 varying vNbW）：间接漫反射换成暖色、天空镜面反射压到 25%，出射光再锁暖石色相；其余线脚不动。
+ *  第 1 版（自建 varying + 末端色相锁）截图无效，第 2 版改走 vNbW + 光照阶段替换 */
 export function warmPortalPinnacles(trim) {
-  return warmLock(trim, [0.62, 0.5, 0.38], { mix: 0.85, gain: 1.15, key: 'r4bpin', boxes: [[-8.1, 19.0, -4.4, -5.9, 26.4, -2.3], [5.9, 19.0, -4.4, 8.1, 26.4, -2.3]] });
+  if (NO || !trim || trim.userData.r4bPin) return trim;
+  trim.userData.r4bPin = true;
+  const prev = trim.onBeforeCompile, prevKey = trim.customProgramCacheKey;
+  const IN = 'float r4in = (step(5.9, abs(vNbW.x)) * step(abs(vNbW.x), 8.1) * step(19.0, vNbW.y) * step(vNbW.y, 26.4) * step(-4.4, vNbW.z) * step(vNbW.z, -2.3));';
+  trim.onBeforeCompile = function (sh, r) {
+    if (prev) prev.call(this, sh, r);
+    if (!sh.fragmentShader.includes('vNbW')) console.warn('[NB] r4b 尖塔：trim 无 vNbW');
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <lights_fragment_end>', `#include <lights_fragment_end>
+        { ${IN}
+          vec3 r4w = vec3(1.0, 0.80, 0.60);
+          float r4l = dot(reflectedLight.indirectDiffuse, vec3(0.299, 0.587, 0.114));
+          reflectedLight.indirectDiffuse = mix(reflectedLight.indirectDiffuse, r4l * r4w * 1.25, r4in);
+          reflectedLight.indirectSpecular *= mix(1.0, 0.25, r4in);
+          reflectedLight.directDiffuse *= mix(vec3(1.0), r4w * 1.1, r4in); }`)
+      .replace('#include <dithering_fragment>', `#include <dithering_fragment>
+        { ${IN}
+          float L = dot(gl_FragColor.rgb, vec3(0.299, 0.587, 0.114)); vec3 hn = vec3(0.62, 0.50, 0.38) / 0.5106;
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, hn * L * 1.15, 0.85 * r4in); }`);
+  };
+  trim.customProgramCacheKey = function () { return (prevKey ? prevKey.call(this) : '') + '|r4bpin2'; };
+  trim.needsUpdate = true;
+  console.log('[NB] r4b 尖塔暖化已挂');
+  return trim;
 }
 
 /** 去蓝：材质贴图先去饱和再乘暖色（报刊亭蓝色瓦楞铁皮等） */
