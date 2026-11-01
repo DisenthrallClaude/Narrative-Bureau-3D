@@ -66,7 +66,7 @@ export function buildR4Seventh(zone, world, Y, M10) {
 
   // 改写之手（Above the Desk giant-hand，去骨骼静态 + 减面）：从天花垂下，x 0 z −176.5（红线林豁口 |x|<2.2 内、天花梁 −175 / −178 之间、
   // 顶光 (0, 8.6, −170)→巨书 光路之外），指尖离地 6.45 m 不挡任何动线；压暗为低存在感，下方暗暖光
-  P.add('r4a/giant_hand', [0, Y + 6.45, -176.5], { h: 2.6, yaw: 0 });
+  P.add('r4a/giant_hand', [0, Y + 6.45, -176.5], { h: 3.0, yaw: 0 }); // 腕口埋进天花 0.45 m（防天花格心处露出腕截面）
   { const l = new THREE.PointLight(0xffa860, 1.1, 4.5, 2); l.position.set(0, Y + 5.4, -175.6); l.castShadow = false; zone.add(l); }
 
   // ③ 杀青室 ——————————————————————————————

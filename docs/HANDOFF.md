@@ -2234,3 +2234,10 @@ m7/portico 2.0→0.66 MB、m8/ops 2.9→0.78、wrap 2.5→0.67、rewrite 3.1→0
 - 未验证：音效听感无法在无头 CI 里实听（只验证了加载 / 无报错 / 音量链路）；low 档未单独拍（B 项不分档）。
 ### 下批建议
 1. 在 physics 登记真正的 'grate'/'metal' 地面（东楼梯 / 书脊井钢梯），替代按区域近似。2. 门关闭、阅读器关闭（K_door_close / K_ui_back / K_paper_open 已入仓未接）。3. 如需更强存在感可把 KALIAS / KINTER 里的音量系数上调，统一在 audio.js 顶部。
+
+## 批次 R4-A · 第七局中部充实（开源资源复用，2026-11-01 16:54 CST 接手，约 45 分钟；与 R4-B / R4-C 并行，只动第七局）
+- 提交 59f83bd（主体）、3c1ac33（杀青室桌换钢桌 + 改写之手）、末次（手加长埋进天花 + 日志）。代码 src/world/r4_seventh.js；depths.js 只加 import + 一行 `jobs.push(buildR4Seventh(zone, world, Y, NO_M10 ? null : M10))`（放在 buildM10Seventh 之前，清空 M10.chairs 接管椅子）；`?nor4a=1` 关闭恢复 M10 转椅。
+- 资源 public/assets/models/r4a/（11 件 2.8 MB）：Above the Desk by Wh1tZz（github.com/Wh1tZz/above-the-desk，Tripo 生成，经作者许可，用户转述）。全部 29 个候选件处理版在 /workspace/work/atd/out/（meshopt + webp 1k，>2 万三角件简化 30%），R4-C 已复用。
+- 平面：work/r4a/plan.md。作战室：长桌两侧 r2/woodenchair_01 ×16（z −117.45 / −122.55 面朝桌）+ 南沿打字机 ×4、转盘电话 ×2、信札匣 ×2；K 桌 r2/armchair_01；北墙东段书柜 ×3（x 3.8…8.2）；东墙内鬼墙下矮柜 ×6 + 地球仪（海洋乘暖褐去青）+ 座钟。回写台：北墙门洞两侧书柜 ×6（红线林外）、定稿台外圈 45° 档案车 ×4（高 0.72 m < 纸条最低 0.79 m）、南墙壁柱间矮柜 ×2 + 浑天仪、天花垂下巨人手（x0 z−176.5，指尖离地 6.45 m，压暗）。杀青室：x ±4.8、z −141 / −150.5 钢制办公桌（S1 同款暗铜褐）×4 + 木椅 + 台灯 + 打字机 / 茶具 / 信札 / 百科，每台暖点光。
+- 机位新增 r4a_wrap_top / r4a_rew_top / r4a_ops_ne / r4a_rew_n / r4a_wrap_e / r4a_hand。截图 work/r4a/{top,after1,after}/，对比 work/r4a/sheet.jpg（改前 S3 ↔ 改后）、sheet_new.jpg。
+- 遗留：作战室会商长桌本体（dp_inkMatte 黑板面）无桌腿、看起来悬浮；东墙军械柜 r2/metal_storage_cabinet ×3 偏蓝、沙盘左侧 M8 吊灯罩仍反蓝；纸人 paper-courier 未用（T-pose + 蓝披风）；巨人手存在感很低（按要求），玩家需抬头才看得到。
