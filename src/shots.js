@@ -1,6 +1,10 @@
 // 截图机位（?shot=名称）：用于里程碑截图与视觉审阅
 const Y = 1.8;
 export const SHOTS = {
+  // R8-MOYUAN 原型（需 ?moyuan=athena；Athenaion 世界整体在 y−3000）
+  moyuan_entry: { pos: [150, -3000 + 72, 160], look: [20, -3000 + 80, -64], fov: 62, zone: 'abyss_athena' },   // 入口远望卫城
+  moyuan_colossus: { pos: [44, -3000 + 69.5, -16], look: [50, -3000 + 85, -33], fov: 70, zone: 'abyss_athena' }, // 巨像 A 下仰视
+
   plaza: { pos: [0, 1.7, 74], look: [0, 30, -40], fov: 70 },
   plaza_aerial: { pos: [70, 95, 150], look: [0, 25, -40], fov: 55 },
   plaza_fountain: { pos: [-22, 3.2, 48], look: [0, 6, 28], fov: 65 },

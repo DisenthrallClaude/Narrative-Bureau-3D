@@ -91,3 +91,9 @@ paper-courier（纸人主角）未用：绑定姿态为 T-pose、披风为蓝色
 |---|---|---|---|---|---|
 | src/engine/skyfog.js（nbAerial / nbAtmoOD） | https://github.com/Leonxlnx/athenaion/blob/main/src/core/atmosphere.js | Leon Lin | MIT（Copyright (c) 2026 Leon Lin，全文见 public/assets/CREDITS.txt） | 公式改编：高度层光学深度 + 远距平方项 + 逐通道消光 + HG 前向散射；色调改暖琥珀灰（不偏蓝），只作用室外 FogExp2；?nor7=1 回旧 | 代码 |
 | tools/colorstat.py | https://github.com/Leonxlnx/athenaion/blob/main/tools/colorstats.mjs 、satstats.mjs | Leon Lin | MIT（同上） | Python 重写，增加青蓝像素占比 / 暖度两项验收指标 | 代码 |
+
+## R8-MOYUAN · Athenaion（2026-11-02，原型，默认关闭）
+- 来源：https://github.com/Leonxlnx/athenaion ，MIT，Copyright (c) 2026 Leon Lin（LICENSE 原文保留于 src/world/athenaion/LICENSE）。
+- 用途：`?moyuan=athena` 时进入墨渊动态加载其程序化古城（terrain/temple/acropolis/aqueducts/statues/city/vegetation/waterfalls 模块），世界平移至 y−3000，地底化调色。
+- 改动：core/cache.js 取烘焙文件路径改为 `BASE_URL + moyuan/generated/`；modules/terrain.js 跳过源码哈希（运行时 worker 网格化）。
+- 烘焙文件：public/moyuan/generated/statue-*.bin（41 个，26.2 MB，gzip 13.3 MB），用其 tools/bake.mjs statues、STATUES_DETAIL=0.5 生成。

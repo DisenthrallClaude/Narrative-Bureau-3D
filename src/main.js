@@ -14,6 +14,7 @@ import { buildM5 } from './world/dress_m5.js';
 import { applyM14Training } from './world/m14_training.js';
 import { buildSurface } from './world/surface.js';
 import { buildDepths, updateDepths, depthZone, setupDepths } from './world/depths.js';
+import { MOYUAN_ATHENA, athenaZone, ATHENA_LOOK, setupMoyuanAthena } from './world/moyuan_athena.js'; // R8-MOYUAN 原型（?moyuan=athena）
 import { PlanarReflector } from './engine/reflect.js';
 import { time } from './engine/fx.js';
 import { buildExterior, updateExterior, FLOOR } from './world/exterior.js';
@@ -139,6 +140,7 @@ async function boot() {
   scene.traverse((o) => { if (o.userData?.isFill) { let a = o; while (a.parent && a.parent !== scene) a = a.parent; o.userData.fillOf = a.name; FILLS.push(o); } });
   setupStory(G);
   setupDepths(G, { toast: UI.toast, dialog: UI.dialog, fade: UI.fade, chapterCard: UI.chapterCard, updateObjective: UI.updateObjective, docPages: UI.docPages });
+  setupMoyuanAthena(G, (x, y, z, yaw = 0) => { player.pos.set(x, y, z); player.vel?.set(0, 0, 0); player.yaw = yaw; player.pitch = 0; player.applyCamera(camera); setZone(zoneAt(player.pos)); });
   bindAll(G);
   setupElevator(G, { toast: UI.toast, dialog: UI.dialog, fade: UI.fade, runInteractable });
   applyQuality(savedQ);
@@ -215,7 +217,7 @@ async function start() {
 }
 
 // —— 分区与可见性 ——
-const AREA_NAMES = { plaza: ['中轴广场 · 规则之泉', 'CENTRAL PLAZA'], gate: ['正门 · 服务台', 'MAIN GATE'], security_hall: ['安检大厅', 'SECURITY HALL'], archive: ['人事档案馆', 'PERSONNEL ARCHIVE'], archive_b1: ['B1 · 密集库', 'ARCHIVE STACKS · B1'],
+const AREA_NAMES = { abyss_athena: ['墨渊 · 雅典娜地城', 'THE INK ABYSS · ATHENAION'], plaza: ['中轴广场 · 规则之泉', 'CENTRAL PLAZA'], gate: ['正门 · 服务台', 'MAIN GATE'], security_hall: ['安检大厅', 'SECURITY HALL'], archive: ['人事档案馆', 'PERSONNEL ARCHIVE'], archive_b1: ['B1 · 密集库', 'ARCHIVE STACKS · B1'],
   citizen_service: ['东翼 1F · 市民服务大厅', 'CITIZEN SERVICES'], exam_center: ['东翼 · 叙事高考考务中心', 'NARRATIVE EXAM CENTER'], command_center: ['东翼 2F · 现实稳定度监测指挥中心', 'STABILITY COMMAND'], zone_control: ['东翼 3F · 禁区封锁调度厅', 'ZONE CONTROL'], east_stair: ['东翼楼梯', 'EAST STAIR'],
   spine_b3: ['书脊井 · B3 电梯厅', 'SPINE SHAFT · B3'], spine_b4: ['书脊井 · B4 电梯厅', 'SPINE SHAFT · B4'], spine_b5: ['书脊井 · B5 电梯厅', 'SPINE SHAFT · B5'],
   vault_b3: ['B3 · 证物收容库　开架区', 'EVIDENCE VAULT · B3'], vault_b4: ['B4 · 单独收容柜', 'CONTAINMENT · B4'], vault_b5: ['B5 · 深库', 'DEEP VAULT · B5'],
@@ -229,6 +231,7 @@ const AREA_OF = { hangar: 'helipad', abyss_gate: 'abyss_gate', abyss_city: 'abys
 const GROUP_OF = { hangar: 'surface', abyss_gate: 'abyss', abyss_city: 'abyss', abyss_core: 'abyss', abyss_exam: 'abyss', abyss_tide: 'abyss', seventh_entry: 'seventh', seventh_gutter: 'seventh', seventh_ops: 'seventh', seventh_wrap: 'seventh', seventh_rewrite: 'seventh', dorm: 'surface', helipad: 'surface', wall_posts: 'surface', memorial: 'surface', metro_exit: 'surface', spine_b3: 'vault_b3', spine_b4: 'vault_b4', spine_b5: 'vault_b5', citizen_service: 'east_wing', exam_center: 'east_wing', command_center: 'east_wing', zone_control: 'east_wing', east_stair: 'east_wing' };
 function zoneAt(p) {
   const Y = FLOOR;
+  if (MOYUAN_ATHENA) { const mz = athenaZone(p); if (mz) return mz; }
   const dz = depthZone(p); if (dz) return dz;
   // 地上楼层：按 upper.js 实际平面包围盒判定（含电梯厅 z -84…-92）；包围盒外的高空一律算室外
   const inUpper = (hx, z1) => Math.abs(p.x) < hx && p.z < -83.6 && p.z > z1;
@@ -266,6 +269,7 @@ const VIS = {
   plaza: { exterior: 1, gate: 1, security_hall: 1, surface: 1 },
   dorm: { exterior: 1, surface: 1 }, helipad: { exterior: 1, surface: 1 }, hangar: { exterior: 1, surface: 1 }, wall_posts: { exterior: 1, surface: 1 }, memorial: { exterior: 1, surface: 1 }, metro_exit: { exterior: 1, surface: 1 },
   east_cloister: { east_cloister: 1, canteen: 1, east_wing: 1 },
+  abyss_athena: {}, // R8-MOYUAN：只显示 moyuan_athena 根组
   abyss_gate: { abyss: 1 }, abyss_city: { abyss: 1 }, abyss_core: { abyss: 1 }, abyss_exam: { abyss: 1 }, abyss_tide: { abyss: 1 },
   seventh_entry: { seventh: 1 }, seventh_gutter: { seventh: 1 }, seventh_ops: { seventh: 1 }, seventh_wrap: { seventh: 1 }, seventh_rewrite: { seventh: 1 },
   gate: { exterior: 1, gate: 1, security_hall: 1 },
@@ -277,6 +281,7 @@ const VIS = {
   citizen_service: EW, exam_center: EW, command_center: { east_wing: 1 }, zone_control: { east_wing: 1 }, east_stair: EW,
 };
 const ZONE_LOOK = {
+  abyss_athena: { ...ATHENA_LOOK },
   plaza: { env: 'sky', envI: 1.1, sun: 3.2, exp: 1.05, fog: [0x8a7a86, 0.0011], hemi: 0.3 },
   memorial: { env: 'sky', envI: 1.0, sun: 3.2, exp: 1.05, fog: [0x8a7a86, 0.0016], hemi: 0.3 }, metro_exit: { env: 'sky', envI: 1.1, sun: 3.2, exp: 1.05, fog: [0x8a7a86, 0.0011], hemi: 0.3 },
   wall_posts: { env: 'sky', envI: 1.0, sun: 3.2, exp: 1.05, fog: [0x8a7a86, 0.0011], hemi: 0.3 }, helipad: { env: 'sky', envI: 0.9, sun: 3.2, exp: 1.1, fog: [0x8a7a86, 0.0011], hemi: 0.25 }, hangar: { env: 'hall', envI: 0.38, sun: 3.2, exp: 1.2, fog: [0x221d17, 0.004], hemi: 0.2 },

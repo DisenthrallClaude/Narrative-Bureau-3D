@@ -166,3 +166,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+墨渊 · 雅典娜地城（R8-MOYUAN 原型，?moyuan=athena 才加载）
+Athenaion — procedural ancient Greek city (code + baked statue geometry)
+https://github.com/Leonxlnx/athenaion  ·  MIT License  ·  Copyright (c) 2026 Leon Lin
+源码位于 src/world/athenaion/（含原 LICENSE），烘焙数据 public/moyuan/generated/（由其 tools/bake.mjs statues 以 STATUES_DETAIL=0.5 生成）。
+本项目修改：地底化调色（蓝/青/绿压为暗金/暗铜/墨褐）、去海与云、树密度约 1/20、贴图/资源路径改为站内 BASE_URL。
