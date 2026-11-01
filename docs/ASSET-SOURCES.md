@@ -28,3 +28,21 @@
 | models/s3/mantel_clock_01.glb | https://polyhaven.com/a/mantel_clock_01 | Yann Kervran, Rico Cilliers | CC0 | 1k webp + meshopt | 326 KB |
 
 已下载、核过许可但本批未入库：tea_set_01 / wooden_display_shelves_01（Poly Haven CC0，未找到经核实的空位）、round_spectacles（深色墨镜片，不合时代）、Khronos glTF-Sample-Assets Lantern（CC0，中世纪木杆路灯不合风格）。弃用：Khronos AntiqueCamera（CC0 但含 UX3D 商标，LICENSE 明确排除商标）。
+
+## 批次 R4-A（第七局中部充实，2026-11-01）
+Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源。
+
+| 文件 | 来源 | 作者 | 许可 | 处理 | 大小 |
+|---|---|---|---|---|---|
+| models/r4a/typewriter.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/typewriter.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源） | 1k webp + meshopt | 250 KB |
+| models/r4a/desk_lamp.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/desk-lamp.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源） | 1k webp + meshopt，简化 30% | 349 KB |
+| models/r4a/library_cart.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/library-cart.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源） | 1k webp + meshopt | 185 KB |
+| models/r4a/realistic_bookcase.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/realistic-bookcase.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源） | 1k webp + meshopt | 262 KB |
+| models/r4a/lower_cabinet.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/lower-cabinet.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源） | 1k webp + meshopt | 200 KB |
+| models/r4a/desk_globe.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/desk-globe.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源） | 1k webp + meshopt | 147 KB |
+| models/r4a/wind_clock.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/wind-clock.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源） | 1k webp + meshopt | 230 KB |
+| models/r4a/tea_service.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/tea-service.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源） | 1k webp + meshopt | 380 KB |
+| models/r4a/correspondence_set.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/correspondence-set.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源） | 1k webp + meshopt | 164 KB |
+| models/r4a/armillary.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/armillary.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源） | 1k webp + meshopt，简化 30% | 467 KB |
+
+另复用已入库 r2/woodenchair_01、r2/armchair_01、r2/woodentable_02、r2/rotary_telephone、s1/book_encyclopedia_set_01。处理件共 29 个放 /workspace/work/atd/out/（供其它批次复用）；ink-bottle（青绿墨水瓶）、antique-book-stack（蓝绿书脊）未用。

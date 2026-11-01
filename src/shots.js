@@ -213,6 +213,11 @@ export const SHOTS = {
   memorial_r3: { pos: [-63, 1.7, 21.0], look: [-72, 1.0, 27], fov: 72, zone: 'memorial' },
   s7_ops_b: { pos: [-7.5, -500 + 1.7, -114], look: [6, -500 + 1.0, -126], fov: 76, zone: 'seventh_ops' },
   s7_ops_top: { pos: [0, -500 + 24, -122.99], look: [0, -500, -123], fov: 50, clipY: -500 + 4.2, zone: 'seventh_ops' },
+  r4a_wrap_top: { pos: [0, -500 + 20, -145.99], look: [0, -500, -146], fov: 62, clipY: -500 + 4.6, zone: 'seventh_wrap' }, // 批次 R4-A 俯视
+  r4a_rew_top: { pos: [0, -500 + 25, -171.99], look: [0, -500, -172], fov: 58, clipY: -500 + 3.0, zone: 'seventh_rewrite' }, // 批次 R4-A 俯视（切掉红线林上部）
+  r4a_ops_ne: { pos: [-1, -500 + 1.7, -126], look: [7, -500 + 1.0, -115], fov: 70, zone: 'seventh_ops' }, // 批次 R4-A：长桌/北墙书柜/东墙矮柜
+  r4a_rew_n: { pos: [0, -500 + 1.8, -168.6], look: [0, -500 + 1.4, -158.5], fov: 74, zone: 'seventh_rewrite' }, // 批次 R4-A：回写台北墙书柜
+  r4a_wrap_e: { pos: [-1, -500 + 1.7, -137.5], look: [6, -500 + 0.9, -148], fov: 70, zone: 'seventh_wrap' }, // 批次 R4-A：杀青室工作台
   b5_deep: { pos: [0.5, -42 + 1.7, -101.2], look: [-1, -42 + 1.0, -124], fov: 76, zone: 'vault_b5' },
   b6_maint: { pos: [-27.5, -52 + 1.7, -138.0], look: [-31.8, -52 + 2.6, -148], fov: 76, zone: 'training' },
   med_r3: { pos: [0.6, 15.8 + 1.65, -93.0], look: [-3.5, 15.8 + 1.0, -107], fov: 76, zone: 'floor3' },

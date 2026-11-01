@@ -106,3 +106,16 @@ Kenney（www.kenney.nl）音效包，CC0 1.0（http://creativecommons.org/public
 [批次 S3 · 第七局杀青室 · Poly Haven CC0] public/assets/models/s3/
 - side_table_tall_01.glb — "Side Table Tall 01" by James Ray Cock, https://polyhaven.com/a/side_table_tall_01 — CC0 1.0
 - mantel_clock_01.glb — "Mantel Clock 01" by Yann Kervran, Rico Cilliers, https://polyhaven.com/a/mantel_clock_01 — CC0 1.0
+
+[批次 R4-A · 第七局 · Above the Desk] public/assets/models/r4a/
+Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源
+- typewriter.glb — "Typewriter", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/typewriter.glb
+- desk_lamp.glb — "Desk Lamp", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/desk-lamp.glb
+- library_cart.glb — "Library Cart", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/library-cart.glb
+- realistic_bookcase.glb — "Realistic Bookcase", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/realistic-bookcase.glb
+- lower_cabinet.glb — "Lower Cabinet", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/lower-cabinet.glb
+- desk_globe.glb — "Desk Globe", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/desk-globe.glb
+- wind_clock.glb — "Wind Clock", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/wind-clock.glb
+- tea_service.glb — "Tea Service", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/tea-service.glb
+- correspondence_set.glb — "Correspondence Set", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/correspondence-set.glb
+- armillary.glb — "Armillary", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/armillary.glb
