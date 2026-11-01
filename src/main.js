@@ -102,7 +102,7 @@ async function boot() {
   const [sky, hall] = await Promise.all([new THREE.TextureLoader(manager).loadAsync('./assets/tex/' + TOD.sky).catch(() => null), loadHDR(HALL_PROBE ? 'hall_probe' : 'hall_1k')]);
   if (sky) { sky.mapping = THREE.EquirectangularReflectionMapping; sky.colorSpace = THREE.SRGBColorSpace; sky.generateMipmaps = true; sky.minFilter = THREE.LinearMipmapLinearFilter; sky.anisotropy = 4; }
   skyTex = sky;
-  installSkyFog(sky, SKY_I);
+  installSkyFog(sky, SKY_I, { dir: TOD.sunDir, color: TOD.sunColor }); // R7-ATH：大气透视需太阳方向/颜色（?nor7=1 回旧）
   envSky = sky ? pm.fromEquirectangular(sky).texture : null;
   if (hall) tameHDR(hall, HALL_PROBE ? 6 : 2.5); // M5：压住室内 HDR 的窗口高光（档案馆/安检大厅地面「白光溢出」与地下地面金色镜面的根因）
   envHall = hall ? pm.fromEquirectangular(hall).texture : null;

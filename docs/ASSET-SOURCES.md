@@ -84,3 +84,10 @@ paper-courier（纸人主角）未用：绑定姿态为 T-pose、披风为蓝色
 | 文件 | 来源 | 作者 | 许可 | 处理 | 大小 |
 |---|---|---|---|---|---|
 | models/r6c/bureau_armchair.glb | 本项目 Blender 自建（tools/blender/r6c_bureau_armchair.py）；贴图 ambientCG Wood051 / Leather026 | 本项目 | 模型自有；贴图 CC0 | 5.2k 三角，1k webp（色图按亮度重着色：暗胡桃 / 暗酒红褐），meshopt | 251 KB |
+
+## 批次 R7-ATH · 外景大气透视（代码改编，MIT）
+
+| 文件 | 来源 | 作者 | 许可 | 处理 | 大小 |
+|---|---|---|---|---|---|
+| src/engine/skyfog.js（nbAerial / nbAtmoOD） | https://github.com/Leonxlnx/athenaion/blob/main/src/core/atmosphere.js | Leon Lin | MIT（Copyright (c) 2026 Leon Lin，全文见 public/assets/CREDITS.txt） | 公式改编：高度层光学深度 + 远距平方项 + 逐通道消光 + HG 前向散射；色调改暖琥珀灰（不偏蓝），只作用室外 FogExp2；?nor7=1 回旧 | 代码 |
+| tools/colorstat.py | https://github.com/Leonxlnx/athenaion/blob/main/tools/colorstats.mjs 、satstats.mjs | Leon Lin | MIT（同上） | Python 重写，增加青蓝像素占比 / 暖度两项验收指标 | 代码 |
