@@ -8,7 +8,8 @@ import { mats } from './mats.js';
 import { Frame, archRingGeo, archSolidGeo, archShape, archApex, lancetWindow, pinnacle, spire, tower, gableRoof, bayWall, flyingButtress, emblem, goldText } from './gothic.js';
 import { waterMaterial, waterfallMaterial, bannerMaterial, CanvasScreen, time } from '../engine/fx.js';
 import { content } from '../engine/content.js';
-import { placeHero, phMat } from './hero.js';
+import { placeHero, phMat, extMats } from './hero.js';
+import { warmPortalPinnacles, deBlueMap, farHalls, R4B_OFF } from './r4b_ext.js';
 import { weather } from '../engine/weather.js';
 export const HERO = !new URLSearchParams(location.search).has('legacy'); // R2：主楼外观改用 Blender 精修 GLB（?legacy 回到旧版程序化外观对比）
 
@@ -217,22 +218,23 @@ function buildFountain(b, g, M, world, ctx) {
   law.rotation.x = -Math.PI / 2; law.position.set(C[0], 0.12, C[2]); law.receiveShadow = true; g.add(law);
   ctx.lawFloor = law;
   // 水面
-  const water = new THREE.Mesh(new THREE.RingGeometry(2.2, 13.45, 96, 1), waterMaterial()); water.rotation.x = -Math.PI / 2; water.position.set(C[0], 0.62, C[2]); water.material.opacity = 0.78; g.add(water);
+  const wCol = R4B_OFF ? undefined : 0x15110c; /* R4-B：池水冷蓝黑 0x0a1a24 → 暖深褐，反射压 1.4 → 0.8（映天偏冷白） */ const wmR4 = () => { const m = waterMaterial(wCol); if (!R4B_OFF) m.envMapIntensity = 0.8; return m; };
+  const water = new THREE.Mesh(new THREE.RingGeometry(2.2, 13.45, 96, 1), wmR4()); water.rotation.x = -Math.PI / 2; water.position.set(C[0], 0.62, C[2]); water.material.opacity = 0.78; g.add(water);
   ctx.fountainWater = water;
   // 中央底座与二层盘
   lathe([[0, 0], [3.2, 0], [3.2, 0.9], [2.4, 1.2], [1.6, 1.4], [1.3, 2.4], [1.5, 3.0], [2.4, 3.3], [6.2, 3.55], [6.5, 3.9], [6.1, 4.05], [2.0, 3.9], [0, 3.9]], 'blackMarble');
   if (!HERO) {
   { const r = new THREE.TorusGeometry(6.38, 0.05, 6, 120); r.rotateX(Math.PI / 2); b.add('gold', r, { pos: [C[0], 3.95, C[2]] }, { uv: 1 }); }
   }
-  const w2 = new THREE.Mesh(new THREE.CircleGeometry(6.05, 64), waterMaterial()); w2.rotation.x = -Math.PI / 2; w2.position.set(C[0], HERO ? 3.8 : 3.98, C[2]); g.add(w2);
+  const w2 = new THREE.Mesh(new THREE.CircleGeometry(6.05, 64), wmR4()); w2.rotation.x = -Math.PI / 2; w2.position.set(C[0], HERO ? 3.8 : 3.98, C[2]); g.add(w2);
   // 三层盘
   lathe([[0, 3.9], [1.0, 3.9], [0.7, 4.6], [0.7, 5.6], [1.1, 6.2], [3.0, 6.45], [3.2, 6.75], [2.9, 6.85], [0.9, 6.75], [0, 6.75]], 'blackMarble');
   if (!HERO) {
   { const r = new THREE.TorusGeometry(3.15, 0.04, 6, 90); r.rotateX(Math.PI / 2); b.add('gold', r, { pos: [C[0], 6.8, C[2]] }, { uv: 1 }); }
   }
-  const w3 = new THREE.Mesh(new THREE.CircleGeometry(2.9, 48), waterMaterial()); w3.rotation.x = -Math.PI / 2; w3.position.set(C[0], 6.8, C[2]); g.add(w3);
+  const w3 = new THREE.Mesh(new THREE.CircleGeometry(2.9, 48), wmR4()); w3.rotation.x = -Math.PI / 2; w3.position.set(C[0], 6.8, C[2]); g.add(w3);
   // 水帘
-  const wfm = waterfallMaterial();
+  const wfm = R4B_OFF ? waterfallMaterial() : waterfallMaterial([0.86, 0.78, 0.64], 0.72); // R4-B：水帘 / 喷水冷白 (0.78,0.88,0.98) → 暖白、亮度 ×0.72
   const s2 = new THREE.Mesh(new THREE.CylinderGeometry(6.5, 6.9, 3.4, 96, 1, true), wfm); s2.position.set(C[0], 2.2, C[2]); g.add(s2);
   const s3 = new THREE.Mesh(new THREE.CylinderGeometry(3.22, 3.5, 2.85, 64, 1, true), wfm); s3.position.set(C[0], 5.4, C[2]); g.add(s3);
   // 四向喷水（从外沿射向中心）
@@ -500,6 +502,7 @@ async function heroFacade(g, M, world, ctx, add) {
   // R3 批次8：远景 LOD（tools/facade_lod.mjs，Permissive 塌边 2.6M → 0.32M 面）；hi/lo 各自子组，main.js 切块后按格切换
   const gHi = new THREE.Group(); gHi.name = 'facade_hi'; const gLo = new THREE.Group(); gLo.name = 'facade_lo'; g.add(gHi, gLo); ctx.facadeLod = { hi: gHi, lo: gLo };
   await Promise.all([placeHero(gHi, world, './assets/hero/hero_facade.glb', { hide: ['steps'] }), placeHero(gLo, null, './assets/hero/hero_facade_lo.glb', { col: false, hide: ['steps'] })]);
+  warmPortalPinnacles(extMats().trim); // R4-B：门楼两侧尖塔（山花左右两只「∩」盲拱小尖塔）背光偏紫 / 边缘映蓝 → 盒内暖石色相锁
   facadeBounce(gHi, gLo, Y); facadeTroughs(g, Y); // 批次50：下半立面暖反弹光（广场铺地被地埋灯 / 投光照亮后回弹到石墙下段），让远景下半立面石材纹理可读
   // 门洞内：敞开的大门门扇——批次30 看 ext_door_near：原深色木 + 亮铜框读成「棕木板 + 霓虹描边」→ 暗古铜门扇 + 浅一档铜芯板 + 哑光铜框 + 铁箍铜泡钉
   const DW = 7, DH = 9;
@@ -761,6 +764,7 @@ function buildCity(g, M, ctx) {
   }
   for (const im of [bodies, roofs, spires, tips, bands]) { im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; im.computeBoundingSphere?.(); g.add(im); }
   buildStreetRows(g, M, place, rnd);
+  farHalls(g, null, place); // R4-B：远景写实砖石公馆 ×N（Innerscene Library building，CC0）
   ctx.cityMats = { stoneCity };
   loadModel('cathedral').then((src) => {
     const spots = [[-420, -640, 0.4], [520, -900, 2.1], [-900, 300, 1.2], [880, 260, -0.6], [-260, -1300, 0.9], [1300, -500, 3.0], [-1500, -600, 2.4], [300, 900, 0.2]];
@@ -802,7 +806,7 @@ function streetModules(g, mods, at, Y0) { // 批次33：tools/blender/street_hou
     src.updateMatrixWorld(true);
     src.traverse((o) => { if (!o.isMesh) return; const mn = (o.material?.name || '').replace(/\.\d+$/, ''); const geo = o.geometry.clone().applyMatrix4(o.matrixWorld); geo.rotateY(Math.PI); /* 批次36 ★根因：Blender +Y 朝街导出后是 glTF −Z（不是 +Z）——三批来阳台板 / 铁栏 / 雨棚 / 窗套全部朝楼内长进墙里，只有退进的玻璃和窗框露在墙外（pick 前读 glb：sh_shop 玻璃 z=+0.08、雨棚 z<0）。绕 Y 转 180° 让模块正面朝街 */
       const sets = mn === 'sh_glass' ? [[MT.sh_glass, list.filter((m) => !m[6])], [litGlass, list.filter((m) => m[6])]] : [[MT[mn] ?? MT.sh_stone, list]];
-      for (const [mat, L] of sets) { if (!L.length) continue; const im = new THREE.InstancedMesh(geo, mat, L.length);
+      for (const [mat, L] of sets) { if (!L.length) continue; if (!R4B_OFF && mn === 'sh_glass' && !mat.userData.r4bPO) { mat.polygonOffset = true; mat.polygonOffsetFactor = -2; mat.polygonOffsetUnits = -6; mat.userData.r4bPO = true; } /* R4-B：ext_green 白色民居窗内「二维码」噪点 = 玻璃与墙面画的深色窗 / 窗框远处深度打架 → 玻璃深度前拉 */ const im = new THREE.InstancedMesh(geo, mat, L.length);
         L.forEach((m, i) => { const [x, z] = at(m[1], m[2]); q.setFromAxisAngle(up, m[4]); m4.compose(new THREE.Vector3(x, Y0 + m[3], z), q, (mn === 'sh_glass' || mn === 'sh_frame') ? MSC_FLAT[name] : MSC[name]); im.setMatrixAt(i, m4); });
         im.computeBoundingSphere(); im.userData.noCull = true; im.castShadow = mn === 'sh_canvas' || mn === 'sh_conc'; im.receiveShadow = true; g.add(im); } });
     console.log('[NB] 街屋立面模块', name, list.length); });
@@ -852,7 +856,7 @@ function busStops(g, at, Y0) {
     const put = (name, r, arc, h, extra) => { /* 批次39：人行道顶 Y0+0.2（原 +0.1 陷进 10 cm） */ const th = sx * arc / r; const [x, z] = at(r, th); placeModel(name, { height: h, pos: [x, Y0 + 0.2, z], rotY: th + Math.PI }).then((w) => { w.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); w.userData.noCull = true; g.add(w); extra?.(w); }); };
     put('r2/bus_shelter_6080', 168.6, 34, 3.02, (w) => { const o = w.children[0]; const m = new THREE.Mesh(new THREE.PlaneGeometry(0.54, 0.81), sign); m.position.set(2.35 + o.position.x, 1.95, 0.75 + 0.032 + o.position.z); w.add(m); });
     // 批次39：成组对称——候车亭（弧长 34）居中，西侧垃圾桶（29.4）、东侧垃圾桶（38.6）对称；报刊亭移到候车亭东侧同一后退线（弧长 45，r 171.6，原 41.5 在候车亭正后方被挡），旋转报架在报刊亭门前东侧（49）
-    put('r2/simple_90_s_kiosk', 171.6, 45, 2.6);
+    put('r2/simple_90_s_kiosk', 171.6, 45, 2.6, (w) => { if (R4B_OFF) return; w.traverse((o) => { if (!o.isMesh) return; const nm = o.material?.name || ''; if (nm === 'met4') o.material = deBlueMap(o.material, [0.5, 0.38, 0.28], 0.95); /* R4-B：蓝色瓦楞铁皮 → 去饱和暖铁锈灰褐 */ else if (nm === 'vitea') o.material = deBlueMap(o.material, [0.55, 0.45, 0.35], 0.55); /* 橱窗图里蓝色冰柜 / 包装压掉一半饱和 */ }); });
     put('r2/news_rack_6080', 170.0, 49, 1.48); // 批次41：细铁丝格兜旋转报架（远看白色点阵线框）→ Blender 精建 60–80 年代墨绿铁皮报刊架（4 级斜搁板插满报纸，tools/blender/news_rack_6080.py）；市民大厅表格取阅架 / 报刊架同换
     put('r2/garbage_bin', 169.2, 38.6, 1.0); put('r2/garbage_bin', 169.2, 29.4, 1.0);
   }
@@ -1095,12 +1099,17 @@ function buildStreetRows(g, M, place, rnd) {
   for (const [im, n] of [[houses, nh], [pars, np], [roofs, nf], [roads, nr], [walks, nw], [curbs, nc], [poles, nl], [arms, nl], [heads, nl], [stems, nt], [crowns, nt], [linesW, nlw], [linesY, nly]]) { im.count = n; im.computeBoundingSphere(); im.userData.noCull = true; /* 批次30：ext_sky 看图——三圈街屋全没出现：InstancedMesh 没算 boundingSphere，DistCull 拿单位方块半径 0.87 m 当整排街屋 → 60 m 外全剔 */ im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.instanceMatrix.needsUpdate = true; g.add(im); }
 }
 
+const _acM = {};
 function aircraft(M, s) {
   const g = new THREE.Group();
   const body = new THREE.Mesh(new THREE.CapsuleGeometry(1.6, 11, 6, 12), embBackM4()); body.rotation.z = Math.PI / 2; g.add(body);
-  const wing = new THREE.Mesh(new THREE.BoxGeometry(5, 0.3, 16), M.slate); wing.position.x = -1; g.add(wing);
-  const fin = new THREE.Mesh(new THREE.BoxGeometry(3, 3.2, 0.25), M.slate); fin.position.set(-6, 1.8, 0); g.add(fin);
-  for (const sz of [-1, 1]) { const eng = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 1.0, 16), M.blackMetal); eng.position.set(-1, 0.4, sz * 7); g.add(eng); }
+  // R4-B：机翼 / 尾翼原 M.slate（冷蓝灰金属、环境反射全量）+ 发动机 M.blackMetal 映黄昏天 → 远看机身偏蓝发亮；改哑光暗铜 / 暖黑铁，发动机尾口加小琥珀尾焰
+  const acW = R4B_OFF ? M.slate : (_acM.w ??= new THREE.MeshStandardMaterial({ color: 0x4a3626, metalness: 0.55, roughness: 0.6, envMapIntensity: 0.35 }));
+  const acE = R4B_OFF ? M.blackMetal : (_acM.e ??= new THREE.MeshStandardMaterial({ color: 0x2a2420, metalness: 0.6, roughness: 0.55, envMapIntensity: 0.3 }));
+  const wing = new THREE.Mesh(new THREE.BoxGeometry(5, 0.3, 16), acW); wing.position.x = -1; g.add(wing);
+  const fin = new THREE.Mesh(new THREE.BoxGeometry(3, 3.2, 0.25), acW); fin.position.set(-6, 1.8, 0); g.add(fin);
+  for (const sz of [-1, 1]) { const eng = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 1.0, 16), acE); eng.position.set(-1, 0.4, sz * 7); g.add(eng);
+    if (!R4B_OFF) { const fl = new THREE.Mesh(new THREE.CircleGeometry(0.75, 16), (_acM.f ??= new THREE.MeshBasicMaterial({ color: 0xc87a30, side: THREE.DoubleSide, fog: true }))); fl.position.set(-1.52, 0.4, sz * 7); fl.rotation.y = Math.PI / 2; g.add(fl); } }
   const stripe = new THREE.Mesh(new THREE.BoxGeometry(12, 0.25, 0.1), M.goldBright); stripe.position.set(0, 0, 1.62); g.add(stripe);
   const light = new THREE.Mesh(new THREE.SphereGeometry(0.4, 6, 4), new THREE.MeshBasicMaterial({ color: 0xff3030 })); light.position.set(-1, 0.2, 8.2); g.add(light);
   g.scale.setScalar(s);

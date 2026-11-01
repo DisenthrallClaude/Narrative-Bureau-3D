@@ -98,12 +98,12 @@ export function waterMaterial(color = 0x0a1a24) {
   return m;
 }
 /** 下落水帘（滚动透明） */
-export function waterfallMaterial() {
+export function waterfallMaterial(tint = [0.78, 0.88, 0.98], gain = 1.0) {
   return new THREE.ShaderMaterial({
     transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
-    uniforms: { uTime: time },
+    uniforms: { uTime: time, uTint: { value: new THREE.Vector3(tint[0] * gain, tint[1] * gain, tint[2] * gain) } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }',
-    fragmentShader: `uniform float uTime; varying vec2 vUv;
+    fragmentShader: `uniform float uTime; uniform vec3 uTint; varying vec2 vUv;
       float h(vec2 p){ vec3 q = fract(vec3(p.xyx) * 0.1031); q += dot(q, q.yzx + 33.33); return fract((q.x + q.y) * q.z); }
       float n(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.-2.*f); return mix(mix(h(i), h(i+vec2(1,0)), f.x), mix(h(i+vec2(0,1)), h(i+vec2(1,1)), f.x), f.y); }
       void main(){
@@ -116,7 +116,7 @@ export function waterfallMaterial() {
         float edge = smoothstep(0.0, 0.12, vUv.y) * (0.65 + 0.35 * smoothstep(1.0, 0.7, vUv.y));
         float foam = smoothstep(0.25, 0.0, vUv.y) * n(vec2(vUv.x * 80.0, t * 6.0)) * 0.5;
         float a = clamp(s * 0.55 + foam, 0.0, 1.0) * edge;
-        gl_FragColor = vec4(vec3(0.78, 0.88, 0.98) * a, a);
+        gl_FragColor = vec4(uTint * a, a);
       }`,
   });
 }

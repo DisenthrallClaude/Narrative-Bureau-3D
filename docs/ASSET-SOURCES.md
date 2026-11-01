@@ -46,3 +46,9 @@ Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo �
 | models/r4a/armillary.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/armillary.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源） | 1k webp + meshopt，简化 30% | 467 KB |
 
 另复用已入库 r2/woodenchair_01、r2/armchair_01、r2/woodentable_02、r2/rotary_telephone、s1/book_encyclopedia_set_01。处理件共 29 个放 /workspace/work/atd/out/（供其它批次复用）；ink-bottle（青绿墨水瓶）、antique-book-stack（蓝绿书脊）未用。
+## 批次 R4-B（外观远景，2026-11-01）
+| 文件 | 来源 | 作者 | 许可 | 处理 | 大小 |
+|---|---|---|---|---|---|
+| models/r4b/library_hall.glb | https://www.innerscene.com/tools/library/3d-parts/library-building-362b4104 | Innerscene（原创模型） | CC0 1.0 | 贴图 2048→512 webp q78 + meshopt（26.4 MB → 0.75 MB，约 1 万面不减面）；运行时材质压暗暖、铜绿/青铜去饱和成暗铜、玻璃改暗暖不透明 | 751 KB |
+
+候选未用：Innerscene Synagogue（CC0，铜绿圆顶需大改色）、Residential tower（CC0，现代玻璃幕墙不合时代）；Quaternius / Kenney 卡通风按要求不用。
