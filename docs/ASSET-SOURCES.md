@@ -78,3 +78,9 @@ paper-courier（纸人主角）未用：绑定姿态为 T-pose、披风为蓝色
 |---|---|---|---|---|---|
 | models/r5e/atd_lower_cabinet.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/lower-cabinet.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 + 1k webp + meshopt | 195 KB |
 | models/r5e/atd_writing_station.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/writing-station.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 + 1k webp + meshopt | 233 KB |
+
+## 批次 R6-C · 第七局扶手椅（作战室长桌 16 + 杀青室 4）
+
+| 文件 | 来源 | 作者 | 许可 | 处理 | 大小 |
+|---|---|---|---|---|---|
+| models/r6c/bureau_armchair.glb | 本项目 Blender 自建（tools/blender/r6c_bureau_armchair.py）；贴图 ambientCG Wood051 / Leather026 | 本项目 | 模型自有；贴图 CC0 | 5.2k 三角，1k webp（色图按亮度重着色：暗胡桃 / 暗酒红褐），meshopt | 251 KB |

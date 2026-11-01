@@ -136,3 +136,6 @@ Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo �
 [批次 R5-E · 宿舍三号楼 207 室 · Above the Desk] public/assets/models/r5e/
 - atd_lower_cabinet.glb — "lower-cabinet" from Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源 — https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/lower-cabinet.glb
 - atd_writing_station.glb — "writing-station" from Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源 — https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/writing-station.glb
+
+[批次 R6-C · 第七局作战室 / 杀青室扶手椅] public/assets/models/r6c/
+- bureau_armchair.glb — 本项目 Blender 4.3 自建（tools/blender/r6c_bureau_armchair.py），1960–80 年代机关风实木扶手椅；贴图取自 ambientCG（CC0）Wood051（调暗胡桃）、Leather026（调暗酒红褐）

@@ -16,6 +16,11 @@ import { pbr } from '../engine/assets.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 export const NO_R4A = typeof location !== 'undefined' && /[?&]nor4a=1/.test(location.search);
+// R6-C：作战室长桌 16 + 杀青室 4 把 literary_club_chair（细木条、偏秀气）→ Blender 自建 1960–80 年代机关风厚重实木扶手椅 r6c/bureau_armchair
+// （宽 0.63 深 0.60 座高 0.46 总高 0.88；5 cm 方腿、0.10 m 宽扶手、暗酒红褐皮革软包 + 暗铜泡钉、矮靠背上下横档、H 形横枨、暗铜包脚；5.2k 三角 251 KB；
+// 源脚本 tools/blender/r6c_bureau_armchair.py）。位置 / 朝向不变；扶手顶 0.67 m，椅前沿离桌沿封边 ≈0.3 m，不进长桌腿 / H 枨 / 围裙。`?nor6c=1` 回旧椅。
+const NO_R6C = typeof location !== 'undefined' && /[?&]nor6c=1/.test(location.search);
+const CHAIR = NO_R6C ? ['r2/literary_club_chair_preview', 1.0] : ['r6c/bureau_armchair', 0.88];
 
 export function buildR4Seventh(zone, world, Y, M10) {
   if (NO_R4A) return Promise.resolve();
@@ -49,8 +54,8 @@ export function buildR4Seventh(zone, world, Y, M10) {
     for (const dx of [-0.5, 0.5]) {
       // R5-D：哥特高背梯形木椅（woodenchair_01 宽/高仅 0.30，h 0.95 时座宽 ≈0.29 m，房间尺度下太细）→ 实木扶手椅 literary_club_chair（宽 ≈0.76、深 ≈0.72），
       // 椅心离桌沿 0.65 m（椅前沿离桌沿 ≈0.29 m，扶手 < 台面底 0.73 m），仍成排面朝桌
-      P.add('r2/literary_club_chair_preview', [x + dx, Y, -117.35], { h: 1.0, yaw: PI }); // 南侧，面朝 −z
-      P.add('r2/literary_club_chair_preview', [x + dx, Y, -122.65], { h: 1.0, yaw: 0 }); // 北侧，面朝 +z
+      P.add(CHAIR[0], [x + dx, Y, -117.35], { h: CHAIR[1], yaw: PI }); // 南侧，面朝 −z
+      P.add(CHAIR[0], [x + dx, Y, -122.65], { h: CHAIR[1], yaw: 0 }); // 北侧，面朝 +z
     }
     P.add('r4a/typewriter', [x + 0.45, Y + 0.79, -118.42], { w: 0.42, yaw: 0 });
     if (k % 2 === 0) P.add('r2/rotary_telephone', [x - 0.55, Y + 0.79, -118.4], { h: 0.13, yaw: 0.0 });
@@ -97,7 +102,7 @@ export function buildR4Seventh(zone, world, Y, M10) {
     const x = sx * 4.8, face = sx > 0 ? -PI / 2 : PI / 2; // 桌面件正面朝向椅子（室内中轴一侧）
     // 首拍 woodentable_02 实际只有约 0.6 m 宽（小边几）→ 换 S1 同款 1970 年代钢制办公桌（2.0×0.95，同暗铜褐漆），使用侧朝椅子
     P.add('s1/metal_office_desk', [x, Y, z], { w: 2.0, yaw: sx > 0 ? -PI / 2 : PI / 2 }); world.box(x, Y + 0.4, z, 0.95, 0.8, 2.0);
-    P.add('r2/literary_club_chair_preview', [sx * 3.8, Y, z], { h: 1.0, yaw: sx > 0 ? PI / 2 : -PI / 2 }); // R5-D：同作战室换实木扶手椅（椅前沿离桌 ≈0.17 m）
+    P.add(CHAIR[0], [sx * 3.8, Y, z], { h: CHAIR[1], yaw: sx > 0 ? PI / 2 : -PI / 2 }); // R5-D：同作战室换实木扶手椅（椅前沿离桌 ≈0.17 m）
     P.add('r4a/desk_lamp', [x + sx * 0.15, Y + 0.79, z - 0.7], { h: 0.45, yaw: face });
     if (j === 0) { P.add('r4a/typewriter', [x, Y + 0.79, z + 0.05], { w: 0.4, yaw: face }); P.add('s1/book_encyclopedia_set_01', [x + sx * 0.2, Y + 0.79, z + 0.7], { w: 0.45, yaw: face }); }
     else { P.add('r4a/tea_service', [x, Y + 0.79, z + 0.1], { w: 0.42, yaw: face }); P.add('r4a/correspondence_set', [x + sx * 0.05, Y + 0.79, z + 0.7], { d: 0.36, yaw: face + PI / 2 }); }
