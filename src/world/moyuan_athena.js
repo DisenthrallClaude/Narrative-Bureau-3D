@@ -82,8 +82,8 @@ function collectCollider(root) {
     if (!/^(terrain|temple|acropolis|aqueducts)$/.test(top ?? '')) return;
     if (top === 'terrain' && !o.castShadow && !o.userData.near) return; // 只取近处地形块
     let g = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone();
-    for (const k of Object.keys(g.attributes)) if (k !== 'position') g.deleteAttribute(k);
-    g.morphAttributes = {}; g.applyMatrix4(o.matrixWorld); geos.push(g);
+    const pa = g.attributes.position, f = new Float32Array(pa.count * 3); for (let i = 0; i < pa.count; i++) { f[i * 3] = pa.getX(i); f[i * 3 + 1] = pa.getY(i); f[i * 3 + 2] = pa.getZ(i); } // 量化 / 交错位置统一转 Float32，避免合并失败
+    g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(f, 3)); g.applyMatrix4(o.matrixWorld); geos.push(g);
   });
   if (!geos.length) return null;
   const merged = mergeGeometries(geos.filter((g) => g.attributes.position.itemSize === 3 && !g.attributes.position.isInterleavedBufferAttribute), false); if (!merged) return null; merged.boundsTree = new MeshBVH(merged);
