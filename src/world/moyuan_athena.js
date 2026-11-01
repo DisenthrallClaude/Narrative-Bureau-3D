@@ -61,6 +61,19 @@ function remapScene(root) {
   });
 }
 
+// Athenaion 的部分材质（plaster / foliage 等）依赖其 patchMaterial 注入的大气 uniform（uSunDir…）——这里只补声明与取值，不装其 fog chunk / CSM
+async function patchAtmo(root) {
+  const { ATMO } = await import('./athenaion/core/atmosphere.js');
+  const ty = (v) => (typeof v === 'number' ? 'float' : v?.isVector2 ? 'vec2' : v?.isVector3 || v?.isColor ? 'vec3' : v?.isVector4 ? 'vec4' : v?.isTexture ? 'sampler2D' : null);
+  const seen = new Set();
+  root.traverse((o) => { for (const m of Array.isArray(o.material) ? o.material : o.material ? [o.material] : []) {
+    if (seen.has(m)) continue; seen.add(m); const prev = m.onBeforeCompile;
+    m.onBeforeCompile = function (sh, r) { if (prev) prev.call(this, sh, r);
+      for (const k in ATMO) { if (!sh.uniforms[k]) sh.uniforms[k] = ATMO[k]; const t = ty(ATMO[k].value); if (!t) continue; const decl = new RegExp('uniform\\s+\\w+\\s+' + k + '\\b');
+        for (const st of ['vertexShader', 'fragmentShader']) if (new RegExp('\\b' + k + '\\b').test(sh[st]) && !decl.test(sh[st])) sh[st] = `uniform ${t} ${k};\n` + sh[st]; } };
+    const base = m.customProgramCacheKey?.bind(m); m.customProgramCacheKey = () => (base ? base() : '') + '|nbAtmo'; m.needsUpdate = true; } });
+}
+
 function collectCollider(root) {
   const geos = []; root.updateMatrixWorld(true);
   root.traverse((o) => {
@@ -73,7 +86,7 @@ function collectCollider(root) {
     g.morphAttributes = {}; g.applyMatrix4(o.matrixWorld); geos.push(g);
   });
   if (!geos.length) return null;
-  const merged = mergeGeometries(geos, false); merged.boundsTree = new MeshBVH(merged);
+  const merged = mergeGeometries(geos.filter((g) => g.attributes.position.itemSize === 3 && !g.attributes.position.isInterleavedBufferAttribute), false); if (!merged) return null; merged.boundsTree = new MeshBVH(merged);
   const m = new THREE.Mesh(merged, new THREE.MeshBasicMaterial()); m.visible = false; return m;
 }
 
@@ -96,7 +109,7 @@ async function build(G) {
   }
   const root = E.scene; root.name = 'moyuan_athena'; root.position.y = OY;
   root.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.frustumCulled = o.frustumCulled !== false; } });
-  remapScene(root);
+  remapScene(root); await patchAtmo(root);
   // 地底化：岩顶穹顶、墨黑静水、暗金点光 + 暗铜环境
   const dome = new THREE.Mesh(new THREE.SphereGeometry(9000, 48, 24, 0, Math.PI * 2, 0, Math.PI * 0.5), new THREE.MeshStandardMaterial({ color: 0x0c0907, roughness: 1, side: THREE.BackSide }));
   dome.position.set(0, -400, 0); dome.scale.y = 0.22; root.add(dome);
@@ -104,7 +117,7 @@ async function build(G) {
   ink.rotation.x = -Math.PI / 2; ink.position.y = 0.6; root.add(ink);
   const amb = new THREE.HemisphereLight(0x6a4a2a, 0x120c08, 0.6); root.add(amb);
   const key = new THREE.DirectionalLight(0xffb060, 0.9); key.position.set(-400, 1500, 600); key.target.position.set(20, 60, -64); root.add(key, key.target);
-  for (const [x, y, z, i] of [[20, 110, -40, 9e4], [50, 90, -10, 4e4], [-10, 90, -10, 4e4], [-300, 80, 100, 6e4]]) { const p = new THREE.PointLight(0xffa040, i, 0, 2); p.position.set(x, y, z); root.add(p); }
+  for (const [x, y, z, i] of [[20, 110, -40, 1800], [50, 90, -10, 800], [-10, 90, -10, 800], [-300, 80, 100, 1200]]) { const p = new THREE.PointLight(0xffa040, i, 0, 2); p.position.set(x, y, z); root.add(p); }
   G.scene.add(root); S.root = root; S.updates = E.updates;
   const tc = performance.now(); S.collider = collectCollider(root); const colMs = Math.round(performance.now() - tc);
   let tris = 0, meshes = 0; root.traverse((o) => { if (!o.isMesh || !o.geometry) return; meshes++; tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1); });
