@@ -119,5 +119,6 @@ Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo �
 - tea_service.glb — "Tea Service", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/tea-service.glb
 - correspondence_set.glb — "Correspondence Set", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/correspondence-set.glb
 - armillary.glb — "Armillary", https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/armillary.glb
+
 [批次 R4-B · 外观远景砖石公馆 · Innerscene 3D Parts Library CC0] public/assets/models/r4b/
 - library_hall.glb — "Library building" (Beaux-Arts public library), Innerscene original model, https://www.innerscene.com/tools/library/3d-parts/library-building-362b4104 — CC0 1.0 (public domain)
