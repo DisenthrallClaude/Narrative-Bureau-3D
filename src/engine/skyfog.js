@@ -33,13 +33,15 @@ export function installSkyFog(tex, intensity = 1, sun = null) {
 		float d = length( V );
 		vec3 dir = V / max( d, 1e-4 );
 		// 贴地暖霭层（基准地面 y≈-4.4，标高 22 m）+ 远距平方项（2.4 km 处光学深度 0.55）
-		float tau = nbAtmoOD( cameraPosition.y, dir.y, d, 0.00085, 22.0, - 4.4 ) + 0.55 * pow( d / 2400.0, 2.0 );
-		vec3 T = exp( - tau * vec3( 0.86, 1.0, 1.22 ) );
+		// R7b：贴地密度 0.00085→0.0004；150 m 内大气项为 0、150–250 m smoothstep 渐入（主立面 60–70 m 不再罩纱）
+		float w = smoothstep( 150.0, 250.0, d ); // ANGLE：须 edge0 < edge1
+		float tau = nbAtmoOD( cameraPosition.y, dir.y, d, 0.0004, 22.0, - 4.4 ) + 0.55 * pow( d / 2400.0, 2.0 );
+		vec3 T = mix( vec3( 1.0 ), exp( - tau * vec3( 0.86, 1.0, 1.22 ) ), w );
 		float L = dot( skyC, vec3( 0.2126, 0.7152, 0.0722 ) );
-		vec3 haze = mix( skyC, L * vec3( 1.30, 0.98, 0.70 ), 0.6 );
+		vec3 haze = mix( skyC, L * vec3( 1.02, 0.84, 0.64 ), 0.82 ); // R7b：少借天空亮色，偏暗琥珀灰（原 0.6 / 1.30,0.98,0.70）
 		float mu = dot( dir, nbSunDir ), g = 0.72, g2 = g * g;
 		float ph = ( 1.0 - g2 ) / pow( max( 1.0 + g2 - 2.0 * g * mu, 1e-4 ), 1.5 ) * ( 1.0 - g ) * ( 1.0 - g ) / ( 1.0 + g ); // HG 归一到 mu=1 时 = 1
-		haze += nbSunCol * L * 0.6 * ph;
+		haze += nbSunCol * L * 0.35 * ph; // R7b：0.6→0.35
 		return col * T + haze * ( 1.0 - T );
 	}` : ''}`);
   C.fog_fragment = C.fog_fragment.replace(
