@@ -7,7 +7,8 @@
 //    北墙东段（x 3.8…8.1，门洞 |x|<2.2 与西门子内线 x 3.4 之外）书柜 ×3 背贴墙；东墙内鬼墙下（z −119.5…−125.8，壁柱 −118.6 之南）矮档案柜 ×6 + 地球仪 / 座钟 + 暖光池。
 // ② 回写台：北墙门洞两侧（|x| 1.7…7.1）书柜 ×3+3（z −158.2…−158.9，红线纸条林 z<−160 之外）；
 //    环形定稿台外圈 45° 四角（r 6.8）低矮档案车 ×4（高 0.72 m < 纸条最低 0.79 m，不碰红线林）；南墙壁柱间矮柜 ×2 + 浑天仪；暖光池。
-// ③ 杀青室：中部两侧（x ±4.8，z −141 / −150.5，书脊架内侧 1.85 m、中轴凳 / 地毯外）工作台 ×4 + 木椅（面朝书架侧）+ 台灯 + 打字机 / 茶具 / 信札 / 百科，每台暖光池。
+// ③ 杀青室：中部两侧（x ±4.8，z −141 / −150.5，书脊架内侧 1.85 m、中轴凳 / 地毯外）钢制办公桌 ×4（S1 同款）+ 木椅（面朝书架侧）+ 台灯 + 打字机 / 茶具 / 信札 / 百科，每台暖光池。
+// ④ 回写台「改写之手」：Above the Desk 巨人手（去骨骼静态）从天花垂下，指尖离地 6.45 m，压暗 + 暗暖光。
 // 剧情锚点、触发器、传送、zone 判定不动；`?nor4a=1` 关闭（M10 椅子恢复）。
 import * as THREE from 'three';
 import { Props } from './dress.js';
@@ -63,21 +64,29 @@ export function buildR4Seventh(zone, world, Y, M10) {
     lamp(x * 0.92, Y + 2.0, -174 + (z + 174) * 0.92, 1.0, 3.5);
   }
 
+  // 改写之手（Above the Desk giant-hand，去骨骼静态 + 减面）：从天花垂下，x 0 z −176.5（红线林豁口 |x|<2.2 内、天花梁 −175 / −178 之间、
+  // 顶光 (0, 8.6, −170)→巨书 光路之外），指尖离地 6.45 m 不挡任何动线；压暗为低存在感，下方暗暖光
+  P.add('r4a/giant_hand', [0, Y + 6.45, -176.5], { h: 2.6, yaw: 0 });
+  { const l = new THREE.PointLight(0xffa860, 1.1, 4.5, 2); l.position.set(0, Y + 5.4, -175.6); l.castShadow = false; zone.add(l); }
+
   // ③ 杀青室 ——————————————————————————————
   for (const sx of [-1, 1]) for (const [j, z] of [[0, -141], [1, -150.5]]) {
     const x = sx * 4.8, face = sx > 0 ? -PI / 2 : PI / 2; // 桌面件正面朝向椅子（室内中轴一侧）
-    P.add('r2/woodentable_02', [x, Y, z], { h: 0.78, yaw: -PI / 2 }); world.box(x, Y + 0.39, z, 0.9, 0.78, 1.8);
-    P.add('r2/woodenchair_01', [sx * 3.95, Y, z], { h: 0.95, yaw: sx > 0 ? PI / 2 : -PI / 2 });
-    P.add('r4a/desk_lamp', [x + sx * 0.15, Y + 0.78, z - 0.6], { h: 0.45, yaw: face });
-    if (j === 0) { P.add('r4a/typewriter', [x, Y + 0.78, z + 0.05], { w: 0.4, yaw: face }); P.add('s1/book_encyclopedia_set_01', [x + sx * 0.2, Y + 0.78, z + 0.65], { w: 0.45, yaw: face }); }
-    else { P.add('r4a/tea_service', [x, Y + 0.78, z + 0.1], { w: 0.42, yaw: face }); P.add('r4a/correspondence_set', [x + sx * 0.05, Y + 0.78, z + 0.62], { d: 0.36, yaw: face + PI / 2 }); }
+    // 首拍 woodentable_02 实际只有约 0.6 m 宽（小边几）→ 换 S1 同款 1970 年代钢制办公桌（2.0×0.95，同暗铜褐漆），使用侧朝椅子
+    P.add('s1/metal_office_desk', [x, Y, z], { w: 2.0, yaw: sx > 0 ? -PI / 2 : PI / 2 }); world.box(x, Y + 0.4, z, 0.95, 0.8, 2.0);
+    P.add('r2/woodenchair_01', [sx * 3.85, Y, z], { h: 0.95, yaw: sx > 0 ? PI / 2 : -PI / 2 });
+    P.add('r4a/desk_lamp', [x + sx * 0.15, Y + 0.79, z - 0.7], { h: 0.45, yaw: face });
+    if (j === 0) { P.add('r4a/typewriter', [x, Y + 0.79, z + 0.05], { w: 0.4, yaw: face }); P.add('s1/book_encyclopedia_set_01', [x + sx * 0.2, Y + 0.79, z + 0.7], { w: 0.45, yaw: face }); }
+    else { P.add('r4a/tea_service', [x, Y + 0.79, z + 0.1], { w: 0.42, yaw: face }); P.add('r4a/correspondence_set', [x + sx * 0.05, Y + 0.79, z + 0.7], { d: 0.36, yaw: face + PI / 2 }); }
     lamp(x - sx * 0.3, Y + 1.7, z, 1.3, 3.6);
   }
 
   return P.build(zone).then((ms) => {
     for (const m of ms || []) {
+      if (m.name === 'props:s1/metal_office_desk') { m.material = m.material.clone(); m.material.color.setHex(0x8a6446); m.material.metalness = Math.min(m.material.metalness ?? 0, 0.35); m.material.roughness = Math.max(m.material.roughness ?? 0.5, 0.55); m.material.envMapIntensity = 0.35; continue; }
       if (!m.name.startsWith('props:r4a/')) continue;
       m.material = m.material.clone(); m.material.envMapIntensity = Math.min(m.material.envMapIntensity ?? 1, 0.35);
+      if (m.name === 'props:r4a/giant_hand') { m.material.color.setHex(0x8a6a58); m.material.roughness = Math.max(m.material.roughness ?? 0.6, 0.7); m.material.envMapIntensity = 0.15; m.castShadow = false; }
       if (m.name === 'props:r4a/desk_globe') m.material.color.setHex(0xd2a46c); // 禁蓝绿：海洋青绿 → 暖褐（乘色）
     }
     return ms;

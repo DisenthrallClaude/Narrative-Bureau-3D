@@ -217,6 +217,7 @@ export const SHOTS = {
   r4a_rew_top: { pos: [0, -500 + 25, -171.99], look: [0, -500, -172], fov: 58, clipY: -500 + 3.0, zone: 'seventh_rewrite' }, // 批次 R4-A 俯视（切掉红线林上部）
   r4a_ops_ne: { pos: [-1, -500 + 1.7, -126], look: [7, -500 + 1.0, -115], fov: 70, zone: 'seventh_ops' }, // 批次 R4-A：长桌/北墙书柜/东墙矮柜
   r4a_rew_n: { pos: [0, -500 + 1.8, -168.6], look: [0, -500 + 1.4, -158.5], fov: 74, zone: 'seventh_rewrite' }, // 批次 R4-A：回写台北墙书柜
+  r4a_hand: { pos: [0, -500 + 1.7, -165.5], look: [0, -500 + 5.8, -176.5], fov: 62, zone: 'seventh_rewrite' }, // 批次 R4-A：改写之手
   r4a_wrap_e: { pos: [-1, -500 + 1.7, -137.5], look: [6, -500 + 0.9, -148], fov: 70, zone: 'seventh_wrap' }, // 批次 R4-A：杀青室工作台
   b5_deep: { pos: [0.5, -42 + 1.7, -101.2], look: [-1, -42 + 1.0, -124], fov: 76, zone: 'vault_b5' },
   b6_maint: { pos: [-27.5, -52 + 1.7, -138.0], look: [-31.8, -52 + 2.6, -148], fov: 76, zone: 'training' },

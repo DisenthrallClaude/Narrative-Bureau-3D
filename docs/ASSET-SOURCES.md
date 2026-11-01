@@ -63,3 +63,10 @@ Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo �
 | models/r4c/atd_realistic_bookcase.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/realistic-bookcase.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 50% + 1k webp + meshopt | 240 KB |
 | models/r4c/atd_sewing_machine.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/sewing-machine.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 50% + 1k webp + meshopt | 216 KB |
 | models/r4c/atd_suitcase.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/suitcase.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 50% + 1k webp + meshopt | 152 KB |
+
+### 批次 R4-A 补（改写之手）
+| 文件 | 来源 | 作者 | 许可 | 处理 | 大小 |
+|---|---|---|---|---|---|
+| models/r4a/giant_hand.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/giant-hand-rigged.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源；用户特许人物类例外） | Blender 去骨骼静态 + 减面 30% + webp + meshopt | 144 KB |
+
+paper-courier（纸人主角）未用：绑定姿态为 T-pose、披风为蓝色（禁蓝），静态摆件效果不佳。

@@ -129,3 +129,6 @@ Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo �
 - atd_realistic_bookcase.glb — "realistic-bookcase" from Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源 — https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/realistic-bookcase.glb
 - atd_sewing_machine.glb — "sewing-machine" from Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源 — https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/sewing-machine.glb
 - atd_suitcase.glb — "suitcase" from Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源 — https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/suitcase.glb
+
+[批次 R4-A 补 · 第七局回写台改写之手 · Above the Desk，经作者许可] public/assets/models/r4a/
+- giant_hand.glb — "Giant Hand"（giant-hand-rigged.glb 去骨骼静态 + 减面 30%）, https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/giant-hand-rigged.glb
