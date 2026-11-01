@@ -9,7 +9,7 @@ import { Frame, archRingGeo, archSolidGeo, archShape, archApex, lancetWindow, pi
 import { waterMaterial, waterfallMaterial, bannerMaterial, CanvasScreen, time } from '../engine/fx.js';
 import { content } from '../engine/content.js';
 import { placeHero, phMat, extMats } from './hero.js';
-import { warmPortalPinnacles, deBlueMap, farHalls, R4B_OFF } from './r4b_ext.js';
+import { warmPortalPinnacles, farHalls, R4B_OFF } from './r4b_ext.js';
 import { weather } from '../engine/weather.js';
 export const HERO = !new URLSearchParams(location.search).has('legacy'); // R2：主楼外观改用 Blender 精修 GLB（?legacy 回到旧版程序化外观对比）
 
@@ -856,7 +856,7 @@ function busStops(g, at, Y0) {
     const put = (name, r, arc, h, extra) => { /* 批次39：人行道顶 Y0+0.2（原 +0.1 陷进 10 cm） */ const th = sx * arc / r; const [x, z] = at(r, th); placeModel(name, { height: h, pos: [x, Y0 + 0.2, z], rotY: th + Math.PI }).then((w) => { w.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); w.userData.noCull = true; g.add(w); extra?.(w); }); };
     put('r2/bus_shelter_6080', 168.6, 34, 3.02, (w) => { const o = w.children[0]; const m = new THREE.Mesh(new THREE.PlaneGeometry(0.54, 0.81), sign); m.position.set(2.35 + o.position.x, 1.95, 0.75 + 0.032 + o.position.z); w.add(m); });
     // 批次39：成组对称——候车亭（弧长 34）居中，西侧垃圾桶（29.4）、东侧垃圾桶（38.6）对称；报刊亭移到候车亭东侧同一后退线（弧长 45，r 171.6，原 41.5 在候车亭正后方被挡），旋转报架在报刊亭门前东侧（49）
-    put('r2/simple_90_s_kiosk', 171.6, 45, 2.6, (w) => { if (R4B_OFF) return; w.traverse((o) => { if (!o.isMesh) return; const nm = o.material?.name || ''; if (nm === 'met4') o.material = deBlueMap(o.material, [0.5, 0.38, 0.28], 0.95); /* R4-B：蓝色瓦楞铁皮 → 去饱和暖铁锈灰褐 */ else if (nm === 'vitea') o.material = deBlueMap(o.material, [0.55, 0.45, 0.35], 0.55); /* 橱窗图里蓝色冰柜 / 包装压掉一半饱和 */ }); });
+    put('r2/simple_90_s_kiosk', 171.6, 45, 2.6); /* R4-B：蓝色瓦楞铁皮 met4 / 橱窗图 vitea 已在 glb 贴图里去蓝（tools/_r4b_kiosk.mjs），所有实例（含 r3plan 安检亭）一起生效 */ });
     put('r2/news_rack_6080', 170.0, 49, 1.48); // 批次41：细铁丝格兜旋转报架（远看白色点阵线框）→ Blender 精建 60–80 年代墨绿铁皮报刊架（4 级斜搁板插满报纸，tools/blender/news_rack_6080.py）；市民大厅表格取阅架 / 报刊架同换
     put('r2/garbage_bin', 169.2, 38.6, 1.0); put('r2/garbage_bin', 169.2, 29.4, 1.0);
   }
