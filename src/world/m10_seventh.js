@@ -7,8 +7,9 @@ import * as THREE from 'three';
 import { loadModel } from '../engine/assets.js';
 
 export const NO_M10 = typeof location !== 'undefined' && /[?&]nom10=1/.test(location.search);
+const NO_R5F = typeof location !== 'undefined' && /[?&]nor5f=1/.test(location.search);
 
-function tune(o) {
+function tune(o, name) {
   o.traverse((m) => {
     if (!m.isMesh) return; m.castShadow = false; m.receiveShadow = true;
     const mt = m.material; if (!mt || !mt.name) return;
@@ -17,13 +18,20 @@ function tune(o) {
     if (mt.name === 'm10_enamelBlack') { mt.envMapIntensity = 0.12; mt.roughness = Math.max(mt.roughness, 0.55); } // M13：暖黑搪瓷罩顶反天空蓝 → 压环境反射
     if (mt.name === 'm10_bulb') { mt.emissive.setRGB(1.0, 0.8, 0.52); mt.emissiveIntensity = 0.9; m.userData.noShadow = true; }
     if (mt.name === 'm10_enamelIn') { mt.emissive.setRGB(1.0, 0.86, 0.66); mt.emissiveIntensity = 0.35; mt.side = THREE.DoubleSide; }
+    // R5-F：搪瓷吊灯罩顶 / 罩内发蓝——glb 无贴图、无顶点色、color/emissive 均暖；蓝来自场景冷光：罩内 env 0.4 反出 hall HDR 天窗蓝斑，近黑外壳（底色 0.035）只剩
+    // 掠射 env 高光 + 偏蓝半球光 → 读成蓝灰。改：外壳深墨褐 0x3a2a1e、粗糙 0.5、env 0；内侧暖白 env 0；灯头铜 env 0.1（仅 pendant；?nor5f=1 回旧）
+    if (name === 'pendant' && !NO_R5F) {
+      if (mt.name === 'm10_enamelBlack') { mt.color.setHex(0x3a2a1e); mt.roughness = 0.5; mt.metalness = 0; mt.envMapIntensity = 0; }
+      if (mt.name === 'm10_enamelIn') { mt.color.setHex(0xf2e4c8); mt.envMapIntensity = 0; }
+      if (mt.name === 'm10_bronze') { mt.envMapIntensity = 0.1; mt.roughness = Math.max(mt.roughness, 0.55); }
+    }
   });
   return o;
 }
 
 /** items: { pendants:[[x,y,z]], chairs:[[x,y,z,yaw]], stools:[[x,y,z]] } */
 export function buildM10Seventh(zone, items) {
-  const put = (name, list, f) => loadModel('m10/' + name).then((src) => { tune(src); for (const it of list) { const o = src.clone(true); f(o, it); zone.add(o); } });
+  const put = (name, list, f) => loadModel('m10/' + name).then((src) => { tune(src, name); for (const it of list) { const o = src.clone(true); f(o, it); zone.add(o); } });
   return Promise.all([
     put('pendant', items.pendants, (o, [x, y, z]) => o.position.set(x, y, z)),
     put('oldchair', items.chairs, (o, [x, y, z, yaw]) => { o.position.set(x, y, z); o.rotation.y = yaw; }),

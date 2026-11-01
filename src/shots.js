@@ -284,6 +284,7 @@ export const SHOTS = {
   m1_entry_s: { pos: [-1.2, -498.4, -64.0], look: [0.6, -497.6, -53.5], fov: 72, zone: 'seventh_entry' }, // 批次 M1：入口南望（门套 + 装订机 + 藻井）
   m3_entry_top: { pos: [0, -500 + 22, -59.99], look: [0, -500, -60], fov: 40, clipY: -500 + 5.6, zone: 'seventh_entry' }, // 批次 M3：入口俯视（陈设穿插核对）
   m8_ops_w: { pos: [-1.5, -500 + 1.7, -119.5], look: [-9.6, -500 + 1.3, -127.5], fov: 62, zone: 'seventh_ops' }, // 批次 M8：西墙电话台 + 分格墙
+  r5f_ops_e: { pos: [4.6, -500 + 1.6, -125.6], look: [9.45, -500 + 1.0, -128.7], fov: 62, zone: 'seventh_ops' }, // 批次 R5-F：东墙军械区（R5-D 铁皮柜暗橄榄褐核对）
   m8_ops_lamp: { pos: [2.5, -500 + 1.6, -123.5], look: [-4.3, -500 + 2.2, -121.0], fov: 62, zone: 'seventh_ops' }, // 批次 M8：沙盘 + 铜链灯组 + 行军床
   m8_wrap: { pos: [0, -500 + 1.7, -135.6], look: [0, -500 + 1.6, -150], fov: 70, zone: 'seventh_wrap' }, // 批次 M8：杀青室中轴（书架降高后的壁柱/定稿台）
   m8_rewrite_w: { pos: [-3.2, -500 + 1.7, -168.2], look: [-8.6, -500 + 1.0, -162.8], fov: 62, zone: 'seventh_rewrite' }, // 批次 M8：西墙北段排字台机位
