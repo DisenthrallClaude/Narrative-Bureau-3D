@@ -70,3 +70,11 @@ Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo �
 | models/r4a/giant_hand.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/giant-hand-rigged.glb | Wh1tZz（Tripo 生成） | 经作者许可（非商业开源；用户特许人物类例外） | Blender 去骨骼静态 + 减面 30% + webp + meshopt | 144 KB |
 
 paper-courier（纸人主角）未用：绑定姿态为 T-pose、披风为蓝色（禁蓝），静态摆件效果不佳。
+
+### 批次 R5-E（宿舍三号楼 2F 207 室）
+署名：Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源。另复用 models/r4c/（台灯/书柜/座钟/行李箱）与 r2/ 库存家具。
+
+| 文件 | 来源 | 作者 | 许可 | 处理 | 大小 |
+|---|---|---|---|---|---|
+| models/r5e/atd_lower_cabinet.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/lower-cabinet.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 + 1k webp + meshopt | 195 KB |
+| models/r5e/atd_writing_station.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/writing-station.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 + 1k webp + meshopt | 233 KB |

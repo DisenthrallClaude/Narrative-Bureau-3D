@@ -16,6 +16,7 @@ import { m5Mats } from './dress_m5.js';
 import { RING, FLOOR, cypress, blob, flushTopiary } from './exterior.js';
 import { R3, DORM3, dorm3Rooms, dorm3Furn } from './r3plan.js';
 import { dormMats, bunkBed, singleBed, desk, wardrobe, thermos, mug, washstand, windowCurtain, noticeBoard, thermosRack, tubeLamp } from './dorm.js';
+import { NO_R5E } from './r5_rooms.js'; // 批次 R5-E
 
 const rnd = (() => { let s = 11; return () => ((s = (s * 16807) % 2147483647) / 2147483647); })();
 const cvMat = (w, h, draw, o = {}) => { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return new THREE.MeshStandardMaterial({ map: t, roughness: 0.7, ...(o.emis ? { emissive: 0xffffff, emissiveMap: t, emissiveIntensity: o.emis } : {}), ...(o.side ? { side: o.side } : {}) }); };
@@ -154,7 +155,7 @@ export async function buildSurface(scene, world, ctx) {
     { const z0 = 20.2, x = 72; bunkBed(b, world, 77.85, F2 + 0.04, 21.35, 0, { bottom: 'quilt', top: 'bare', suitcase: false }); windowCurtain(b, 78.72, F2 + 0.95, 25.6, -Math.PI / 2, 1.8, 1.7); wardrobe(b, world, 65.42, F2 + 0.04, 21.2, Math.PI / 2); washstand(b, world, 65.55, F2 + 0.04, 28.4, Math.PI / 2); thermos(b, 73.0, F2 + 0.04, 29.0); thermos(b, 73.2, F2 + 0.04, 29.05); mug(b, 71.7, F2 + 0.79, 28.7); tubeLamp(b, 72, 8.9, 24.8, Math.PI / 2);
       bunkBed(b, world, 75.0, F2 + 0.04, 21.35, 0, { bottom: 'bare', top: 'none', suitcase: false }); // 室友的空铺
       for (let k = 0; k < 9; k++) b.box('dm_frameCream', 0.08, 0.6, 0.05, [78.6, F2 + 0.45, 24.9 + k * 0.17], { uv: false }); b.box('dm_frameCream', 0.1, 0.05, 1.5, [78.6, F2 + 0.13, 25.6], { uv: false }); // 暖气片
-      rug(b, 71.5, 24.8, 2.4, 3.2, F2 + 0.05, 'dz_rugNavy');
+      if (NO_R5E) rug(b, 71.5, 24.8, 2.4, 3.2, F2 + 0.05, 'dz_rugNavy'); else rug(b, 71.5, 23.35, 2.8, 2.3, F2 + 0.05, 'dz_rugGreen'); // R5-E：207 深蓝地毯 → 酒红褐，随茶桌北移
       { const sx0 = 68.4, sz = 29.12; for (const ly of [0.05, 0.45, 0.85, 1.25, 1.65]) b.box('dm_desk', 1.2, 0.03, 0.3, [sx0, F2 + ly, sz], { uv: 1 }); for (const dx of [-0.6, 0.6]) b.box('dm_desk', 0.03, 1.7, 0.3, [sx0 + dx, F2 + 0.85, sz], { uv: 1 }); for (let r = 0; r < 4; r++) for (let k = 0; k < 18 - r * 3; k++) b.box(['dm_bookA', 'dm_bookB', 'dm_bookC', 'kraft'][(k + r) % 4], 0.035, 0.22 + (k % 3) * 0.03, 0.2, [sx0 - 0.55 + k * 0.045, F2 + 0.18 + r * 0.4 + (k % 3) * 0.015, sz], { uv: false }); world.box(sx0, F2 + 0.9, sz, 1.2, 1.8, 0.32); }
       for (let k = 0; k < 3; k++) b.add('dm_brass', new THREE.CylinderGeometry(0.012, 0.012, 0.1, 6), { pos: [65.17, F2 + 1.75, 23.6 + k * 0.3], rot: [0, 0, Math.PI / 2 - 0.4] }, { uv: false }); b.add('navy', new THREE.BoxGeometry(0.08, 0.8, 0.5), { pos: [65.2, F2 + 1.35, 23.9] }, { uv: 1 }); // 衣钩+制服外套
       point(zone, 0xd8e4f4, 2.2, [77.5, F2 + 1.9, 25.6], 6); point(zone, 0xffe0b8, 2.5, [70, F2 + 3, 22.5], 7); b.add('dm_case', new THREE.BoxGeometry(0.7, 0.45, 0.25), { pos: [76.6, F2 + 0.27, 23.2], rot: [0, 0.3, 0] }, { uv: false }); desk(b, world, x, F2 + 0.04, 28.95, Math.PI, 1.4); greenLamp(b, x - 0.5, F2 + 0.83, 29.0, Math.PI); P.add('picture_frame', [x + 0.4, F2 + 0.83, 29.05], { h: 0.22, yaw: Math.PI });
@@ -221,7 +222,7 @@ export async function buildSurface(scene, world, ctx) {
     for (const [x, z] of [[57.5, 15], [57.5, 19.5], [57.5, 24], [63.5, 21]]) tubeLamp(b, x, F2 - 0.3, z, 0);
     P.add('wall_clock', [57.5, 3.1, 12.48], { w: 0.5 });
     b.add('dm_frame', new THREE.CylinderGeometry(0.15, 0.13, 0.55, 14, 1, true), { pos: [61.5, 0.32, 21.8] }, { uv: false }); for (let k = 0; k < 3; k++) b.add(['navy', 'dm_case', 'dm_shoe'][k], new THREE.CylinderGeometry(0.02, 0.02, 0.9, 5), { pos: [61.48 + k * 0.04, 0.6, 21.8 + (k - 1) * 0.05], rot: [0.08 * (k - 1), 0, 0.06] }, { uv: false });
-    rug(b, 57.5, 20, 4.4, 6, 0.06, 'dz_rugNavy');
+    rug(b, 57.5, 20, 4.4, 6, 0.06, NO_R5E ? 'dz_rugNavy' : 'dz_rugGreen'); // R5-E：大堂深蓝红边地毯（红配蓝）→ 酒红褐底 + 暗褐边
     for (let k = 0; k < 6; k++) litWindow(b, X1 + 0.62, F2 + 1.4, 3 + k * 6.6, Math.PI / 2, 1.1, 2.2);
     world.surface(X0, Z1, X1, Z0, 'stone', -1, 12);
     jobs.push(Promise.resolve());

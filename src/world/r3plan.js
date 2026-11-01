@@ -1,4 +1,5 @@
 import { applyR4C } from "./r4_rooms.js"; // 批次 R4-C
+import { applyR5E } from "./r5_rooms.js"; // 批次 R5-E
 // R3 平面功能规划（纯数据，无 THREE 依赖：游戏与 tools/r3plan_dump.mjs 共用）
 // 约定：所有入选模型的「正面/使用侧」= 模型 +Z（已用 work/r3/orient_sheet_*.png 逐个核对）。
 // yaw 按 three.js 绕 Y 轴：+Z → (sin yaw, cos yaw)。桌子的使用侧 = 人坐的一侧；椅子正面 = 人脸朝向。
@@ -3299,3 +3300,4 @@ export function planWallPosts(y) {
 }
 PLANS.wall_posts = (Y) => planWallPosts(Y);
 applyR4C(PLANS, fixYaw); // 批次 R4-C（src/world/r4_rooms.js，?nor4c=1 关）
+applyR5E(PLANS, fixYaw); // 批次 R5-E（src/world/r5_rooms.js，?nor5e=1 关）
