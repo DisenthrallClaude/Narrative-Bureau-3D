@@ -52,3 +52,14 @@ Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo �
 | models/r4b/library_hall.glb | https://www.innerscene.com/tools/library/3d-parts/library-building-362b4104 | Innerscene（原创模型） | CC0 1.0 | 贴图 2048→512 webp q78 + meshopt（26.4 MB → 0.75 MB，约 1 万面不减面）；运行时材质压暗暖、铜绿/青铜去饱和成暗铜、玻璃改暗暖不透明 | 751 KB |
 
 候选未用：Innerscene Synagogue（CC0，铜绿圆顶需大改色）、Residential tower（CC0，现代玻璃幕墙不合时代）；Quaternius / Kenney 卡通风按要求不用。
+### 批次 R4-C（宿舍三号楼 2F 活动室 / 1F 大堂）
+署名：Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源。
+
+| 文件 | 来源 | 作者 | 许可 | 处理 | 大小 |
+|---|---|---|---|---|---|
+| models/r4c/atd_gramophone.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/gramophone.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 50% + 1k webp + meshopt | 161 KB |
+| models/r4c/atd_desk_lamp.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/desk-lamp.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 50% + 1k webp + meshopt | 351 KB |
+| models/r4c/atd_wind_clock.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/wind-clock.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 50% + 1k webp + meshopt | 194 KB |
+| models/r4c/atd_realistic_bookcase.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/realistic-bookcase.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 50% + 1k webp + meshopt | 240 KB |
+| models/r4c/atd_sewing_machine.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/sewing-machine.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 50% + 1k webp + meshopt | 216 KB |
+| models/r4c/atd_suitcase.glb | https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/suitcase.glb | Wh1tZz（Tripo 生成） | 作者许可（非商业开源，用户转述） | 减面 50% + 1k webp + meshopt | 152 KB |

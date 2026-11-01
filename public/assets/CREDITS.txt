@@ -122,3 +122,10 @@ Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo �
 
 [批次 R4-B · 外观远景砖石公馆 · Innerscene 3D Parts Library CC0] public/assets/models/r4b/
 - library_hall.glb — "Library building" (Beaux-Arts public library), Innerscene original model, https://www.innerscene.com/tools/library/3d-parts/library-building-362b4104 — CC0 1.0 (public domain)
+[批次 R4-C · 宿舍三号楼活动室/大堂 · Above the Desk] public/assets/models/r4c/
+- atd_gramophone.glb — "gramophone" from Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源 — https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/gramophone.glb
+- atd_desk_lamp.glb — "desk-lamp" from Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源 — https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/desk-lamp.glb
+- atd_wind_clock.glb — "wind-clock" from Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源 — https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/wind-clock.glb
+- atd_realistic_bookcase.glb — "realistic-bookcase" from Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源 — https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/realistic-bookcase.glb
+- atd_sewing_machine.glb — "sewing-machine" from Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源 — https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/sewing-machine.glb
+- atd_suitcase.glb — "suitcase" from Above the Desk by Wh1tZz (github.com/Wh1tZz/above-the-desk)，模型由 Tripo 生成，经作者许可使用（用户转述作者公开同意），本项目非商业开源 — https://github.com/Wh1tZz/above-the-desk/blob/main/assets/models/suitcase.glb
