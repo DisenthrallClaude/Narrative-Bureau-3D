@@ -4,6 +4,10 @@ import { loadModel } from '../engine/assets.js';
 
 const NO = /[?&]nor4b=1/.test(location.search); // ?nor4b=1 关闭本批全部改动对比
 export const R4B_OFF = NO;
+/* R6-B：pick（run 41298977585）证实正门山花两侧暗「∩」尖塔就是 facade_hi 的 F_trim（Granite003A 0x3c3a38，facadeBounce 克隆、userData.r4bPin 在链上），
+   R4-B 的锁色其实生效了——但锁的目标色相 (0.62,0.50,0.38) 比周围立面石（显示比 R:G:B≈1:0.36:0.08）灰得多，成片读出 1:0.70:0.42，
+   在饱和橙褐墙面包围下靠同时对比读成「偏绿 / 偏紫」。改为与周围立面同一暖褐色相（线性 0.62/0.37/0.19，经 AgX 后约 1:0.42:0.14）；?nor6b=1 回 R4-B 色相 */
+const R6B = !/[?&]nor6b=1/.test(location.search);
 
 /** 色相锁（亮度保留）：把出射光换成指定暖色相 × 亮度；boxes 给出时只在这些世界坐标盒内生效 */
 export function warmLock(mat, hue = [0.62, 0.5, 0.38], { mix = 0.82, gain = 1.0, boxes = null, key = 'r4bwarm' } = {}) {
@@ -49,17 +53,17 @@ export function warmPortalPinnacles(trim) {
     sh.fragmentShader = sh.fragmentShader
       .replace('#include <lights_fragment_end>', `#include <lights_fragment_end>
         { ${IN}
-          vec3 r4w = vec3(1.0, 0.80, 0.60);
+          vec3 r4w = ${R6B ? 'vec3(1.0, 0.62, 0.36)' : 'vec3(1.0, 0.80, 0.60)'};
           float r4l = dot(reflectedLight.indirectDiffuse, vec3(0.299, 0.587, 0.114));
           reflectedLight.indirectDiffuse = mix(reflectedLight.indirectDiffuse, r4l * r4w * 1.25, r4in);
           reflectedLight.indirectSpecular *= mix(1.0, 0.25, r4in);
           reflectedLight.directDiffuse *= mix(vec3(1.0), r4w * 1.1, r4in); }`)
       .replace('#include <dithering_fragment>', `#include <dithering_fragment>
         { ${IN}
-          float L = dot(gl_FragColor.rgb, vec3(0.299, 0.587, 0.114)); vec3 hn = vec3(0.62, 0.50, 0.38) / 0.5106;
-          gl_FragColor.rgb = mix(gl_FragColor.rgb, hn * L * 1.15, 0.85 * r4in); }`);
+          float L = dot(gl_FragColor.rgb, vec3(0.299, 0.587, 0.114)); vec3 hn = ${R6B ? 'vec3(0.62, 0.37, 0.19) / 0.4242' : 'vec3(0.62, 0.50, 0.38) / 0.5106'};
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, hn * L * 1.15, ${R6B ? '0.92' : '0.85'} * r4in); }`);
   };
-  trim.customProgramCacheKey = function () { return (prevKey ? prevKey.call(this) : '') + '|r4bpin2'; };
+  trim.customProgramCacheKey = function () { return (prevKey ? prevKey.call(this) : '') + '|r4bpin2' + (R6B ? 'r6b' : ''); };
   trim.needsUpdate = true;
   console.log('[NB] r4b 尖塔暖化已挂');
   return trim;

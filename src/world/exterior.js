@@ -865,11 +865,12 @@ function buildStreetRows(g, M, place, rnd) {
   const hs = (k) => { const x = Math.sin(k * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
   const boxG = new THREE.BoxGeometry(1, 1, 1); boxG.translate(0, 0.5, 0);
   const lit = TOD.label === '白昼' ? 0.02 : 0.12;
+  const R6B_SDQ = !/[?&]nor6b=1/.test(location.search); // R6-B
   const houseMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.86, metalness: 0, envMapIntensity: 0.45 });
   // 批次59：A 款红褐砖原为平涂粉色 + 7% 细格（ext_house b57 读作粉墙）→ Poly Haven brick_wall_006（CC0）真实砖贴图 + ARM 的 AO 通道作凹凸（屏幕空间求导扰动法线，砖缝凹进）、按色调压成暗红褐；D 款深木竖板 → ambientCG Wood051（CC0）竖纹 + 0.2 m 板缝凹凸
   const tBrick = loadTex('assets/tex/ph/brick_wall_006_col.webp', { srgb: true }), tBrickA = loadTex('assets/tex/ph/brick_wall_006_arm.webp'), tWood = loadTex('assets/tex/Wood051_color.webp', { srgb: true });
   for (const t of [tBrick, tBrickA, tWood]) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; }
-  houseMat.customProgramCacheKey = () => 'house59';
+  houseMat.customProgramCacheKey = () => 'house59' + (R6B_SDQ ? 'q' : '');
   houseMat.onBeforeCompile = (sh) => {
     Object.assign(sh.uniforms, { uBrick: { value: tBrick }, uBrickA: { value: tBrickA }, uWood: { value: tWood } });
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float aTyp;\nvarying vec3 vLm; varying vec3 vLn; varying float vSd; varying float vH; varying float vW;')
@@ -883,6 +884,7 @@ function buildStreetRows(g, M, place, rnd) {
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLm; varying vec3 vLn; varying float vSd; varying float vH; varying float vW;\nfloat h2(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5);}\nuniform sampler2D uBrick; uniform sampler2D uBrickA; uniform sampler2D uWood;')
       .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
         { float wall = 1.0 - step(0.5, abs(vLn.y));
+          float sdq = ${R6B_SDQ ? 'floor(vSd * 512.0 + 0.5) / 512.0' : 'vSd'}; /* R6-B：vSd 是逐实例常量但走插值 varying，透视插值有 1e-7 级逐像素抖动；h2 = fract(sin(·)·43758) 把它放大成逐像素随机 → ext_green 白楼山墙亮窗「二维码」噪点、石块明暗麻点。哈希前先量化（?nor6b=1 回旧） */
           float u = abs(vLn.x) > 0.5 ? vLm.z : vLm.x; float y = vLm.y; float side = abs(vLn.x) > 0.5 ? 1.0 : 0.0;
           vec3 pal = vSd > 0.93 ? vec3(0.27, 0.18, 0.12) /* 批次57：D 深木构 */ : vSd < 0.34 ? vec3(0.47, 0.44, 0.40) /* 批次57：冷灰 → 暖灰抹灰 */ : vSd < 0.67 ? vec3(0.46, 0.27, 0.21) : vec3(0.68, 0.64, 0.57); // 批次32：三色成排——深灰抹灰 / 暗红砖 / 米灰石（去掉偏蓝绿的第四色）
           vec3 col = pal;
@@ -897,7 +899,7 @@ function buildStreetRows(g, M, place, rnd) {
           { vec3 sp = -vViewPosition; vec3 sx = dFdx(sp), sy = dFdy(sp); vec3 r1 = cross(sy, normal), r2 = cross(normal, sx); float fd = dot(sx, r1) * faceDirection;
             vec3 grd = sign(fd) * (dH.x * r1 + dH.y * r2); vec3 nn = abs(fd) * normal - grd; if (dot(nn, nn) > 1e-12 && wall > 0.5) normal = normalize(nn); }
           if (isBrick) col = bTex * vec3(0.66, 0.50, 0.46) * (0.75 + 0.25 * bAo); // 贴图均值 sRGB (173,116,83) → 约 (145,83,56) 暗红褐，不粉
-          else if (isWood) col = wTex * vec3(3.2, 2.9, 2.2) * (1.0 - 0.6 * seam) * (0.9 + 0.2 * h2(vec2(floor(u / 0.2), vSd * 5.0))); // Wood051 均值线性 (0.053,0.034,0.027) → 深胡桃
+          else if (isWood) col = wTex * vec3(3.2, 2.9, 2.2) * (1.0 - 0.6 * seam) * (0.9 + 0.2 * h2(vec2(floor(u / 0.2), sdq * 5.0))); // Wood051 均值线性 (0.053,0.034,0.027) → 深胡桃
           else { vec2 tg = fract(vec2(u / 0.6, y / 0.3)); col *= 0.93 + 0.07 * step(0.08, tg.x) * step(0.1, tg.y); } // 面砖 / 砖缝
           vec3 em = vec3(0.0);
           // 批次36：临街正面（局部 ±Z 面）由立面模块覆盖的范围——店面 5 m 开间、楼层 3.4 m 开间，与 buildStreetRows 的模块排布同式；范围外着色器不再画大块暗窗 / 白亮橱窗（ext_tree 看图：模块外的残开间是一整块暗玻璃 + 白光条）
@@ -917,7 +919,7 @@ function buildStreetRows(g, M, place, rnd) {
               float row = floor(y / bs.y); vec2 bb = vec2(u / bs.x + 0.5 * mod(row, 2.0), y / bs.y); vec2 bf = fract(bb);
               float mort = (1.0 - step(brick ? 0.05 : 0.025, bf.x) * step(bf.y, brick ? 0.82 : 0.95)) * (1.0 - aa);
               vec3 base = brick ? vec3(0.50, 0.26, 0.19) : pal * 0.95;
-              col = base * (0.86 + 0.24 * h2(floor(bb) + vSd * 9.0)) ;
+              col = base * (0.86 + 0.24 * h2(floor(bb) + sdq * 9.0)) ;
               col = mix(col, brick ? vec3(0.62, 0.58, 0.52) : pal * 0.7, mort * 0.8);
               if (isBrick) col = bTex * vec3(0.66, 0.50, 0.46) * (0.75 + 0.25 * bAo); else if (isWood) col = wTex * vec3(3.2, 2.9, 2.2) * (1.0 - 0.6 * seam); // 批次59：山墙底层同用真实贴图
               // 石套窗：每 3.4 m 一樘，窗洞 1.1–2.9 m
@@ -929,17 +931,17 @@ function buildStreetRows(g, M, place, rnd) {
               col = mix(col, vec3(0.70, 0.68, 0.63), max(fr, sill));
               col = mix(col, vec3(0.05, 0.055, 0.06), wn); col = mix(col, vec3(0.26, 0.17, 0.10), ml);
               col *= 1.0 - 0.3 * step(0.98, y) * step(y, 1.0) * step(0.25, fx) * step(fx, 0.75); // 窗台下影
-              float wo = step(0.82, h2(vec2(cx * 2.3, vSd * 31.0)));
+              float wo = step(0.82, h2(vec2(cx * 2.3, sdq * 31.0)));
               em += wn * (1.0 - ml) * wo * vec3(1.0, 0.55, 0.25) * 0.35;
               if (y > 3.85) col = vec3(0.66, 0.64, 0.59) * (1.0 - 0.3 * step(y, 3.92)); // 腰线石
             }
           } else if (y < 4.2) { // 底层商铺
-            float bay = floor(u / 5.0 + 0.5 + side * 7.0 + vSd * 13.0); float bx = fract(u / 5.0 + 0.5);
+            float bay = floor(u / 5.0 + 0.5 + side * 7.0 + sdq * 13.0); float bx = fract(u / 5.0 + 0.5);
             float glass = step(0.08, bx) * step(bx, 0.92) * step(0.45, y) * step(y, 3.0) * keepShop;
             float sign = step(0.04, bx) * step(bx, 0.96) * step(3.15, y) * step(y, 3.95) * (1.0 - front); /* 批次38：临街正面招牌交给模块招牌框 + shopSigns 有字招牌，着色器不再画平涂色带（ext_house b38：模块外残开间仍见红 / 绿色带） */
             vec3 sc = h2(vec2(bay, 1.0)) < 0.33 ? vec3(0.30, 0.07, 0.05) : h2(vec2(bay, 1.0)) < 0.66 ? vec3(0.06, 0.05, 0.045) : vec3(0.28, 0.17, 0.09); /* 批次59：去蓝 / 绿招牌色带 → 暗红 / 黑 / 木 */
             col = mix(col * 0.75, vec3(0.05, 0.06, 0.07), glass); col = mix(col, sc, sign);
-            float shopOn = step(0.55, h2(vec2(bay, 7.0 + vSd)));
+            float shopOn = step(0.55, h2(vec2(bay, 7.0 + sdq)));
             em += glass * shopOn * (1.0 - front) * vec3(1.0, 0.55, 0.24) * 0.45 /* 批次37：侧面橱窗压暗偏暖 */ /* 批次36：正面橱窗亮光交给模块 litGlass */ + sign * vec3(1.0, 0.9, 0.8) * sc * 1.6 * step(0.4, h2(vec2(bay, 3.0)));
             col *= 1.0 - 0.25 * step(y, 0.45); // 水刷石勒脚
           } else if (y > vH - 0.9) { col *= y > vH - 0.6 ? 0.55 : 1.15; // 檐口 + 檐下线脚
@@ -953,7 +955,7 @@ function buildStreetRows(g, M, place, rnd) {
             col *= 1.0 - 0.14 * step(0.3, fx) * step(fx, 0.7) * step(f, 0.24) * (1.0 - f / 0.24); // 窗台下雨渍
             col = mix(col, vec3(0.85, 0.83, 0.78), frame * 0.7);
             col = mix(col, vec3(0.04, 0.05, 0.06), win); col = mix(col, vec3(0.30, 0.18, 0.10), mull);
-            float on = step(1.0 - ${lit.toFixed(2)}, h2(vec2(cx + side * 31.0, cy) + vSd * 17.0));
+            float on = step(1.0 - ${lit.toFixed(2)}, h2(vec2(cx + side * 31.0, cy) + sdq * 17.0));
             em += win * (1.0 - mull) * on * (1.0 - step(0.5, abs(vLn.z))) /* 批次36：临街正面 / 背面的亮窗交给模块 litGlass（稳定少量暖窗），着色器只在山墙侧面画亮窗——去掉正面窗后再叠一层亮窗的白闪点 */ * step(0.5, h2(vec2(cx * 1.7, cy + 5.0))) * mix(vec3(1.0, 0.5, 0.2), vec3(1.0, 0.62, 0.32), h2(vec2(cx, cy * 3.1))) * 0.5; /* 批次37：侧面亮窗再减半 + 更暖（ext_house 仍见奶白块） */ /* 批次36：山墙亮窗 2.0 → 0.75、偏暖（原过曝成白块；1.3 仍偏白，ext_house b36b） */
           }
           col = mix(vec3(0.16, 0.16, 0.17), col, wall); // 平屋面
