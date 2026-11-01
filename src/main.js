@@ -375,7 +375,7 @@ addEventListener('keyup', (e) => { keys[e.code] = false; });
 G.read = async (pages) => { if (!pages?.length) return; await UI.openReader(pages); if (started && document.pointerLockElement !== canvas) lock(); };
 G.freeze = (f) => { G.frozen = f; };
 G.pitchDown = () => player.pitch < -0.25;
-G.glitch = (s) => { R.ca.offset.set(0.004 * s, 0.003 * s); setTimeout(() => R.ca.offset.set(0.0006, 0.0004), 600); };
+G.glitch = (s) => { R.ca.offset.set(0.004 * s, 0.003 * s); setTimeout(() => R.ca.offset.set(0.0002, 0.00013), 600) /* R6-A 常态色差同步 */; };
 
 // —— 主循环 ——
 const clock = new THREE.Clock();

@@ -52,6 +52,7 @@ export function dormMats() {
     dm_shoe: matte({ color: 0x1a1612 }),
     dm_shoe2: matte({ color: 0xd8d4cc }),
     dm_case: matte({ color: 0x6a2a20, roughness: 0.6 }),
+    dm_umbrella: matte({ color: 0x3a1c16, roughness: 0.7 }), // R6-A：大堂伞桶深蓝伞 → 暗酒红褐
     dm_bookA: matte({ color: 0x8a2a22 }), dm_bookB: matte({ color: 0x24406a }), dm_bookC: matte({ color: 0xc8b890 }),
   };
 }

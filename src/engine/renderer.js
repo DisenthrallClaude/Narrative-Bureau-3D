@@ -35,7 +35,7 @@ export class Renderer {
     this.vignette = new VignetteEffect({ offset: 0.32, darkness: 0.55 });
     this.noise = new NoiseEffect({ blendFunction: BlendFunction.OVERLAY, premultiply: false });
     this.noise.blendMode.opacity.value = 0.06;
-    this.ca = new ChromaticAberrationEffect({ offset: new THREE.Vector2(0.0006, 0.0004), radialModulation: true, modulationOffset: 0.4 });
+    this.ca = new ChromaticAberrationEffect({ offset: new THREE.Vector2(0.0002, 0.00013), radialModulation: true, modulationOffset: 0.4 }); // R6-A：0.0006/0.0004 → 约 1/3，去画面边缘红蓝细边
     this.smaa = new SMAAEffect({ preset: SMAAPreset.HIGH });
     this.exposure = 1.0;
     this.setQuality('high');

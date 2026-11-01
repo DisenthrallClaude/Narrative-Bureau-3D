@@ -221,7 +221,7 @@ export async function buildSurface(scene, world, ctx) {
     for (const z of [17.6, 19.6]) { b.box('dm_desk', 0.42, 0.04, 1.6, [64.6, 0.45, z], { uv: 1 }); for (const dz of [-0.7, 0.7]) b.box('dm_frame', 0.38, 0.43, 0.04, [64.6, 0.22, z + dz], { uv: false }); world.box(64.6, 0.25, z, 0.45, 0.5, 1.6); }
     for (const [x, z] of [[57.5, 15], [57.5, 19.5], [57.5, 24], [63.5, 21]]) tubeLamp(b, x, F2 - 0.3, z, 0);
     P.add('wall_clock', [57.5, 3.1, 12.48], { w: 0.5 });
-    b.add('dm_frame', new THREE.CylinderGeometry(0.15, 0.13, 0.55, 14, 1, true), { pos: [61.5, 0.32, 21.8] }, { uv: false }); for (let k = 0; k < 3; k++) b.add(['navy', 'dm_case', 'dm_shoe'][k], new THREE.CylinderGeometry(0.02, 0.02, 0.9, 5), { pos: [61.48 + k * 0.04, 0.6, 21.8 + (k - 1) * 0.05], rot: [0.08 * (k - 1), 0, 0.06] }, { uv: false });
+    b.add('dm_frame', new THREE.CylinderGeometry(0.15, 0.13, 0.55, 14, 1, true), { pos: [61.5, 0.32, 21.8] }, { uv: false }); for (let k = 0; k < 3; k++) b.add(['dm_umbrella', 'dm_case', 'dm_shoe'][k] /* R6-A：伞 navy → 暗酒红褐 */, new THREE.CylinderGeometry(0.02, 0.02, 0.9, 5), { pos: [61.48 + k * 0.04, 0.6, 21.8 + (k - 1) * 0.05], rot: [0.08 * (k - 1), 0, 0.06] }, { uv: false });
     rug(b, 57.5, 20, 4.4, 6, 0.06, NO_R5E ? 'dz_rugNavy' : 'dz_rugGreen'); // R5-E：大堂深蓝红边地毯（红配蓝）→ 酒红褐底 + 暗褐边
     for (let k = 0; k < 6; k++) litWindow(b, X1 + 0.62, F2 + 1.4, 3 + k * 6.6, Math.PI / 2, 1.1, 2.2);
     world.surface(X0, Z1, X1, Z0, 'stone', -1, 12);
