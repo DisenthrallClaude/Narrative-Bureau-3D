@@ -806,7 +806,7 @@ function streetModules(g, mods, at, Y0) { // 批次33：tools/blender/street_hou
     src.updateMatrixWorld(true);
     src.traverse((o) => { if (!o.isMesh) return; const mn = (o.material?.name || '').replace(/\.\d+$/, ''); const geo = o.geometry.clone().applyMatrix4(o.matrixWorld); geo.rotateY(Math.PI); /* 批次36 ★根因：Blender +Y 朝街导出后是 glTF −Z（不是 +Z）——三批来阳台板 / 铁栏 / 雨棚 / 窗套全部朝楼内长进墙里，只有退进的玻璃和窗框露在墙外（pick 前读 glb：sh_shop 玻璃 z=+0.08、雨棚 z<0）。绕 Y 转 180° 让模块正面朝街 */
       const sets = mn === 'sh_glass' ? [[MT.sh_glass, list.filter((m) => !m[6])], [litGlass, list.filter((m) => m[6])]] : [[MT[mn] ?? MT.sh_stone, list]];
-      for (const [mat, L] of sets) { if (!L.length) continue; if (!R4B_OFF && mn === 'sh_glass' && !mat.userData.r4bPO) { mat.polygonOffset = true; mat.polygonOffsetFactor = -2; mat.polygonOffsetUnits = -6; mat.userData.r4bPO = true; } /* R4-B：ext_green 白色民居窗内「二维码」噪点 = 玻璃与墙面画的深色窗 / 窗框远处深度打架 → 玻璃深度前拉 */ const im = new THREE.InstancedMesh(geo, mat, L.length);
+      for (const [mat, L] of sets) { if (!L.length) continue; const im = new THREE.InstancedMesh(geo, mat, L.length);
         L.forEach((m, i) => { const [x, z] = at(m[1], m[2]); q.setFromAxisAngle(up, m[4]); m4.compose(new THREE.Vector3(x, Y0 + m[3], z), q, (mn === 'sh_glass' || mn === 'sh_frame') ? MSC_FLAT[name] : MSC[name]); im.setMatrixAt(i, m4); });
         im.computeBoundingSphere(); im.userData.noCull = true; im.castShadow = mn === 'sh_canvas' || mn === 'sh_conc'; im.receiveShadow = true; g.add(im); } });
     console.log('[NB] 街屋立面模块', name, list.length); });
@@ -1103,7 +1103,7 @@ const _acM = {};
 function aircraft(M, s) {
   const g = new THREE.Group();
   const body = new THREE.Mesh(new THREE.CapsuleGeometry(1.6, 11, 6, 12), embBackM4()); body.rotation.z = Math.PI / 2; g.add(body);
-  // R4-B：机翼 / 尾翼原 M.slate（冷蓝灰金属、环境反射全量）+ 发动机 M.blackMetal 映黄昏天 → 远看机身偏蓝发亮；改哑光暗铜 / 暖黑铁，发动机尾口加小琥珀尾焰
+  // R4-B：ext_house 里那架「带翼蓝色尾焰」的大飞行器其实画在黄昏天空盒 sky_dusk.jpg 里（已从贴图中抹掉，见 R4-B 提交）；这里的程序化小飞行器同样去蓝——机翼 / 尾翼原 M.slate（冷蓝灰金属、环境反射全量）+ 发动机 M.blackMetal 映黄昏天 → 远看机身偏蓝发亮；改哑光暗铜 / 暖黑铁，发动机尾口加小琥珀尾焰
   const acW = R4B_OFF ? M.slate : (_acM.w ??= new THREE.MeshStandardMaterial({ color: 0x4a3626, metalness: 0.55, roughness: 0.6, envMapIntensity: 0.35 }));
   const acE = R4B_OFF ? M.blackMetal : (_acM.e ??= new THREE.MeshStandardMaterial({ color: 0x2a2420, metalness: 0.6, roughness: 0.55, envMapIntensity: 0.3 }));
   const wing = new THREE.Mesh(new THREE.BoxGeometry(5, 0.3, 16), acW); wing.position.x = -1; g.add(wing);
