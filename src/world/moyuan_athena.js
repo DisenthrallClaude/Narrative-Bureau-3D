@@ -25,6 +25,7 @@ export const ATHENA_LOOK = { env: 'sky', envI: 0.4, sun: 0, exp: 0.86, fog: [0xc
 export const athenaZone = (p) => (MOYUAN_ATHENA && p.y < OY + 2000 && p.y > OY - 200 ? 'abyss_athena' : null); // R9：上界 −1000（原 −500 把装订线 y≈−500.02 误判成古城）
 
 const OPT = !/[?&]myopt=0\b/.test(location.search); // R11：性能优化总开关（?myopt=0 回到 R10 行为，便于对比）
+const R12 = OPT && !/[?&]myr12=0\b/.test(location.search); // R12：分 pass 诊断 + 植被阴影只近处 + 屏幕尺寸剔除 + 植被用 Athenaion 原 IBL（?myr12=0 回退 R11）
 const S = { state: 'idle', root: null, collider: null, mainCollider: null, stats: null };
 window.__MOYUAN__ = () => S.stats;
 
@@ -158,6 +159,68 @@ function perfDiag(G) {
   console.log('[NB] moyuan perf', cam.position.toArray().map((x) => x.toFixed(0)).join(','), fmt.slice(0, 280)); if (fmt.length > 280) console.log('[NB] moyuan perf+', fmt.slice(280, 560));
 }
 
+
+// R12：分 pass 统计——包住 renderBufferDirect / render / shadowMap.render，按 pass（shadow / main / 其他 RT / 后处理）× 模块记一帧的 draw 与面数
+const PASS = { on: false, cur: 'other', b: {}, n: 0 };
+function installPassProbe(G) {
+  const gl = G.renderer; if (!gl || gl.__nbPass) return; gl.__nbPass = true;
+  const topMod = (o) => { let a = o, last = null; while (a && a !== S.root && a.parent) { last = a; a = a.parent; } return a === S.root ? (last?.userData.mod ?? last?.name ?? '?') : 'NB'; };
+  const rbd = gl.renderBufferDirect.bind(gl);
+  gl.renderBufferDirect = function (camera, scene, geometry, material, object, group) {
+    if (PASS.on) { const k = PASS.cur + ':' + topMod(object) + (group ? '#g' : '') + (material?.transparent ? '#t' : ''); const r = PASS.b[k] ??= [0, 0];
+      const g = geometry; const n = (group ? group.count : g.index ? g.index.count : g.attributes.position?.count ?? 0) / 3 * (object.isInstancedMesh ? object.count : 1); r[0]++; r[1] += n; }
+    return rbd(camera, scene, geometry, material, object, group); };
+  const rnd = gl.render.bind(gl);
+  gl.render = function (scene, camera) { const prev = PASS.cur; const rt = gl.getRenderTarget();
+    PASS.cur = scene === G.scene ? (camera === G.camera ? (rt ? 'main' : 'mainFB') : 'scene2:' + (camera.type || '?').slice(0, 5)) : 'post:' + (scene.name || scene.type || '?').slice(0, 8) + (rt?.texture?.name ? '/' + rt.texture.name.slice(0, 10) : '');
+    try { return rnd(scene, camera); } finally { PASS.cur = prev; } };
+  const sm = gl.shadowMap, smr = sm.render.bind(sm);
+  sm.render = function (...a) { const prev = PASS.cur; PASS.cur = 'shadow'; try { return smr(...a); } finally { PASS.cur = prev; } };
+}
+function passReport() { // 每次在帧开始调用：打印上一帧的统计，然后清零
+  if (PASS.on && PASS.n > 0) {
+    const pass = {}; for (const [k, v] of Object.entries(PASS.b)) { const p = k.split(':')[0].startsWith('post') ? 'post' : k.split(':')[0]; const r = pass[p] ??= [0, 0]; r[0] += v[0]; r[1] += v[1]; }
+    const tot = Object.values(pass).reduce((a, v) => [a[0] + v[0], a[1] + v[1]], [0, 0]);
+    console.log('[NB] moyuan pass', 'total', tot[0] + '/' + (tot[1] / 1e6).toFixed(2) + 'M', Object.entries(pass).map(([k, v]) => k + ' ' + v[0] + '/' + (v[1] / 1e6).toFixed(2) + 'M').join(' | '));
+    const det = Object.entries(PASS.b).sort((a, b) => b[1][0] - a[1][0]).map(([k, v]) => k + '=' + v[0]).join(' ');
+    for (let i = 0; i < Math.min(det.length, 1120); i += 280) console.log('[NB] moyuan pass+', det.slice(i, i + 280));
+  }
+  PASS.b = {}; PASS.n++; PASS.on = PASS.n <= 4 && !/[?&]mypass=0\b/.test(location.search);
+}
+
+// R12：屏幕尺寸剔除——单件（实例件按单实例）投影半径 < SPX 像素的整组不画（远处细部件），按距离分级；植被另管
+const SPX = 1.25;
+function collectSizeCull(root) {
+  const out = [], v = new THREE.Vector3(), m = new THREE.Matrix4();
+  root.updateMatrixWorld(true);
+  root.traverse((o) => {
+    if (!o.isMesh || !o.geometry?.attributes?.position || o.frustumCulled === false) return;
+    let a = o; while (a.parent && a.parent !== root) a = a.parent; if (!/^(temple|acropolis|city|statues|aqueducts)$/.test(a.userData.mod ?? '')) return;
+    const g = o.geometry; g.boundingSphere || g.computeBoundingSphere(); if (!g.boundingSphere) return;
+    let rItem = g.boundingSphere.radius * o.matrixWorld.getMaxScaleOnAxis(), sph;
+    if (o.isInstancedMesh) { if (!o.count) return; o.computeBoundingSphere(); let sMax = 0; const st = Math.max(1, Math.floor(o.count / 64));
+      for (let i = 0; i < o.count; i += st) { o.getMatrixAt(i, m); sMax = Math.max(sMax, m.getMaxScaleOnAxis()); } rItem *= sMax || 1; sph = o.boundingSphere; }
+    else sph = g.boundingSphere;
+    const c = sph.center.clone().applyMatrix4(o.matrixWorld), R = sph.radius * o.matrixWorld.getMaxScaleOnAxis();
+    out.push({ o, c, R, r: rItem });
+  });
+  return out;
+}
+
+// R12：远坡树偏蓝——Athenaion 原管线里植被（及全部材质）的 IBL 是其程序化天空的 PMREM（uEnvPass=1，按 SKY.uEnvScale≈0.21 压暗、去云），
+// 本项目则用 R7 天空盒 HDR 的 PMREM ×0.5（偏亮偏蓝），对反照率只有 0.04–0.15 的植被占主导 → 远坡树发蓝。只给植被材质补回原 IBL。
+async function vegEnv(root, renderer) {
+  const { createSky, SKY } = await import('./athenaion/core/sky.js');
+  const pm = new THREE.PMREMGenerator(renderer); const sc = new THREE.Scene(); const sky = createSky(); sky.renderOrder = 0; sc.add(sky);
+  SKY.uEnvPass.value = 1; const rt = pm.fromScene(sc, 0, 0.1, 100); SKY.uEnvPass.value = 0; pm.dispose();
+  S.vegEnvTex = rt.texture; return applyVegEnv(root);
+}
+function applyVegEnv(root) {
+  if (!S.vegEnvTex) return 0; let n = 0; const veg = root.children.find((c) => c.userData.mod === 'vegetation'); if (!veg) return 0;
+  veg.traverse((o) => { for (const mt of Array.isArray(o.material) ? o.material : o.material ? [o.material] : []) { if (!mt.isMeshStandardMaterial || mt.envMap === S.vegEnvTex) continue; mt.envMap = S.vegEnvTex; mt.envMapIntensity = 1.0; mt.needsUpdate = true; n++; } });
+  return n;
+}
+
 function collectCollider(root) {
   const geos = []; root.updateMatrixWorld(true);
   root.traverse((o) => {
@@ -201,6 +264,7 @@ async function build(G) {
   if (DBG) { const keep = DBG.split(','); for (const ch of root.children) if (!ch.isLight && ch.userData.mod) ch.visible = keep.includes(ch.userData.mod); console.log('[NB] mydbg show', DBG, JSON.stringify(root.children.filter((c) => c.userData.mod).map((c) => c.userData.mod + ':' + (c.visible ? 1 : 0)))); }
   // R9：远处小件剔除（城区 / 雕像 / 植被 / 渡槽 包围球 r<45 m 且离相机 > 650 m 不画）
   S.cull = []; root.updateMatrixWorld(true); root.traverse((o) => { if (!o.isMesh || !o.geometry) return; let a = o; while (a.parent && a.parent !== root) a = a.parent; if (!/^(city|statues|vegetation|aqueducts|temple)$/.test(a.userData.mod ?? '')) return; o.geometry.boundingSphere || o.geometry.computeBoundingSphere(); const bs = o.geometry.boundingSphere; if (!bs || o.isInstancedMesh) { if (o.isInstancedMesh && o.count > 0) { o.computeBoundingSphere?.(); } } const sp = (o.isInstancedMesh && o.boundingSphere) ? o.boundingSphere : bs; if (!sp) return; const c = sp.center.clone().applyMatrix4(o.matrixWorld); const r = sp.radius * o.matrixWorld.getMaxScaleOnAxis(); if (r < 45) S.cull.push({ o, c, r }); });
+  if (R12) { for (const it of S.cull) it.o.userData.inCull = true; S.sizeCull = collectSizeCull(root); times.sizeCull = S.sizeCull.length; try { times.vegEnv = await vegEnv(root, G.renderer); } catch (e) { console.warn('[moyuan] vegEnv skipped', String(e?.message ?? e).slice(0, 120)); } installPassProbe(G); }
   G.scene.add(root); S.root = root; S.updates = E.updates; startProbe(G);
   const tc = performance.now(); S.collider = collectCollider(root); const colMs = Math.round(performance.now() - tc);
   let tris = 0, meshes = 0; root.traverse((o) => { if (!o.isMesh || !o.geometry) return; meshes++; tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1); });
@@ -335,7 +399,16 @@ export function setupMoyuanAthena(G, tp) {
     for (const f of S.updates ?? []) try { f(S.skyT, dt); } catch { /* 动画失败不影响游戏 */ }
     if (S.atmo) { const n = S.atmo(S.root); if (n && (S.lpN = (S.lpN ?? 0) + 1) <= 5) console.log('[NB] moyuan late-patched mats', n); }
     if (!((acc += dt ?? 0.016) < 0.4 && S.culled)) { acc = 0; S.culled = true; // R9：远处小件剔除，0.4 s 一次
-      G.camera.getWorldPosition(cam); for (const it of S.cull ?? []) it.o.visible = cam.distanceTo(it.c) - it.r < 650; }
+      G.camera.getWorldPosition(cam); for (const it of S.cull ?? []) it.o.visible = cam.distanceTo(it.c) - it.r < 650;
+      if (R12) { const fpx = (innerHeight || 720) * 0.5 / Math.tan(G.camera.fov * Math.PI / 360); let nOff = 0;
+        for (const it of S.sizeCull ?? []) { if (it.o.userData.r12off && !it.o.userData.inCull) it.o.visible = it.o.userData.r12vis; const d = Math.max(1, cam.distanceTo(it.c) - it.R); const off = it.r * fpx / d < SPX; it.o.userData.r12off = off; if (off) { it.o.userData.r12vis = it.o.visible; it.o.visible = false; nOff++; } }
+        // 植被：页面网格是运行时按 LOD 建的、frustumCulled=false（阴影 pass 不做视锥剔除）→ 只让 L0/L1 的树干 / 树冠团投影，远档与卡片 / 公告板不进阴影图
+        const veg = S.root.children.find((c) => c.userData.mod === 'vegetation'); let vs = 0;
+        if (veg) for (const o of veg.children) { if (!o.isInstancedMesh) continue; const mm = /:L(\d+):(\w+):/.exec(o.name); if (!mm) continue; const cs = o.userData.castShadow && +mm[1] <= 1 && mm[2] !== 'card' && mm[2] !== 'bb'; o.castShadow = cs; if (cs && o.visible) vs++; }
+        if (applyVegEnv(S.root) && (S.veN = (S.veN ?? 0) + 1) <= 3) console.log('[NB] moyuan vegEnv applied');
+        if ((S.scN = (S.scN ?? 0) + 1) <= 4) console.log('[NB] moyuan sizecull off', nOff, '/', S.sizeCull?.length, 'vegShadowPages', vs); }
+    }
+    if (R12) passReport();
     if (OPT && !/[?&]mydiag=0\b/.test(location.search)) try { perfDiag(G); } catch (e) { console.log('[NB] moyuan diag err', String(e).slice(0, 120)); }
   };
   G.onUpdate.push(() => {}); // R11：逻辑移到 G.moyuanTick
