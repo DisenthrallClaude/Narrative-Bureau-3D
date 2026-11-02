@@ -264,7 +264,8 @@ async function build(G) {
   if (DBG) { const keep = DBG.split(','); for (const ch of root.children) if (!ch.isLight && ch.userData.mod) ch.visible = keep.includes(ch.userData.mod); console.log('[NB] mydbg show', DBG, JSON.stringify(root.children.filter((c) => c.userData.mod).map((c) => c.userData.mod + ':' + (c.visible ? 1 : 0)))); }
   // R9：远处小件剔除（城区 / 雕像 / 植被 / 渡槽 包围球 r<45 m 且离相机 > 650 m 不画）
   S.cull = []; root.updateMatrixWorld(true); root.traverse((o) => { if (!o.isMesh || !o.geometry) return; let a = o; while (a.parent && a.parent !== root) a = a.parent; if (!/^(city|statues|vegetation|aqueducts|temple)$/.test(a.userData.mod ?? '')) return; o.geometry.boundingSphere || o.geometry.computeBoundingSphere(); const bs = o.geometry.boundingSphere; if (!bs || o.isInstancedMesh) { if (o.isInstancedMesh && o.count > 0) { o.computeBoundingSphere?.(); } } const sp = (o.isInstancedMesh && o.boundingSphere) ? o.boundingSphere : bs; if (!sp) return; const c = sp.center.clone().applyMatrix4(o.matrixWorld); const r = sp.radius * o.matrixWorld.getMaxScaleOnAxis(); if (r < 45) S.cull.push({ o, c, r }); });
-  if (R12) { for (const it of S.cull) it.o.userData.inCull = true; S.sizeCull = collectSizeCull(root); times.sizeCull = S.sizeCull.length; try { times.vegEnv = await vegEnv(root, G.renderer); } catch (e) { console.warn('[moyuan] vegEnv skipped', String(e?.message ?? e).slice(0, 120)); } installPassProbe(G); }
+  if (R12) { for (const it of S.cull) it.o.userData.inCull = true; S.sizeCull = collectSizeCull(root); times.sizeCull = S.sizeCull.length; try { times.vegEnv = await vegEnv(root, G.renderer); } catch (e) { console.warn('[moyuan] vegEnv skipped', String(e?.message ?? e).slice(0, 120)); } }
+  if (OPT) installPassProbe(G); // 分 pass 诊断在 ?myr12=0 时也开（用于对比 R11）
   G.scene.add(root); S.root = root; S.updates = E.updates; startProbe(G);
   const tc = performance.now(); S.collider = collectCollider(root); const colMs = Math.round(performance.now() - tc);
   let tris = 0, meshes = 0; root.traverse((o) => { if (!o.isMesh || !o.geometry) return; meshes++; tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1); });
@@ -408,7 +409,7 @@ export function setupMoyuanAthena(G, tp) {
         if (applyVegEnv(S.root) && (S.veN = (S.veN ?? 0) + 1) <= 3) console.log('[NB] moyuan vegEnv applied');
         if ((S.scN = (S.scN ?? 0) + 1) <= 4) console.log('[NB] moyuan sizecull off', nOff, '/', S.sizeCull?.length, 'vegShadowPages', vs); }
     }
-    if (R12) passReport();
+    if (OPT) passReport();
     if (OPT && !/[?&]mydiag=0\b/.test(location.search)) try { perfDiag(G); } catch (e) { console.log('[NB] moyuan diag err', String(e).slice(0, 120)); }
   };
   G.onUpdate.push(() => {}); // R11：逻辑移到 G.moyuanTick
