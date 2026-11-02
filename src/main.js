@@ -34,12 +34,13 @@ import { setupStory } from './story.js';
 import * as UI from './ui/ui.js';
 import { SHOTS } from './shots.js';
 import { TOD, TOD_NAME, setTod } from './engine/tod.js';
+import { REC } from './rec/recorder.js'; // 展示片录制模式（?rec=1；不开时 REC = null，零影响）
 
 const params = new URLSearchParams(location.search);
 const SHOT = params.get('shot');
 const TEST = !!params.get('test'); // M7：走查模式不预编译、不渲染（SwiftShader 下整场景编译+渲染要十几分钟）
 const LOG = (...a) => { if (SHOT) console.log('[NB]', ...a); };
-window.__SHOT__ = !!SHOT;
+window.__SHOT__ = !!SHOT || !!REC;
 // 批次12：截图模式省内存（?freecpu=1，tools/shot.mjs 在 8 GB 本机用）。实测渲染进程里 GLB 贴图 ImageBitmap 解码副本 1299 张 ≈ 2.6 GB，
 // 而 SwiftShader 的「显存」本身也在内存里 → 1600×900 high 峰值超 7.9 GB 被 OOM。贴图上传 GPU 后 close() 掉 CPU 端位图（GLB 贴图不被 clone、不会重传），画面不变。
 if (SHOT && params.get('freecpu') === '1') {
@@ -157,7 +158,7 @@ async function boot() {
   // 预编译
   UI.loadProgress(0.95, '点亮灯光……');
   for (const z of Object.values(ctx.zones)) z.visible = true;
-  if (!SHOT && !TEST) { try { await R.gl.compileAsync(scene, camera); } catch { /* 旧浏览器 */ } }
+  if (!SHOT && !TEST && !REC) { try { await R.gl.compileAsync(scene, camera); } catch { /* 旧浏览器 */ } }
   LOG('compiled');
   await applyBakes(scene, undefined, { log: LOG }); // R3 批次10：程序化室内区 AO 烘焙
   if (SHOT) window.__bakeExport = (id, url) => exportBake(scene, id, url);
@@ -171,6 +172,7 @@ async function boot() {
   setZone('plaza', true);
   UI.updateObjective();
   window.__NB_G__ = G; // 调试：内存探针（work/b12/memprobe.mjs）
+  if (REC) return REC.init({ G, scene, camera, renderer: R.gl, setZone, zoneAt }); // 录制模式：机位 / 时间由 src/rec/recorder.js 逐帧驱动
   if (SHOT) return startShot();
   if (params.get('test')) { // M6：自动化走查接口（tools/walk.mjs）——不锁鼠标，直接进入游戏态
     window.__NB_AUTO__ = { choices: [], log: [] };
@@ -409,7 +411,7 @@ window.__PERF__ = () => ({ ...perf.last, geometries: R.gl.info.memory.geometries
 function loop() {
   if (window.__READY__) return;
   requestAnimationFrame(loop);
-  const dt = Math.min(clock.getDelta(), 0.1);
+  const dt = REC ? REC.dt : Math.min(clock.getDelta(), 0.1);
   if (!envSky && !SHOT && !started) return;
   if (TEST && !started) return;
   if (SHOT && !shotStarted) return; // 截图模式：加载期间不渲染（SwiftShader 下每帧数秒，会拖慢资源回调）
@@ -436,7 +438,7 @@ function loop() {
   sun.target.position.copy(focus); sun.position.copy(focus).addScaledVector(SUN_DIR, 300);
   const texel = 220 / sun.shadow.mapSize.x; sun.target.position.x = Math.round(sun.target.position.x / texel) * texel; sun.target.position.z = Math.round(sun.target.position.z / texel) * texel; sun.position.copy(sun.target.position).addScaledVector(SUN_DIR, 300);
   // 曝光适应
-  curExp += (targetExp - curExp) * Math.min(1, dt * 1.5);
+  curExp += (targetExp - curExp) * (REC ? 1 : Math.min(1, dt * 1.5));
   R.setExposure(curExp);
   for (const s of ctx.screens) s.update(dt, t);
   updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t); updateDressing(ctx, dt, t); updateDepths(ctx, dt, t); G.e1fx?.update(dt);
