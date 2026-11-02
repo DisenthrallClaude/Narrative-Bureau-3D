@@ -114,18 +114,42 @@ async function build(G) {
   remapScene(root); await patchAtmo(root);
   // 地底化：岩顶穹顶、墨黑静水、暗金点光 + 暗铜环境
   const dome = new THREE.Mesh(new THREE.SphereGeometry(9000, 48, 24, 0, Math.PI * 2, 0, Math.PI * 0.5), new THREE.MeshStandardMaterial({ color: 0x0c0907, roughness: 1, side: THREE.BackSide }));
-  dome.position.set(0, -400, 0); dome.scale.y = 0.22; root.add(dome);
+  dome.position.set(0, -400, 0); dome.scale.y = 0.22; dome.name = 'moyuan_dome'; dome.userData.mod = 'dome'; root.add(dome);
   const ink = new THREE.Mesh(new THREE.PlaneGeometry(30000, 30000), new THREE.MeshStandardMaterial({ color: 0x030202, roughness: 0.06, metalness: 0.2 }));
-  ink.rotation.x = -Math.PI / 2; ink.position.y = 0.6; root.add(ink);
+  ink.rotation.x = -Math.PI / 2; ink.position.y = 0.6; ink.name = 'moyuan_ink'; ink.userData.mod = 'ink'; root.add(ink);
   const amb = new THREE.HemisphereLight(0x6a4a2a, 0x120c08, 0.6); root.add(amb);
   const key = new THREE.DirectionalLight(0xffb060, 0.9); key.position.set(-400, 1500, 600); key.target.position.set(20, 60, -64); root.add(key, key.target);
   for (const [x, y, z, i] of [[20, 110, -40, 1800], [50, 90, -10, 800], [-10, 90, -10, 800], [-300, 80, 100, 1200]]) { const p = new THREE.PointLight(0xffa040, i, 0, 2); p.position.set(x, y, z); root.add(p); }
-  G.scene.add(root); S.root = root; S.updates = E.updates;
+  if (DBG) { const keep = DBG.split(','); for (const ch of root.children) if (!ch.isLight && ch.userData.mod) ch.visible = keep.includes(ch.userData.mod); console.log('[NB] mydbg show', DBG, JSON.stringify(root.children.filter((c) => c.userData.mod).map((c) => c.userData.mod + ':' + (c.visible ? 1 : 0)))); }
+  G.scene.add(root); S.root = root; S.updates = E.updates; startProbe(G);
   const tc = performance.now(); S.collider = collectCollider(root); const colMs = Math.round(performance.now() - tc);
   let tris = 0, meshes = 0; root.traverse((o) => { if (!o.isMesh || !o.geometry) return; meshes++; tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1); });
   S.stats = { buildMs: Math.round(performance.now() - t0), colliderMs: colMs, colliderTris: S.collider ? S.collider.geometry.attributes.position.count / 3 : 0, modules: times, meshes, tris: Math.round(tris), heapMB: performance.memory ? Math.round((performance.memory.usedJSHeapSize - mem0) / 1e6) : null };
   console.log('[moyuan] athena built', JSON.stringify(S.stats));
   S.state = 'ready'; manager.itemEnd('moyuan:athena');
+}
+
+// R8c 调试：?mydbg=模块名[,模块名…]（terrain / temple / acropolis / aqueducts / statues / city / vegetation / dome / ink）只显示所列模块；
+// 构建后每 4 s 打印一次相机位置与 5 条屏幕射线的首个命中（[NB] 前缀，截图工具会转发）
+const DBG = new URLSearchParams(location.search).get('mydbg');
+function startProbe(G) {
+  if (!DBG && !/[?&]myprobe=1/.test(location.search) && !/[?&]mypost=0/.test(location.search)) return;
+  let n = 0; const rc = new THREE.Raycaster(); rc.far = 20000; const v = new THREE.Vector2(), d = new THREE.Vector3();
+  const targets = () => { const out = []; const walk = (o) => { if (!o.visible) return; if (o.isMesh) out.push(o); for (const c of o.children) walk(c); }; walk(G.scene); return out; };
+  const top = (o) => { let a = o; while (a.parent && a.parent !== S.root && a.parent.parent) a = a.parent; return a.userData.mod ?? a.name; };
+  const tick = () => {
+    if (n++ >= 6) return; const cam = G.camera; cam.updateMatrixWorld(); cam.getWorldDirection(d);
+    console.log('[NB] mydbg cam', cam.position.toArray().map((x) => x.toFixed(1)).join(','), 'dir', d.toArray().map((x) => x.toFixed(2)).join(','), 'near', cam.near, 'far', cam.far, 'zone', G.zone, 'rootVis', S.root?.visible, 'fog', G.scene.fog?.density, 'bg', G.scene.background?.getHexString?.());
+    const T = targets();
+    for (const [x, y] of [[0, 0], [-0.97, 0], [0.5, 0.4], [-0.5, -0.4], [0, -0.85]]) {
+      v.set(x, y); rc.setFromCamera(v, cam); let h = null; try { h = rc.intersectObjects(T, false)[0]; } catch (e) { console.log('[NB] mydbg ray err', String(e)); }
+      if (!h) { console.log('[NB] mydbg ray', x, y, 'MISS'); continue; }
+      const m = Array.isArray(h.object.material) ? h.object.material[0] : h.object.material;
+      console.log('[NB] mydbg ray', x, y, 'hit', h.object.name || h.object.type, 'mod', top(h.object), 'dist', h.distance.toFixed(2), 'mat', m?.type, m?.name, 'col', m?.color?.getHexString?.(), 'emi', m?.emissive?.getHexString?.(), 'side', m?.side, 'transp', m?.transparent, 'shader', !!m?.isShaderMaterial, 'inst', !!h.object.isInstancedMesh);
+    }
+    setTimeout(tick, 4000);
+  };
+  setTimeout(tick, 500);
 }
 
 /** main.js 调用：G = { scene, camera, world, player, onZone, onUpdate }；tp(x,y,z,yaw) 传送 */

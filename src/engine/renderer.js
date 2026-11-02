@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import { EffectComposer, RenderPass, EffectPass, BloomEffect, ToneMappingEffect, ToneMappingMode, VignetteEffect, SMAAEffect, SMAAPreset, NoiseEffect, BlendFunction, ChromaticAberrationEffect, HueSaturationEffect, BrightnessContrastEffect } from 'postprocessing';
 import { N8AOPostPass } from 'n8ao';
 
+// R8c 调试：?mypost=0 绕过整条后处理（AO / bloom / 调色 / 暗角），直接 AgX 出屏
+const NOPOST = typeof location !== 'undefined' && /[?&]mypost=0\b/.test(location.search);
 export const QUALITY = {
   low: { label: '低', pixelRatio: 0.75, shadow: 1024, ao: false, bloom: true, reflect: 0, smaa: false, shadowsLocal: false, shafts: true, anis: 2 },
   medium: { label: '中', pixelRatio: 1.0, shadow: 2048, ao: 'half', bloom: true, reflect: 0.35, smaa: true, shadowsLocal: false, shafts: true, anis: 4 },
@@ -73,5 +75,5 @@ export class Renderer {
     this.composer.setSize(w, h);
   }
   setExposure(e) { this.exposure = e; this.tone.exposure = e; if (this.tone.uniforms?.get?.('exposure')) this.tone.uniforms.get('exposure').value = e; this.gl.toneMappingExposure = e; }
-  render(dt) { this.composer.render(dt); }
+  render(dt) { if (NOPOST) { this.gl.toneMapping = THREE.AgXToneMapping; this.gl.setRenderTarget(null); this.gl.render(this.scene, this.camera); return; } this.composer.render(dt); }
 }
