@@ -72,8 +72,18 @@ async function patchAtmo(root) {
     if (seen.has(m)) continue; seen.add(m); const prev = m.onBeforeCompile;
     m.onBeforeCompile = function (sh, r) { if (prev) prev.call(this, sh, r);
       for (const k in ATMO) { if (!sh.uniforms[k]) sh.uniforms[k] = ATMO[k]; const t = ty(ATMO[k].value); if (!t) continue; const decl = new RegExp('uniform\\s+\\w+\\s+' + k + '\\b');
-        for (const st of ['vertexShader', 'fragmentShader']) if (new RegExp('\\b' + k + '\\b').test(sh[st]) && !decl.test(sh[st])) sh[st] = `uniform ${t} ${k};\n` + sh[st]; } };
-    const base = m.customProgramCacheKey?.bind(m); m.customProgramCacheKey = () => (base ? base() : '') + '|nbAtmo'; m.needsUpdate = true; } });
+        for (const st of ['vertexShader', 'fragmentShader']) if (new RegExp('\\b' + k + '\\b').test(sh[st]) && !decl.test(sh[st])) sh[st] = `uniform ${t} ${k};\n` + sh[st]; }
+      scrubNaN(sh); };
+    const base = m.customProgramCacheKey?.bind(m); m.customProgramCacheKey = () => (base ? base() : '') + '|nbAtmo|r8c'; m.needsUpdate = true; } });
+}
+
+// R8c 真因：?mypost=0 时画面正常，开后处理（HalfFloat HDR + mipmap Bloom）才整屏灰白、带锐利竖直块边——
+// 是 Athenaion 某些材质（神庙 / 卫城 / 渡槽 / 植被组）输出了 NaN / Inf 像素，被 Bloom 的 mip 链扩散到全屏、AgX 映射成灰白。
+// 修：给 Athenaion 全部材质的片元出口包一层，NaN / Inf → 黑，HDR 上限钳到 256。
+function scrubNaN(sh) {
+  const re = /void\s+main\s*\(\s*(?:void)?\s*\)/g; const fs = sh.fragmentShader;
+  if ((fs.match(re) || []).length !== 1 || /nbMainR8c/.test(fs)) return;
+  sh.fragmentShader = fs.replace(re, 'void nbMainR8c()') + '\nvoid main() { nbMainR8c(); vec4 c = gl_FragColor; if (any(isnan(c)) || any(isinf(c))) c = vec4(0.0, 0.0, 0.0, 1.0); gl_FragColor = vec4(clamp(c.rgb, 0.0, 256.0), clamp(c.a, 0.0, 1.0)); }\n';
 }
 
 function collectCollider(root) {
