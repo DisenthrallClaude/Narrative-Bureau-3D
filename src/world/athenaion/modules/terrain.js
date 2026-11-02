@@ -21,7 +21,7 @@ export async function buildTerrain(engine, { shots = SHOTS } = {}) {
   const t0 = performance.now();
   const q = engine.quality;
   const qname = q.terrainRes >= 1 ? 'high' : 'preview';
-  const planOpts = PLAN_OPTS(qname);
+  const planOpts = { ...PLAN_OPTS(qname), ...(q.planOverride ?? {}) }; // NB R11：叙事管理局可覆盖地形 LOD 粗细（coarseFactor）
   // eroded far field (mountains): registered for heightAt() and uploaded as a texture for shading
   let far = null;
   try {

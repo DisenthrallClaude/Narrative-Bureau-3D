@@ -329,6 +329,7 @@ export function pxPerMetre(x, y, z, margin = 0.15) {
 /** coarsest library LOD whose marching-cubes cell (0.017 / 0.04 / 0.08 figure units) stays under ~0.9 px */
 const LOD_CELL = [0.015, 0.036, 0.08]; // (r6) matches statuary.js cell sizes
 export function lodForScale(scale, ppm, maxPx = 0.9) {
+  maxPx *= globalThis.__NB_STATUE_LODMUL ?? 1; // NB R11：叙事管理局按 1280×720 运行时放宽 LOD 阈值
   for (let l = 2; l > 0; l--) if (LOD_CELL[l] * scale * ppm <= maxPx) return l;
   return 0;
 }

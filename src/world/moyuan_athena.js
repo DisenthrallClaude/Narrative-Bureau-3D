@@ -72,22 +72,26 @@ function remapScene(root) {
 }
 
 // Athenaion 的部分材质（plaster / foliage 等）依赖其 patchMaterial 注入的大气 uniform（uSunDir…）——这里只补声明与取值，不装其 fog chunk / CSM
-async function patchAtmo(root) {
-  const { ATMO, FOG_PARS_VERTEX, FOG_VERTEX, FOG_PARS_FRAGMENT, FOG_FRAGMENT } = await import('./athenaion/core/atmosphere.js');
+let ATMOMOD = null;
+async function patchAtmo(root) { ATMOMOD = await import('./athenaion/core/atmosphere.js'); return patchAtmoSync(root); }
+function patchAtmoSync(root) {
+  if (!ATMOMOD) return 0; const { ATMO, FOG_PARS_VERTEX, FOG_VERTEX, FOG_PARS_FRAGMENT, FOG_FRAGMENT } = ATMOMOD;
   ATMO.uAtmoEnabled.value = 1; ATMO.uAtmoOY.value = OY; // R10：恢复 Athenaion 大气透视（原 R8b 白屏因高度偏移，现由 uAtmoOY 抵消）
   const FOGSW = [['#include <fog_pars_vertex>', FOG_PARS_VERTEX], ['#include <fog_vertex>', FOG_VERTEX], ['#include <fog_pars_fragment>', FOG_PARS_FRAGMENT], ['#include <fog_fragment>', FOG_FRAGMENT]];
   void 0; // R8b：Athenaion 自带大气（uMist H=16 m / uHazeLow 300 m）按世界绝对高度算，y−3000 时光学深度爆掉 → 白屏；墨渊地下不要天空大气，整体关掉
   const ty = (v) => (typeof v === 'number' ? 'float' : v?.isVector2 ? 'vec2' : v?.isVector3 || v?.isColor ? 'vec3' : v?.isVector4 ? 'vec4' : v?.isTexture ? 'sampler2D' : null);
-  const seen = new Set();
-  root.traverse((o) => { for (const m of Array.isArray(o.material) ? o.material : o.material ? [o.material] : []) {
-    if (seen.has(m)) continue; seen.add(m); const prev = m.onBeforeCompile;
+  const seen = PATCHED; let n = 0;
+  root.traverse((o) => { for (const m of [...(Array.isArray(o.material) ? o.material : o.material ? [o.material] : []), o.customDepthMaterial, o.customDistanceMaterial]) { // R11：阴影深度材质也补
+    if (!m || seen.has(m)) continue; seen.add(m); n++; const prev = m.onBeforeCompile;
     m.onBeforeCompile = function (sh, r) { if (prev) prev.call(this, sh, r);
       for (const [a, b] of FOGSW) for (const st of ['vertexShader', 'fragmentShader']) if (sh[st].includes(a)) sh[st] = sh[st].split(a).join(b); // R10：只给 Athenaion 材质换成其大气 fog chunk，不动全局
       for (const k in ATMO) { if (!sh.uniforms[k]) sh.uniforms[k] = ATMO[k]; const t = ty(ATMO[k].value); if (!t) continue; const decl = new RegExp('uniform\\s+\\w+\\s+' + k + '\\b');
         for (const st of ['vertexShader', 'fragmentShader']) if (new RegExp('\\b' + k + '\\b').test(sh[st]) && !decl.test(sh[st])) sh[st] = `uniform ${t} ${k};\n` + sh[st]; }
       scrubNaN(sh); };
     const base = m.customProgramCacheKey?.bind(m); m.customProgramCacheKey = () => (base ? base() : '') + '|nbAtmo|r10'; m.needsUpdate = true; } });
+  return n;
 }
+const PATCHED = new WeakSet(); // R11：运行时新出现的材质（植被 LOD 切换）也要补大气 uniform，否则 uSunDir 未声明
 
 // R8c 真因：?mypost=0 时画面正常，开后处理（HalfFloat HDR + mipmap Bloom）才整屏灰白、带锐利竖直块边——
 // 是 Athenaion 某些材质（神庙 / 卫城 / 渡槽 / 植被组）输出了 NaN / Inf 像素，被 Bloom 的 mip 链扩散到全屏、AgX 映射成灰白。
@@ -142,13 +146,14 @@ function perfDiag(G) {
   const cam = G.camera; if (DIAG_N >= 6 || cam.position.distanceTo(_dp) < 2) return; _dp.copy(cam.position); DIAG_N++;
   const fr = new THREE.Frustum(), frS = new THREE.Frustum(), m = new THREE.Matrix4(), sp = new THREE.Sphere(); cam.updateMatrixWorld();
   m.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse); fr.setFromProjectionMatrix(m);
-  const sun = S.root.getObjectByName('moyuan_sun'); if (sun) { const sc = sun.shadow.camera; sc.updateMatrixWorld(); m.multiplyMatrices(sc.projectionMatrix, sc.matrixWorldInverse); frS.setFromProjectionMatrix(m); }
+  const sun = S.root.getObjectByName('moyuan_sun'); if (sun) { sun.updateMatrixWorld(true); sun.shadow.updateMatrices(sun); const sc = sun.shadow.camera; sc.updateMatrixWorld(); m.multiplyMatrices(sc.projectionMatrix, sc.matrixWorldInverse); frS.setFromProjectionMatrix(m); }
   const out = {};
   const walk = (o, mod) => { if (!o.visible) return; if (o.isMesh && o.geometry) { const g = o.geometry; const n = (g.index ? g.index.count : g.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1);
       const bs = o.isInstancedMesh && o.boundingSphere ? o.boundingSphere : (g.boundingSphere || (g.computeBoundingSphere(), g.boundingSphere)); sp.copy(bs).applyMatrix4(o.matrixWorld);
       const R = out[mod] ??= [0, 0, 0, 0]; if (!o.frustumCulled || fr.intersectsSphere(sp)) { R[0]++; R[1] += n; } if (sun && o.castShadow && (!o.frustumCulled || frS.intersectsSphere(sp))) { R[2]++; R[3] += n; } }
     for (const ch of o.children) walk(ch, mod); };
   for (const ch of S.root.children) walk(ch, ch.userData.mod ?? ch.name ?? '?');
+  for (const ch of G.scene.children) if (ch !== S.root) walk(ch, 'NB');
   const fmt = Object.entries(out).map(([k, v]) => `${k}:${v[0]}/${(v[1] / 1e6).toFixed(2)}M sh${v[2]}/${(v[3] / 1e6).toFixed(2)}M`).join(' ');
   console.log('[NB] moyuan perf', cam.position.toArray().map((x) => x.toFixed(0)).join(','), fmt.slice(0, 280)); if (fmt.length > 280) console.log('[NB] moyuan perf+', fmt.slice(280, 560));
 }
@@ -174,6 +179,7 @@ async function build(G) {
   const t0 = performance.now(), mem0 = performance.memory?.usedJSHeapSize ?? 0;
   const params = new URLSearchParams(location.search);
   const E = shimEngine(params, G.renderer); S.E = E;
+  if (OPT) { E.quality.planOverride = { coarseFactor: 3 }; globalThis.__NB_STATUE_LODMUL = 2; } // R11：地形网格 2→3 倍粗（面数约 ×0.45、构建更快）；雕像 LOD 阈值 0.9→1.8 px
   const { Footprints } = await import('./athenaion/core/footprints.js');
   const { RNG } = await import('./athenaion/core/rng.js');
   E.footprints = new Footprints(); E.rng = (label) => new RNG(String(label));
@@ -189,7 +195,7 @@ async function build(G) {
   }
   const root = E.scene; root.name = 'moyuan_athena'; root.position.y = OY;
   root.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.frustumCulled = o.frustumCulled !== false; } });
-  await patchAtmo(root); // R10：不再 remapScene（保留 Athenaion 原配色）
+  await patchAtmo(root); S.atmo = patchAtmoSync; // R10：不再 remapScene（保留 Athenaion 原配色）
   if (OPT) { const tm = performance.now(); times.merge = mergeStatic(root); times.mergeMs = Math.round(performance.now() - tm); } // R11：静态件按 160 m 区块 × 材质合批
   await addNature(root, E, times);
   if (DBG) { const keep = DBG.split(','); for (const ch of root.children) if (!ch.isLight && ch.userData.mod) ch.visible = keep.includes(ch.userData.mod); console.log('[NB] mydbg show', DBG, JSON.stringify(root.children.filter((c) => c.userData.mod).map((c) => c.userData.mod + ':' + (c.visible ? 1 : 0)))); }
@@ -327,6 +333,7 @@ export function setupMoyuanAthena(G, tp) {
     if (S.E) { const ec = S.E.camera; G.camera.updateMatrixWorld(); ec.matrixWorld.copy(G.camera.matrixWorld); ec.matrixWorld.decompose(ec.position, ec.quaternion, ec.scale); ec.position.y -= OY; ec.fov = G.camera.fov; ec.aspect = G.camera.aspect; ec.near = G.camera.near; ec.far = G.camera.far; ec.updateProjectionMatrix(); ec.updateMatrixWorld(true); } // R10：Athenaion 的 LOD / 剔除按玩家相机（去掉 y 平移）
     S.skyT = (S.skyT ?? 0) + (dt ?? 0.016); if (S.SKY) S.SKY.uSkyTime.value = S.skyT;
     for (const f of S.updates ?? []) try { f(S.skyT, dt); } catch { /* 动画失败不影响游戏 */ }
+    if (S.atmo) { const n = S.atmo(S.root); if (n && (S.lpN = (S.lpN ?? 0) + 1) <= 5) console.log('[NB] moyuan late-patched mats', n); }
     if (!((acc += dt ?? 0.016) < 0.4 && S.culled)) { acc = 0; S.culled = true; // R9：远处小件剔除，0.4 s 一次
       G.camera.getWorldPosition(cam); for (const it of S.cull ?? []) it.o.visible = cam.distanceTo(it.c) - it.r < 650; }
     if (OPT && !/[?&]mydiag=0\b/.test(location.search)) try { perfDiag(G); } catch (e) { console.log('[NB] moyuan diag err', String(e).slice(0, 120)); }
