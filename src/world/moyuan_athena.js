@@ -329,8 +329,13 @@ async function addNature(root, E, times) {
   key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.6; root.add(key, key.target);
   root.updateMatrixWorld(true); const v = new THREE.Vector3(); let nc = 0;
   root.traverse((o) => { if (!o.isMesh || o.userData.wantShadow === false || o === S.sky) return; let a = o; while (a.parent && a.parent !== root) a = a.parent; if (!/^(temple|acropolis|aqueducts|statues|city|terrain)$/.test(a.userData.mod ?? '')) return;
-    if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); const bs = o.geometry.boundingSphere; if (!bs) return; v.copy(bs.center).applyMatrix4(o.matrixWorld); v.y -= OY;
+    if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); let bs = o.geometry.boundingSphere; if (!bs) return;
+    // R12 真因修复：R11 对 InstancedMesh 用的是单件几何（原点附近）的包围球 → 卫城 / 神庙实例件几乎全被当成「近处大件」投影（入口阴影 pass 399 draw / 678 万面，卫城 263）。
+    // 改为：实例件用整组包围球判距离、用单实例尺寸判大小（单件 < 1.5 m 的细部件不投影）
+    let rItem = null; if (R12 && o.isInstancedMesh) { if (!o.count) return; o.computeBoundingSphere(); const mm = new THREE.Matrix4(); let sMax = 0; const st = Math.max(1, Math.floor(o.count / 64)); for (let i = 0; i < o.count; i += st) { o.getMatrixAt(i, mm); sMax = Math.max(sMax, mm.getMaxScaleOnAxis()); } rItem = bs.radius * (sMax || 1) * o.matrixWorld.getMaxScaleOnAxis(); bs = o.boundingSphere; }
+    v.copy(bs.center).applyMatrix4(o.matrixWorld); v.y -= OY;
     const r = bs.radius * o.matrixWorld.getMaxScaleOnAxis(); o.receiveShadow = true;
+    if (rItem !== null) { if (a.userData.mod === 'city' || rItem < 1.5 || rItem > 260) return; if (v.distanceTo(C) - r < 300) { o.castShadow = true; nc++; } return; }
     if (OPT) { const md = a.userData.mod; if (md === 'city') return; if (md === 'terrain' ? r > 900 : r > 260) return; if (md !== 'terrain' && r < 1.5) return; if (v.distanceTo(C) - r < 300) { o.castShadow = true; nc++; } return; } // R11：城区小房不投影；只近处大件投影
     if (a.userData.mod === 'terrain' ? r > 900 : r > 200) return; if (v.distanceTo(C) - r < 450) { o.castShadow = true; nc++; } });
   times.shadowCasters = nc;
