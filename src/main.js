@@ -61,7 +61,7 @@ const player = new Player(world);
 const inter = new Interactions(camera);
 scene.add(inter.proxies);
 const audio = new Audio(camera);
-const G = { scene, camera, ctx, world, player, inter, audio, zone: null, onUpdate: [], onZone: [], frozen: false };
+const G = { scene, camera, renderer: R.gl, ctx, world, player, inter, audio, zone: null, onUpdate: [], onZone: [], frozen: false };
 window.G = G; if (SHOT) window.__THREE__ = THREE; // 批次15：拾取探针 tools/_pick.mjs
 
 // —— 光照 ——

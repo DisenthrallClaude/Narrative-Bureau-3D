@@ -29,6 +29,7 @@ export const ATMO = {
   uMie: { value: new THREE.Vector3(0.76, 0.55, 0.8) },
   uAtmoTime: { value: 0 },
   uAtmoEnabled: { value: 1 },
+  uAtmoOY: { value: 0 }, // 叙事管理局 R10：世界整体平移的 y 偏移（墨渊古城 y−3000），大气按原高度算
 };
 
 export function atmoUniforms() { return { ...ATMO }; }
@@ -48,6 +49,7 @@ uniform vec3 uMistColor;
 uniform vec3 uMie;
 uniform float uAtmoTime;
 uniform float uAtmoEnabled;
+uniform float uAtmoOY;
 
 // Optical depth of an exponential height-density layer along a ray.
 float atmoOD(float y0, float dy, float dist, float dens, float H, float h0){
@@ -89,16 +91,16 @@ vec3 atmoApplyFrom(vec3 col, vec3 camPos, vec3 wp){
   col = col * TM + atmoMistInscatter(dir) * (1.0 - TM);
   return col;
 }
-vec3 atmoApply(vec3 col, vec3 wp){ return atmoApplyFrom(col, cameraPosition, wp); }
+vec3 atmoApply(vec3 col, vec3 wp){ vec3 o = vec3(0.0, uAtmoOY, 0.0); return atmoApplyFrom(col, cameraPosition - o, wp - o); }
 #endif
 `;
 
-const FOG_PARS_VERTEX = /* glsl */ `
+export const FOG_PARS_VERTEX = /* glsl */ `
 #ifdef USE_FOG
   varying vec3 vAtmoWorldPos;
 #endif
 `;
-const FOG_VERTEX = /* glsl */ `
+export const FOG_VERTEX = /* glsl */ `
 #ifdef USE_FOG
   {
     vec4 atmoWP = vec4( transformed, 1.0 );
@@ -112,13 +114,13 @@ const FOG_VERTEX = /* glsl */ `
   }
 #endif
 `;
-const FOG_PARS_FRAGMENT = /* glsl */ `
+export const FOG_PARS_FRAGMENT = /* glsl */ `
 #ifdef USE_FOG
   varying vec3 vAtmoWorldPos;
   ${ATMO_GLSL}
 #endif
 `;
-const FOG_FRAGMENT = /* glsl */ `
+export const FOG_FRAGMENT = /* glsl */ `
 #ifdef USE_FOG
   gl_FragColor.rgb = atmoApply( gl_FragColor.rgb, vAtmoWorldPos );
 #endif

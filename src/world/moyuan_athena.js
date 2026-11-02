@@ -10,31 +10,33 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import { manager } from '../engine/assets.js';
 import { midLoad } from '../ui/ui.js';
 
+// R10（用户 2026-11-02 22:10）：古城 = 被管理局封锁的历史遗迹，自然部分按 Athenaion 原样：恢复其天空（含体积云）/ 太阳 / 大气透视 / 海水 / 原配色，
+// 撤掉 R9 的地底化（岩穹顶、墨黑静水、暗金点光、去蓝压暗调色）；大气与天空着色器用 uAtmoOY 抵消 y−3000 平移。
 // R9：默认开启（墨渊 = 古城）；?nomyathena=1 回退旧墨渊四区
 export const MOYUAN_ATHENA = typeof location !== 'undefined' && !/[?&]nomyathena=1\b/.test(location.search);
 export const OY = -3000;
-const MODULES = ['terrain', 'temple', 'acropolis', 'aqueducts', 'statues', 'city', 'vegetation']; // R9：waterfalls 需要 Athenaion 管线 RT，失败 → 不建
-const DENSITY = { vegetation: 0.45 / 40, city: 0.225 }; // R9：树 / 城区实例再减半 // 其余用 preview 0.45
+const MODULES = ['terrain', 'water', 'temple', 'acropolis', 'aqueducts', 'statues', 'city', 'vegetation', 'waterfalls']; // R10：恢复 Athenaion 原顺序里的 water / waterfalls（失败则跳过，海面退回简易平面） // R9：waterfalls 需要 Athenaion 管线 RT，失败 → 不建
+const DENSITY = { vegetation: 0.45 / 4, city: 0.3 }; // R10：树 1/40 → 1/4 原 preview 密度（Athenaion VegSystem 自带 LOD + 每实例剔除，镜头同步为玩家相机） // R9：树 / 城区实例再减半 // 其余用 preview 0.45
 // 玩家出生：卫城前庭南缘（Athenaion 机位 5 前方），落地由重力贴地
 export const SPAWN = [34, 70, -18];
 // R8b：雾密度取负 = 关闭 R7 天空盒雾/大气透视 nbAerial（skyfog.js），exp2 雾浓度不变
 // R9：远处暗琥珀灰距离雾（exp2，仍取负值 → 不走 nbAerial）
-export const ATHENA_LOOK = { env: 'hall', envI: 0.3, sun: 0, exp: 1.3, fog: [0x2a2117, -0.0009], hemi: 0.2 };
+export const ATHENA_LOOK = { env: 'sky', envI: 0.4, sun: 0, exp: 0.86, fog: [0xc9d2db, -0.00001], hemi: 0.05 }; // R10：自然天空 IBL；项目 exp2 雾几乎关掉（Athenaion 材质走自己的大气透视）
 export const athenaZone = (p) => (MOYUAN_ATHENA && p.y < OY + 2000 && p.y > OY - 200 ? 'abyss_athena' : null); // R9：上界 −1000（原 −500 把装订线 y≈−500.02 误判成古城）
 
 const S = { state: 'idle', root: null, collider: null, mainCollider: null, stats: null };
 window.__MOYUAN__ = () => S.stats;
 
-function shimEngine(params) {
+function shimEngine(params, renderer) {
   const scene = new THREE.Group();
   const quality = { name: 'preview', spp: 1, msaa: 4, shadowMapSize: 2048, cascades: 3, shadowMaxFar: 1400, softShadows: false, terrainRes: 0.5, density: 0.45, detail: 0.5, cloudSteps: 16, bloom: false, ao: false };
-  const cam = new THREE.PerspectiveCamera(60, 16 / 9, 0.5, 20000); cam.position.set(...SPAWN); cam.lookAt(20, 70, -64);
+  const cam = new THREE.PerspectiveCamera(60, 16 / 9, 0.3, 40000); cam.position.set(...SPAWN); cam.lookAt(20, 70, -64);
   return {
-    scene, camera: cam, quality, params, time: 0, width: 1600, height: 900, registry: {}, updates: [], shotHooks: [],
+    scene, camera: cam, renderer, quality, params, time: 0, width: 1600, height: 900, registry: {}, updates: [], shotHooks: [],
     slots: { banner: [], brazier: [], statue: [], ivy: [], urn: [], planter: [], lamp: [], tree: [] },
     footprints: null, envIntensity: 1, stats: {},
     rng: null, onUpdate(fn) { this.updates.push(fn); }, onShot(fn) { this.shotHooks.push(fn); },
-    add(obj, { castShadow = false, receiveShadow = true } = {}) { obj.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.receiveShadow = receiveShadow && !!castShadow; } }); scene.add(obj); return obj; },
+    add(obj, { castShadow = true, receiveShadow = true } = {}) { obj.traverse((o) => { if (o.isMesh) { if (o.userData.castShadow === undefined) o.userData.wantShadow = castShadow; o.castShadow = false; o.receiveShadow = o.userData.receiveShadow ?? receiveShadow; } }); scene.add(obj); return obj; },
     patchMaterial() {}, ensurePatched() {}, prepareScene() {}, applyShot() {},
   };
 }
@@ -70,17 +72,20 @@ function remapScene(root) {
 
 // Athenaion 的部分材质（plaster / foliage 等）依赖其 patchMaterial 注入的大气 uniform（uSunDir…）——这里只补声明与取值，不装其 fog chunk / CSM
 async function patchAtmo(root) {
-  const { ATMO } = await import('./athenaion/core/atmosphere.js');
-  ATMO.uAtmoEnabled.value = 0; // R8b：Athenaion 自带大气（uMist H=16 m / uHazeLow 300 m）按世界绝对高度算，y−3000 时光学深度爆掉 → 白屏；墨渊地下不要天空大气，整体关掉
+  const { ATMO, FOG_PARS_VERTEX, FOG_VERTEX, FOG_PARS_FRAGMENT, FOG_FRAGMENT } = await import('./athenaion/core/atmosphere.js');
+  ATMO.uAtmoEnabled.value = 1; ATMO.uAtmoOY.value = OY; // R10：恢复 Athenaion 大气透视（原 R8b 白屏因高度偏移，现由 uAtmoOY 抵消）
+  const FOGSW = [['#include <fog_pars_vertex>', FOG_PARS_VERTEX], ['#include <fog_vertex>', FOG_VERTEX], ['#include <fog_pars_fragment>', FOG_PARS_FRAGMENT], ['#include <fog_fragment>', FOG_FRAGMENT]];
+  void 0; // R8b：Athenaion 自带大气（uMist H=16 m / uHazeLow 300 m）按世界绝对高度算，y−3000 时光学深度爆掉 → 白屏；墨渊地下不要天空大气，整体关掉
   const ty = (v) => (typeof v === 'number' ? 'float' : v?.isVector2 ? 'vec2' : v?.isVector3 || v?.isColor ? 'vec3' : v?.isVector4 ? 'vec4' : v?.isTexture ? 'sampler2D' : null);
   const seen = new Set();
   root.traverse((o) => { for (const m of Array.isArray(o.material) ? o.material : o.material ? [o.material] : []) {
     if (seen.has(m)) continue; seen.add(m); const prev = m.onBeforeCompile;
     m.onBeforeCompile = function (sh, r) { if (prev) prev.call(this, sh, r);
+      for (const [a, b] of FOGSW) for (const st of ['vertexShader', 'fragmentShader']) if (sh[st].includes(a)) sh[st] = sh[st].split(a).join(b); // R10：只给 Athenaion 材质换成其大气 fog chunk，不动全局
       for (const k in ATMO) { if (!sh.uniforms[k]) sh.uniforms[k] = ATMO[k]; const t = ty(ATMO[k].value); if (!t) continue; const decl = new RegExp('uniform\\s+\\w+\\s+' + k + '\\b');
         for (const st of ['vertexShader', 'fragmentShader']) if (new RegExp('\\b' + k + '\\b').test(sh[st]) && !decl.test(sh[st])) sh[st] = `uniform ${t} ${k};\n` + sh[st]; }
       scrubNaN(sh); };
-    const base = m.customProgramCacheKey?.bind(m); m.customProgramCacheKey = () => (base ? base() : '') + '|nbAtmo|r8c'; m.needsUpdate = true; } });
+    const base = m.customProgramCacheKey?.bind(m); m.customProgramCacheKey = () => (base ? base() : '') + '|nbAtmo|r10'; m.needsUpdate = true; } });
 }
 
 // R8c 真因：?mypost=0 时画面正常，开后处理（HalfFloat HDR + mipmap Bloom）才整屏灰白、带锐利竖直块边——
@@ -112,7 +117,7 @@ async function build(G) {
   S.state = 'loading'; manager.itemStart('moyuan:athena');
   const t0 = performance.now(), mem0 = performance.memory?.usedJSHeapSize ?? 0;
   const params = new URLSearchParams(location.search);
-  const E = shimEngine(params);
+  const E = shimEngine(params, G.renderer); S.E = E;
   const { Footprints } = await import('./athenaion/core/footprints.js');
   const { RNG } = await import('./athenaion/core/rng.js');
   E.footprints = new Footprints(); E.rng = (label) => new RNG(String(label));
@@ -122,21 +127,14 @@ async function build(G) {
     const t = performance.now(); const before = new Set(E.scene.children);
     E.quality.density = DENSITY[name] ?? 0.45;
     try { const mod = await import(`./athenaion/modules/${name}.js`); if (typeof mod.build === 'function') await mod.build(E); }
-    catch (e) { console.error('[moyuan] module', name, 'failed:', e?.stack || e); times[name] = 'ERR ' + String(e?.message ?? e).slice(0, 80); continue; }
+    catch (e) { console.warn('[moyuan] module', name, 'skipped:', String(e?.message ?? e).slice(0, 160)); times[name] = 'ERR ' + String(e?.message ?? e).slice(0, 80); continue; }
     for (const ch of E.scene.children) if (!before.has(ch)) ch.userData.mod = name;
     times[name] = Math.round(performance.now() - t);
   }
   const root = E.scene; root.name = 'moyuan_athena'; root.position.y = OY;
   root.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.frustumCulled = o.frustumCulled !== false; } });
-  remapScene(root); await patchAtmo(root);
-  // 地底化：岩顶穹顶、墨黑静水、暗金点光 + 暗铜环境
-  root.add(makeDome());
-  const ink = new THREE.Mesh(new THREE.PlaneGeometry(30000, 30000), new THREE.MeshStandardMaterial({ color: 0x030202, roughness: 0.06, metalness: 0.2 }));
-  ink.rotation.x = -Math.PI / 2; ink.position.y = 0.6; ink.name = 'moyuan_ink'; ink.userData.mod = 'ink'; root.add(ink);
-  const amb = new THREE.HemisphereLight(0x5a3e22, 0x0e0a06, 0.42); root.add(amb);
-  const key = new THREE.DirectionalLight(0xffa850, 0.55); key.position.set(-400, 1500, 600); key.target.position.set(20, 60, -64); root.add(key, key.target);
-  // R9：暗金光池（卫城 / 巨像 / 阶梯 / 渡槽 / 神庙）
-  for (const [x, y, z, i, d] of [[20, 105, -50, 2600, 140], [50, 92, -30, 1400, 70], [30, 78, -4, 700, 45], [-300, 90, 100, 2400, 260], [22, 74, -52, 260, 26]]) { const p = new THREE.PointLight(0xffa040, i, d, 2); p.position.set(x, y, z); root.add(p); }
+  await patchAtmo(root); // R10：不再 remapScene（保留 Athenaion 原配色）
+  await addNature(root, E, times);
   if (DBG) { const keep = DBG.split(','); for (const ch of root.children) if (!ch.isLight && ch.userData.mod) ch.visible = keep.includes(ch.userData.mod); console.log('[NB] mydbg show', DBG, JSON.stringify(root.children.filter((c) => c.userData.mod).map((c) => c.userData.mod + ':' + (c.visible ? 1 : 0)))); }
   // R9：远处小件剔除（城区 / 雕像 / 植被 / 渡槽 包围球 r<45 m 且离相机 > 650 m 不画）
   S.cull = []; root.updateMatrixWorld(true); root.traverse((o) => { if (!o.isMesh || !o.geometry) return; let a = o; while (a.parent && a.parent !== root) a = a.parent; if (!/^(city|statues|vegetation|aqueducts|temple)$/.test(a.userData.mod ?? '')) return; o.geometry.boundingSphere || o.geometry.computeBoundingSphere(); const bs = o.geometry.boundingSphere; if (!bs || o.isInstancedMesh) { if (o.isInstancedMesh && o.count > 0) { o.computeBoundingSphere?.(); } } const sp = (o.isInstancedMesh && o.boundingSphere) ? o.boundingSphere : bs; if (!sp) return; const c = sp.center.clone().applyMatrix4(o.matrixWorld); const r = sp.radius * o.matrixWorld.getMaxScaleOnAxis(); if (r < 45) S.cull.push({ o, c, r }); });
@@ -172,21 +170,59 @@ function startProbe(G) {
   setTimeout(tick, 500);
 }
 
-// R9：岩顶穹顶——项目已有 CC0 暗岩贴图（ambientCG Granite003A）压暗 + 暗金裂隙微光（程序化 emissiveMap）；不吃雾
-function makeDome() {
-  const tl = new THREE.TextureLoader(manager), rep = (t, cs) => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(36, 9); if (cs) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
-  const map = rep(tl.load('./assets/tex/Granite003A_color.webp'), true), nrm = rep(tl.load('./assets/tex/Granite003A_normal.webp'));
-  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const c = cv.getContext('2d'); c.fillStyle = '#000'; c.fillRect(0, 0, 1024, 512);
-  let sd = 7; const rnd = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
-  for (let k = 0; k < 9; k++) { let x = rnd() * 1024, y = 60 + rnd() * 360; c.strokeStyle = `rgba(255,${150 + rnd() * 50 | 0},60,${0.55 + rnd() * 0.4})`; c.lineWidth = 0.6 + rnd() * 1.1; c.beginPath(); c.moveTo(x, y); for (let j = 0; j < 22; j++) { x += 8 + rnd() * 26; y += (rnd() - 0.5) * 30; c.lineTo(x % 1024, y); if (x > 1024) { x -= 1024; c.stroke(); c.beginPath(); c.moveTo(x, y); } } c.stroke(); }
-  const em = new THREE.CanvasTexture(cv); em.colorSpace = THREE.SRGBColorSpace;
-  void nrm; const mat = new THREE.MeshBasicMaterial({ color: 0x3a2e24, map, side: THREE.BackSide, fog: false }); // 穹顶内表面朝下、半球光只给地色 → 用不受光的暗岩底色
-  const crack = new THREE.MeshBasicMaterial({ map: em, side: THREE.BackSide, fog: false, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false });
-  // 主贴图平铺，裂隙图不平铺：裂隙用 uv2 不可得 → 让 emissiveMap 取 1× 重复（three r186 每张贴图各自 transform）
-  em.repeat.set(1, 1);
-  const dome = new THREE.Mesh(new THREE.SphereGeometry(9000, 64, 24, 0, Math.PI * 2, 0, Math.PI * 0.5), mat);
-  dome.position.set(0, -400, 0); dome.scale.y = 0.22; dome.name = 'moyuan_dome'; dome.userData.mod = 'dome';
-  const cr = new THREE.Mesh(new THREE.SphereGeometry(8950, 64, 24, 0, Math.PI * 2, 0, Math.PI * 0.5), crack); cr.scale.set(1 / 1, 1, 1); dome.add(cr); return dome;
+// R10：Athenaion 原样的天空（程序化天穹 + 体积云 raymarch + 太阳盘）、太阳（方向光 + 阴影）、海面兜底；入口 1–2 件管理局封存标识
+async function addNature(root, E, times) {
+  const { createSky, SKY, ensureCloudTextures } = await import('./athenaion/core/sky.js');
+  const { ATMO } = await import('./athenaion/core/atmosphere.js');
+  const { sunColorForElevation } = await import('./athenaion/core/lighting.js');
+  const { dirFromAzEl, SUN: SUN0 } = await import('./athenaion/world/layout.js');
+  S.SKY = SKY;
+  const dir = new THREE.Vector3(...dirFromAzEl(SUN0.azimuth, SUN0.elevation)).normalize();
+  const col = sunColorForElevation(SUN0.elevation), I = 12.0;
+  ATMO.uSunDir.value.copy(dir); ATMO.uSunColor.value.copy(col);
+  SKY.uSunIrr.value.set(col.r, col.g, col.b).multiplyScalar(I);
+  if (SKY.uSunDiskDir) SKY.uSunDiskDir.value.copy(dir);
+  SKY.uCloudSteps.value = /[?&]q=low\b/.test(location.search) ? 10 : 16;
+  try { if (E.renderer) ensureCloudTextures(E.renderer); } catch (e) { console.warn('[moyuan] cloud noise skipped', String(e?.message ?? e)); }
+  {
+    const sky = createSky(); sky.userData.mod = 'sky';
+    if (/[?&]nomycloud=1\b/.test(location.search)) SKY.uCloudCover && (SKY.uCloudCover.value = 0);
+    // y−3000 平移：天空片元里的 cameraPosition 换成原高度
+    const m = sky.material; m.uniforms.uAtmoOY = ATMO.uAtmoOY;
+    m.fragmentShader = 'uniform float uAtmoOY;\n' + m.fragmentShader.replace(/\bcameraPosition\b/g, '(cameraPosition - vec3(0.0, uAtmoOY, 0.0))');
+    if (/uniform float uAtmoOY;[\s\S]*uniform float uAtmoOY;/.test(m.fragmentShader)) m.fragmentShader = m.fragmentShader.replace('uniform float uAtmoOY;\n', '');
+    root.add(sky); S.sky = sky;
+  }
+  // 太阳：Athenaion 默认方位 238° / 仰角 21°、强度 12、按空气质量的金色；单张 2048 阴影，覆盖卫城一带 ±420 m
+  const key = new THREE.DirectionalLight(col, I); key.name = 'moyuan_sun';
+  const C = new THREE.Vector3(20, 80, -50); key.target.position.copy(C); key.position.copy(C).addScaledVector(dir, 1500);
+  key.castShadow = true; const sc = key.shadow.camera; sc.left = sc.bottom = -420; sc.right = sc.top = 420; sc.near = 10; sc.far = 3200; sc.updateProjectionMatrix();
+  key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.6; root.add(key, key.target);
+  root.updateMatrixWorld(true); const v = new THREE.Vector3(); let nc = 0;
+  root.traverse((o) => { if (!o.isMesh || o.userData.wantShadow === false || o === S.sky) return; let a = o; while (a.parent && a.parent !== root) a = a.parent; if (!/^(temple|acropolis|aqueducts|statues|city|terrain)$/.test(a.userData.mod ?? '')) return;
+    if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); const bs = o.geometry.boundingSphere; if (!bs) return; v.copy(bs.center).applyMatrix4(o.matrixWorld); v.y -= OY;
+    const r = bs.radius * o.matrixWorld.getMaxScaleOnAxis(); if (a.userData.mod === 'terrain' ? r > 900 : r > 200) return; if (v.distanceTo(C) - r < 450) { o.castShadow = true; nc++; } o.receiveShadow = true; });
+  times.shadowCasters = nc;
+  // 海 / 潟湖：water 模块失败时用简易海面（Athenaion SEA_LEVEL = 0）
+  if (typeof times.water !== 'number') {
+    const sea = new THREE.Mesh(new THREE.PlaneGeometry(60000, 60000), new THREE.MeshStandardMaterial({ color: 0x1b3d4c, roughness: 0.12, metalness: 0.0, envMapIntensity: 1.2 }));
+    sea.rotation.x = -Math.PI / 2; sea.position.y = 0; sea.name = 'moyuan_sea'; sea.userData.mod = 'sea'; root.add(sea);
+  }
+}
+
+// 入口：管理局封存标识（编号铜牌 + 红色封条），按出生点前方落地
+function bureauSeal() {
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 320; const c = cv.getContext('2d');
+  const g = c.createLinearGradient(0, 0, 512, 320); g.addColorStop(0, '#8a6a3c'); g.addColorStop(1, '#5a4224'); c.fillStyle = g; c.fillRect(0, 0, 512, 320);
+  c.strokeStyle = '#2e2010'; c.lineWidth = 10; c.strokeRect(14, 14, 484, 292); c.fillStyle = '#21160a'; c.textAlign = 'center';
+  c.font = 'bold 44px serif'; c.fillText('叙事管理局 · 封存遗迹', 256, 96); c.font = 'bold 64px monospace'; c.fillText('NB-M-0008', 256, 186);
+  c.font = '30px serif'; c.fillText('墨渊 · 雅典娜　未经批文不得深入', 256, 256);
+  c.save(); c.translate(256, 160); c.rotate(-0.22); c.fillStyle = 'rgba(170,20,16,0.88)'; c.fillRect(-300, -26, 600, 52); c.fillStyle = '#f3e6d0'; c.font = 'bold 34px serif'; c.fillText('封 · 叙事管理局 · 封', 0, 12); c.restore();
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  const grp = new THREE.Group(); grp.name = 'bureau_seal';
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.0, 0.06), [0, 0, 0, 0, 0, 0].map((_, i) => (i === 4 ? new THREE.MeshStandardMaterial({ map: t, metalness: 0.6, roughness: 0.45 }) : new THREE.MeshStandardMaterial({ color: 0x4a3418, metalness: 0.8, roughness: 0.4 }))));
+  plate.position.y = 1.35; const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 1.4, 8), new THREE.MeshStandardMaterial({ color: 0x2a2018, metalness: 0.7, roughness: 0.5 })); post.position.y = 0.7;
+  grp.add(plate, post); grp.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); return grp;
 }
 
 // R9：旧墨渊四区的剧情点（depths.js 默认只建这些，不建几何）挂进古城：按古城本地 (x, z) 向下找地面
@@ -200,6 +236,7 @@ function placeRelics(G) {
   for (const { box, at } of d.athenaBoxes ?? []) { const [x, z, dy] = at; box[0] = x; box[1] = OY + gy(x, z) + dy; box[2] = z; }
   // floatFile 动画按世界 y 写 position（root 只平移 y）→ 基准换成本地
   if (d.floatFileBase != null) d.floatFileBase -= OY;
+  { const seal = bureauSeal(); S.root.add(seal); const sx = SPAWN[0] - 3, sz = SPAWN[2] - 6; seal.position.set(sx, gy(sx, sz), sz); seal.rotation.y = 0.35; }
   S.relicY = d.athenaRelics.map((r) => +(r.obj.position.y).toFixed(1));
   console.log('[moyuan] relics placed', d.athenaRelics.length, 'g0', g0.toFixed(1));
 }
@@ -210,7 +247,7 @@ export function setupMoyuanAthena(G, tp) {
   const enter = (z) => {
     const inAthena = z === 'abyss_athena';
     if (S.root) S.root.visible = inAthena;
-    if (inAthena) { G.camera.far = 16000; G.camera.near = 0.15; G.camera.updateProjectionMatrix(); if (S.collider) { S.mainCollider ??= G.world.collider; G.world.collider = S.collider; } }
+    if (inAthena) { G.camera.far = 40000; G.camera.near = 0.2; G.camera.updateProjectionMatrix(); if (S.collider) { S.mainCollider ??= G.world.collider; G.world.collider = S.collider; } }
     else { if (G.camera.far !== 6000) { G.camera.far = 6000; G.camera.near = 0.05; G.camera.updateProjectionMatrix(); } if (S.mainCollider) G.world.collider = S.mainCollider; }
   };
   let loadUI = false;
@@ -227,7 +264,9 @@ export function setupMoyuanAthena(G, tp) {
   const cam = new THREE.Vector3(); let acc = 0;
   G.onUpdate.push((dt, t) => {
     if (!S.root?.visible) return;
-    for (const f of S.updates ?? []) try { f(t ?? 0, dt); } catch { /* 动画失败不影响游戏 */ }
+    if (S.E) { const ec = S.E.camera; G.camera.updateMatrixWorld(); ec.matrixWorld.copy(G.camera.matrixWorld); ec.matrixWorld.decompose(ec.position, ec.quaternion, ec.scale); ec.position.y -= OY; ec.fov = G.camera.fov; ec.aspect = G.camera.aspect; ec.near = G.camera.near; ec.far = G.camera.far; ec.updateProjectionMatrix(); ec.updateMatrixWorld(true); } // R10：Athenaion 的 LOD / 剔除按玩家相机（去掉 y 平移）
+    S.skyT = (S.skyT ?? 0) + (dt ?? 0.016); if (S.SKY) S.SKY.uSkyTime.value = S.skyT;
+    for (const f of S.updates ?? []) try { f(S.skyT, dt); } catch { /* 动画失败不影响游戏 */ }
     if ((acc += dt ?? 0.016) < 0.4 && S.culled) return; acc = 0; S.culled = true; // R9：远处小件剔除，0.4 s 一次
     G.camera.getWorldPosition(cam); for (const it of S.cull ?? []) it.o.visible = cam.distanceTo(it.c) - it.r < 650;
   });
