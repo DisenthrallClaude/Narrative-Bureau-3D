@@ -8,6 +8,7 @@
 //   ③ 房间北半部：方茶桌 + 两把椅（东西对坐）+ 暖瓶两杯，地毯随之北移到桌下；门 → 窗 / 南墙书桌通道 z 24.4…27.8 留空
 //   ④ 东南角：靠南墙小木桌 + 座钟；东墙窗南侧两只立放行李箱（新人刚搬来，靠墙成组）
 // `?nor5e=1` 关闭。
+import { NO_R13 } from './r13_fix.js'; // 批次 R13
 export const NO_R5E = typeof location !== 'undefined' && /[?&]nor5e=1/.test(location.search);
 const W = -Math.PI / 2, E = Math.PI / 2, S = Math.PI;
 const light = (out, x, y, z, c, i, d) => out.push({ light: true, x, y, z, c, i, d, size: [0.2, 0.2, 0.2], tag: '灯', on: 'light' });
@@ -43,9 +44,25 @@ const X = {
     out.push({ m: 'r4c/atd_suitcase', x: 78.5, y, z: 27.6, yaw: W, w: 0.72, tag: 'R5E 207 行李', on: 'floor', col: [0.31, 0.49, 0.72] });
     out.push({ m: 'r4c/atd_suitcase', x: 78.52, y, z: 28.42, yaw: W - 0.05, w: 0.62, tag: 'R5E 207 行李', on: 'floor', col: [0.27, 0.42, 0.62] });
     light(out, 75.6, y + 1.5, 28.6, 0xffcf96, 0.7, 3.0);
+    if (!NO_R13) r13Dorm207(out, y);
   },
 };
 export function applyR5E(PLANS, fixYaw) {
   if (NO_R5E) return;
   for (const [id, f] of Object.entries(X)) { const base = PLANS[id]; if (!base) continue; PLANS[id] = (Y) => { const p = base(Y); const old = new Set(p.items); p.items.Y = Y; f(p.items); delete p.items.Y; fixYaw({ items: p.items.filter((it) => !old.has(it)) }); return p; }; }
+}
+
+// 批次 R13：207 南半补一组成套家具（新人自己的写字台组）+ 东墙行李箱真实尺度（`?nor13=1` 回 R5-E）
+// 南墙（z 29.3）由西向东成排背贴：西墙脸盆架 | 小书架 x 67.8…69.0 | 写实书柜 x 69.45…70.86（新）| 原书桌带椅 x 71.3…72.7 |
+// kneehole 写字台 x 73.45…74.45（新，配文具座 + 摇臂台灯 + 木椅）| 小木桌 x 75.1…76.1 | 东墙行李箱。各件间留 0.45–0.75 m，
+// 进深 ≤ 0.53 m（前沿 z ≥ 28.5，椅 z 28.42），门 → 窗通道 z 24.4…27.8 不占。与北墙室友组同款模型，镜像朝北。
+function r13Dorm207(out, y) {
+  out.push({ m: 'r4c/atd_realistic_bookcase', x: 70.155, y, z: 29.025, yaw: S, h: 1.9, tag: 'R13 207 南墙书柜', on: 'floor', col: [1.41, 1.9, 0.53] });
+  out.push({ m: 'r5e/atd_lower_cabinet', x: 73.95, y, z: 29.06, yaw: S, w: 1.0, tag: 'R13 207 南墙写字台', on: 'floor', col: [1.0, 0.77, 0.47] });
+  out.push({ m: 'r5e/atd_writing_station', x: 74.13, y: y + 0.768, z: 29.04, yaw: S, w: 0.5, tag: 'R13 207 南墙写字台', on: 'desk' });
+  out.push({ m: 'r4c/atd_desk_lamp', x: 73.62, y: y + 0.768, z: 29.1, yaw: S + 0.3, h: 0.45, tag: 'R13 207 南墙写字台', on: 'desk' });
+  out.push({ m: 'r2/dining_chair_02', x: 73.95, y, z: 28.42, yaw: 0, h: 0.95, tag: 'R13 207 南墙写字台', on: 'floor' });
+  light(out, 73.8, y + 1.45, 28.7, 0xffcf96, 0.8, 3.0);
+  // 行李箱：R5-E 两只按 w 缩放（模型 x 向含提手/包角，箱体读着偏小）→ 按真实硬壳箱 fit：0.74×0.50×0.27 / 0.68×0.46×0.25（长×高含提手×厚，箱体≈0.7×0.45×0.25），仍立放靠东墙
+  for (const it of out) if (it.tag === 'R5E 207 行李') { const big = it.z < 28; it.tag = 'R13 207 行李'; delete it.w; it.fit = big ? [0.74, 0.5, 0.27] : [0.68, 0.46, 0.25]; it.col = big ? [0.27, 0.5, 0.74] : [0.25, 0.46, 0.68]; it.x = big ? 78.53 : 78.55; }
 }
