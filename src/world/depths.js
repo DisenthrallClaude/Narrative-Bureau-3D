@@ -20,6 +20,8 @@ import { buildM10Seventh, NO_M10 } from './m10_seventh.js';
 import { buildM13Abyss, M13_ABYSS } from './m13_abyss.js';
 
 export const AY = -300, SY = -500; // 墨渊 / 装订线 地坪
+// R9：默认墨渊 = Athenaion 古城；?nomyathena=1 回退旧墨渊四区（倒悬书城 / 定稿厅 / 考场母本 / 墨潮带）
+export const OLD_ABYSS = typeof location !== 'undefined' && /[?&]nomyathena=1\b/.test(location.search);
 const rnd = (() => { let s = 23; return () => ((s = (s * 16807) % 2147483647) / 2147483647); })();
 const TXT = '万物皆文本作者在上此页不应存在这段太平淡了删留白第七条本条不存在你又一次来报到了墨还没干别相信页码请勿回头阅读此页即进入叙事安全第一';
 function cvTex(w, h, draw, rep) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; draw(cv.getContext('2d'), w, h); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; if (rep) t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; }
@@ -118,6 +120,31 @@ export async function buildDepths(scene, world, ctx) {
       const face = plane(zone, D.dp_blank, 0.22, 0.28, -6.4 + Math.sin(0.4) * 0.12, Y + 1.62, gz + 3.4 + Math.cos(0.4) * 0.12, 0.4); void face;
       ctx.anchors.int_abyss_guard = { box: [-6.4, Y + 1.0, gz + 3.4, 1.2, 2, 1.2] };
       point(zone, 0xffe2b0, 30, [0, Y + 8, gz + 6], 26); }
+    // R9：墨渊默认改为 Athenaion 古城（moyuan_athena.js）。原倒悬书城 / 定稿厅 / 考场母本 / 墨潮带四区几何保留在下面 OLD_ABYSS 分支（?nomyathena=1 回退），
+    // 默认只建它们承载剧情的可读档案 / 交互点 / 红缝，古城加载完成后由 moyuan_athena.placeRelics 挂进古城（at = 古城本地 x, z, 离地高, 朝向）
+    if (!OLD_ABYSS) { const R = [], BX = []; const rel = (obj, at) => { obj.position.set(0, -9000, 0); zone.add(obj); R.push({ obj, at }); return obj; };
+      const mkPlane = (mat, w, h) => new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
+      // 卫城前庭：路牌、居民告示
+      rel(mkPlane(docMat('doc_abyss_city_sign', new THREE.MeshStandardMaterial({ map: cvTex(1024, 200, (c, w, h) => { c.clearRect(0, 0, w, h); c.fillStyle = '#f0e6c8'; c.font = '900 96px "NB Title", "NB Serif", serif'; c.fillText('↑ 神庙　← 巨像　渡槽 →', 20, 130); }), transparent: true, emissive: 0xffe8b0, emissiveIntensity: 0.6, side: THREE.DoubleSide })), 6, 1.2), [36, -12, 5, Math.PI]);
+      anchor('doc_abyss_city_sign', R[R.length - 1].obj, 12);
+      anchor('doc_abyss_resident_notice', rel(mkPlane(docMat('doc_abyss_resident_notice', signMaterial('古城居民告示', ['一、请勿把自己的名字', '　　念出声', '二、正本只可阅，不可抄', '三、看见祂的红字', '　　请原地不动'], 480, 640)), 1.1, 1.5), [29, -20, 1.9, Math.PI / 2]));
+      // 巨像脚下：正本档案（悬浮档案袋）+ 叶寻的影子
+      { const ff = new THREE.Group(); const env = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.46, 0.03), M.kraft); ff.add(env); const halo = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.02, 6, 40), D.dp_goldGlow); ff.add(halo); rel(ff, [46, -22, 1.6, 0]); ctx.depths.floatFile = ff; ctx.depths.floatFileBase = null; anchor('doc_abyss_true_file', ff, 3);
+        const sh = new THREE.Mesh(new THREE.CircleGeometry(0.55, 24), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.75, depthWrite: false })); sh.rotation.x = -Math.PI / 2; sh.scale.set(1, 2.4, 1); rel(sh, [48.5, -19.5, 0.03, null]); ctx.anchors.int_abyss_yexun_shadow = { obj: sh, range: 2.6 }; }
+      // 神庙内（卫城主殿）：修订稿、镇纸、抬头看红批注、红缝 → 装订线
+      anchor('doc_abyss_revisions', rel(mkPlane(docMat('doc_abyss_revisions', new THREE.MeshStandardMaterial({ map: textPage('#efe8d6', '#20180f', true, 18, 0.7), roughness: 0.9 })), 1.6, 1.1), [22, -52, 1.0, -1]), 3);
+      anchor('doc_abyss_paperweight', rel(mkPlane(docMat('doc_abyss_paperweight', brassPlaqueMaterial('镇纸', ['驯化第八号空间', '压住：京城一章', '勿动。'])), 1.2, 1.4), [24, -50, 1.6, 0]));
+      { const bx = [0, -9000, 0, 6, 3, 6]; ctx.anchors.int_abyss_core_look_up = { box: bx }; BX.push({ box: bx, at: [20, -56, 1.5] }); }
+      { const seam = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 4), new THREE.MeshStandardMaterial({ color: 0, emissive: 0xc01818, emissiveIntensity: 2.0 })); rel(seam, [17, -48, 2, Math.PI / 2]); ctx.depths.coreSeam = seam; }
+      // 卫城阶梯：考场母本的第七排第七张试卷
+      anchor('doc_abyss_exam_paper', rel(mkPlane(docMat('doc_abyss_exam_paper', new THREE.MeshStandardMaterial({ map: textPage('#f4efe2', '#1a1a1a', false, 16, 0.8), roughness: 0.9 })), 0.32, 0.44), [30, -6, 0.05, -2]), 2.4);
+      { const bx = [0, -9000, 0, 0.8, 1.2, 0.8]; ctx.anchors.int_abyss_exam_sit = { box: bx }; BX.push({ box: bx, at: [30, -5.3, 0.6] }); }
+      // 渡槽下：墨潮警示桩 + 录音机
+      anchor('doc_abyss_tide_post', rel(mkPlane(docMat('doc_abyss_tide_post', signMaterial('边界警示', ['墨潮带', '禁止越过红桩', '不要读它们身上的字'], 420, 520)), 0.7, 0.86), [42, -4, 1.0, -Math.PI / 2]));
+      { const rec = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 0.2), M.blackMetal); anchor('doc_abyss_recorder', rel(rec, [42.6, -6, 0.03, 0.6]), 2.4); }
+      ctx.depths.athenaRelics = R; ctx.depths.athenaBoxes = BX;
+      world.box(0, Y + 5, -83.5, 30, 10, 0.6); /* 折页门后不再有书城地面：挡住，只能通过折页门交互进入古城 */ }
+    if (OLD_ABYSS) {
     // —— 倒悬书城 abyss_city (z −85…−185)：纸页街道、书墙、倒悬塔、漂浮路牌、居民告示 ——
     b.box('dp_street', 26, 0.4, 104, [0, Y - 0.2, -136], { uv: 0.3, collide: true });
     for (const sx of [-1, 1]) { for (let z = -88; z > -184; z -= 4.2) { const hh = 6 + rnd() * 9; let yy = 0; while (yy < hh) { const bh = 1.4 + rnd() * 1.2; bigBook(b, sx * (13 + rnd() * 0.6), Y + yy, z + (rnd() - 0.5) * 0.4, 2.2 + rnd() * 0.8, bh, 3.8, (rnd() - 0.5) * 0.15 + (sx < 0 ? 0 : Math.PI), ['dp_inkMatte', 'navy', 'leather', 'dp_inkMatte'][Math.floor(rnd() * 4)]); yy += bh + 0.04; } } world.box(sx * 13.5, Y + 6, -136, 3, 12, 104); }
@@ -196,6 +223,7 @@ export async function buildDepths(scene, world, ctx) {
     { const fogT = cvTex(16, 256, (c, w, h) => { const gr = c.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#000000'); gr.addColorStop(0.55, '#0b1424'); gr.addColorStop(0.85, '#1c2a40'); gr.addColorStop(1, '#0a0e16'); c.fillStyle = gr; c.fillRect(0, 0, w, h); });
       const fm = new THREE.MeshBasicMaterial({ map: fogT, fog: false, side: THREE.DoubleSide }); for (const [x, z, ry, w] of [[104, -140, -Math.PI / 2, 80], [74, -172, 0, 64], [74, -108, Math.PI, 64]]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, 60), fm); m.position.set(x, Y + 26, z); m.rotation.y = ry; zone.add(m); } }
     zone.add(dust([0, Y, -140], [80, 30, 140], 900, 0xe8dcc0));
+    }
     b.build(zone, MAT); for (const g of b.colliders) world.addGeo(g); jobs.push(P.build(zone));
     world.surface(-80, -240, 80, -50, 'wood', Y - 2, Y + 30);
   }
@@ -288,7 +316,7 @@ export function updateDepths(ctx, dt, t) {
   const d = ctx.depths; if (!d) return;
   for (const p of d.pages) { p.position.y += Math.sin(t * p.userData.v + p.id) * 0.004; p.rotation.y += dt * p.userData.v * 0.3; }
   for (const [i, m] of d.redTexts.entries()) { m.material.opacity = 0.55 + 0.45 * Math.sin(t * 1.3 + i); }
-  if (d.floatFile) { d.floatFile.position.y = AY + 1.6 + Math.sin(t * 1.1) * 0.08; d.floatFile.rotation.y += dt * 0.4; }
+  if (d.floatFile) { if (OLD_ABYSS) d.floatFile.position.y = AY + 1.6 + Math.sin(t * 1.1) * 0.08; else if (d.floatFileBase != null) d.floatFile.position.y = d.floatFileBase + Math.sin(t * 1.1) * 0.08; d.floatFile.rotation.y += dt * 0.4; }
   if (d.tide) { d.tide.material.map.offset.set(t * 0.01, t * 0.004); const pa = d.tide.geometry.attributes.position; for (let i = 0; i < pa.count; i += 1) { const x = pa.getX(i), y = pa.getY(i); pa.setZ(i, Math.sin(x * 0.4 + t * 0.8) * 0.12 + Math.cos(y * 0.33 + t * 0.6) * 0.1); } pa.needsUpdate = true; }
   if (d.fold) d.fold.material.opacity = 0.85 + Math.sin(t * 0.7) * 0.07;
 }
@@ -326,7 +354,7 @@ export function setupDepths(G, { toast, dialog, fade, chapterCard, updateObjecti
   if (ctx.depths?.exitSeam) inter.add({ id: 'depth_seventh_exit', obj: ctx.depths.exitSeam, range: 3, prompt: () => '按 E 从缝隙回到 B1', use: () => go([-35.7, (ctx.b1Y ?? -4.2) + 0.05, -39.0], Math.PI, null) });
   // 折页门：交互后穿门（transition 由 manifest 提供文本）
   ctx.hooks = ctx.hooks ?? {};
-  ctx.hooks.int_abyss_fold = () => { player.pos.set(0, AY + 0.05, -88); player.vel?.set(0, 0, 0); G.glitch?.(1.4); };
+  if (OLD_ABYSS) ctx.hooks.int_abyss_fold = () => { player.pos.set(0, AY + 0.05, -88); player.vel?.set(0, 0, 0); G.glitch?.(1.4); };
   // 局长室无名书 → 装订线
   if (ctx.directorBook) inter.add({ id: 'depth_director_book', obj: ctx.directorBook, range: 2.6, prompt: () => '按 E 抽出那本没有书名的书', use: async () => { toast('（书柜向内转开。后面不是墙，是一页纸的背面。）', { ms: 3500, whisper: true }); await sleep(1600); await G.toSeventh(); } });
   // B1 第 7 排缝隙（第一章完成后）

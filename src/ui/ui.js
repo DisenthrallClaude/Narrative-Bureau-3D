@@ -170,3 +170,9 @@ export function chapterCard(a, b, ms = 6000) {
 window.__NB_chapterLayout = chapterLayout;
 export function fade(on) { $('fade').classList.toggle('on', on); }
 export function setFpsText(t) { $('fps').textContent = t; }
+// R9：游戏中途加载（进墨渊古城）复用开场齿轮加载层；on=false 时淡出
+export function midLoad(on, p = 0, tip) {
+  const L = $('loading'); if (!L) return;
+  if (on) { L.classList.remove('hidden', 'open'); L.classList.add('go'); loadProgress(p, tip); }
+  else { loadProgress(1, '就绪'); L.classList.add('open'); setTimeout(() => L.classList.add('hidden'), 1500); }
+}

@@ -8,15 +8,18 @@ import * as THREE from 'three';
 import { MeshBVH } from 'three-mesh-bvh';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { manager } from '../engine/assets.js';
+import { midLoad } from '../ui/ui.js';
 
-export const MOYUAN_ATHENA = typeof location !== 'undefined' && /[?&]moyuan=athena\b/.test(location.search);
+// R9：默认开启（墨渊 = 古城）；?nomyathena=1 回退旧墨渊四区
+export const MOYUAN_ATHENA = typeof location !== 'undefined' && !/[?&]nomyathena=1\b/.test(location.search);
 export const OY = -3000;
-const MODULES = ['terrain', 'temple', 'acropolis', 'aqueducts', 'statues', 'city', 'vegetation', 'waterfalls'];
-const DENSITY = { vegetation: 0.45 / 20, waterfalls: 0.15 }; // 其余用 preview 0.45
+const MODULES = ['terrain', 'temple', 'acropolis', 'aqueducts', 'statues', 'city', 'vegetation']; // R9：waterfalls 需要 Athenaion 管线 RT，失败 → 不建
+const DENSITY = { vegetation: 0.45 / 40, city: 0.225 }; // R9：树 / 城区实例再减半 // 其余用 preview 0.45
 // 玩家出生：卫城前庭南缘（Athenaion 机位 5 前方），落地由重力贴地
 export const SPAWN = [34, 70, -18];
 // R8b：雾密度取负 = 关闭 R7 天空盒雾/大气透视 nbAerial（skyfog.js），exp2 雾浓度不变
-export const ATHENA_LOOK = { env: 'hall', envI: 0.3, sun: 0, exp: 1.3, fog: [0x17120c, -0.00042], hemi: 0.2 };
+// R9：远处暗琥珀灰距离雾（exp2，仍取负值 → 不走 nbAerial）
+export const ATHENA_LOOK = { env: 'hall', envI: 0.3, sun: 0, exp: 1.3, fog: [0x2a2117, -0.0009], hemi: 0.2 };
 export const athenaZone = (p) => (MOYUAN_ATHENA && p.y < OY + 2500 && p.y > OY - 200 ? 'abyss_athena' : null);
 
 const S = { state: 'idle', root: null, collider: null, mainCollider: null, stats: null };
@@ -38,8 +41,10 @@ function shimEngine(params) {
 
 // —— 色相压制：蓝 / 青 / 绿 → 暗金 / 暗铜 / 墨褐；植物（材质名含 leaf / foliage / tree / grass）保留极暗墨绿
 const _hsl = {};
-function remapColor(c, plant) {
+function remapColor(c, plant, dark = 1) {
   c.getHSL(_hsl); let { h, s, l } = _hsl;
+  if ((h < 0.065 || h > 0.94) && s > 0.3 && !plant) { h = 0.07; s *= 0.38; l *= 0.72; } // R9：屋顶红橙 → 暗陶褐
+  l *= dark;
   if (h > 0.17 && h < 0.8) { if (plant) { h = 0.3; s *= 0.35; l *= 0.35; } else { h = 0.08 + (h - 0.17) * 0.05; s = Math.min(s, 0.45) * 0.7; l *= 0.55; } }
   else { s *= 0.85; l *= 0.7; }
   c.setHSL(h, s, l);
@@ -49,16 +54,17 @@ function remapScene(root) {
   root.traverse((o) => {
     if (!o.isMesh && !o.isPoints && !o.isLine) return;
     const plant = /leaf|foliage|tree|cypress|olive|pine|grass|shrub|veg|flora/i.test(o.name + (o.parent?.name ?? ''));
+    let top = o; while (top.parent && top.parent !== root) top = top.parent; const dark = top.userData.mod === 'terrain' ? 0.7 : 1; // R9：地形整体压暗 30%
     for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
       if (!m || seen.has(m)) continue; seen.add(m);
-      if (m.color) remapColor(m.color, plant);
+      if (m.color) remapColor(m.color, plant, dark);
       if (m.emissive) m.emissive.multiplyScalar(0.4);
-      if (m.uniforms) for (const u of Object.values(m.uniforms)) if (u?.value?.isColor) remapColor(u.value, plant);
+      if (m.uniforms) for (const u of Object.values(m.uniforms)) if (u?.value?.isColor) remapColor(u.value, plant, dark);
       if ('envMapIntensity' in m) m.envMapIntensity = 0.5;
     }
     const g = o.geometry, ca = g?.attributes?.color;
-    if (ca && !seenG.has(g) && ca.itemSize >= 3 && !ca.normalized) { seenG.add(g); for (let i = 0; i < ca.count; i++) { c.setRGB(ca.getX(i), ca.getY(i), ca.getZ(i)); remapColor(c, plant); ca.setXYZ(i, c.r, c.g, c.b); } ca.needsUpdate = true; }
-    if (o.isInstancedMesh && o.instanceColor && !seenG.has(o.instanceColor)) { const ic = o.instanceColor; seenG.add(ic); for (let i = 0; i < ic.count; i++) { c.fromArray(ic.array, i * 3); remapColor(c, plant); c.toArray(ic.array, i * 3); } ic.needsUpdate = true; }
+    if (ca && !seenG.has(g) && ca.itemSize >= 3 && !ca.normalized) { seenG.add(g); for (let i = 0; i < ca.count; i++) { c.setRGB(ca.getX(i), ca.getY(i), ca.getZ(i)); remapColor(c, plant, dark); ca.setXYZ(i, c.r, c.g, c.b); } ca.needsUpdate = true; }
+    if (o.isInstancedMesh && o.instanceColor && !seenG.has(o.instanceColor)) { const ic = o.instanceColor; seenG.add(ic); for (let i = 0; i < ic.count; i++) { c.fromArray(ic.array, i * 3); remapColor(c, plant, dark); c.toArray(ic.array, i * 3); } ic.needsUpdate = true; }
   });
 }
 
@@ -111,7 +117,8 @@ async function build(G) {
   const { RNG } = await import('./athenaion/core/rng.js');
   E.footprints = new Footprints(); E.rng = (label) => new RNG(String(label));
   const times = {};
-  for (const name of MODULES) {
+  for (const [mi, name] of MODULES.entries()) {
+    S.onProgress?.(0.1 + 0.8 * mi / MODULES.length, '正在展开墨渊古城……（' + name + '）'); await new Promise((r) => setTimeout(r, 0));
     const t = performance.now(); const before = new Set(E.scene.children);
     E.quality.density = DENSITY[name] ?? 0.45;
     try { const mod = await import(`./athenaion/modules/${name}.js`); if (typeof mod.build === 'function') await mod.build(E); }
@@ -123,19 +130,22 @@ async function build(G) {
   root.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.frustumCulled = o.frustumCulled !== false; } });
   remapScene(root); await patchAtmo(root);
   // 地底化：岩顶穹顶、墨黑静水、暗金点光 + 暗铜环境
-  const dome = new THREE.Mesh(new THREE.SphereGeometry(9000, 48, 24, 0, Math.PI * 2, 0, Math.PI * 0.5), new THREE.MeshStandardMaterial({ color: 0x0c0907, roughness: 1, side: THREE.BackSide }));
-  dome.position.set(0, -400, 0); dome.scale.y = 0.22; dome.name = 'moyuan_dome'; dome.userData.mod = 'dome'; root.add(dome);
+  root.add(makeDome());
   const ink = new THREE.Mesh(new THREE.PlaneGeometry(30000, 30000), new THREE.MeshStandardMaterial({ color: 0x030202, roughness: 0.06, metalness: 0.2 }));
   ink.rotation.x = -Math.PI / 2; ink.position.y = 0.6; ink.name = 'moyuan_ink'; ink.userData.mod = 'ink'; root.add(ink);
-  const amb = new THREE.HemisphereLight(0x6a4a2a, 0x120c08, 0.6); root.add(amb);
-  const key = new THREE.DirectionalLight(0xffb060, 0.9); key.position.set(-400, 1500, 600); key.target.position.set(20, 60, -64); root.add(key, key.target);
-  for (const [x, y, z, i] of [[20, 110, -40, 1800], [50, 90, -10, 800], [-10, 90, -10, 800], [-300, 80, 100, 1200]]) { const p = new THREE.PointLight(0xffa040, i, 0, 2); p.position.set(x, y, z); root.add(p); }
+  const amb = new THREE.HemisphereLight(0x5a3e22, 0x0e0a06, 0.42); root.add(amb);
+  const key = new THREE.DirectionalLight(0xffa850, 0.55); key.position.set(-400, 1500, 600); key.target.position.set(20, 60, -64); root.add(key, key.target);
+  // R9：暗金光池（卫城 / 巨像 / 阶梯 / 渡槽 / 神庙）
+  for (const [x, y, z, i, d] of [[20, 105, -50, 2600, 140], [50, 92, -30, 1400, 70], [30, 78, -4, 700, 45], [-300, 90, 100, 2400, 260], [22, 74, -52, 260, 26]]) { const p = new THREE.PointLight(0xffa040, i, d, 2); p.position.set(x, y, z); root.add(p); }
   if (DBG) { const keep = DBG.split(','); for (const ch of root.children) if (!ch.isLight && ch.userData.mod) ch.visible = keep.includes(ch.userData.mod); console.log('[NB] mydbg show', DBG, JSON.stringify(root.children.filter((c) => c.userData.mod).map((c) => c.userData.mod + ':' + (c.visible ? 1 : 0)))); }
+  // R9：远处小件剔除（城区 / 雕像 / 植被 / 渡槽 包围球 r<45 m 且离相机 > 650 m 不画）
+  S.cull = []; root.updateMatrixWorld(true); root.traverse((o) => { if (!o.isMesh || !o.geometry) return; let a = o; while (a.parent && a.parent !== root) a = a.parent; if (!/^(city|statues|vegetation|aqueducts|temple)$/.test(a.userData.mod ?? '')) return; o.geometry.boundingSphere || o.geometry.computeBoundingSphere(); const bs = o.geometry.boundingSphere; if (!bs || o.isInstancedMesh) { if (o.isInstancedMesh && o.count > 0) { o.computeBoundingSphere?.(); } } const sp = (o.isInstancedMesh && o.boundingSphere) ? o.boundingSphere : bs; if (!sp) return; const c = sp.center.clone().applyMatrix4(o.matrixWorld); const r = sp.radius * o.matrixWorld.getMaxScaleOnAxis(); if (r < 45) S.cull.push({ o, c, r }); });
   G.scene.add(root); S.root = root; S.updates = E.updates; startProbe(G);
   const tc = performance.now(); S.collider = collectCollider(root); const colMs = Math.round(performance.now() - tc);
   let tris = 0, meshes = 0; root.traverse((o) => { if (!o.isMesh || !o.geometry) return; meshes++; tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1); });
   S.stats = { buildMs: Math.round(performance.now() - t0), colliderMs: colMs, colliderTris: S.collider ? S.collider.geometry.attributes.position.count / 3 : 0, modules: times, meshes, tris: Math.round(tris), heapMB: performance.memory ? Math.round((performance.memory.usedJSHeapSize - mem0) / 1e6) : null };
   console.log('[moyuan] athena built', JSON.stringify(S.stats));
+  placeRelics(G);
   S.state = 'ready'; manager.itemEnd('moyuan:athena');
 }
 
@@ -162,6 +172,36 @@ function startProbe(G) {
   setTimeout(tick, 500);
 }
 
+// R9：岩顶穹顶——项目已有 CC0 暗岩贴图（ambientCG Granite003A）压暗 + 暗金裂隙微光（程序化 emissiveMap）；不吃雾
+function makeDome() {
+  const tl = new THREE.TextureLoader(manager), rep = (t, cs) => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(36, 9); if (cs) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
+  const map = rep(tl.load('./assets/tex/Granite003A_color.webp'), true), nrm = rep(tl.load('./assets/tex/Granite003A_normal.webp'));
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const c = cv.getContext('2d'); c.fillStyle = '#000'; c.fillRect(0, 0, 1024, 512);
+  let sd = 7; const rnd = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
+  for (let k = 0; k < 9; k++) { let x = rnd() * 1024, y = 60 + rnd() * 360; c.strokeStyle = `rgba(255,${150 + rnd() * 50 | 0},60,${0.55 + rnd() * 0.4})`; c.lineWidth = 1 + rnd() * 2.2; c.beginPath(); c.moveTo(x, y); for (let j = 0; j < 22; j++) { x += 8 + rnd() * 26; y += (rnd() - 0.5) * 30; c.lineTo(x % 1024, y); if (x > 1024) { x -= 1024; c.stroke(); c.beginPath(); c.moveTo(x, y); } } c.stroke(); }
+  const em = new THREE.CanvasTexture(cv); em.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.MeshStandardMaterial({ color: 0x2a2018, map, normalMap: nrm, roughness: 1, side: THREE.BackSide, fog: false, emissive: 0xffa040, emissiveMap: em, emissiveIntensity: 0.9 });
+  // 主贴图平铺，裂隙图不平铺：裂隙用 uv2 不可得 → 让 emissiveMap 取 1× 重复（three r186 每张贴图各自 transform）
+  em.repeat.set(1, 1);
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(9000, 64, 24, 0, Math.PI * 2, 0, Math.PI * 0.5), mat);
+  dome.position.set(0, -400, 0); dome.scale.y = 0.22; dome.name = 'moyuan_dome'; dome.userData.mod = 'dome'; return dome;
+}
+
+// R9：旧墨渊四区的剧情点（depths.js 默认只建这些，不建几何）挂进古城：按古城本地 (x, z) 向下找地面
+function placeRelics(G) {
+  const d = G.ctx?.depths; if (!d?.athenaRelics || !S.root) return;
+  const rc = new THREE.Raycaster(); rc.firstHitOnly = true; const down = new THREE.Vector3(0, -1, 0);
+  const ground = (x, z, fromY) => { if (!S.collider) return null; rc.set(new THREE.Vector3(x, OY + fromY, z), down); rc.far = fromY + 400; const h = rc.intersectObject(S.collider, false)[0]; return h ? h.point.y - OY : null; };
+  const g0 = ground(SPAWN[0], SPAWN[2], 400) ?? 66;
+  const gy = (x, z) => ground(x, z, g0 + 12) ?? g0;
+  for (const { obj, at } of d.athenaRelics) { const [x, z, dy, yaw] = at; S.root.attach(obj); obj.position.set(x, gy(x, z) + dy, z); if (yaw != null) obj.rotation.y = yaw; if (obj === d.floatFile) d.floatFileBase = obj.position.y + OY; }
+  for (const { box, at } of d.athenaBoxes ?? []) { const [x, z, dy] = at; box[0] = x; box[1] = OY + gy(x, z) + dy; box[2] = z; }
+  // floatFile 动画按世界 y 写 position（root 只平移 y）→ 基准换成本地
+  if (d.floatFileBase != null) d.floatFileBase -= OY;
+  S.relicY = d.athenaRelics.map((r) => +(r.obj.position.y).toFixed(1));
+  console.log('[moyuan] relics placed', d.athenaRelics.length, 'g0', g0.toFixed(1));
+}
+
 /** main.js 调用：G = { scene, camera, world, player, onZone, onUpdate }；tp(x,y,z,yaw) 传送 */
 export function setupMoyuanAthena(G, tp) {
   if (!MOYUAN_ATHENA) return;
@@ -171,9 +211,22 @@ export function setupMoyuanAthena(G, tp) {
     if (inAthena) { G.camera.far = 16000; G.camera.near = 0.15; G.camera.updateProjectionMatrix(); if (S.collider) { S.mainCollider ??= G.world.collider; G.world.collider = S.collider; } }
     else { if (G.camera.far !== 6000) { G.camera.far = 6000; G.camera.near = 0.05; G.camera.updateProjectionMatrix(); } if (S.mainCollider) G.world.collider = S.mainCollider; }
   };
-  G.onZone.push((z) => {
-    if (/^abyss/.test(z) && S.state === 'idle') build(G).then(() => { enter(G.zone); if (!window.__SHOT__ && z !== 'abyss_athena') tp(SPAWN[0], OY + SPAWN[1], SPAWN[2], Math.PI); }).catch((e) => { console.error('[moyuan] build failed', e); S.state = 'failed'; manager.itemEnd('moyuan:athena'); });
-    else enter(z);
+  let loadUI = false;
+  S.onProgress = (p, tip) => { if (loadUI) midLoad(true, p, tip); };
+  const start = () => { if (S.state !== 'idle') return S.promise; S.promise = build(G).then(() => enter(G.zone)).catch((e) => { console.error('[moyuan] build failed', e); S.state = 'failed'; manager.itemEnd('moyuan:athena'); }); return S.promise; };
+  // 进入深渊门广场（abyss_gate）即后台预构建；穿过折页门 → 传送进古城（未构建完则显示齿轮加载层等待）
+  G.onZone.push((z) => { if (/^abyss/.test(z)) start(); enter(z); });
+  const goIn = async () => {
+    if (S.state !== 'ready') { loadUI = true; G.freeze?.(true); midLoad(true, 0.08, '正在展开墨渊古城……'); await start(); loadUI = false; midLoad(false); G.freeze?.(false); }
+    if (S.state === 'ready') { tp(SPAWN[0], OY + SPAWN[1], SPAWN[2], Math.PI); G.glitch?.(1.4); }
+  };
+  G.ctx.hooks = G.ctx.hooks ?? {}; G.ctx.hooks.int_abyss_fold = () => goIn();
+  G.toAthena = goIn; window.__MOYUAN_STATE__ = () => ({ state: S.state, relicY: S.relicY, stats: S.stats });
+  const cam = new THREE.Vector3(); let acc = 0;
+  G.onUpdate.push((dt, t) => {
+    if (!S.root?.visible) return;
+    for (const f of S.updates ?? []) try { f(t ?? 0, dt); } catch { /* 动画失败不影响游戏 */ }
+    if ((acc += dt ?? 0.016) < 0.4 && S.culled) return; acc = 0; S.culled = true; // R9：远处小件剔除，0.4 s 一次
+    G.camera.getWorldPosition(cam); for (const it of S.cull ?? []) it.o.visible = cam.distanceTo(it.c) - it.r < 650;
   });
-  G.onUpdate.push((dt, t) => { if (S.root?.visible) for (const f of S.updates ?? []) try { f(t ?? 0, dt); } catch { /* 动画失败不影响游戏 */ } });
 }

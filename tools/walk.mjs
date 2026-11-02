@@ -83,6 +83,11 @@ for (const id of ['depth_b6_door', 'depth_b5_door', 'depth_director_book', 'dept
 await use('depth_director_book'); await page.waitForTimeout(3500); z = await zone(); ok(z === 'seventh_entry', '局长室无名书 → 装订线入口 zone=' + z);
 await use('depth_seventh_exit'); await page.waitForTimeout(3500); z = await zone(); ok(z === 'archive_b1' || z === 'archive', '装订线白缝 → 回 B1 zone=' + z);
 await use('depth_b5_door'); await page.waitForTimeout(3500); z = await zone(); ok(z?.startsWith('abyss'), 'B5 后门 → 墨渊 zone=' + z);
+// R9：墨渊默认 = Athenaion 古城：深渊门广场 → 折页门 → 古城（齿轮加载层等待构建），旧四区剧情点挂在古城里
+await tp(0, -299.95, -76, Math.PI); await page.waitForTimeout(800); await use('int_abyss_fold');
+{ const s0 = Date.now(); while (Date.now() - s0 < 300000 && (await zone()) !== 'abyss_athena') await page.waitForTimeout(2000); }
+z = await zone(); const ms = await ev(() => window.__MOYUAN_STATE__?.() ?? null); ok(z === 'abyss_athena' && ms?.state === 'ready', `折页门 → 墨渊古城 zone=${z} state=${ms?.state} build=${ms?.stats?.buildMs}ms`);
+{ const ids = ['doc_abyss_true_file', 'doc_abyss_revisions', 'doc_abyss_exam_paper', 'doc_abyss_tide_post', 'int_abyss_yexun_shadow', 'int_abyss_core_look_up', 'int_abyss_exam_sit']; const r = await ev((ids) => ids.map((id) => { const s = window.__NB__.spot(id); if (!s) return id + ':无'; const p = s.obj ? s.obj.getWorldPosition(new s.obj.position.constructor()) : { y: s.box?.[1] }; return id + ':' + (p.y < -2500 ? 'ok' : 'y=' + p.y?.toFixed?.(0)); }), ids); ok(r.every((x) => x.endsWith(':ok')), '旧四区剧情点已挂进古城：' + r.join(' ')); }
 await use('depth_core_seam'); await page.waitForTimeout(3500); z = await zone(); ok(z?.startsWith('seventh'), '定稿厅红缝 → 装订线 zone=' + z);
 await use('depth_return'); await page.waitForTimeout(3500); z = await zone(); ok(z === 'training', '墨渊金门 → 回 B6 zone=' + z);
 
