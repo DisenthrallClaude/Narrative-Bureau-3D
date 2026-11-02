@@ -20,7 +20,7 @@ export const SPAWN = [34, 70, -18];
 // R8b：雾密度取负 = 关闭 R7 天空盒雾/大气透视 nbAerial（skyfog.js），exp2 雾浓度不变
 // R9：远处暗琥珀灰距离雾（exp2，仍取负值 → 不走 nbAerial）
 export const ATHENA_LOOK = { env: 'hall', envI: 0.3, sun: 0, exp: 1.3, fog: [0x2a2117, -0.0009], hemi: 0.2 };
-export const athenaZone = (p) => (MOYUAN_ATHENA && p.y < OY + 2500 && p.y > OY - 200 ? 'abyss_athena' : null);
+export const athenaZone = (p) => (MOYUAN_ATHENA && p.y < OY + 2000 && p.y > OY - 200 ? 'abyss_athena' : null); // R9：上界 −1000（原 −500 把装订线 y≈−500.02 误判成古城）
 
 const S = { state: 'idle', root: null, collider: null, mainCollider: null, stats: null };
 window.__MOYUAN__ = () => S.stats;
@@ -178,13 +178,15 @@ function makeDome() {
   const map = rep(tl.load('./assets/tex/Granite003A_color.webp'), true), nrm = rep(tl.load('./assets/tex/Granite003A_normal.webp'));
   const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const c = cv.getContext('2d'); c.fillStyle = '#000'; c.fillRect(0, 0, 1024, 512);
   let sd = 7; const rnd = () => ((sd = (sd * 16807) % 2147483647) / 2147483647);
-  for (let k = 0; k < 9; k++) { let x = rnd() * 1024, y = 60 + rnd() * 360; c.strokeStyle = `rgba(255,${150 + rnd() * 50 | 0},60,${0.55 + rnd() * 0.4})`; c.lineWidth = 1 + rnd() * 2.2; c.beginPath(); c.moveTo(x, y); for (let j = 0; j < 22; j++) { x += 8 + rnd() * 26; y += (rnd() - 0.5) * 30; c.lineTo(x % 1024, y); if (x > 1024) { x -= 1024; c.stroke(); c.beginPath(); c.moveTo(x, y); } } c.stroke(); }
+  for (let k = 0; k < 9; k++) { let x = rnd() * 1024, y = 60 + rnd() * 360; c.strokeStyle = `rgba(255,${150 + rnd() * 50 | 0},60,${0.55 + rnd() * 0.4})`; c.lineWidth = 0.6 + rnd() * 1.1; c.beginPath(); c.moveTo(x, y); for (let j = 0; j < 22; j++) { x += 8 + rnd() * 26; y += (rnd() - 0.5) * 30; c.lineTo(x % 1024, y); if (x > 1024) { x -= 1024; c.stroke(); c.beginPath(); c.moveTo(x, y); } } c.stroke(); }
   const em = new THREE.CanvasTexture(cv); em.colorSpace = THREE.SRGBColorSpace;
-  const mat = new THREE.MeshStandardMaterial({ color: 0x2a2018, map, normalMap: nrm, roughness: 1, side: THREE.BackSide, fog: false, emissive: 0xffa040, emissiveMap: em, emissiveIntensity: 0.9 });
+  void nrm; const mat = new THREE.MeshBasicMaterial({ color: 0x3a2e24, map, side: THREE.BackSide, fog: false }); // 穹顶内表面朝下、半球光只给地色 → 用不受光的暗岩底色
+  const crack = new THREE.MeshBasicMaterial({ map: em, side: THREE.BackSide, fog: false, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false });
   // 主贴图平铺，裂隙图不平铺：裂隙用 uv2 不可得 → 让 emissiveMap 取 1× 重复（three r186 每张贴图各自 transform）
   em.repeat.set(1, 1);
   const dome = new THREE.Mesh(new THREE.SphereGeometry(9000, 64, 24, 0, Math.PI * 2, 0, Math.PI * 0.5), mat);
-  dome.position.set(0, -400, 0); dome.scale.y = 0.22; dome.name = 'moyuan_dome'; dome.userData.mod = 'dome'; return dome;
+  dome.position.set(0, -400, 0); dome.scale.y = 0.22; dome.name = 'moyuan_dome'; dome.userData.mod = 'dome';
+  const cr = new THREE.Mesh(new THREE.SphereGeometry(8950, 64, 24, 0, Math.PI * 2, 0, Math.PI * 0.5), crack); cr.scale.set(1 / 1, 1, 1); dome.add(cr); return dome;
 }
 
 // R9：旧墨渊四区的剧情点（depths.js 默认只建这些，不建几何）挂进古城：按古城本地 (x, z) 向下找地面

@@ -62,7 +62,7 @@ export const bakeRegistry = new Map();
 
 export async function loadOrBuild(name, build) {
   if (isNode) { const g = await build(); bakeRegistry.set(name, g); return g; }
-  try {
+  if (!/^terrain-/.test(name)) try { // R9：地形烘焙不入库 → 不去请求（避免 404 控制台错误），直接运行时构建
     const res = await fetch(`${(import.meta.env?.BASE_URL ?? '/')}moyuan/generated/${name}.bin`);
     if (res.ok) return deserializeGeometry(await res.arrayBuffer());
   } catch { /* fall through */ }
