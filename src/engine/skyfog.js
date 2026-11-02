@@ -1,6 +1,7 @@
 // 天空盒雾：室外（FogExp2 密度 < 0.003）时，雾色按视线方向从天空盒全景图（模糊 mip）采样，
 // 让远处的低模城市剪影无缝融进生图天空盒；室内（密度更大）仍用纯色雾。
 // 必须在任何材质首次编译之前调用。
+// R8b：密度 ≤ 0 时跳过天空盒雾与 nbAerial（exp2 只用 density²，负值雾效不变）——墨渊雅典娜区世界在 y−3000，贴地高度层会算爆白屏，用负密度关掉。
 import * as THREE from 'three';
 // R7-ATH：外景「大气透视 / 远景空气雾」，思路与公式改编自 Athenaion（Leon Lin，MIT，src/core/atmosphere.js）：
 //   指数高度层光学深度（贴地厚、随高度变薄）+ 远距平方项 + 逐通道消光 + 朝太阳的 Henyey-Greenstein 前向散射光晕。
@@ -48,10 +49,10 @@ export function installSkyFog(tex, intensity = 1, sun = null) {
     'gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );',
     `vec3 nbFc = fogColor;
 	#ifdef FOG_EXP2
-		if ( fogDensity < 0.003 ) nbFc = nbSkyFog( vNbFogDir );
+		if ( fogDensity > 0.0 && fogDensity < 0.003 ) nbFc = nbSkyFog( vNbFogDir );
 	#endif
 	${R7 ? `#ifdef FOG_EXP2
-		if ( fogDensity < 0.003 ) { gl_FragColor.rgb = nbAerial( gl_FragColor.rgb, nbFc, vNbFogDir ); fogFactor *= 0.8; }
+		if ( fogDensity > 0.0 && fogDensity < 0.003 ) { gl_FragColor.rgb = nbAerial( gl_FragColor.rgb, nbFc, vNbFogDir ); fogFactor *= 0.8; }
 	#endif
 	` : ''}gl_FragColor.rgb = mix( gl_FragColor.rgb, nbFc, fogFactor );`);
   for (const k of Object.keys(THREE.ShaderLib)) {

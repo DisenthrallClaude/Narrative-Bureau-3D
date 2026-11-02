@@ -15,7 +15,8 @@ const MODULES = ['terrain', 'temple', 'acropolis', 'aqueducts', 'statues', 'city
 const DENSITY = { vegetation: 0.45 / 20, waterfalls: 0.15 }; // 其余用 preview 0.45
 // 玩家出生：卫城前庭南缘（Athenaion 机位 5 前方），落地由重力贴地
 export const SPAWN = [34, 70, -18];
-export const ATHENA_LOOK = { env: 'hall', envI: 0.3, sun: 0, exp: 1.3, fog: [0x17120c, 0.00042], hemi: 0.2 };
+// R8b：雾密度取负 = 关闭 R7 天空盒雾/大气透视 nbAerial（skyfog.js），exp2 雾浓度不变
+export const ATHENA_LOOK = { env: 'hall', envI: 0.3, sun: 0, exp: 1.3, fog: [0x17120c, -0.00042], hemi: 0.2 };
 export const athenaZone = (p) => (MOYUAN_ATHENA && p.y < OY + 2500 && p.y > OY - 200 ? 'abyss_athena' : null);
 
 const S = { state: 'idle', root: null, collider: null, mainCollider: null, stats: null };
