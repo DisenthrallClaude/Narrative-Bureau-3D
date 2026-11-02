@@ -190,6 +190,7 @@ async function addNature(root, E, times) {
     // y−3000 平移：天空片元里的 cameraPosition 换成原高度
     const m = sky.material; m.uniforms.uAtmoOY = ATMO.uAtmoOY;
     m.fragmentShader = 'uniform float uAtmoOY;\n' + m.fragmentShader.replace(/\bcameraPosition\b/g, '(cameraPosition - vec3(0.0, uAtmoOY, 0.0))');
+    m.fragmentShader = m.fragmentShader.replace('uEnvPass > 0.5 ? 1.0 : 0.0', '1.0'); // 本项目画布带 alpha：天空 alpha 0 会透成黑底
     if (/uniform float uAtmoOY;[\s\S]*uniform float uAtmoOY;/.test(m.fragmentShader)) m.fragmentShader = m.fragmentShader.replace('uniform float uAtmoOY;\n', '');
     root.add(sky); S.sky = sky;
   }

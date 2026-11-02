@@ -173,3 +173,9 @@ Athenaion — procedural ancient Greek city (code + baked statue geometry)
 https://github.com/Leonxlnx/athenaion  ·  MIT License  ·  Copyright (c) 2026 Leon Lin
 源码位于 src/world/athenaion/（含原 LICENSE），烘焙数据 public/moyuan/generated/（由其 tools/bake.mjs statues 以 STATUES_DETAIL=0.5 生成）。
 本项目修改：地底化调色（蓝/青/绿压为暗金/暗铜/墨褐）、去海与云、树密度约 1/20、贴图/资源路径改为站内 BASE_URL。
+
+[R10 · 墨渊古城自然恢复 · 参考 halo-above-the-clouds（MIT）]
+- R10 墨渊古城的天空 / 体积云 / 大气透视 / 海水 / 瀑布直接使用 Athenaion 原代码（src/world/athenaion/，MIT，Copyright (c) 2026 Leon Lin，见上）。
+- halo-above-the-clouds — https://github.com/Leonxlnx/halo-above-the-clouds · MIT License · Copyright (c) 2026 Leon Lin
+  作为云海 / 天穹 / 调色的技术参考研读（本轮未拷入其代码与数据；若后续移植 src/clouds.js 须保留本条与其 LICENSE）。
+- 本轮未使用 HDRI 新资源（天空为 Athenaion 程序化天空；IBL 沿用已有 sky_2k.hdr）。

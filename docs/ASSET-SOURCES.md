@@ -97,3 +97,9 @@ paper-courier（纸人主角）未用：绑定姿态为 T-pose、披风为蓝色
 - 用途：`?moyuan=athena` 时进入墨渊动态加载其程序化古城（terrain/temple/acropolis/aqueducts/statues/city/vegetation/waterfalls 模块），世界平移至 y−3000，地底化调色。
 - 改动：core/cache.js 取烘焙文件路径改为 `BASE_URL + moyuan/generated/`；modules/terrain.js 跳过源码哈希（运行时 worker 网格化）。
 - 烘焙文件：public/moyuan/generated/statue-*.bin（41 个，26.2 MB，gzip 13.3 MB），用其 tools/bake.mjs statues、STATUES_DETAIL=0.5 生成。
+
+## R10 · 墨渊古城自然恢复（2026-11-02）
+| 用途 | 来源 | 作者 | 许可 | 处理 | 类型 |
+|---|---|---|---|---|---|
+| 古城天空+体积云、太阳色、大气透视、water / waterfalls | https://github.com/Leonxlnx/athenaion （src/world/athenaion/） | Leon Lin | MIT（Copyright (c) 2026 Leon Lin） | 原样使用；atmosphere.js 加 uAtmoOY 抵消 y−3000 平移并导出 fog chunk | 代码 |
+| 云海 / 天穹 / 调色技术参考 | https://github.com/Leonxlnx/halo-above-the-clouds | Leon Lin | MIT（Copyright (c) 2026 Leon Lin） | 仅研读，未拷入代码/数据 | 参考 |
