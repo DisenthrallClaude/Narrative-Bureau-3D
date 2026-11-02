@@ -114,7 +114,8 @@ export class Player {
     // M7：坠落重生——墨渊（地坪 −300）与装订线（地坪 −500）在深处，原先 y<−60 一律拉回广场，导致两大隐藏区一进去就被弹回开场
     { const y = this.pos.y, deep = (y > -340 && y < -150) || (y > -540 && y < -380) || (y > -3250 && y < -1000); /* R9：墨渊古城 y≈−3000 */ if ((y < -60 && !deep) || (y < -540 && !(y > -3250 && y < -1000))) { this.pos.copy(this.spawn ?? new THREE.Vector3(0, 2, 60)); this.vel.set(0, 0, 0); }
       else if (deep && y < -315 && y > -340) { this.pos.set(0, -299.95, -58); this.vel.set(0, 0, 0); } // 墨渊坠落 → 折页门
-      else if (deep && y < -515) { this.pos.set(0, -499.95, -57); this.vel.set(0, 0, 0); } } // 装订线坠落 → 页缝入口
+      else if (deep && y < -515 && y > -540) { this.pos.set(0, -499.95, -57); this.vel.set(0, 0, 0); } // 装订线坠落 → 页缝入口（R9b：限 −540 以上，原条件把古城 y≈−3000 整段吞掉、一进古城即弹回装订线）
+      else if (y < -3150 && y > -3250) { this.pos.set(34, -2930, -18); this.vel.set(0, 0, 0); } } // R9b：古城坠落 → 古城出生点（SPAWN 34,70,-18 + OY）
     const moved = Math.hypot(this.pos.x - before.x, this.pos.z - before.z);
     if (this.onGround) { this.stepDist += moved; this.bob += moved * 2.2; }
   }
