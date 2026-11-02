@@ -24,6 +24,7 @@ export const SPAWN = [34, 70, -18];
 export const ATHENA_LOOK = { env: 'sky', envI: 0.4, sun: 0, exp: 0.86, fog: [0xc9d2db, -0.00001], hemi: 0.05 }; // R10：自然天空 IBL；项目 exp2 雾几乎关掉（Athenaion 材质走自己的大气透视）
 export const athenaZone = (p) => (MOYUAN_ATHENA && p.y < OY + 2000 && p.y > OY - 200 ? 'abyss_athena' : null); // R9：上界 −1000（原 −500 把装订线 y≈−500.02 误判成古城）
 
+const OPT = !/[?&]myopt=0\b/.test(location.search); // R11：性能优化总开关（?myopt=0 回到 R10 行为，便于对比）
 const S = { state: 'idle', root: null, collider: null, mainCollider: null, stats: null };
 window.__MOYUAN__ = () => S.stats;
 
@@ -97,6 +98,61 @@ function scrubNaN(sh) {
   sh.fragmentShader = fs.replace(re, 'void nbMainR8c()') + '\nvoid main() { nbMainR8c(); vec4 c = gl_FragColor; if (any(isnan(c)) || any(isinf(c))) c = vec4(0.0, 0.0, 0.0, 1.0); gl_FragColor = vec4(clamp(c.rgb, 0.0, 256.0), clamp(c.a, 0.0, 1.0)); }\n';
 }
 
+// R11：静态件合批——city / acropolis / temple / aqueducts 里的普通 Mesh（非实例、非透明、单材质、无子节点、无自定义 onBeforeRender、正行列式）
+// 按 (模块, 160 m 区块, 材质, 属性签名, 阴影标志) 分桶，几何变换到 root 空间后 mergeGeometries，原件移除。画面不变，draw call 大降。
+function mergeStatic(root, CELL = 160) {
+  root.updateMatrixWorld(true); const inv = root.matrixWorld.clone().invert();
+  const MODS = /^(city|acropolis|temple|aqueducts)$/, buckets = new Map(); let nIn = 0;
+  const baseOBR = THREE.Object3D.prototype.onBeforeRender, c = new THREE.Vector3();
+  root.traverse((o) => {
+    if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || o.children.length || !o.geometry?.attributes?.position) return;
+    const m0 = o.material; if (Array.isArray(m0) || !m0 || m0.transparent || o.morphTargetInfluences || (o.geometry.groups?.length ?? 0) > 1) return;
+    if (o.onBeforeRender !== baseOBR || o.onAfterRender !== baseOBR) return;
+    let a = o; while (a.parent && a.parent !== root) a = a.parent; const mod = a.userData.mod; if (!MODS.test(mod ?? '') || a === o && false) return;
+    if (/water|flame|fire|banner|smoke|glow|flag|fall/i.test((o.name || '') + (m0.name || ''))) return;
+    if (!o.visible) return; let p = o.parent; while (p && p !== root) { if (!p.visible) return; p = p.parent; }
+    const M = new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld); if (M.determinant() <= 0) return;
+    const g = o.geometry; if (!g.boundingSphere) g.computeBoundingSphere(); c.copy(g.boundingSphere.center).applyMatrix4(M);
+    const sig = Object.keys(g.attributes).sort().map((k) => k + g.attributes[k].itemSize).join(',') + (g.index ? 'I' : 'N');
+    const key = mod + '|' + Math.floor(c.x / CELL) + ',' + Math.floor(c.z / CELL) + '|' + m0.uuid + '|' + sig + '|' + (o.userData.wantShadow !== false ? 1 : 0) + (o.receiveShadow ? 1 : 0) + '|' + o.layers.mask + '|' + o.renderOrder;
+    let b = buckets.get(key); if (!b) buckets.set(key, (b = { mod, mat: m0, items: [] })); b.items.push({ o, M }); nIn++;
+  });
+  const toF32 = (at) => { const n = at.count, k = at.itemSize, f = new Float32Array(n * k); for (let i = 0; i < n; i++) for (let j = 0; j < k; j++) f[i * k + j] = at.getComponent ? at.getComponent(i, j) : [at.getX, at.getY, at.getZ, at.getW][j].call(at, i); return new THREE.BufferAttribute(f, k); };
+  const groups = {}; let nOut = 0, nMerged = 0;
+  for (const b of buckets.values()) {
+    if (b.items.length < 2) continue;
+    const geos = [];
+    for (const { o, M } of b.items) { const s = o.geometry, g = new THREE.BufferGeometry();
+      for (const k of Object.keys(s.attributes)) g.setAttribute(k, toF32(s.attributes[k]));
+      if (s.index) g.setIndex(new THREE.BufferAttribute(Uint32Array.from(s.index.array), 1));
+      g.applyMatrix4(M); geos.push(g); }
+    let merged = null; try { merged = mergeGeometries(geos, false); } catch { merged = null; }
+    if (!merged) continue; merged.computeBoundingSphere(); merged.computeBoundingBox();
+    const f = b.items[0].o, mesh = new THREE.Mesh(merged, b.mat); mesh.name = 'merged-' + b.mod; mesh.userData.wantShadow = f.userData.wantShadow; mesh.castShadow = false; mesh.receiveShadow = f.receiveShadow; mesh.layers.mask = f.layers.mask; mesh.renderOrder = f.renderOrder; mesh.frustumCulled = true;
+    let grp = groups[b.mod]; if (!grp) { grp = groups[b.mod] = new THREE.Group(); grp.name = 'merged_' + b.mod; grp.userData.mod = b.mod; root.add(grp); }
+    grp.add(mesh); nOut++; nMerged += b.items.length;
+    for (const { o } of b.items) o.parent?.remove(o);
+  }
+  return { candidates: nIn, merged: nMerged, into: nOut, buckets: buckets.size };
+}
+
+let DIAG_N = 0; const _dp = new THREE.Vector3(-1e9, 0, 0);
+// R11：性能诊断（截图 / 游戏均可）：相机移动 > 2 m 时按模块统计主视锥 draw / 面数、阴影视锥投影件，[NB] 前缀（截图工具转发），最多 6 次
+function perfDiag(G) {
+  const cam = G.camera; if (DIAG_N >= 6 || cam.position.distanceTo(_dp) < 2) return; _dp.copy(cam.position); DIAG_N++;
+  const fr = new THREE.Frustum(), frS = new THREE.Frustum(), m = new THREE.Matrix4(), sp = new THREE.Sphere(); cam.updateMatrixWorld();
+  m.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse); fr.setFromProjectionMatrix(m);
+  const sun = S.root.getObjectByName('moyuan_sun'); if (sun) { const sc = sun.shadow.camera; sc.updateMatrixWorld(); m.multiplyMatrices(sc.projectionMatrix, sc.matrixWorldInverse); frS.setFromProjectionMatrix(m); }
+  const out = {};
+  const walk = (o, mod) => { if (!o.visible) return; if (o.isMesh && o.geometry) { const g = o.geometry; const n = (g.index ? g.index.count : g.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1);
+      const bs = o.isInstancedMesh && o.boundingSphere ? o.boundingSphere : (g.boundingSphere || (g.computeBoundingSphere(), g.boundingSphere)); sp.copy(bs).applyMatrix4(o.matrixWorld);
+      const R = out[mod] ??= [0, 0, 0, 0]; if (!o.frustumCulled || fr.intersectsSphere(sp)) { R[0]++; R[1] += n; } if (sun && o.castShadow && (!o.frustumCulled || frS.intersectsSphere(sp))) { R[2]++; R[3] += n; } }
+    for (const ch of o.children) walk(ch, mod); };
+  for (const ch of S.root.children) walk(ch, ch.userData.mod ?? ch.name ?? '?');
+  const fmt = Object.entries(out).map(([k, v]) => `${k}:${v[0]}/${(v[1] / 1e6).toFixed(2)}M sh${v[2]}/${(v[3] / 1e6).toFixed(2)}M`).join(' ');
+  console.log('[NB] moyuan perf', cam.position.toArray().map((x) => x.toFixed(0)).join(','), fmt.slice(0, 280)); if (fmt.length > 280) console.log('[NB] moyuan perf+', fmt.slice(280, 560));
+}
+
 function collectCollider(root) {
   const geos = []; root.updateMatrixWorld(true);
   root.traverse((o) => {
@@ -134,6 +190,7 @@ async function build(G) {
   const root = E.scene; root.name = 'moyuan_athena'; root.position.y = OY;
   root.traverse((o) => { if (o.isMesh) { o.castShadow = false; o.frustumCulled = o.frustumCulled !== false; } });
   await patchAtmo(root); // R10：不再 remapScene（保留 Athenaion 原配色）
+  if (OPT) { const tm = performance.now(); times.merge = mergeStatic(root); times.mergeMs = Math.round(performance.now() - tm); } // R11：静态件按 160 m 区块 × 材质合批
   await addNature(root, E, times);
   if (DBG) { const keep = DBG.split(','); for (const ch of root.children) if (!ch.isLight && ch.userData.mod) ch.visible = keep.includes(ch.userData.mod); console.log('[NB] mydbg show', DBG, JSON.stringify(root.children.filter((c) => c.userData.mod).map((c) => c.userData.mod + ':' + (c.visible ? 1 : 0)))); }
   // R9：远处小件剔除（城区 / 雕像 / 植被 / 渡槽 包围球 r<45 m 且离相机 > 650 m 不画）
@@ -142,7 +199,7 @@ async function build(G) {
   const tc = performance.now(); S.collider = collectCollider(root); const colMs = Math.round(performance.now() - tc);
   let tris = 0, meshes = 0; root.traverse((o) => { if (!o.isMesh || !o.geometry) return; meshes++; tris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position?.count ?? 0) / 3 * (o.isInstancedMesh ? o.count : 1); });
   S.stats = { buildMs: Math.round(performance.now() - t0), colliderMs: colMs, colliderTris: S.collider ? S.collider.geometry.attributes.position.count / 3 : 0, modules: times, meshes, tris: Math.round(tris), heapMB: performance.memory ? Math.round((performance.memory.usedJSHeapSize - mem0) / 1e6) : null };
-  console.log('[moyuan] athena built', JSON.stringify(S.stats));
+  console.log('[moyuan] athena built', JSON.stringify(S.stats)); console.log('[NB] moyuan built', JSON.stringify({ buildMs: S.stats.buildMs, meshes, tris: S.stats.tris, modules: times }).slice(0, 290));
   placeRelics(G);
   S.state = 'ready'; manager.itemEnd('moyuan:athena');
 }
@@ -182,7 +239,7 @@ async function addNature(root, E, times) {
   ATMO.uSunDir.value.copy(dir); ATMO.uSunColor.value.copy(col);
   SKY.uSunIrr.value.set(col.r, col.g, col.b).multiplyScalar(I);
   if (SKY.uSunDiskDir) SKY.uSunDiskDir.value.copy(dir);
-  SKY.uCloudSteps.value = /[?&]q=low\b/.test(location.search) ? 10 : 16;
+  SKY.uCloudSteps.value = /[?&]q=low\b/.test(location.search) ? 10 : OPT ? 12 : 16; // R11：16→12
   try { if (E.renderer) ensureCloudTextures(E.renderer); } catch (e) { console.warn('[moyuan] cloud noise skipped', String(e?.message ?? e)); }
   {
     const sky = createSky(); sky.userData.mod = 'sky';
@@ -197,12 +254,14 @@ async function addNature(root, E, times) {
   // 太阳：Athenaion 默认方位 238° / 仰角 21°、强度 12、按空气质量的金色；单张 2048 阴影，覆盖卫城一带 ±420 m
   const key = new THREE.DirectionalLight(col, I); key.name = 'moyuan_sun';
   const C = new THREE.Vector3(20, 80, -50); key.target.position.copy(C); key.position.copy(C).addScaledVector(dir, 1500);
-  key.castShadow = true; const sc = key.shadow.camera; sc.left = sc.bottom = -420; sc.right = sc.top = 420; sc.near = 10; sc.far = 3200; sc.updateProjectionMatrix();
+  key.castShadow = true; const sc = key.shadow.camera; const SR = OPT ? 300 : 420; sc.left = sc.bottom = -SR; sc.right = sc.top = SR; sc.near = 10; sc.far = OPT ? 2400 : 3200; // R11：±420→±300 sc.updateProjectionMatrix();
   key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.6; root.add(key, key.target);
   root.updateMatrixWorld(true); const v = new THREE.Vector3(); let nc = 0;
   root.traverse((o) => { if (!o.isMesh || o.userData.wantShadow === false || o === S.sky) return; let a = o; while (a.parent && a.parent !== root) a = a.parent; if (!/^(temple|acropolis|aqueducts|statues|city|terrain)$/.test(a.userData.mod ?? '')) return;
     if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); const bs = o.geometry.boundingSphere; if (!bs) return; v.copy(bs.center).applyMatrix4(o.matrixWorld); v.y -= OY;
-    const r = bs.radius * o.matrixWorld.getMaxScaleOnAxis(); if (a.userData.mod === 'terrain' ? r > 900 : r > 200) return; if (v.distanceTo(C) - r < 450) { o.castShadow = true; nc++; } o.receiveShadow = true; });
+    const r = bs.radius * o.matrixWorld.getMaxScaleOnAxis(); o.receiveShadow = true;
+    if (OPT) { const md = a.userData.mod; if (md === 'city') return; if (md === 'terrain' ? r > 900 : r > 260) return; if (md !== 'terrain' && r < 1.5) return; if (v.distanceTo(C) - r < 300) { o.castShadow = true; nc++; } return; } // R11：城区小房不投影；只近处大件投影
+    if (a.userData.mod === 'terrain' ? r > 900 : r > 200) return; if (v.distanceTo(C) - r < 450) { o.castShadow = true; nc++; } });
   times.shadowCasters = nc;
   // 海 / 潟湖：water 模块失败时用简易海面（Athenaion SEA_LEVEL = 0）
   if (typeof times.water !== 'number') {
@@ -263,12 +322,14 @@ export function setupMoyuanAthena(G, tp) {
   G.ctx.hooks = G.ctx.hooks ?? {}; G.ctx.hooks.int_abyss_fold = () => goIn();
   G.toAthena = goIn; window.__MOYUAN_STATE__ = () => ({ state: S.state, relicY: S.relicY, stats: S.stats });
   const cam = new THREE.Vector3(); let acc = 0;
-  G.onUpdate.push((dt, t) => {
+  G.moyuanTick = (dt) => { // R11：由主循环每帧调用（截图模式也跑：相机同步 / LOD / 远处小件剔除）
     if (!S.root?.visible) return;
     if (S.E) { const ec = S.E.camera; G.camera.updateMatrixWorld(); ec.matrixWorld.copy(G.camera.matrixWorld); ec.matrixWorld.decompose(ec.position, ec.quaternion, ec.scale); ec.position.y -= OY; ec.fov = G.camera.fov; ec.aspect = G.camera.aspect; ec.near = G.camera.near; ec.far = G.camera.far; ec.updateProjectionMatrix(); ec.updateMatrixWorld(true); } // R10：Athenaion 的 LOD / 剔除按玩家相机（去掉 y 平移）
     S.skyT = (S.skyT ?? 0) + (dt ?? 0.016); if (S.SKY) S.SKY.uSkyTime.value = S.skyT;
     for (const f of S.updates ?? []) try { f(S.skyT, dt); } catch { /* 动画失败不影响游戏 */ }
-    if ((acc += dt ?? 0.016) < 0.4 && S.culled) return; acc = 0; S.culled = true; // R9：远处小件剔除，0.4 s 一次
-    G.camera.getWorldPosition(cam); for (const it of S.cull ?? []) it.o.visible = cam.distanceTo(it.c) - it.r < 650;
-  });
+    if (!((acc += dt ?? 0.016) < 0.4 && S.culled)) { acc = 0; S.culled = true; // R9：远处小件剔除，0.4 s 一次
+      G.camera.getWorldPosition(cam); for (const it of S.cull ?? []) it.o.visible = cam.distanceTo(it.c) - it.r < 650; }
+    if (OPT && !/[?&]mydiag=0\b/.test(location.search)) try { perfDiag(G); } catch (e) { console.log('[NB] moyuan diag err', String(e).slice(0, 120)); }
+  };
+  G.onUpdate.push(() => {}); // R11：逻辑移到 G.moyuanTick
 }

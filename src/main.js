@@ -440,7 +440,7 @@ function loop() {
   R.setExposure(curExp);
   for (const s of ctx.screens) s.update(dt, t);
   updateExterior(ctx, dt, t); updateInteriors(ctx, dt, t); updateEastWing(ctx, dt, t); updateVault(ctx, dt, t, started ? player.pos : null); updateRooms(ctx, dt, t); updateUpper(ctx, dt, t); updateDressing(ctx, dt, t); updateDepths(ctx, dt, t); G.e1fx?.update(dt);
-  if (G.lod && !/[?&]nolod=1/.test(location.search)) G.lod.update(camera); if (G.distCull && !/[?&]nocull=1/.test(location.search)) G.distCull.update(camera); if (G.metroCull) G.metroCull.update(camera, G.zone === 'metro_exit' && !/[?&]nometrocull=1/.test(location.search) ? 1 : 1e9); G.portal?.update(camera);
+  G.moyuanTick?.(dt); if (G.lod && !/[?&]nolod=1/.test(location.search)) G.lod.update(camera); if (G.distCull && !/[?&]nocull=1/.test(location.search)) G.distCull.update(camera); if (G.metroCull) G.metroCull.update(camera, G.zone === 'metro_exit' && !/[?&]nometrocull=1/.test(location.search) ? 1 : 1e9); G.portal?.update(camera);
   if (TEST) { frames++; return; }
   R.gl.info.autoReset = false; R.gl.info.reset(); // M6：统计整帧（反射 + 阴影 + 后期全部 pass）
   // 批次44：截图专用「静帧冻结」——机位静止、场景静止，第 3 帧起阴影贴图与平面反射与前帧逐像素相同，
