@@ -189,7 +189,7 @@ function passReport() { // 每次在帧开始调用：打印上一帧的统计�
 }
 
 // R12：屏幕尺寸剔除——单件（实例件按单实例）投影半径 < SPX 像素的整组不画（远处细部件），按距离分级；植被另管
-const SPX = 1.25;
+const SPX = 2.0; // R12c：1.25→2 px（1.25 px 入口只剔 30 件）
 function collectSizeCull(root) {
   const out = [], v = new THREE.Vector3(), m = new THREE.Matrix4();
   root.updateMatrixWorld(true);
@@ -327,7 +327,7 @@ async function addNature(root, E, times) {
   const C = new THREE.Vector3(20, 80, -50); key.target.position.copy(C); key.position.copy(C).addScaledVector(dir, 1500);
   key.castShadow = true; const sc = key.shadow.camera; const SR = OPT ? 300 : 420; sc.left = sc.bottom = -SR; sc.right = sc.top = SR; sc.near = 10; sc.far = OPT ? 2400 : 3200; // R11：±420→±300 sc.updateProjectionMatrix();
   key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.6; root.add(key, key.target);
-  root.updateMatrixWorld(true); const v = new THREE.Vector3(); let nc = 0;
+  root.updateMatrixWorld(true); const v = new THREE.Vector3(); let nc = 0; S.casters = [];
   root.traverse((o) => { if (!o.isMesh || o.userData.wantShadow === false || o === S.sky) return; let a = o; while (a.parent && a.parent !== root) a = a.parent; if (!/^(temple|acropolis|aqueducts|statues|city|terrain)$/.test(a.userData.mod ?? '')) return;
     if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); let bs = o.geometry.boundingSphere; if (!bs) return;
     // R12 真因修复：R11 对 InstancedMesh 用的是单件几何（原点附近）的包围球 → 卫城 / 神庙实例件几乎全被当成「近处大件」投影（入口阴影 pass 399 draw / 678 万面，卫城 263）。
@@ -335,8 +335,8 @@ async function addNature(root, E, times) {
     let rItem = null; if (R12 && o.isInstancedMesh) { if (!o.count) return; o.computeBoundingSphere(); const mm = new THREE.Matrix4(); let sMax = 0; const st = Math.max(1, Math.floor(o.count / 64)); for (let i = 0; i < o.count; i += st) { o.getMatrixAt(i, mm); sMax = Math.max(sMax, mm.getMaxScaleOnAxis()); } rItem = bs.radius * (sMax || 1) * o.matrixWorld.getMaxScaleOnAxis(); bs = o.boundingSphere; }
     v.copy(bs.center).applyMatrix4(o.matrixWorld); v.y -= OY;
     const r = bs.radius * o.matrixWorld.getMaxScaleOnAxis(); o.receiveShadow = true;
-    if (rItem !== null) { if (a.userData.mod === 'city' || rItem < 1.5 || rItem > 260) return; if (v.distanceTo(C) - r < 300) { o.castShadow = true; nc++; } return; }
-    if (OPT) { const md = a.userData.mod; if (md === 'city') return; if (md === 'terrain' ? r > 900 : r > 260) return; if (md !== 'terrain' && r < 1.5) return; if (v.distanceTo(C) - r < 300) { o.castShadow = true; nc++; } return; } // R11：城区小房不投影；只近处大件投影
+    if (rItem !== null) { if (a.userData.mod === 'city' || rItem < 1.5 || rItem > 260) return; if (v.distanceTo(C) - r < 300) { o.castShadow = true; nc++; S.casters.push({ o, c: v.clone().setY(v.y + OY), R: r, r: rItem }); } return; }
+    if (OPT) { const md = a.userData.mod; if (md === 'city') return; if (md === 'terrain' ? r > 900 : r > 260) return; if (md !== 'terrain' && r < 1.5) return; if (v.distanceTo(C) - r < 300) { o.castShadow = true; nc++; if (R12) S.casters.push({ o, c: v.clone().setY(v.y + OY), R: r, r }); } return; } // R11：城区小房不投影；只近处大件投影
     if (a.userData.mod === 'terrain' ? r > 900 : r > 200) return; if (v.distanceTo(C) - r < 450) { o.castShadow = true; nc++; } });
   times.shadowCasters = nc;
   // 海 / 潟湖：water 模块失败时用简易海面（Athenaion SEA_LEVEL = 0）
@@ -408,6 +408,9 @@ export function setupMoyuanAthena(G, tp) {
       G.camera.getWorldPosition(cam); for (const it of S.cull ?? []) it.o.visible = cam.distanceTo(it.c) - it.r < 650;
       if (R12) { const fpx = (innerHeight || 720) * 0.5 / Math.tan(G.camera.fov * Math.PI / 360); let nOff = 0;
         for (const it of S.sizeCull ?? []) { if (it.o.userData.r12off && !it.o.userData.inCull) it.o.visible = it.o.userData.r12vis; const d = Math.max(1, cam.distanceTo(it.c) - it.R); const off = it.r * fpx / d < SPX; it.o.userData.r12off = off; if (off) { it.o.userData.r12vis = it.o.visible; it.o.visible = false; nOff++; } }
+        // 阴影投影件按相机距离分级：单件投影半径 < 6 px 的不进阴影图（60 m 内一律投影）——远处细部件的影子本来就看不出
+        let nCs = 0; for (const it of S.casters ?? []) { const d = cam.distanceTo(it.c) - it.R; const cs = d < 60 || it.r * fpx / Math.max(1, d) >= 6; it.o.castShadow = cs; if (cs) nCs++; }
+        if ((S.csN = (S.csN ?? 0) + 1) <= 4) console.log('[NB] moyuan shadow casters', nCs, '/', S.casters?.length);
         // 植被：页面网格是运行时按 LOD 建的、frustumCulled=false（阴影 pass 不做视锥剔除）→ 只让 L0/L1 的树干 / 树冠团投影，远档与卡片 / 公告板不进阴影图
         const veg = S.root.children.find((c) => c.userData.mod === 'vegetation'); let vs = 0;
         if (veg) for (const o of veg.children) { if (!o.isInstancedMesh) continue; const mm = /:L(\d+):(\w+):/.exec(o.name); if (!mm) continue; const cs = o.userData.castShadow && +mm[1] <= 1 && mm[2] !== 'card' && mm[2] !== 'bb'; o.castShadow = cs; if (cs && o.visible) vs++; }
